@@ -91,7 +91,7 @@ namespace autovala {
 		
 			var basepath=GLib.Environment.get_current_dir().split(Path.DIR_SEPARATOR_S);
 			int len=basepath.length;
-			string config_path="";
+			this.config_path="";
 			while(len>=0) {
 				var path=Path.DIR_SEPARATOR_S;
 				for(var i=0;i<len;i++) {
@@ -107,12 +107,11 @@ namespace autovala {
 				return false; // no configuration file found
 			}
 			
-			var file=File.new_for_path(config_path);
+			var file=File.new_for_path(this.config_path);
 			try {
 				var dis = new DataInputStream(file.read());
 				string line;
 				while((line = dis.read_line(null))!=null) {
-					GLib.stdout.printf("Linea: %s\n",line);
 					if (line[0]=='#') {
 						continue;
 					}
