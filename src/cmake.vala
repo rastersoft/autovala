@@ -123,11 +123,11 @@ namespace autovala {
 					error=this.create_po(dir,data_stream);
 					break;
 				case Config_Type.VALA_BINARY:
-					error=this.create_vala_binary(dir, data_stream,element.file,element.packages,element.check_packages,false,added_vala_binaries);
+					error=this.create_vala_binary(dir, data_stream,element.file,element.packages,element.check_packages,element.compile_options,false,added_vala_binaries);
 					added_vala_binaries=true;
 					break;
 				case Config_Type.VALA_LIBRARY:
-					error=this.create_vala_binary(dir, data_stream,element.file,element.packages,element.check_packages,true,added_vala_binaries);
+					error=this.create_vala_binary(dir, data_stream,element.file,element.packages,element.check_packages,element.compile_options,true,added_vala_binaries);
 					added_vala_binaries=true;
 					break;
 				case Config_Type.BINARY:
@@ -394,7 +394,7 @@ namespace autovala {
 		}
 		
 		private bool create_vala_binary(string dir,DataOutputStream data_stream,string element_file, string[] element_packages,
-									string [] element_check_packages, bool is_library, bool added_vala_binaries) {
+									string [] element_check_packages, string options, bool is_library, bool added_vala_binaries) {
 		
 			var fname=File.new_for_path(Path.build_filename(this.config.basepath,dir,"Config.vala.cmake"));
 			if (fname.query_exists()==false) {
@@ -461,8 +461,12 @@ namespace autovala {
 				foreach(var module in element_check_packages) {
 					data_stream.put_string("\t"+module+"\n");
 				}
-	/*OPTIONS
-	${COMPILE_OPTIONS_VALA}*/
+				
+				if (options!="") {
+					data_stream.put_string("OPTIONS\n");
+					data_stream.put_string("\t"+options+"\n");
+				}
+
 				data_stream.put_string(")\n\n");
 				if (is_library) {
 					data_stream.put_string("add_library("+element_file+" SHARED ${VALA_C})\n\n");

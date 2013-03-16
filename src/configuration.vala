@@ -29,6 +29,7 @@ enum Config_Type {VALA_BINARY, VALA_LIBRARY, BINARY, ICON, PIXMAP, PO, GLADE, DB
 		public string path;
 		public Config_Type type;
 		public string file;
+		public string compile_options;
 		public string[] packages;
 		public string[] check_packages;
 
@@ -38,6 +39,7 @@ enum Config_Type {VALA_BINARY, VALA_LIBRARY, BINARY, ICON, PIXMAP, PO, GLADE, DB
 			this.path=path;
 			this.packages={};
 			this.check_packages={};
+			this.compile_options="";
 		}
 
 		public void add_package(string pkg,bool to_check) {
@@ -87,6 +89,7 @@ enum Config_Type {VALA_BINARY, VALA_LIBRARY, BINARY, ICON, PIXMAP, PO, GLADE, DB
 
 		private weak config_element ? last_element;
 		private int version;
+		private int line_number;
 
 		public configuration() {
 			this.config_path="";
@@ -180,12 +183,12 @@ enum Config_Type {VALA_BINARY, VALA_LIBRARY, BINARY, ICON, PIXMAP, PO, GLADE, DB
 			try {
 				var dis = new DataInputStream(file.read());
 
-				int line_number=0;
+				this.line_number=0;
 				string line;
 				this.error_list={};
 
 				while((line = dis.read_line(null))!=null) {
-					line_number++;
+					this.line_number++;
 					if ((line[0]=='#')||(line[0]==';')) {
 						continue;
 					}
@@ -253,6 +256,10 @@ enum Config_Type {VALA_BINARY, VALA_LIBRARY, BINARY, ICON, PIXMAP, PO, GLADE, DB
 						this.add_entry(line.substring(7).strip(),Config_Type.GLADE);
 						continue;
 					}
+					if (line.has_prefix("compile_options: ")) {
+						this.add_compiling_options(line.substring(17).strip());
+						continue;
+					}
 					if (line.has_prefix("project_name: ")) {
 						this.project_name=line.substring(14).strip();
 						continue;
@@ -262,7 +269,7 @@ enum Config_Type {VALA_BINARY, VALA_LIBRARY, BINARY, ICON, PIXMAP, PO, GLADE, DB
 						continue;
 					}
 					error=true;
-					this.error_list+=_("Syntax error in line %d").printf(line_number);
+					this.error_list+=_("Syntax error in line %d").printf(this.line_number);
 				}
 			} catch (Error e) {
 				this.config_path="";
@@ -270,6 +277,20 @@ enum Config_Type {VALA_BINARY, VALA_LIBRARY, BINARY, ICON, PIXMAP, PO, GLADE, DB
 				error=true;
 			}
 			return error;
+		}
+
+		private bool add_compiling_options(string options) {
+
+			if (this.last_element==null) {
+				this.error_list+=_("Adding compiling options after a non vala_binary or vala_library command (line %d)").printf(this.line_number);
+				return false;
+			}
+			
+			if (this.last_element.compile_options!="") {
+				this.error_list+=_("Warning: overwriting compile options (line %d)").printf(this.line_number);
+			}
+			this.last_element.compile_options=options;
+			return true;
 		}
 
 		private bool add_package(string pkg,bool check) {
