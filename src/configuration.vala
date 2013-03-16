@@ -93,6 +93,7 @@ enum Config_Type {VALA_BINARY, VALA_LIBRARY, BINARY, ICON, PIXMAP, PO, GLADE, DB
 		public string basepath;
 		public Gee.List<config_element ?> configuration;
 		public string[] error_list;
+		public string vala_version;
 
 		private weak config_element ? last_element;
 		private int version;
@@ -105,6 +106,7 @@ enum Config_Type {VALA_BINARY, VALA_LIBRARY, BINARY, ICON, PIXMAP, PO, GLADE, DB
 			this.version=0;
 			this.project_name="";
 			this.error_list={};
+			this.vala_version="0.16.0";
 		}
 
 		string find_configuration(string basepath) {
@@ -203,6 +205,16 @@ enum Config_Type {VALA_BINARY, VALA_LIBRARY, BINARY, ICON, PIXMAP, PO, GLADE, DB
 					if (finalline=="") {
 						continue;
 					}
+					if (line.has_prefix("vala_version: ")) {
+						var version=line.substring(14).strip();
+						if (false==Regex.match_simple("^[0-9]+.[0-9]+(.[0-9]+)?$",version)) {
+							this.error_list+=_("Vala version string not valid. It must be in the form N.N or N.N.N (line %d)").printf(this.line_number);
+							error=true;
+						} else {
+							this.vala_version=version;
+						}
+						continue;
+					}
 					if (line.has_prefix("vala_binary: ")) {
 						error|=this.add_entry(line.substring(13).strip(),Config_Type.VALA_BINARY);
 						continue;
@@ -219,7 +231,7 @@ enum Config_Type {VALA_BINARY, VALA_LIBRARY, BINARY, ICON, PIXMAP, PO, GLADE, DB
 						error|=this.add_package(line.substring(20).strip(),true);
 						continue;
 					}
-					if (line.has_prefix("vala_version: ")) {
+					if (line.has_prefix("file_version: ")) {
 						error|=this.set_version(line.substring(14).strip());
 						continue;
 					}
@@ -302,10 +314,9 @@ enum Config_Type {VALA_BINARY, VALA_LIBRARY, BINARY, ICON, PIXMAP, PO, GLADE, DB
 			}
 
 			if (this.last_element.type==Config_Type.VALA_LIBRARY) {
-			GLib.stdout.printf("Meto version: %s\n",version);
 				// Only accept version string in the format N, N.N or N.N.N (with N a number of one or more digits)
-				if (false==Regex.match_simple("^[0-9]+(.[0-9]+(.[0-9]+)?)?$",version)) {
-					this.error_list+=_("Version string not valid for a library. It must be in the form N, N.N or N.N.N (line %d)").printf(this.line_number);
+				if (false==Regex.match_simple("^[0-9]+.[0-9]+(.[0-9]+)?$",version)) {
+					this.error_list+=_("Version string not valid for a library. It must be in the form N.N or N.N.N (line %d)").printf(this.line_number);
 					return true;
 				}
 			}

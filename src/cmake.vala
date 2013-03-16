@@ -123,11 +123,11 @@ namespace autovala {
 					error=this.create_po(dir,data_stream);
 					break;
 				case Config_Type.VALA_BINARY:
-					error=this.create_vala_binary(dir, data_stream,element.file,element.packages,element.check_packages,element.compile_options,false,added_vala_binaries);
+					error=this.create_vala_binary(dir, data_stream,element.file,element.packages,element.check_packages,element.compile_options,element.version,false,added_vala_binaries);
 					added_vala_binaries=true;
 					break;
 				case Config_Type.VALA_LIBRARY:
-					error=this.create_vala_binary(dir, data_stream,element.file,element.packages,element.check_packages,element.compile_options,true,added_vala_binaries);
+					error=this.create_vala_binary(dir, data_stream,element.file,element.packages,element.check_packages,element.compile_options,element.version,true,added_vala_binaries);
 					added_vala_binaries=true;
 					break;
 				case Config_Type.BINARY:
@@ -394,7 +394,7 @@ namespace autovala {
 		}
 
 		private bool create_vala_binary(string dir,DataOutputStream data_stream,string element_file, string[] element_packages,
-									string [] element_check_packages, string options, bool is_library, bool added_vala_binaries) {
+									string [] element_check_packages, string options, string version, bool is_library, bool added_vala_binaries) {
 
 			var fname=File.new_for_path(Path.build_filename(this.config.basepath,dir,"Config.vala.cmake"));
 			if (fname.query_exists()==false) {
@@ -406,6 +406,7 @@ namespace autovala {
 					data_stream2.put_string("\tpublic const string PKGDATADIR = \"@PKGDATADIR@\";\n");
 					data_stream2.put_string("\tpublic const string GETTEXT_PACKAGE = \"@GETTEXT_PACKAGE@\";\n");
 					data_stream2.put_string("\tpublic const string RELEASE_NAME = \"@RELEASE_NAME@\";\n");
+					data_stream2.put_string("\tpublic const string VERSION = \"@VERSION@\";\n");
 					data_stream2.put_string("\tpublic const string PLUGINDIR = \"@PLUGINDIR@\";\n");
 					data_stream2.put_string("}\n");
 					data_stream2.close();
@@ -431,6 +432,7 @@ namespace autovala {
 					data_stream.put_string("add_definitions(-DGETTEXT_PACKAGE=\\\"${GETTEXT_PACKAGE}\\\")\n");
 					data_stream.put_string("find_package(PkgConfig)\n\n");
 				}
+				data_stream.put_string("set (VERSION \""+version+"\")\n");
 				data_stream.put_string("pkg_check_modules(DEPS REQUIRED\n");
 				foreach(var module in element_check_packages) {
 					data_stream.put_string("\t"+module+"\n");
@@ -442,7 +444,7 @@ namespace autovala {
 				data_stream.put_string("link_directories(${DEPS_LIBRARY_DIRS})\n");
 				data_stream.put_string("find_package(Vala REQUIRED)\n");
 				data_stream.put_string("include(ValaVersion)\n");
-				data_stream.put_string("ensure_vala_version(\"0.16.0\" MINIMUM)\n");
+				data_stream.put_string("ensure_vala_version(\""+this.config.vala_version+"\" MINIMUM)\n");
 				data_stream.put_string("include(ValaPrecompile)\n\n");
 
 				data_stream.put_string("vala_precompile(VALA_C\n");

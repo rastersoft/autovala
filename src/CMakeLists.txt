@@ -12,6 +12,7 @@ configure_file (${CMAKE_SOURCE_DIR}/src/Config.vala.cmake ${CMAKE_BINARY_DIR}/sr
 add_definitions(-DGETTEXT_PACKAGE=\"${GETTEXT_PACKAGE}\")
 find_package(PkgConfig)
 
+set (VERSION "1.0.0")
 pkg_check_modules(DEPS REQUIRED
 	gio-2.0
 	gee-1.0
@@ -23,13 +24,13 @@ link_libraries(${DEPS_LIBRARIES})
 link_directories(${DEPS_LIBRARY_DIRS})
 find_package(Vala REQUIRED)
 include(ValaVersion)
-ensure_vala_version("0.16.0" MINIMUM)
+ensure_vala_version("0.16" MINIMUM)
 include(ValaPrecompile)
 
 vala_precompile(VALA_C
-	cmake.vala
-	autovala.vala
 	configuration.vala
+	autovala.vala
+	cmake.vala
 PACKAGES
 	posix
 	gio-2.0
