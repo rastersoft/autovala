@@ -484,6 +484,13 @@ namespace autovala {
 				data_stream.put_string(")\n\n");
 				if (is_library) {
 					data_stream.put_string("add_library("+element_file+" SHARED ${VALA_C})\n\n");
+
+					data_stream.put_string("set_target_properties( "+element_file+" PROPERTIES\n");
+					data_stream.put_string("VERSION\n");
+					data_stream.put_string("\t"+version+"\n");
+					data_stream.put_string("SOVERSION\n");
+					data_stream.put_string("\t"+version.split(".")[0]+" )\n\n");
+
 					data_stream.put_string("install(TARGETS\n");
 					data_stream.put_string("\t"+element_file+"\n");
 					data_stream.put_string("LIBRARY DESTINATION\n");
