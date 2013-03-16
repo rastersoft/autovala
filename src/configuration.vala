@@ -32,6 +32,8 @@ enum Config_Type {VALA_BINARY, VALA_LIBRARY, BINARY, ICON, PIXMAP, PO, GLADE, DB
 		public string compile_options;
 		public string[] packages;
 		public string[] check_packages;
+		public string version;
+		public bool version_set;
 
 		public config_element(string file, string path, Config_Type type) {
 			this.type=type;
@@ -40,6 +42,8 @@ enum Config_Type {VALA_BINARY, VALA_LIBRARY, BINARY, ICON, PIXMAP, PO, GLADE, DB
 			this.packages={};
 			this.check_packages={};
 			this.compile_options="";
+			this.version="1.0.0";
+			this.version_set=false;
 		}
 
 		public void add_package(string pkg,bool to_check) {
@@ -71,16 +75,19 @@ enum Config_Type {VALA_BINARY, VALA_LIBRARY, BINARY, ICON, PIXMAP, PO, GLADE, DB
 		public void printall() {
 			GLib.stdout.printf("Path: %s, file: %s\n",this.path,this.file);
 			foreach(var l in this.check_packages) {
-				GLib.stdout.printf("    Check package: %s\n",l);
+				GLib.stdout.printf("\tCheck package: %s\n",l);
 			}
 			foreach(var l in this.packages) {
-				GLib.stdout.printf("    Package: %s\n",l);
+				GLib.stdout.printf("\tPackage: %s\n",l);
+			}
+			if (this.compile_options!="") {
+				GLib.stdout.printf("\tCompile options: %s\n",this.compile_options);
 			}
 		}
 	}
 
 	class configuration:GLib.Object {
-	
+
 		public string project_name;
 		public string config_path;
 		public string basepath;
@@ -165,7 +172,7 @@ enum Config_Type {VALA_BINARY, VALA_LIBRARY, BINARY, ICON, PIXMAP, PO, GLADE, DB
 					len--;
 				}
 				if (this.config_path=="") {
-					return false; // no configuration file found
+					return true; // no configuration file found
 				}
 			} else {
 				if (GLib.Path.is_absolute(open_file)) {
@@ -197,31 +204,35 @@ enum Config_Type {VALA_BINARY, VALA_LIBRARY, BINARY, ICON, PIXMAP, PO, GLADE, DB
 						continue;
 					}
 					if (line.has_prefix("vala_binary: ")) {
-						this.add_entry(line.substring(13).strip(),Config_Type.VALA_BINARY);
+						error|=this.add_entry(line.substring(13).strip(),Config_Type.VALA_BINARY);
 						continue;
 					}
 					if (line.has_prefix("vala_library: ")) {
-						this.add_entry(line.substring(14).strip(),Config_Type.VALA_LIBRARY);
+						error|=this.add_entry(line.substring(14).strip(),Config_Type.VALA_LIBRARY);
 						continue;
 					}
 					if (line.has_prefix("vala_package: ")) {
-						this.add_package(line.substring(14).strip(),false);
+						error|=this.add_package(line.substring(14).strip(),false);
 						continue;
 					}
 					if (line.has_prefix("vala_check_package: ")) {
-						this.add_package(line.substring(20).strip(),true);
+						error|=this.add_package(line.substring(20).strip(),true);
+						continue;
+					}
+					if (line.has_prefix("vala_version: ")) {
+						error|=this.set_version(line.substring(14).strip());
 						continue;
 					}
 					if (line.has_prefix("binary: ")) {
-						this.add_entry(line.substring(8).strip(),Config_Type.BINARY);
+						error|=this.add_entry(line.substring(8).strip(),Config_Type.BINARY);
 						continue;
 					}
 					if (line.has_prefix("icon: ")) {
-						this.add_entry(line.substring(6).strip(),Config_Type.ICON);
+						error|=this.add_entry(line.substring(6).strip(),Config_Type.ICON);
 						continue;
 					}
 					if (line.has_prefix("pixmap: ")) {
-						this.add_entry(line.substring(8).strip(),Config_Type.PIXMAP);
+						error|=this.add_entry(line.substring(8).strip(),Config_Type.PIXMAP);
 						continue;
 					}
 					if (line.has_prefix("po: ")) {
@@ -229,35 +240,35 @@ enum Config_Type {VALA_BINARY, VALA_LIBRARY, BINARY, ICON, PIXMAP, PO, GLADE, DB
 						if (false==po_folder.has_suffix("/")) {
 							po_folder+="/";
 						}
-						this.add_entry(po_folder,Config_Type.PO);
+						error|=this.add_entry(po_folder,Config_Type.PO);
 						continue;
 					}
 					if (line.has_prefix("dbus_service: ")) {
-						this.add_entry(line.substring(14).strip(),Config_Type.DBUS_SERVICE);
+						error|=this.add_entry(line.substring(14).strip(),Config_Type.DBUS_SERVICE);
 						continue;
 					}
 					if (line.has_prefix("desktop: ")) {
-						this.add_entry(line.substring(9).strip(),Config_Type.DESKTOP);
+						error|=this.add_entry(line.substring(9).strip(),Config_Type.DESKTOP);
 						continue;
 					}
 					if (line.has_prefix("autostart: ")) {
-						this.add_entry(line.substring(11).strip(),Config_Type.AUTOSTART);
+						error|=this.add_entry(line.substring(11).strip(),Config_Type.AUTOSTART);
 						continue;
 					}
 					if (line.has_prefix("eos_plug: ")) {
-						this.add_entry(line.substring(10).strip(),Config_Type.EOS_PLUG);
+						error|=this.add_entry(line.substring(10).strip(),Config_Type.EOS_PLUG);
 						continue;
 					}
 					if (line.has_prefix("scheme: ")) {
-						this.add_entry(line.substring(8).strip(),Config_Type.SCHEME);
+						error|=this.add_entry(line.substring(8).strip(),Config_Type.SCHEME);
 						continue;
 					}
 					if (line.has_prefix("glade: ")) {
-						this.add_entry(line.substring(7).strip(),Config_Type.GLADE);
+						error|=this.add_entry(line.substring(7).strip(),Config_Type.GLADE);
 						continue;
 					}
 					if (line.has_prefix("compile_options: ")) {
-						this.add_compiling_options(line.substring(17).strip());
+						error|=this.add_compiling_options(line.substring(17).strip());
 						continue;
 					}
 					if (line.has_prefix("project_name: ")) {
@@ -279,37 +290,61 @@ enum Config_Type {VALA_BINARY, VALA_LIBRARY, BINARY, ICON, PIXMAP, PO, GLADE, DB
 			return error;
 		}
 
+		private bool set_version(string version) {
+
+			if (this.last_element==null) {
+				this.error_list+=_("Version number after a non vala_binary or vala_library command (line %d)").printf(this.line_number);
+				return true;
+			}
+
+			if (this.last_element.version_set) {
+				this.error_list+=_("Warning: overwriting version number (line %d)").printf(this.line_number);
+			}
+
+			if (this.last_element.type==Config_Type.VALA_LIBRARY) {
+			GLib.stdout.printf("Meto version: %s\n",version);
+				// Only accept version string in the format N, N.N or N.N.N (with N a number of one or more digits)
+				if (false==Regex.match_simple("^[0-9]+(.[0-9]+(.[0-9]+)?)?$",version)) {
+					this.error_list+=_("Version string not valid for a library. It must be in the form N, N.N or N.N.N (line %d)").printf(this.line_number);
+					return true;
+				}
+			}
+			this.last_element.version=version;
+			this.last_element.version_set=true;
+			return false;
+		}
+
 		private bool add_compiling_options(string options) {
 
 			if (this.last_element==null) {
 				this.error_list+=_("Adding compiling options after a non vala_binary or vala_library command (line %d)").printf(this.line_number);
-				return false;
+				return true;
 			}
-			
+
 			if (this.last_element.compile_options!="") {
 				this.error_list+=_("Warning: overwriting compile options (line %d)").printf(this.line_number);
 			}
 			this.last_element.compile_options=options;
-			return true;
+			return false;
 		}
 
 		private bool add_package(string pkg,bool check) {
 
 			if (this.config_path=="") {
-				return false;
+				return true;
 			}
 
 			if (this.last_element==null) {
-				return false;
+				return true;
 			}
 			this.last_element.add_package(pkg,check);
-			return true;
+			return false;
 		}
 
 		private bool add_entry(string filename, Config_Type type) {
 
 			if (this.config_path=="") {
-				return false;
+				return true;
 			}
 
 			var file=Path.get_basename(filename);
@@ -317,7 +352,7 @@ enum Config_Type {VALA_BINARY, VALA_LIBRARY, BINARY, ICON, PIXMAP, PO, GLADE, DB
 
 			foreach(var e in this.configuration) {
 				if (e.check(file,path,type)) {
-					return true;
+					return false;
 				}
 			}
 
@@ -328,9 +363,9 @@ enum Config_Type {VALA_BINARY, VALA_LIBRARY, BINARY, ICON, PIXMAP, PO, GLADE, DB
 			} else {
 				this.last_element=null;
 			}
-			return true;
+			return false;
 		}
-		
+
 		public void list_all() {
 			foreach(var e in this.configuration) {
 				e.printall();

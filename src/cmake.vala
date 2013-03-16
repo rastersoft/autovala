@@ -21,7 +21,7 @@ using Gee;
 using Posix;
 
 namespace autovala {
-	
+
 	class cmake:GLib.Object {
 
 		private configuration config;
@@ -104,7 +104,7 @@ namespace autovala {
 		}
 
 		private bool create_cmake_for_dir(string dir,DataOutputStream data_stream) {
-		
+
 			this.append_text="";
 			bool added_vala_binaries=false;
 			bool added_icon_suffix=false;
@@ -118,7 +118,7 @@ namespace autovala {
 					continue;
 				}
 
-				switch(element.type) {					
+				switch(element.type) {
 				case Config_Type.PO:
 					error=this.create_po(dir,data_stream);
 					break;
@@ -188,12 +188,12 @@ namespace autovala {
 						error=true;
 					}
 					break;
-				
+
 				default:
 					error=false;
 					break;
 				}
-				
+
 				if (error) {
 					break;
 				}
@@ -208,7 +208,7 @@ namespace autovala {
 			}
 			return error;
 		}
-		
+
 		private bool create_autostart(string dir, DataOutputStream data_stream, string element_file,bool added_autostart_prefix) {
 
 			if (added_autostart_prefix==false) {
@@ -239,8 +239,8 @@ namespace autovala {
 			}
 			return false;
 		}
-		
-		
+
+
 		private bool create_dbus_service(string dir, DataOutputStream data_stream, string element_file,bool added_dbus_prefix) {
 
 			if (added_dbus_prefix==false) {
@@ -265,12 +265,12 @@ namespace autovala {
 			}
 			return false;
 		}
-		
+
 		private bool create_icon(string dir, DataOutputStream data_stream, string element_file,bool added_suffix) {
-		
+
 			var full_path=Path.build_filename(this.config.basepath,dir,element_file);
 			int size=0;
-			
+
 			if (element_file.has_suffix(".png")) {
 				try {
 					var picture=new Gdk.Pixbuf.from_file(full_path);
@@ -319,7 +319,7 @@ namespace autovala {
 			}
 			return false;
 		}
-		
+
 		private bool create_po(string dir,DataOutputStream data_stream) {
 
 			var fname=File.new_for_path(Path.build_filename(this.config.basepath,dir,"POTFILES.in"));
@@ -331,7 +331,7 @@ namespace autovala {
 					return true;
 				}
 			}
-			
+
 			try {
 				var dis = fname.create(FileCreateFlags.NONE);
 				var data_stream2 = new DataOutputStream(dis);
@@ -392,10 +392,10 @@ namespace autovala {
 			}
 			return false;
 		}
-		
+
 		private bool create_vala_binary(string dir,DataOutputStream data_stream,string element_file, string[] element_packages,
 									string [] element_check_packages, string options, bool is_library, bool added_vala_binaries) {
-		
+
 			var fname=File.new_for_path(Path.build_filename(this.config.basepath,dir,"Config.vala.cmake"));
 			if (fname.query_exists()==false) {
 				try {
@@ -436,7 +436,7 @@ namespace autovala {
 					data_stream.put_string("\t"+module+"\n");
 				}
 				data_stream.put_string(")\n\n");
-		
+
 				data_stream.put_string("add_definitions(${DEPS_CFLAGS})\n");
 				data_stream.put_string("link_libraries(${DEPS_LIBRARIES})\n");
 				data_stream.put_string("link_directories(${DEPS_LIBRARY_DIRS})\n");
@@ -461,10 +461,22 @@ namespace autovala {
 				foreach(var module in element_check_packages) {
 					data_stream.put_string("\t"+module+"\n");
 				}
-				
-				if (options!="") {
+
+				var final_options=options;
+				if (is_library) {
+					final_options+=" --gir "+element_file+".gir";
+				}
+
+				if (final_options!="") {
 					data_stream.put_string("OPTIONS\n");
-					data_stream.put_string("\t"+options+"\n");
+					data_stream.put_string("\t"+final_options+"\n");
+				}
+
+				if (is_library) {
+					data_stream.put_string("GENERATE_VAPI\n");
+					data_stream.put_string("\t"+element_file+"\n");
+					data_stream.put_string("GENERATE_HEADER\n");
+					data_stream.put_string("\t"+element_file+"\n");
 				}
 
 				data_stream.put_string(")\n\n");
@@ -488,7 +500,7 @@ namespace autovala {
 				return true;
 			}
 			return false;
-		
+
 		}
 	}
 }
