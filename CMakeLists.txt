@@ -1,0 +1,10 @@
+### CMakeLists automatically created with AutoVala
+### Do not edit
+
+project (autovala)
+cmake_minimum_required (VERSION 2.6)
+cmake_policy (VERSION 2.8)
+list (APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
+enable_testing ()
+add_subdirectory(src)
+add_subdirectory(po)
