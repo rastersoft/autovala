@@ -28,9 +28,9 @@ ensure_vala_version("0.16" MINIMUM)
 include(ValaPrecompile)
 
 vala_precompile(VALA_C
+	cmake.vala
 	configuration.vala
 	autovala.vala
-	cmake.vala
 PACKAGES
 	posix
 	gio-2.0

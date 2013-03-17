@@ -22,18 +22,19 @@ using Posix;
 
 namespace autovala {
 
-enum Config_Type {VALA_BINARY, VALA_LIBRARY, BINARY, ICON, PIXMAP, PO, GLADE, DBUS_SERVICE, DESKTOP, AUTOSTART, EOS_PLUG, SCHEME}
+	public enum Config_Type {VALA_BINARY, VALA_LIBRARY, BINARY, ICON, PIXMAP, PO, GLADE, DBUS_SERVICE, DESKTOP, AUTOSTART, EOS_PLUG, SCHEME}
 
-	class config_element:GLib.Object {
+	public class config_element:GLib.Object {
 
 		public string path;
 		public Config_Type type;
 		public string file;
 		public string compile_options;
-		public string[] packages;
-		public string[] check_packages;
 		public string version;
 		public bool version_set;
+		
+		private string[] packages;
+		private string[] check_packages;
 
 		public config_element(string file, string path, Config_Type type) {
 			this.type=type;
@@ -44,6 +45,14 @@ enum Config_Type {VALA_BINARY, VALA_LIBRARY, BINARY, ICON, PIXMAP, PO, GLADE, DB
 			this.compile_options="";
 			this.version="1.0.0";
 			this.version_set=false;
+		}
+
+		public string[] get_packages() {
+			return this.packages;
+		}
+
+		public string[] get_check_packages() {
+			return this.check_packages;
 		}
 
 		public void add_package(string pkg,bool to_check) {
@@ -86,14 +95,15 @@ enum Config_Type {VALA_BINARY, VALA_LIBRARY, BINARY, ICON, PIXMAP, PO, GLADE, DB
 		}
 	}
 
-	class configuration:GLib.Object {
+	public class configuration:GLib.Object {
 
 		public string project_name;
 		public string config_path;
 		public string basepath;
 		public Gee.List<config_element ?> configuration;
-		public string[] error_list;
 		public string vala_version;
+		
+		private string[] error_list;
 
 		private weak config_element ? last_element;
 		private int version;
@@ -107,6 +117,10 @@ enum Config_Type {VALA_BINARY, VALA_LIBRARY, BINARY, ICON, PIXMAP, PO, GLADE, DB
 			this.project_name="";
 			this.error_list={};
 			this.vala_version="0.16.0";
+		}
+
+		public string[] get_error_list() {
+			return this.error_list;
 		}
 
 		string find_configuration(string basepath) {

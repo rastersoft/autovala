@@ -22,7 +22,7 @@ using Posix;
 
 namespace autovala {
 
-	class cmake:GLib.Object {
+	public class cmake:GLib.Object {
 
 		private configuration config;
 		private string error_text;
@@ -123,11 +123,11 @@ namespace autovala {
 					error=this.create_po(dir,data_stream);
 					break;
 				case Config_Type.VALA_BINARY:
-					error=this.create_vala_binary(dir, data_stream,element.file,element.packages,element.check_packages,element.compile_options,element.version,false,added_vala_binaries);
+					error=this.create_vala_binary(dir, data_stream,element.file,element.get_packages(),element.get_check_packages(),element.compile_options,element.version,false,added_vala_binaries);
 					added_vala_binaries=true;
 					break;
 				case Config_Type.VALA_LIBRARY:
-					error=this.create_vala_binary(dir, data_stream,element.file,element.packages,element.check_packages,element.compile_options,element.version,true,added_vala_binaries);
+					error=this.create_vala_binary(dir, data_stream,element.file,element.get_packages(),element.get_check_packages(),element.compile_options,element.version,true,added_vala_binaries);
 					added_vala_binaries=true;
 					break;
 				case Config_Type.BINARY:
@@ -466,7 +466,7 @@ namespace autovala {
 
 				var final_options=options;
 				if (is_library) {
-					final_options+=" --gir "+element_file+".gir";
+					final_options="--library="+element_file+" --gir "+element_file+"-"+version+".gir "+options;
 				}
 
 				if (final_options!="") {

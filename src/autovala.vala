@@ -35,7 +35,7 @@ int main(string[] argv) {
 
 	if(retval) {
 		GLib.stdout.printf("Incorrecto:\n");
-		foreach (var v in tmp.error_list) {
+		foreach (var v in tmp.get_error_list()) {
 			GLib.stdout.printf("\t"+v+"\n");
 		}
 	} else {
