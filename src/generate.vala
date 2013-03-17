@@ -132,5 +132,22 @@ namespace autovala {
 			}
 			return error;
 		}
+
+		public bool cmake(string config_path="") {
+
+			var config=new autovala.configuration();
+			bool retval=config.read_configuration(config_path);
+			this.add_errors(config.get_error_list()); // there can be warnings
+			if (retval) {
+				return true;
+			}
+			var make=new autovala.cmake(config);
+			retval=make.create_cmake();
+			this.add_errors(make.get_error_list()); // there can be warnings
+			if (retval) {
+				return true;
+			}
+			return false;
+		}
 	}
 }

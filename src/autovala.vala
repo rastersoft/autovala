@@ -54,40 +54,24 @@ int main(string[] argv) {
 			GLib.stdout.printf("Aborting\n");
 			return -1;
 		}
+		GLib.stdout.printf("Done\n");
 		break;
 	case "cmake":
 		if (argv.length!=2) {
 			help();
 			return -1;
 		}
-		var config=new autovala.configuration();
-		bool retval=config.read_configuration();
-		config.show_errors(); // there can be warnings
-		if (retval) {
+		var gen = new autovala.manage_project();
+		if (gen.cmake()) {
+			gen.show_errors();
 			GLib.stdout.printf("Aborting\n");
 			return -1;
 		}
-		var make=new autovala.cmake(config);
-		retval=make.create_cmake();
-		make.show_errors();
-		if (retval) {
-			GLib.stdout.printf("Aborting\n");
-			return -1;
-		}
+		GLib.stdout.printf("Done\n");
 		break;
 	default:
 		help();
 		return -1;
 	}
-
-
-/*		if (tmp.save_configuration("prueba.data")) {
-			GLib.stdout.printf("Error al grabar: \n");
-			foreach (var v in tmp.get_error_list()) {
-				GLib.stdout.printf("\t"+v+"\n");
-			}
-		}
-
-	}*/
 	return 0;
 }
