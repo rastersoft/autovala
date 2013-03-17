@@ -25,11 +25,11 @@ namespace autovala {
 	public enum Config_Type {VALA_BINARY, VALA_LIBRARY, BINARY, ICON, PIXMAP, PO, GLADE, DBUS_SERVICE, DESKTOP, AUTOSTART, EOS_PLUG, SCHEME}
 
 	public class package_element:GLib.Object {
-	
+
 		public string package;
 		public bool do_check;
 		public bool automatic;
-		
+
 		public package_element(string package, bool do_check, bool automatic) {
 			this.package=package;
 			this.do_check=do_check;
@@ -102,7 +102,7 @@ namespace autovala {
 		public string basepath;
 		public Gee.List<config_element ?> configuration_data;
 		public string vala_version;
-		
+
 		private string[] error_list;
 
 		private weak config_element ? last_element;

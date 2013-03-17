@@ -24,8 +24,8 @@ namespace autovala {
 
 	public class cmake:GLib.Object {
 
+		public string error_text;
 		private configuration config;
-		private string error_text;
 		private string append_text;
 
 		public cmake(configuration conf) {
@@ -210,6 +210,9 @@ namespace autovala {
 
 		private bool create_autostart(string dir, DataOutputStream data_stream, string element_file,bool added_autostart_prefix) {
 
+			// .desktop files for programs that must be launched automatically during gnome/kde/whatever startup
+			// We need to know where we are installing all, because if we put a fixed /etc/xdg/autostart, the process will
+			// fail when creating a deb or rpm packages, because they preinstall everything at CMAKE_INSTALL_PREFIX
 			if (added_autostart_prefix==false) {
 				try {
 					data_stream.put_string("STRING (REPLACE \"/\" \";\" PATH_LIST ${CMAKE_INSTALL_PREFIX})\n");
@@ -242,6 +245,8 @@ namespace autovala {
 
 		private bool create_dbus_service(string dir, DataOutputStream data_stream, string element_file,bool added_dbus_prefix) {
 
+			// DBus files must have the full path for the binary, so, in case we are building a deb or rpm package, we need to know
+			// where the binary will be really
 			if (added_dbus_prefix==false) {
 				try {
 					data_stream.put_string("IF(${CMAKE_INSTALL_PREFIX} MATCHES usr/local/? )\n");
@@ -256,6 +261,7 @@ namespace autovala {
 			}
 
 			try {
+				// DBus files must use DBUS_PREFIX in their path, instead of a fixed one, to allow them to be installed both in /usr or /usr/local
 				data_stream.put_string("configure_file(${CMAKE_CURRENT_SOURCE_DIR}/"+element_file+" ${CMAKE_CURRENT_BINARY_DIR}/"+element_file+")\n");
 				data_stream.put_string("install(FILES ${CMAKE_CURRENT_BINARY_DIR}/"+element_file+" DESTINATION ${CMAKE_INSTALL_PREFIX}/share/dbus-1/services/)\n");
 			} catch (Error e) {
@@ -270,6 +276,7 @@ namespace autovala {
 			var full_path=Path.build_filename(this.config.basepath,dir,element_file);
 			int size=0;
 
+			// For each PNG file, find the icon size to which it belongs
 			if (element_file.has_suffix(".png")) {
 				try {
 					var picture=new Gdk.Pixbuf.from_file(full_path);
@@ -295,6 +302,7 @@ namespace autovala {
 				}
 			} else if (element_file.has_suffix(".svg")) {
 				try {
+					// For SVG icons, if they are "symbolic", put them in STATUS, not in APPS
 					if (element_file.has_suffix("-symbolic.svg")) {
 						data_stream.put_string("install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/%s DESTINATION share/icons/hicolor/scalable/status/)\n".printf(element_file));
 					} else {
@@ -308,6 +316,8 @@ namespace autovala {
 				this.error_text=_("Unknown icon type %s. Must be .png or .svg (in lowercase)\n").printf(element_file);
 				return true;
 			}
+
+			// Refresh the icon cache (but only if ICON_UPDATE is not OFF; that means we are building a package)
 			if (added_suffix==false) {
 				this.append_text+="\nIF(NOT (DEFINED ICON_UPDATE))\n";
 				this.append_text+="\tSET (ICON_UPDATE \"ON\")\n";
@@ -331,6 +341,7 @@ namespace autovala {
 				}
 			}
 
+			// Generate the POTFILES.in file for compatibility with xgettext
 			try {
 				var dis = fname.create(FileCreateFlags.NONE);
 				var data_stream2 = new DataOutputStream(dis);
@@ -356,14 +367,19 @@ namespace autovala {
 					}
 				}
 				data_stream2.close();
+
 				data_stream.put_string("include (Translations)\n");
 				data_stream.put_string("add_translations_directory(\""+config.project_name+"\")\n");
+
+				// Calculate the number of "../" needed to go from the PO folder to the root of the project
 				string[] translatable_paths={};
 				var toupper=dir.split(Path.DIR_SEPARATOR_S).length;
 				var tmp_path="";
 				for(var c=0;c<toupper;c++) {
 					tmp_path+="../";
 				}
+
+				// Find all the folders with translatable files
 				foreach (var element in this.config.configuration_data) {
 					if ((element.type==Config_Type.VALA_BINARY) || (element.type==Config_Type.GLADE)) {
 						bool found=false;
@@ -378,6 +394,8 @@ namespace autovala {
 						}
 					}
 				}
+
+				// Add the files to translate using the VALA CMAKE macros
 				if (translatable_paths.length!=0) {
 					data_stream.put_string("add_translations_catalog(\""+config.project_name+"\" ");
 					foreach(var p in translatable_paths) {
@@ -430,6 +448,7 @@ namespace autovala {
 					data_stream.put_string("add_definitions(-DGETTEXT_PACKAGE=\\\"${GETTEXT_PACKAGE}\\\")\n");
 					data_stream.put_string("find_package(PkgConfig)\n\n");
 				}
+
 				data_stream.put_string("set (VERSION \""+element.version+"\")\n");
 				data_stream.put_string("pkg_check_modules(DEPS REQUIRED\n");
 				foreach(var module in element.packages) {
@@ -462,9 +481,12 @@ namespace autovala {
 				}
 
 				var final_options=element.compile_options;
+				string gir_filename="";
 				if (is_library) {
+					// If it is a library, generate the Gobject Introspection file
 					var nversion=element.version.split(".");
-					final_options="--library="+element.file+" --gir "+element.file+"-"+nversion[0]+"."+nversion[1]+".gir "+element.compile_options;
+					gir_filename=element.file+"-"+nversion[0]+"."+nversion[1]+".gir";
+					final_options="--library="+element.file+" --gir "+gir_filename+" "+element.compile_options;
 				}
 
 				if (final_options!="") {
@@ -473,6 +495,7 @@ namespace autovala {
 				}
 
 				if (is_library) {
+					// Generate both VAPI and headers
 					data_stream.put_string("GENERATE_VAPI\n");
 					data_stream.put_string("\t"+element.file+"\n");
 					data_stream.put_string("GENERATE_HEADER\n");
@@ -483,18 +506,43 @@ namespace autovala {
 				if (is_library) {
 					data_stream.put_string("add_library("+element.file+" SHARED ${VALA_C})\n\n");
 
+					// Set library version number
 					data_stream.put_string("set_target_properties( "+element.file+" PROPERTIES\n");
 					data_stream.put_string("VERSION\n");
 					data_stream.put_string("\t"+element.version+"\n");
 					data_stream.put_string("SOVERSION\n");
 					data_stream.put_string("\t"+element.version.split(".")[0]+" )\n\n");
 
+					// Install library
 					data_stream.put_string("install(TARGETS\n");
 					data_stream.put_string("\t"+element.file+"\n");
 					data_stream.put_string("LIBRARY DESTINATION\n");
 					data_stream.put_string("\tlib/\n");
-					data_stream.put_string(")\n\n");
+					data_stream.put_string(")\n");
+
+					// Install headers
+					data_stream.put_string("install(FILES\n");
+					data_stream.put_string("\t${CMAKE_CURRENT_BINARY_DIR}/"+element.file+".h\n");
+					data_stream.put_string("DESTINATION\n");
+					data_stream.put_string("\tinclude/"+this.config.project_name+"/\n");
+					data_stream.put_string(")\n");
+
+					// Install VAPI
+					data_stream.put_string("install(FILES\n");
+					data_stream.put_string("\t${CMAKE_CURRENT_BINARY_DIR}/"+element.file+".vapi\n");
+					data_stream.put_string("DESTINATION\n");
+					data_stream.put_string("\tshare/vala/vapi/\n");
+					data_stream.put_string(")\n");
+
+					// Install GIR
+					data_stream.put_string("install(FILES\n");
+					data_stream.put_string("\t${CMAKE_CURRENT_BINARY_DIR}/"+gir_filename+"\n");
+					data_stream.put_string("DESTINATION\n");
+					data_stream.put_string("\tshare/gir-1.0/\n");
+					data_stream.put_string(")\n");
 				} else {
+
+					// Install executable
 					data_stream.put_string("add_executable("+element.file+" ${VALA_C})\n\n");
 					data_stream.put_string("install(TARGETS\n");
 					data_stream.put_string("\t"+element.file+"\n");

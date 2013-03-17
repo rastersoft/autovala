@@ -34,14 +34,17 @@ int main(string[] argv) {
 	}
 
 	if(retval) {
-		GLib.stdout.printf("Incorrecto:\n");
+		GLib.stdout.printf("Incorrecto\n");
 		foreach (var v in tmp.get_error_list()) {
 			GLib.stdout.printf("\t"+v+"\n");
 		}
 	} else {
 		GLib.stdout.printf("Correcto\n");
+		foreach (var v in tmp.get_error_list()) {
+			GLib.stdout.printf("\t"+v+"\n");
+		}
 		tmp.list_all();
-	
+
 		var tmp2=new autovala.cmake(tmp);
 
 		retval=tmp2.create_cmake();

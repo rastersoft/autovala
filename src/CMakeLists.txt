@@ -28,8 +28,8 @@ ensure_vala_version("0.16" MINIMUM)
 include(ValaPrecompile)
 
 vala_precompile(VALA_C
-	autovala.vala
 	cmake.vala
+	autovala.vala
 	configuration.vala
 PACKAGES
 	gio-2.0
