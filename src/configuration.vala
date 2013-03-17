@@ -24,6 +24,19 @@ namespace autovala {
 
 	public enum Config_Type {VALA_BINARY, VALA_LIBRARY, BINARY, ICON, PIXMAP, PO, GLADE, DBUS_SERVICE, DESKTOP, AUTOSTART, EOS_PLUG, SCHEME}
 
+	public class package_element:GLib.Object {
+	
+		public string package;
+		public bool do_check;
+		public bool automatic;
+		
+		public package_element(string package, bool do_check, bool automatic) {
+			this.package=package;
+			this.do_check=do_check;
+			this.automatic=automatic;
+		}
+	}
+
 	public class config_element:GLib.Object {
 
 		public string path;
@@ -32,45 +45,28 @@ namespace autovala {
 		public string compile_options;
 		public string version;
 		public bool version_set;
-		
-		private string[] packages;
-		private string[] check_packages;
+		public bool automatic;
+		public Gee.List<package_element ?> packages;
 
-		public config_element(string file, string path, Config_Type type) {
+		public config_element(string file, string path, Config_Type type,bool automatic) {
+			this.automatic=automatic;
 			this.type=type;
 			this.file=file;
 			this.path=path;
-			this.packages={};
-			this.check_packages={};
+			this.packages=new Gee.ArrayList<package_element ?>();
 			this.compile_options="";
 			this.version="1.0.0";
 			this.version_set=false;
 		}
 
-		public string[] get_packages() {
-			return this.packages;
-		}
-
-		public string[] get_check_packages() {
-			return this.check_packages;
-		}
-
-		public void add_package(string pkg,bool to_check) {
+		public void add_package(string pkg,bool to_check,bool automatic) {
 			foreach(var p in this.packages) {
-				if (p==pkg) {
+				if (p.package==pkg) {
 					return;
 				}
 			}
-			foreach(var p in this.check_packages) {
-				if (p==pkg) {
-					return;
-				}
-			}
-			if (to_check) {
-				this.check_packages+=pkg;
-			} else {
-				this.packages+=pkg;
-			}
+			var element=new package_element(pkg,to_check,automatic);
+			this.packages.add(element);
 		}
 
 		public bool check(string file, string path, Config_Type type) {
@@ -83,11 +79,15 @@ namespace autovala {
 
 		public void printall() {
 			GLib.stdout.printf("Path: %s, file: %s\n",this.path,this.file);
-			foreach(var l in this.check_packages) {
-				GLib.stdout.printf("\tCheck package: %s\n",l);
-			}
 			foreach(var l in this.packages) {
-				GLib.stdout.printf("\tPackage: %s\n",l);
+				GLib.stdout.printf("\tPackage: %s",l.package);
+				if (l.do_check) {
+					GLib.stdout.printf(" (check it)");
+				}
+				if (l.automatic) {
+					GLib.stdout.printf(" (added automatically)");
+				}
+				GLib.stdout.printf("\n");
 			}
 			if (this.compile_options!="") {
 				GLib.stdout.printf("\tCompile options: %s\n",this.compile_options);
@@ -100,7 +100,7 @@ namespace autovala {
 		public string project_name;
 		public string config_path;
 		public string basepath;
-		public Gee.List<config_element ?> configuration;
+		public Gee.List<config_element ?> configuration_data;
 		public string vala_version;
 		
 		private string[] error_list;
@@ -111,7 +111,7 @@ namespace autovala {
 
 		public configuration() {
 			this.config_path="";
-			this.configuration=new Gee.ArrayList<config_element ?>();
+			this.configuration_data=new Gee.ArrayList<config_element ?>();
 			this.last_element=null;
 			this.version=0;
 			this.project_name="";
@@ -170,7 +170,7 @@ namespace autovala {
 
 		public bool read_configuration(string open_file="") {
 
-			this.configuration=new Gee.ArrayList<config_element ?>();
+			this.configuration_data=new Gee.ArrayList<config_element ?>();
 
 			this.config_path="";
 			if (open_file=="") {
@@ -212,12 +212,17 @@ namespace autovala {
 
 				while((line = dis.read_line(null))!=null) {
 					this.line_number++;
+					bool automatic=false;
 					if ((line[0]=='#')||(line[0]==';')) {
 						continue;
 					}
 					var finalline=line.strip();
 					if (finalline=="") {
 						continue;
+					}
+					if (line[0]=='*') { // it's an element added automatically, not by the user
+						automatic=true;
+						line=line.substring(1).strip();
 					}
 					if (line.has_prefix("vala_version: ")) {
 						var version=line.substring(14).strip();
@@ -230,19 +235,19 @@ namespace autovala {
 						continue;
 					}
 					if (line.has_prefix("vala_binary: ")) {
-						error|=this.add_entry(line.substring(13).strip(),Config_Type.VALA_BINARY);
+						error|=this.add_entry(line.substring(13).strip(),Config_Type.VALA_BINARY,automatic);
 						continue;
 					}
 					if (line.has_prefix("vala_library: ")) {
-						error|=this.add_entry(line.substring(14).strip(),Config_Type.VALA_LIBRARY);
+						error|=this.add_entry(line.substring(14).strip(),Config_Type.VALA_LIBRARY,automatic);
 						continue;
 					}
 					if (line.has_prefix("vala_package: ")) {
-						error|=this.add_package(line.substring(14).strip(),false);
+						error|=this.add_package(line.substring(14).strip(),false,automatic);
 						continue;
 					}
 					if (line.has_prefix("vala_check_package: ")) {
-						error|=this.add_package(line.substring(20).strip(),true);
+						error|=this.add_package(line.substring(20).strip(),true,automatic);
 						continue;
 					}
 					if (line.has_prefix("file_version: ")) {
@@ -250,15 +255,15 @@ namespace autovala {
 						continue;
 					}
 					if (line.has_prefix("binary: ")) {
-						error|=this.add_entry(line.substring(8).strip(),Config_Type.BINARY);
+						error|=this.add_entry(line.substring(8).strip(),Config_Type.BINARY,automatic);
 						continue;
 					}
 					if (line.has_prefix("icon: ")) {
-						error|=this.add_entry(line.substring(6).strip(),Config_Type.ICON);
+						error|=this.add_entry(line.substring(6).strip(),Config_Type.ICON,automatic);
 						continue;
 					}
 					if (line.has_prefix("pixmap: ")) {
-						error|=this.add_entry(line.substring(8).strip(),Config_Type.PIXMAP);
+						error|=this.add_entry(line.substring(8).strip(),Config_Type.PIXMAP,automatic);
 						continue;
 					}
 					if (line.has_prefix("po: ")) {
@@ -266,31 +271,31 @@ namespace autovala {
 						if (false==po_folder.has_suffix("/")) {
 							po_folder+="/";
 						}
-						error|=this.add_entry(po_folder,Config_Type.PO);
+						error|=this.add_entry(po_folder,Config_Type.PO,automatic);
 						continue;
 					}
 					if (line.has_prefix("dbus_service: ")) {
-						error|=this.add_entry(line.substring(14).strip(),Config_Type.DBUS_SERVICE);
+						error|=this.add_entry(line.substring(14).strip(),Config_Type.DBUS_SERVICE,automatic);
 						continue;
 					}
 					if (line.has_prefix("desktop: ")) {
-						error|=this.add_entry(line.substring(9).strip(),Config_Type.DESKTOP);
+						error|=this.add_entry(line.substring(9).strip(),Config_Type.DESKTOP,automatic);
 						continue;
 					}
 					if (line.has_prefix("autostart: ")) {
-						error|=this.add_entry(line.substring(11).strip(),Config_Type.AUTOSTART);
+						error|=this.add_entry(line.substring(11).strip(),Config_Type.AUTOSTART,automatic);
 						continue;
 					}
 					if (line.has_prefix("eos_plug: ")) {
-						error|=this.add_entry(line.substring(10).strip(),Config_Type.EOS_PLUG);
+						error|=this.add_entry(line.substring(10).strip(),Config_Type.EOS_PLUG,automatic);
 						continue;
 					}
 					if (line.has_prefix("scheme: ")) {
-						error|=this.add_entry(line.substring(8).strip(),Config_Type.SCHEME);
+						error|=this.add_entry(line.substring(8).strip(),Config_Type.SCHEME,automatic);
 						continue;
 					}
 					if (line.has_prefix("glade: ")) {
-						error|=this.add_entry(line.substring(7).strip(),Config_Type.GLADE);
+						error|=this.add_entry(line.substring(7).strip(),Config_Type.GLADE,automatic);
 						continue;
 					}
 					if (line.has_prefix("compile_options: ")) {
@@ -353,7 +358,7 @@ namespace autovala {
 			return false;
 		}
 
-		private bool add_package(string pkg,bool check) {
+		private bool add_package(string pkg,bool check,bool automatic) {
 
 			if (this.config_path=="") {
 				return true;
@@ -362,11 +367,11 @@ namespace autovala {
 			if (this.last_element==null) {
 				return true;
 			}
-			this.last_element.add_package(pkg,check);
+			this.last_element.add_package(pkg,check,automatic);
 			return false;
 		}
 
-		private bool add_entry(string filename, Config_Type type) {
+		private bool add_entry(string filename, Config_Type type,bool automatic) {
 
 			if (this.config_path=="") {
 				return true;
@@ -375,14 +380,14 @@ namespace autovala {
 			var file=Path.get_basename(filename);
 			var path=Path.get_dirname(filename);
 
-			foreach(var e in this.configuration) {
+			foreach(var e in this.configuration_data) {
 				if (e.check(file,path,type)) {
 					return false;
 				}
 			}
 
-			var element=new config_element(file,path,type);
-			this.configuration.add(element);
+			var element=new config_element(file,path,type,automatic);
+			this.configuration_data.add(element);
 			if ((type==Config_Type.VALA_BINARY)||(type==Config_Type.VALA_LIBRARY)) {
 				this.last_element=element;
 			} else {
@@ -392,7 +397,7 @@ namespace autovala {
 		}
 
 		public void list_all() {
-			foreach(var e in this.configuration) {
+			foreach(var e in this.configuration_data) {
 				e.printall();
 			}
 		}

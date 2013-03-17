@@ -28,14 +28,14 @@ ensure_vala_version("0.16" MINIMUM)
 include(ValaPrecompile)
 
 vala_precompile(VALA_C
-	configuration.vala
 	autovala.vala
 	cmake.vala
+	configuration.vala
 PACKAGES
-	posix
 	gio-2.0
 	gee-1.0
 	gtk+-3.0
+	posix
 OPTIONS
 	-X -O2
 )

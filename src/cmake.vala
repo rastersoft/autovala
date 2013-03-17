@@ -40,7 +40,7 @@ namespace autovala {
 			// Get all the diferent paths in the project
 			// to create in each one its CMakeLists file
 			var paths=new Gee.HashSet<string>();
-			foreach(var element in this.config.configuration) {
+			foreach(var element in this.config.configuration_data) {
 				if (paths.contains(element.path)==false) {
 					paths.add(element.path);
 				}
@@ -113,7 +113,7 @@ namespace autovala {
 			bool added_scheme_prefix=false;
 
 			bool error=false;
-			foreach(var element in this.config.configuration) {
+			foreach(var element in this.config.configuration_data) {
 				if (element.path!=dir) {
 					continue;
 				}
@@ -123,11 +123,11 @@ namespace autovala {
 					error=this.create_po(dir,data_stream);
 					break;
 				case Config_Type.VALA_BINARY:
-					error=this.create_vala_binary(dir, data_stream,element.file,element.get_packages(),element.get_check_packages(),element.compile_options,element.version,false,added_vala_binaries);
+					error=this.create_vala_binary(dir, data_stream,element,false,added_vala_binaries);
 					added_vala_binaries=true;
 					break;
 				case Config_Type.VALA_LIBRARY:
-					error=this.create_vala_binary(dir, data_stream,element.file,element.get_packages(),element.get_check_packages(),element.compile_options,element.version,true,added_vala_binaries);
+					error=this.create_vala_binary(dir, data_stream,element,true,added_vala_binaries);
 					added_vala_binaries=true;
 					break;
 				case Config_Type.BINARY:
@@ -188,7 +188,6 @@ namespace autovala {
 						error=true;
 					}
 					break;
-
 				default:
 					error=false;
 					break;
@@ -336,7 +335,7 @@ namespace autovala {
 				var dis = fname.create(FileCreateFlags.NONE);
 				var data_stream2 = new DataOutputStream(dis);
 
-				foreach(var e in this.config.configuration) {
+				foreach(var e in this.config.configuration_data) {
 					var final_path=Path.build_filename(e.path,e.file);
 					switch (e.type) {
 					case Config_Type.VALA_BINARY:
@@ -365,7 +364,7 @@ namespace autovala {
 				for(var c=0;c<toupper;c++) {
 					tmp_path+="../";
 				}
-				foreach (var element in this.config.configuration) {
+				foreach (var element in this.config.configuration_data) {
 					if ((element.type==Config_Type.VALA_BINARY) || (element.type==Config_Type.GLADE)) {
 						bool found=false;
 						foreach (var p in translatable_paths) {
@@ -393,8 +392,7 @@ namespace autovala {
 			return false;
 		}
 
-		private bool create_vala_binary(string dir,DataOutputStream data_stream,string element_file, string[] element_packages,
-									string [] element_check_packages, string options, string version, bool is_library, bool added_vala_binaries) {
+		private bool create_vala_binary(string dir,DataOutputStream data_stream, config_element element, bool is_library, bool added_vala_binaries) {
 
 			var fname=File.new_for_path(Path.build_filename(this.config.basepath,dir,"Config.vala.cmake"));
 			if (fname.query_exists()==false) {
@@ -432,10 +430,12 @@ namespace autovala {
 					data_stream.put_string("add_definitions(-DGETTEXT_PACKAGE=\\\"${GETTEXT_PACKAGE}\\\")\n");
 					data_stream.put_string("find_package(PkgConfig)\n\n");
 				}
-				data_stream.put_string("set (VERSION \""+version+"\")\n");
+				data_stream.put_string("set (VERSION \""+element.version+"\")\n");
 				data_stream.put_string("pkg_check_modules(DEPS REQUIRED\n");
-				foreach(var module in element_check_packages) {
-					data_stream.put_string("\t"+module+"\n");
+				foreach(var module in element.packages) {
+					if (module.do_check) {
+						data_stream.put_string("\t"+module.package+"\n");
+					}
 				}
 				data_stream.put_string(")\n\n");
 
@@ -457,17 +457,14 @@ namespace autovala {
 					}
 				}
 				data_stream.put_string("PACKAGES\n");
-				foreach(var module in element_packages) {
-					data_stream.put_string("\t"+module+"\n");
-				}
-				foreach(var module in element_check_packages) {
-					data_stream.put_string("\t"+module+"\n");
+				foreach(var module in element.packages) {
+					data_stream.put_string("\t"+module.package+"\n");
 				}
 
-				var final_options=options;
+				var final_options=element.compile_options;
 				if (is_library) {
-					var nversion=version.split(".");
-					final_options="--library="+element_file+" --gir "+element_file+"-"+nversion[0]+"."+nversion[1]+".gir "+options;
+					var nversion=element.version.split(".");
+					final_options="--library="+element.file+" --gir "+element.file+"-"+nversion[0]+"."+nversion[1]+".gir "+element.compile_options;
 				}
 
 				if (final_options!="") {
@@ -477,36 +474,36 @@ namespace autovala {
 
 				if (is_library) {
 					data_stream.put_string("GENERATE_VAPI\n");
-					data_stream.put_string("\t"+element_file+"\n");
+					data_stream.put_string("\t"+element.file+"\n");
 					data_stream.put_string("GENERATE_HEADER\n");
-					data_stream.put_string("\t"+element_file+"\n");
+					data_stream.put_string("\t"+element.file+"\n");
 				}
 
 				data_stream.put_string(")\n\n");
 				if (is_library) {
-					data_stream.put_string("add_library("+element_file+" SHARED ${VALA_C})\n\n");
+					data_stream.put_string("add_library("+element.file+" SHARED ${VALA_C})\n\n");
 
-					data_stream.put_string("set_target_properties( "+element_file+" PROPERTIES\n");
+					data_stream.put_string("set_target_properties( "+element.file+" PROPERTIES\n");
 					data_stream.put_string("VERSION\n");
-					data_stream.put_string("\t"+version+"\n");
+					data_stream.put_string("\t"+element.version+"\n");
 					data_stream.put_string("SOVERSION\n");
-					data_stream.put_string("\t"+version.split(".")[0]+" )\n\n");
+					data_stream.put_string("\t"+element.version.split(".")[0]+" )\n\n");
 
 					data_stream.put_string("install(TARGETS\n");
-					data_stream.put_string("\t"+element_file+"\n");
+					data_stream.put_string("\t"+element.file+"\n");
 					data_stream.put_string("LIBRARY DESTINATION\n");
 					data_stream.put_string("\tlib/\n");
 					data_stream.put_string(")\n\n");
 				} else {
-					data_stream.put_string("add_executable("+element_file+" ${VALA_C})\n\n");
+					data_stream.put_string("add_executable("+element.file+" ${VALA_C})\n\n");
 					data_stream.put_string("install(TARGETS\n");
-					data_stream.put_string("\t"+element_file+"\n");
+					data_stream.put_string("\t"+element.file+"\n");
 					data_stream.put_string("RUNTIME DESTINATION\n");
 					data_stream.put_string("\tbin/\n");
 					data_stream.put_string(")\n\n");
 				}
 			} catch (Error e) {
-				this.error_text=_("Failed to write the CMakeLists file for binary %s\n").printf(element_file);
+				this.error_text=_("Failed to write the CMakeLists file for binary %s\n").printf(element.file);
 				return true;
 			}
 			return false;
