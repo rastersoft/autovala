@@ -466,7 +466,8 @@ namespace autovala {
 
 				var final_options=options;
 				if (is_library) {
-					final_options="--library="+element_file+" --gir "+element_file+"-"+version+".gir "+options;
+					var nversion=version.split(".");
+					final_options="--library="+element_file+" --gir "+element_file+"-"+nversion[0]+"."+nversion[1]+".gir "+options;
 				}
 
 				if (final_options!="") {
