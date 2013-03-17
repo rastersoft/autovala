@@ -54,6 +54,14 @@ int main(string[] argv) {
 		} else {
 			GLib.stdout.printf("Incorrecto\n");
 		}
+
+		if (tmp.save_configuration("prueba.data")) {
+			GLib.stdout.printf("Error al grabar: \n");
+			foreach (var v in tmp.get_error_list()) {
+				GLib.stdout.printf("\t"+v+"\n");
+			}
+		}
+
 	}
 	return 0;
 }

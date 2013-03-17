@@ -29,8 +29,9 @@ include(ValaPrecompile)
 
 vala_precompile(VALA_C
 	cmake.vala
-	autovala.vala
 	configuration.vala
+	autovala.vala
+	generate.vala
 PACKAGES
 	gio-2.0
 	gee-1.0
@@ -48,4 +49,3 @@ RUNTIME DESTINATION
 	bin/
 )
 
-include(${CMAKE_CURRENT_SOURCE_DIR}/prueba.inc)

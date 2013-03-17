@@ -109,12 +109,12 @@ namespace autovala {
 		private int version;
 		private int line_number;
 
-		public configuration() {
+		public configuration(string project_name="") {
 			this.config_path="";
 			this.configuration_data=new Gee.ArrayList<config_element ?>();
 			this.last_element=null;
 			this.version=0;
-			this.project_name="";
+			this.project_name=project_name;
 			this.error_list={};
 			this.vala_version="0.16.0";
 		}
@@ -123,7 +123,7 @@ namespace autovala {
 			return this.error_list;
 		}
 
-		string find_configuration(string basepath) {
+		private string find_configuration(string basepath) {
 
 			FileEnumerator enumerator;
 			FileInfo info_file;
@@ -226,7 +226,7 @@ namespace autovala {
 					}
 					if (line.has_prefix("vala_version: ")) {
 						var version=line.substring(14).strip();
-						if (false==Regex.match_simple("^[0-9]+.[0-9]+(.[0-9]+)?$",version)) {
+						if (false==this.check_version(version)) {
 							this.error_list+=_("Vala version string not valid. It must be in the form N.N or N.N.N (line %d)").printf(this.line_number);
 							error=true;
 						} else {
@@ -268,9 +268,6 @@ namespace autovala {
 					}
 					if (line.has_prefix("po: ")) {
 						var po_folder=line.substring(4).strip();
-						if (false==po_folder.has_suffix("/")) {
-							po_folder+="/";
-						}
 						error|=this.add_entry(po_folder,Config_Type.PO,automatic);
 						continue;
 					}
@@ -338,7 +335,7 @@ namespace autovala {
 
 			if (this.last_element.type==Config_Type.VALA_LIBRARY) {
 				// Only accept version string in the format N, N.N or N.N.N (with N a number of one or more digits)
-				if (false==Regex.match_simple("^[0-9]+.[0-9]+(.[0-9]+)?$",version)) {
+				if (false==this.check_version(version)) {
 					this.error_list+=_("Version string not valid for a library. It must be in the form N.N or N.N.N (line %d)").printf(this.line_number);
 					return true;
 				}
@@ -346,6 +343,10 @@ namespace autovala {
 			this.last_element.version=version;
 			this.last_element.version_set=true;
 			return false;
+		}
+		
+		private bool check_version(string version) {
+			return Regex.match_simple("^[0-9]+.[0-9]+(.[0-9]+)?$",version);
 		}
 
 		private bool add_compiling_options(string options) {
@@ -375,10 +376,73 @@ namespace autovala {
 			return false;
 		}
 
-		private bool add_entry(string filename, Config_Type type,bool automatic) {
+		public bool add_new_entry(string filename, Config_Type type, bool automatic) {
+
+			if ((type!=Config_Type.VALA_BINARY)&&(type!=Config_Type.VALA_LIBRARY)) {
+				return this.add_entry(filename,type,automatic);
+			} else {
+				return true;
+			}
+		}
+
+		public bool add_new_binary(string filename, Config_Type type, bool automatic, string[] ?packages=null, string[] ?check_packages=null, string version="", string compile_options="") {
+		
+			if ((type!=Config_Type.VALA_BINARY)&&(type!=Config_Type.VALA_LIBRARY)) {
+				return true;
+			}
+			
+			if ((version!="") && (false==this.check_version(version))) {
+				return true;
+			}
+			
+			this.add_entry(filename,type,automatic);
+			if (version!="") {
+				this.set_version(version);
+			}
+			bool p_automatic;
+			string package;
+
+			if (packages!=null) {
+				foreach(var l in packages) {
+					if (l[0]=='*') {
+						p_automatic=true;
+						package=l.substring(1);
+					} else{
+						p_automatic=false;
+						package=l;
+					}
+					this.add_package(package,false,p_automatic);
+				}
+			}
+			if (check_packages!=null) {
+				foreach(var l in check_packages) {
+					if (l[0]=='*') {
+						p_automatic=true;
+						package=l.substring(1);
+					} else{
+						p_automatic=false;
+						package=l;
+					}
+					this.add_package(package,true,p_automatic);
+				}
+			}
+			if (compile_options!="") {
+				this.add_compiling_options(compile_options);
+			}
+			return false;
+		}
+
+		private bool add_entry(string l_filename, Config_Type type,bool automatic) {
 
 			if (this.config_path=="") {
 				return true;
+			}
+
+			var filename=l_filename;
+			if (type==Config_Type.PO) {
+				if (false==filename.has_suffix("/")) {
+					filename+="/";
+				}
 			}
 
 			var file=Path.get_basename(filename);
@@ -404,6 +468,140 @@ namespace autovala {
 			foreach(var e in this.configuration_data) {
 				e.printall();
 			}
+		}
+
+		public bool save_configuration(string filename="") {
+
+			if(this.project_name=="") {
+				this.error_list+=_("Can't store the configuration. Project name not defined.");
+				return true;
+			}
+
+			if((filename=="")&&(this.config_path=="")) {
+				this.error_list+=_("Can't store the configuration. Path not defined.");
+				return true;
+			}
+			if (filename!="") {
+				if (GLib.Path.is_absolute(filename)) {
+					this.config_path=filename;
+				} else {
+					this.config_path=GLib.Path.build_filename(GLib.Environment.get_current_dir(),filename);
+				}
+			}
+			this.basepath=GLib.Path.get_dirname(this.config_path);
+			GLib.stdout.printf("Paths: %s  %s  y  %s\n",filename,this.config_path,this.basepath);
+			var file=File.new_for_path(this.config_path);
+			if (file.query_exists()) {
+				try {
+					file.delete();
+				} catch (Error e) {
+					this.error_list+=_("Failed to delete the old config file %s").printf(this.config_path);
+					return true;
+				}
+			}
+			try {
+				var dis = file.create(FileCreateFlags.NONE);
+				var data_stream = new DataOutputStream(dis);
+				data_stream.put_string("### AutoVala Project ###\n");
+				data_stream.put_string("version: 1\n");
+				data_stream.put_string("project_name: "+this.project_name+"\n");
+				data_stream.put_string("vala_version: "+this.vala_version+"\n");
+				this.store_data(Config_Type.PO,data_stream);
+				this.store_data(Config_Type.AUTOSTART,data_stream);
+				this.store_data(Config_Type.VALA_BINARY,data_stream);
+				this.store_data(Config_Type.VALA_LIBRARY,data_stream);
+				this.store_data(Config_Type.BINARY,data_stream);
+				this.store_data(Config_Type.DESKTOP,data_stream);
+				this.store_data(Config_Type.DBUS_SERVICE,data_stream);
+				this.store_data(Config_Type.EOS_PLUG,data_stream);
+				this.store_data(Config_Type.SCHEME,data_stream);
+				this.store_data(Config_Type.GLADE,data_stream);
+				this.store_data(Config_Type.ICON,data_stream);
+				this.store_data(Config_Type.PIXMAP,data_stream);
+				this.store_data(Config_Type.INCLUDE,data_stream);
+			} catch (Error e) {
+				this.error_list+=_("Can't create the config file %s").printf(this.config_path);
+				return true;
+			}
+			return false;
+		}
+
+		private bool store_data(Config_Type type,DataOutputStream data_stream) {
+
+			try {
+				foreach(var element in this.configuration_data) {
+					if (element.type!=type) {
+						continue;
+					}
+					if (element.automatic) {
+						data_stream.put_string("*");
+					}
+					var fullpathname=Path.build_filename(element.path,element.file);
+					switch(element.type) {
+					case Config_Type.VALA_BINARY:
+					case Config_Type.VALA_LIBRARY:
+						if (element.type==Config_Type.VALA_BINARY) {
+							data_stream.put_string("vala_binary: "+fullpathname+"\n");
+						} else {
+							data_stream.put_string("vala_library: "+fullpathname+"\n");
+						}
+						if (element.version_set) {
+							data_stream.put_string("file_version: "+element.version+"\n");
+						}
+						if (element.compile_options!="") {
+							data_stream.put_string("compile_options: "+element.compile_options+"\n");
+						}
+						foreach(var l in element.packages) {
+							if (l.automatic) {
+								data_stream.put_string("*");
+							}
+							if (l.do_check) {
+								data_stream.put_string("vala_check_package: ");
+							} else {
+								data_stream.put_string("vala_package: ");
+							}
+							data_stream.put_string(Path.build_filename(l.package)+"\n");
+						}
+						break;
+					case Config_Type.BINARY:
+						data_stream.put_string("binary: "+fullpathname+"\n");
+						break;
+					case Config_Type.ICON:
+						data_stream.put_string("icon: "+fullpathname+"\n");
+						break;
+					case Config_Type.PIXMAP:
+						data_stream.put_string("pixmap: "+fullpathname+"\n");
+						break;
+					case Config_Type.PO:
+						data_stream.put_string("po: "+element.path+"\n");
+						break;
+					case Config_Type.GLADE:
+						data_stream.put_string("glade: "+fullpathname+"\n");
+						break;
+					case Config_Type.DBUS_SERVICE:
+						data_stream.put_string("dbus_service: "+fullpathname+"\n");
+						break;
+					case Config_Type.DESKTOP:
+						data_stream.put_string("desktop: "+fullpathname+"\n");
+						break;
+					case Config_Type.AUTOSTART:
+						data_stream.put_string("autostart: "+fullpathname+"\n");
+						break;
+					case Config_Type.EOS_PLUG:
+						data_stream.put_string("eos_plug: "+fullpathname+"\n");
+						break;
+					case Config_Type.SCHEME:
+						data_stream.put_string("scheme: "+fullpathname+"\n");
+						break;
+					case Config_Type.INCLUDE:
+						data_stream.put_string("include: "+fullpathname+"\n");
+						break;
+					}
+				}
+			} catch (Error e) {
+				return true;
+			}
+			return false;
 		}
 	}
 }

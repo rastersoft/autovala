@@ -19,6 +19,7 @@
 using GLib;
 using Gee;
 using Posix;
+using Gtk;
 
 namespace autovala {
 
