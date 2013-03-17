@@ -97,12 +97,13 @@ namespace autovala {
 
 	public class configuration:GLib.Object {
 
-		public string project_name;
-		public string config_path;
-		public string basepath;
-		public Gee.List<config_element ?> configuration_data;
-		public string vala_version;
-
+		public string project_name; // Contains the project name
+		public string config_path; // Contains the full path to the configuration file (both path and filename)
+		public string basepath; // Contains the full path where the configuration file is stored
+		public Gee.List<config_element ?> configuration_data; // Contains all the configuration read
+		public string vala_version; // Version of the syntax in the configuration file
+		
+		private int current_version; // Contains the version of the currently supported syntax
 		private string[] error_list;
 
 		private weak config_element ? last_element;
@@ -110,6 +111,7 @@ namespace autovala {
 		private int line_number;
 
 		public configuration(string project_name="") {
+			this.current_version=1; // currently we support version 1 of the syntax
 			this.config_path="";
 			this.configuration_data=new Gee.ArrayList<config_element ?>();
 			this.last_element=null;
@@ -309,6 +311,13 @@ namespace autovala {
 					}
 					if (line.has_prefix("version: ")) {
 						this.version=int.parse(line.substring(9).strip());
+						if (this.version>this.current_version) {
+							this.config_path="";
+							this.configuration_data=new Gee.ArrayList<config_element ?>();
+							this.error_list+=_("This project was created with a newer version. Can't open it.");
+							error=true;
+							break;
+						}
 						continue;
 					}
 					error=true;
@@ -316,9 +325,11 @@ namespace autovala {
 				}
 			} catch (Error e) {
 				this.config_path="";
+				this.configuration_data=new Gee.ArrayList<config_element ?>();
 				this.error_list+=_("Can't open configuration file");
 				error=true;
 			}
+	
 			return error;
 		}
 
@@ -503,7 +514,7 @@ namespace autovala {
 				var dis = file.create(FileCreateFlags.NONE);
 				var data_stream = new DataOutputStream(dis);
 				data_stream.put_string("### AutoVala Project ###\n");
-				data_stream.put_string("version: 1\n");
+				data_stream.put_string("version: %d\n".printf(this.current_version));
 				data_stream.put_string("project_name: "+this.project_name+"\n");
 				data_stream.put_string("vala_version: "+this.vala_version+"\n");
 				this.store_data(Config_Type.PO,data_stream);
