@@ -21,47 +21,73 @@ using Gee;
 using Posix;
 
 
+void help() {
+
+	GLib.stdout.printf("Autovala. Usage:\n");
+	GLib.stdout.printf("\tautovala help: shows this help\n");
+	GLib.stdout.printf("\tautovala init project_name: initializates a new Vala CMake project and creates an initial project file\n");
+	GLib.stdout.printf("\tautovala cmake: creates the CMake files from the project file\n");
+	GLib.stdout.printf("\tautovala autobuild: tries to guess the type for each file in the folders and adds them to the project file\n\n");
+
+}
+
+
 int main(string[] argv) {
 
-	var tmp=new autovala.configuration();
-
-	bool retval;
-
-	if (argv.length>1) {
-		retval=tmp.read_configuration(argv[1]);
-	} else {
-		retval=tmp.read_configuration();
+	if (argv.length==1) {
+		help();
+		return 0;
 	}
 
-	if(retval) {
-		GLib.stdout.printf("Incorrecto\n");
-		foreach (var v in tmp.get_error_list()) {
-			GLib.stdout.printf("\t"+v+"\n");
+	switch(argv[1]) {
+	case "help":
+		help();
+		break;
+	case "init":
+		if (argv.length!=3) {
+			help();
+			return -1;
 		}
-	} else {
-		GLib.stdout.printf("Correcto\n");
-		foreach (var v in tmp.get_error_list()) {
-			GLib.stdout.printf("\t"+v+"\n");
+		var gen = new autovala.manage_project();
+		if (gen.init(argv[2])) {
+			gen.show_errors();
+			GLib.stdout.printf("Aborting\n");
+			return -1;
 		}
-		tmp.list_all();
-
-		var tmp2=new autovala.cmake(tmp);
-
-		retval=tmp2.create_cmake();
-
-		if(retval==false) {
-			GLib.stdout.printf("Correcto\n");
-		} else {
-			GLib.stdout.printf("Incorrecto\n");
+		break;
+	case "cmake":
+		if (argv.length!=2) {
+			help();
+			return -1;
 		}
+		var config=new autovala.configuration();
+		bool retval=config.read_configuration();
+		config.show_errors(); // there can be warnings
+		if (retval) {
+			GLib.stdout.printf("Aborting\n");
+			return -1;
+		}
+		var make=new autovala.cmake(config);
+		retval=make.create_cmake();
+		make.show_errors();
+		if (retval) {
+			GLib.stdout.printf("Aborting\n");
+			return -1;
+		}
+		break;
+	default:
+		help();
+		return -1;
+	}
 
-		if (tmp.save_configuration("prueba.data")) {
+
+/*		if (tmp.save_configuration("prueba.data")) {
 			GLib.stdout.printf("Error al grabar: \n");
 			foreach (var v in tmp.get_error_list()) {
 				GLib.stdout.printf("\t"+v+"\n");
 			}
 		}
 
-	}
+	}*/
 	return 0;
 }

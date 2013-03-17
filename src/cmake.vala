@@ -25,12 +25,23 @@ namespace autovala {
 
 	public class cmake:GLib.Object {
 
-		public string error_text;
+		private string[] error_list;
 		private configuration config;
 		private string append_text;
 
 		public cmake(configuration conf) {
 			this.config=conf;
+			this.error_list={};
+		}
+
+		public void show_errors() {
+			foreach(var e in this.error_list) {
+				GLib.stdout.printf("%s\n".printf(e));
+			}
+		}
+
+		public string[] get_error_list() {
+			return this.error_list;
 		}
 
 		public bool create_cmake() {
@@ -71,7 +82,7 @@ namespace autovala {
 				}
 				data_stream.close();
 			} catch (Error e) {
-				this.error_text=_("Failed to create the main CMakeLists file\n");
+				this.error_list+=_("Failed to create the main CMakeLists file\n");
 				return true;
 			}
 
@@ -83,7 +94,7 @@ namespace autovala {
 						try {
 							file.delete();
 						} catch (Error e) {
-							this.error_text=_("Failed to delete the old CMakeLists file at %s\n").printf(element);
+							this.error_list+=_("Failed to delete the old CMakeLists file at %s\n").printf(element);
 							return true;
 						}
 					}
@@ -96,7 +107,7 @@ namespace autovala {
 						}
 						data_stream.close();
 					} catch (Error e) {
-						this.error_text=_("Failed to create file %s\n").printf(filepath);
+						this.error_list+=_("Failed to create file %s\n").printf(filepath);
 						return true;
 					}
 				}
@@ -136,7 +147,7 @@ namespace autovala {
 					try {
 						data_stream.put_string("install(PROGRAMS ${CMAKE_CURRENT_SOURCE_DIR}/"+element.file+" DESTINATION bin/)\n");
 					} catch (Error e) {
-						this.error_text=_("Failed to add binary %s\n").printf(element.file);
+						this.error_list+=_("Failed to add binary %s\n").printf(element.file);
 						error=true;
 					}
 					break;
@@ -149,7 +160,7 @@ namespace autovala {
 					try {
 						data_stream.put_string("install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/"+element.file+" DESTINATION share/"+this.config.project_name+"/ )\n");
 					} catch (Error e) {
-						this.error_text=_("Failed to add file %s\n").printf(element.file);
+						this.error_list+=_("Failed to add file %s\n").printf(element.file);
 						error=true;
 					}
 					break;
@@ -161,7 +172,7 @@ namespace autovala {
 					try {
 						data_stream.put_string("install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/"+element.file+" DESTINATION share/applications/ )\n");
 					} catch (Error e) {
-						this.error_text=_("Failed to add file %s\n").printf(element.file);
+						this.error_list+=_("Failed to add file %s\n").printf(element.file);
 						error=true;
 					}
 					break;
@@ -174,7 +185,7 @@ namespace autovala {
 						data_stream.put_string("configure_file(${CMAKE_CURRENT_SOURCE_DIR}/"+element.file+" ${CMAKE_CURRENT_BINARY_DIR}/"+element.file+")\n");
 						data_stream.put_string("install(FILES ${CMAKE_CURRENT_BINARY_DIR}/"+element.file+" DESTINATION lib/plugs/"+config.project_name+"/"+config.project_name+"/)\n");
 					} catch (Error e) {
-						this.error_text=_("Failed to add file %s\n").printf(element.file);
+						this.error_list+=_("Failed to add file %s\n").printf(element.file);
 						error=true;
 					}
 					break;
@@ -186,7 +197,7 @@ namespace autovala {
 						}
 						data_stream.put_string("add_schema("+element.file+")\n");
 					} catch (Error e) {
-						this.error_text=_("Failed to add schema %s\n").printf(element.file);
+						this.error_list+=_("Failed to add schema %s\n").printf(element.file);
 						error=true;
 					}
 					break;
@@ -206,7 +217,7 @@ namespace autovala {
 				try {
 					data_stream.put_string(this.append_text);
 				} catch (Error e) {
-					this.error_text=_("Can't append data to CMakeLists file at %s\n").printf(dir);
+					this.error_list+=_("Can't append data to CMakeLists file at %s\n").printf(dir);
 					error=true;
 				}
 			}
@@ -214,7 +225,7 @@ namespace autovala {
 				try {
 					data_stream.put_string(includes);
 				} catch (Error e) {
-					this.error_text=_("Can't append INCLUDEs to CMakeLists file at %s\n").printf(dir);
+					this.error_list+=_("Can't append INCLUDEs to CMakeLists file at %s\n").printf(dir);
 					error=true;
 				}
 			}
@@ -241,7 +252,7 @@ namespace autovala {
 					data_stream.put_string("\tENDIF()\n");
 					data_stream.put_string("ENDFOREACH()\n\n");
 				} catch (Error e) {
-					this.error_text=_("Can't append data to CMakeLists file at %s\n").printf(dir);
+					this.error_list+=_("Can't append data to CMakeLists file at %s\n").printf(dir);
 					return true;
 				}
 			}
@@ -249,7 +260,7 @@ namespace autovala {
 			try {
 				data_stream.put_string("install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/"+element_file+" DESTINATION ${FINAL_PATH}/etc/xdg/autostart/ )\n");
 			} catch (Error e) {
-				this.error_text=_("Failed to write the CMakeLists file for %s\n").printf(element_file);
+				this.error_list+=_("Failed to write the CMakeLists file for %s\n").printf(element_file);
 				return true;
 			}
 			return false;
@@ -268,7 +279,7 @@ namespace autovala {
 					data_stream.put_string("\tSET (DBUS_PREFIX \"/usr\")\n");
 					data_stream.put_string("ENDIF()\n\n");
 				} catch (Error e) {
-					this.error_text=_("Can't append data to CMakeLists file at %s\n").printf(dir);
+					this.error_list+=_("Can't append data to CMakeLists file at %s\n").printf(dir);
 					return true;
 				}
 			}
@@ -278,7 +289,7 @@ namespace autovala {
 				data_stream.put_string("configure_file(${CMAKE_CURRENT_SOURCE_DIR}/"+element_file+" ${CMAKE_CURRENT_BINARY_DIR}/"+element_file+")\n");
 				data_stream.put_string("install(FILES ${CMAKE_CURRENT_BINARY_DIR}/"+element_file+" DESTINATION ${CMAKE_INSTALL_PREFIX}/share/dbus-1/services/)\n");
 			} catch (Error e) {
-				this.error_text=_("Failed to write the CMakeLists file for %s\n").printf(element_file);
+				this.error_list+=_("Failed to write the CMakeLists file for %s\n").printf(element_file);
 				return true;
 			}
 			return false;
@@ -304,13 +315,13 @@ namespace autovala {
 						}
 					}
 				} catch (Error e) {
-					this.error_text=_("Can't get the size for icon %s\n").printf(full_path);
+					this.error_list+=_("Can't get the size for icon %s\n").printf(full_path);
 					return true;
 				}
 				try {
 					data_stream.put_string("install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/%s DESTINATION share/icons/hicolor/%d/apps/)\n".printf(element_file,size));
 				} catch (Error e) {
-					this.error_text=_("Failed to write the CMakeLists file for icon %s\n").printf(full_path);
+					this.error_list+=_("Failed to write the CMakeLists file for icon %s\n").printf(full_path);
 					return true;
 				}
 			} else if (element_file.has_suffix(".svg")) {
@@ -322,11 +333,11 @@ namespace autovala {
 						data_stream.put_string("install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/%s DESTINATION share/icons/hicolor/scalable/apps/)\n".printf(element_file));
 					}
 				} catch (Error e) {
-					this.error_text=_("Failed to write the CMakeLists file for icon %s\n").printf(full_path);
+					this.error_list+=_("Failed to write the CMakeLists file for icon %s\n").printf(full_path);
 					return true;
 				}
 			} else {
-				this.error_text=_("Unknown icon type %s. Must be .png or .svg (in lowercase)\n").printf(element_file);
+				this.error_list+=_("Unknown icon type %s. Must be .png or .svg (in lowercase)\n").printf(element_file);
 				return true;
 			}
 
@@ -349,7 +360,7 @@ namespace autovala {
 				try {
 					fname.delete();
 				} catch (Error e) {
-					this.error_text=_("Failed to delete the old POTFILES.in file\n");
+					this.error_list+=_("Failed to delete the old POTFILES.in file\n");
 					return true;
 				}
 			}
@@ -417,7 +428,7 @@ namespace autovala {
 					data_stream.put_string(")\n");
 				}
 			} catch (Error e) {
-				this.error_text=_("Failed to create the PO files\n");
+				this.error_list+=_("Failed to create the PO files\n");
 				return true;
 			}
 			return false;
@@ -440,7 +451,7 @@ namespace autovala {
 					data_stream2.put_string("}\n");
 					data_stream2.close();
 				} catch (Error e) {
-					this.error_text=_("Failed to create the Config.vala.cmake file\n");
+					this.error_list+=_("Failed to create the Config.vala.cmake file\n");
 					return true;
 				}
 			}
@@ -564,7 +575,7 @@ namespace autovala {
 					data_stream.put_string(")\n\n");
 				}
 			} catch (Error e) {
-				this.error_text=_("Failed to write the CMakeLists file for binary %s\n").printf(element.file);
+				this.error_list+=_("Failed to write the CMakeLists file for binary %s\n").printf(element.file);
 				return true;
 			}
 			return false;

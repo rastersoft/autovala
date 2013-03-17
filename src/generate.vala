@@ -23,19 +23,37 @@ using Posix;
 namespace autovala {
 
 	public class manage_project:GLib.Object {
-	
+
 		private configuration config;
-		private string[] error_text;
-		
+		private string[] error_list;
+
+		public void show_errors() {
+			foreach(var e in this.error_list) {
+				GLib.stdout.printf("%s\n".printf(e));
+			}
+		}
+
+		public string[] get_error_list() {
+			return this.error_list;
+		}
+
+		private void add_errors(string[] ? errors) {
+			if (errors!=null) {
+				foreach (var e in errors) {
+					this.error_list+=e;
+				}
+			}
+		}
+
 		/**
 		 * Creates a new project from scratch in the specified folder.
 		 * If config_path is an empty string, will use the current folder.
 		 * If there is already a project there, will return an error.
 		 */
-		public bool create(string project_name, string i_config_path="") {
-		
+		public bool init(string project_name, string i_config_path="") {
+
 			bool error=false;
-			this.error_text={};
+			this.error_list={};
 			string config_path;
 			if (i_config_path=="") {
 				config_path=Posix.realpath(GLib.Environment.get_current_dir());
@@ -47,7 +65,7 @@ namespace autovala {
 			FileInfo file_info;
 			while ((file_info = enumerator.next_file ()) != null) {
 				if (file_info.get_name().has_suffix(".avprj")) {
-					error_text+=_("There's already a project in folder %s").printf(config_path);
+					error_list+=_("There's already a project in folder %s").printf(config_path);
 					return true; // there's already a project here!!!!
 				}
 			}
@@ -55,49 +73,64 @@ namespace autovala {
 			try {
 				var folder=File.new_for_path(Path.build_filename(config_path,"src"));
 				if (false==folder.make_directory_with_parents()) {
-					error_text+=_("Unable to create the SRC directory");
+					error_list+=_("Unable to create the SRC directory");
 					error=true;
 				}
 				folder=File.new_for_path(Path.build_filename(config_path,"data"));
 				if (false==folder.make_directory_with_parents()) {
-					error_text+=_("Unable to create the DATA directory");
+					error_list+=_("Unable to create the DATA directory");
 					error=true;
 				}
 				folder=File.new_for_path(Path.build_filename(config_path,"po"));
 				if (false==folder.make_directory_with_parents()) {
-					error_text+=_("Unable to create the PO directory");
+					error_list+=_("Unable to create the PO directory");
 					error=true;
 				}
 				folder=File.new_for_path(Path.build_filename(config_path,"doc"));
 				if (false==folder.make_directory_with_parents()) {
-					error_text+=_("Unable to create the DOC directory");
+					error_list+=_("Unable to create the DOC directory");
 					error=true;
 				}
 				folder=File.new_for_path(Path.build_filename(config_path,"data","icons"));
 				if (false==folder.make_directory_with_parents()) {
-					error_text+=_("Unable to create the data/icons directory");
+					error_list+=_("Unable to create the data/icons directory");
 					error=true;
 				}
 				folder=File.new_for_path(Path.build_filename(config_path,"data","pixmaps"));
 				if (false==folder.make_directory_with_parents()) {
-					error_text+=_("Unable to create the data/pixmaps directory");
+					error_list+=_("Unable to create the data/pixmaps directory");
 					error=true;
 				}
 				folder=File.new_for_path(Path.build_filename(config_path,"data","interface"));
 				if (false==folder.make_directory_with_parents()) {
-					error_text+=_("Unable to create the data/interface directory");
+					error_list+=_("Unable to create the data/interface directory");
 					error=true;
 				}
 			} catch (Error e) {
-				error_text+=_("Unable to create folder");
+				error_list+=_("Unable to create folder");
 				error=true;
+			}
+
+			if (error) {
+				return true;
 			}
 
 			this.config=new configuration(project_name);
 			this.config.project_name=project_name;
-			this.config.add_new_entry("po/",Config_Type.PO,true);
-			this.config.add_new_binary("src/"+project_name,Config_Type.VALA_BINARY,true);
+			this.config.set_config_filename(Path.build_filename(config_path,project_name+".avprj"));
+			if (this.config.add_new_entry("po/",Config_Type.PO,true)) {
+				this.add_errors(this.config.get_error_list());
+				return true;
+			}
+			if (this.config.add_new_binary("src/"+project_name,Config_Type.VALA_BINARY,true)) {
+				this.add_errors(this.config.get_error_list());
+				return true;
+			}
+			if (this.config.save_configuration()) {
+				this.add_errors(this.config.get_error_list());
+				return true;
+			}
 			return error;
-		}	
+		}
 	}
 }

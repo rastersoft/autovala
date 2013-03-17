@@ -102,7 +102,7 @@ namespace autovala {
 		public string basepath; // Contains the full path where the configuration file is stored
 		public Gee.List<config_element ?> configuration_data; // Contains all the configuration read
 		public string vala_version; // Version of the syntax in the configuration file
-		
+
 		private int current_version; // Contains the version of the currently supported syntax
 		private string[] error_list;
 
@@ -119,6 +119,12 @@ namespace autovala {
 			this.project_name=project_name;
 			this.error_list={};
 			this.vala_version="0.16.0";
+		}
+
+		public void show_errors() {
+			foreach(var e in this.error_list) {
+				GLib.stdout.printf("%s\n".printf(e));
+			}
 		}
 
 		public string[] get_error_list() {
@@ -168,6 +174,16 @@ namespace autovala {
 				break;
 			}
 			return (full_path);
+		}
+
+		public void set_config_filename(string path) {
+
+			if (GLib.Path.is_absolute(path)) {
+				this.config_path=path;
+			} else {
+				this.config_path=GLib.Path.build_filename(GLib.Environment.get_current_dir(),path);
+			}
+			this.basepath=GLib.Path.get_dirname(this.config_path);
 		}
 
 		public bool read_configuration(string open_file="") {
@@ -329,7 +345,7 @@ namespace autovala {
 				this.error_list+=_("Can't open configuration file");
 				error=true;
 			}
-	
+
 			return error;
 		}
 
@@ -355,7 +371,7 @@ namespace autovala {
 			this.last_element.version_set=true;
 			return false;
 		}
-		
+
 		private bool check_version(string version) {
 			return Regex.match_simple("^[0-9]+.[0-9]+(.[0-9]+)?$",version);
 		}
@@ -397,15 +413,15 @@ namespace autovala {
 		}
 
 		public bool add_new_binary(string filename, Config_Type type, bool automatic, string[] ?packages=null, string[] ?check_packages=null, string version="", string compile_options="") {
-		
+
 			if ((type!=Config_Type.VALA_BINARY)&&(type!=Config_Type.VALA_LIBRARY)) {
 				return true;
 			}
-			
+
 			if ((version!="") && (false==this.check_version(version))) {
 				return true;
 			}
-			
+
 			this.add_entry(filename,type,automatic);
 			if (version!="") {
 				this.set_version(version);
@@ -446,6 +462,7 @@ namespace autovala {
 		private bool add_entry(string l_filename, Config_Type type,bool automatic) {
 
 			if (this.config_path=="") {
+				this.error_list+=_("Trying to add an entry with the class unconfigured");
 				return true;
 			}
 
@@ -500,7 +517,6 @@ namespace autovala {
 				}
 			}
 			this.basepath=GLib.Path.get_dirname(this.config_path);
-			GLib.stdout.printf("Paths: %s  %s  y  %s\n",filename,this.config_path,this.basepath);
 			var file=File.new_for_path(this.config_path);
 			if (file.query_exists()) {
 				try {
