@@ -22,7 +22,7 @@ using Posix;
 
 namespace autovala {
 
-	public enum Config_Type {VALA_BINARY, VALA_LIBRARY, BINARY, ICON, PIXMAP, PO, GLADE, DBUS_SERVICE, DESKTOP, AUTOSTART, EOS_PLUG, SCHEME}
+	public enum Config_Type {VALA_BINARY, VALA_LIBRARY, BINARY, ICON, PIXMAP, PO, GLADE, DBUS_SERVICE, DESKTOP, AUTOSTART, EOS_PLUG, SCHEME, INCLUDE}
 
 	public class package_element:GLib.Object {
 
@@ -296,6 +296,10 @@ namespace autovala {
 					}
 					if (line.has_prefix("glade: ")) {
 						error|=this.add_entry(line.substring(7).strip(),Config_Type.GLADE,automatic);
+						continue;
+					}
+					if (line.has_prefix("include: ")) {
+						error|=this.add_entry(line.substring(9).strip(),Config_Type.INCLUDE,automatic);
 						continue;
 					}
 					if (line.has_prefix("compile_options: ")) {

@@ -48,3 +48,4 @@ RUNTIME DESTINATION
 	bin/
 )
 
+include(${CMAKE_CURRENT_SOURCE_DIR}/prueba.inc)

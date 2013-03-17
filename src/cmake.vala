@@ -106,6 +106,7 @@ namespace autovala {
 		private bool create_cmake_for_dir(string dir,DataOutputStream data_stream) {
 
 			this.append_text="";
+			string includes="";
 			bool added_vala_binaries=false;
 			bool added_icon_suffix=false;
 			bool added_dbus_prefix=false;
@@ -188,6 +189,9 @@ namespace autovala {
 						error=true;
 					}
 					break;
+				case Config_Type.INCLUDE:
+					includes+="include(${CMAKE_CURRENT_SOURCE_DIR}/"+element.file+")\n";
+					break;
 				default:
 					error=false;
 					break;
@@ -202,6 +206,14 @@ namespace autovala {
 					data_stream.put_string(this.append_text);
 				} catch (Error e) {
 					this.error_text=_("Can't append data to CMakeLists file at %s\n").printf(dir);
+					error=true;
+				}
+			}
+			if ((error==false)&&(includes!="")) {
+				try {
+					data_stream.put_string(includes);
+				} catch (Error e) {
+					this.error_text=_("Can't append INCLUDEs to CMakeLists file at %s\n").printf(dir);
 					error=true;
 				}
 			}
