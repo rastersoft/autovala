@@ -104,11 +104,26 @@ namespace autovala {
 			this.packages.add(element);
 		}
 
-		public bool check(string file, string path, Config_Type type) {
-			if ((this.file==file)&&(this.path==path)&&(this.type==type)) {
-				return true;
+		public bool check(string file, string path, Config_Type type, out bool overwriting) {
+			overwriting=false;
+			if ((type!=Config_Type.VALA_BINARY)&&(type!=Config_Type.VALA_LIBRARY)) {
+				if ((this.file==file)&&(this.path==path)&&(this.type==type)) {
+					return true;
+				} else {
+					return false;
+				}
 			} else {
-				return false;
+				// Vala binaries and libraries are determined by the path (there can be only one binary or library per path)
+				if (this.path==path) {
+					if ((this.type==type)&&(this.file==file)) {
+						return true;
+					} else {
+						overwriting=true;
+						return true;
+					}
+				} else {
+					return false;
+				}
 			}
 		}
 
@@ -541,9 +556,18 @@ namespace autovala {
 			}
 
 			foreach(var e in this.configuration_data) {
-				if (e.check(file,path,type)) {
+				bool overwriting;
+				bool retval;
+				retval=e.check(file,path,type,out overwriting);
+				if (retval) {
 					if ((type==Config_Type.VALA_BINARY)||(type==Config_Type.VALA_LIBRARY)) {
-						this.last_element=e;
+						if(overwriting) { // a binary or a library is overwriting other
+							this.error_list+=_("A binary or library is trying to overwrite another at line %d").printf(line_number);
+							this.last_element=null;
+							return true;
+						} else {
+							this.last_element=e;
+						}
 					} else {
 						this.last_element=null;
 					}
