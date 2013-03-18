@@ -22,7 +22,7 @@ using Posix;
 
 namespace autovala {
 
-	public enum Config_Type {VALA_BINARY, VALA_LIBRARY, BINARY, ICON, PIXMAP, PO, GLADE, DBUS_SERVICE, DESKTOP, AUTOSTART, EOS_PLUG, SCHEME, INCLUDE}
+	public enum Config_Type {VALA_BINARY, VALA_LIBRARY, BINARY, ICON, PIXMAP, PO, GLADE, DBUS_SERVICE, DESKTOP, AUTOSTART, EOS_PLUG, SCHEME, INCLUDE, IGNORE}
 
 	public class package_element:GLib.Object {
 
@@ -59,7 +59,26 @@ namespace autovala {
 			this.version_set=false;
 		}
 
+		public void set_compile_options(string options) {
+			this.compile_options=options;
+			this.transform_to_non_automatic();
+		}
+
+		private void transform_to_non_automatic() {
+
+			this.automatic=false;
+			/*foreach(var l in this.packages) {
+				l.automatic=false;
+			}*/
+		}
+
 		public void add_package(string pkg,bool to_check,bool automatic) {
+
+			// adding a non-automatic package to an automatic binary transforms this binary to non-automatic
+			if ((automatic==false)&& (this.automatic==true)) {
+				this.transform_to_non_automatic();
+			}
+
 			foreach(var p in this.packages) {
 				if (p.package==pkg) {
 					return;
@@ -317,6 +336,10 @@ namespace autovala {
 						error|=this.add_entry(line.substring(9).strip(),Config_Type.INCLUDE,automatic);
 						continue;
 					}
+					if (line.has_prefix("ignore: ")) {
+						error|=this.add_entry(line.substring(8).strip(),Config_Type.IGNORE,automatic);
+						continue;
+					}
 					if (line.has_prefix("compile_options: ")) {
 						error|=this.add_compiling_options(line.substring(17).strip());
 						continue;
@@ -386,7 +409,7 @@ namespace autovala {
 			if (this.last_element.compile_options!="") {
 				this.error_list+=_("Warning: overwriting compile options (line %d)").printf(this.line_number);
 			}
-			this.last_element.compile_options=options;
+			this.last_element.set_compile_options(options);
 			return false;
 		}
 
@@ -468,13 +491,24 @@ namespace autovala {
 
 			var filename=l_filename;
 			if (type==Config_Type.PO) {
-				if (false==filename.has_suffix("/")) {
-					filename+="/";
+				if (false==filename.has_suffix(Path.DIR_SEPARATOR_S)) {
+					filename+=Path.DIR_SEPARATOR_S;
 				}
 			}
 
-			var file=Path.get_basename(filename);
-			var path=Path.get_dirname(filename);
+			string file;
+			string path;
+			if (type!=Config_Type.IGNORE) {
+				file=Path.get_basename(filename);
+				path=Path.get_dirname(filename);
+			} else {
+				if((filename.length>1)&&(filename.has_suffix(Path.DIR_SEPARATOR_S))) {
+					file=filename.substring(0,filename.length-1);
+				} else {
+					file=filename;
+				}
+				path=file;
+			}
 
 			foreach(var e in this.configuration_data) {
 				if (e.check(file,path,type)) {

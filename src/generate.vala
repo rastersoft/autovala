@@ -118,11 +118,11 @@ namespace autovala {
 			this.config=new configuration(project_name);
 			this.config.project_name=project_name;
 			this.config.set_config_filename(Path.build_filename(config_path,project_name+".avprj"));
-			if (this.config.add_new_entry("po/",Config_Type.PO,true)) {
+			if (this.config.add_new_entry("po/",Config_Type.PO,false)) {
 				this.add_errors(this.config.get_error_list());
 				return true;
 			}
-			if (this.config.add_new_binary("src/"+project_name,Config_Type.VALA_BINARY,true)) {
+			if (this.config.add_new_binary("src/"+project_name,Config_Type.VALA_BINARY,false)) {
 				this.add_errors(this.config.get_error_list());
 				return true;
 			}
@@ -147,6 +147,19 @@ namespace autovala {
 			if (retval) {
 				return true;
 			}
+			return false;
+		}
+
+		public bool autorefresh(string config_path="") {
+			var config=new autovala.configuration();
+			bool retval=config.read_configuration(config_path);
+			this.add_errors(config.get_error_list()); // there can be warnings
+			if (retval) {
+				return true;
+			}
+
+
+
 			return false;
 		}
 	}
