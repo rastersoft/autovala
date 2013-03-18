@@ -2,13 +2,11 @@
 version: 1
 project_name: autovala
 vala_version: 0.16
-vala_binary: src/autovala
-vala_check_package: gio-2.0
-vala_check_package: gee-1.0
-vala_check_package: gtk+-3.0
-vala_package: posix
-file_version: 1.0.0
-compile_options: -X -O2
+*vala_binary: src/autovala
+*vala_check_package: gio-2.0
+*vala_check_package: gee-1.0
+*vala_check_package: gtk+-3.0
+*vala_package: posix
 vala_library: src/library/lautovala
 vala_check_package: gio-2.0
 vala_check_package: gee-1.0
@@ -16,4 +14,4 @@ vala_check_package: gtk+-3.0
 vala_package: posix
 file_version: 1.0.0
 compile_options: -X -O2
-po: po
+*po: po

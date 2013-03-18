@@ -34,6 +34,10 @@ namespace autovala {
 			this.error_list={};
 		}
 
+		public void clear_errors() {
+			this.error_list={};
+		}
+
 		public void show_errors() {
 			foreach(var e in this.error_list) {
 				GLib.stdout.printf("%s\n".printf(e));

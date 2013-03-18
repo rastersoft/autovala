@@ -69,6 +69,19 @@ int main(string[] argv) {
 		}
 		GLib.stdout.printf("Done\n");
 		break;
+	case "autorefresh":
+		if (argv.length!=2) {
+			help();
+			return -1;
+		}
+		var gen = new autovala.manage_project();
+		if (gen.autorefresh()) {
+			gen.show_errors();
+			GLib.stdout.printf("Aborting\n");
+			return -1;
+		}
+		GLib.stdout.printf("Done\n");
+		break;
 	default:
 		help();
 		return -1;

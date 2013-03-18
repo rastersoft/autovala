@@ -27,6 +27,10 @@ namespace autovala {
 		private configuration config;
 		private string[] error_list;
 
+		public void clear_errors() {
+			this.error_list={};
+		}
+
 		public void show_errors() {
 			foreach(var e in this.error_list) {
 				GLib.stdout.printf("%s\n".printf(e));
@@ -154,12 +158,13 @@ namespace autovala {
 			var config=new autovala.configuration();
 			bool retval=config.read_configuration(config_path);
 			this.add_errors(config.get_error_list()); // there can be warnings
+			config.clear_errors();
 			if (retval) {
 				return true;
 			}
-
-
-
+			config.list_all();
+			config.clear_automatic(); // remove all automatic entries
+			config.list_all();
 			return false;
 		}
 	}

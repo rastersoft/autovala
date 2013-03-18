@@ -59,6 +59,22 @@ namespace autovala {
 			this.version_set=false;
 		}
 
+		public void clear_automatic() {
+			var tmp_packages=new Gee.ArrayList<package_element ?>();
+			foreach (var p in this.packages) {
+				if (p.automatic==false) {
+					tmp_packages.add(p);
+				}
+			}
+			this.packages=tmp_packages;
+		}
+
+		public void set_version(string version) {
+			this.version=version;
+			this.version_set=true;
+			this.transform_to_non_automatic();
+		}
+
 		public void set_compile_options(string options) {
 			this.compile_options=options;
 			this.transform_to_non_automatic();
@@ -138,6 +154,21 @@ namespace autovala {
 			this.project_name=project_name;
 			this.error_list={};
 			this.vala_version="0.16.0";
+		}
+
+		public void clear_automatic() {
+			var new_config=new Gee.ArrayList<config_element ?>();
+			foreach (var element in this.configuration_data) {
+				if (element.automatic==false) {
+					new_config.add(element);
+					element.clear_automatic();
+				}
+			}
+			this.configuration_data=new_config;
+		}
+
+		public void clear_errors() {
+			this.error_list={};
 		}
 
 		public void show_errors() {
@@ -390,8 +421,7 @@ namespace autovala {
 					return true;
 				}
 			}
-			this.last_element.version=version;
-			this.last_element.version_set=true;
+			this.last_element.set_version(version);
 			return false;
 		}
 
@@ -512,6 +542,11 @@ namespace autovala {
 
 			foreach(var e in this.configuration_data) {
 				if (e.check(file,path,type)) {
+					if ((type==Config_Type.VALA_BINARY)||(type==Config_Type.VALA_LIBRARY)) {
+						this.last_element=e;
+					} else {
+						this.last_element=null;
+					}
 					return false;
 				}
 			}
