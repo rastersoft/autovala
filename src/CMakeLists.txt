@@ -37,6 +37,8 @@ PACKAGES
 	gee-1.0
 	gtk+-3.0
 	posix
+OPTIONS
+	-X -O2
 )
 
 add_executable(autovala ${VALA_C})

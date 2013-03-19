@@ -77,8 +77,14 @@ namespace autovala {
 				data_stream.put_string("list (APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)\n");
 				data_stream.put_string("enable_testing ()\n");
 				foreach(var element in paths) {
-					if (element!="") {
-						data_stream.put_string("add_subdirectory("+element+")\n");
+					var dirpath=File.new_for_path(element);
+					if (dirpath.query_exists()==false) {
+						this.error_list+=_("Warning: directory %s doesn't exists").printf(element);
+						continue;
+					} else {
+						if (element!="") {
+							data_stream.put_string("add_subdirectory("+element+")\n");
+						}
 					}
 				}
 				if (this.create_cmake_for_dir("",data_stream)) {
@@ -92,6 +98,10 @@ namespace autovala {
 
 			foreach(var element in paths) {
 				if (element!="") { // don't check the main folder
+					var dirpath=File.new_for_path(element);
+					if(dirpath.query_exists()==false) {
+						continue;
+					}
 					var filepath=Path.build_filename(this.config.basepath,element,"CMakeLists.txt");
 					var file=File.new_for_path(filepath);
 					if (file.query_exists()) {
@@ -134,7 +144,13 @@ namespace autovala {
 				if (element.path!=dir) {
 					continue;
 				}
-
+				if ((element.type!=Config_Type.VALA_BINARY)&&(element.type!=Config_Type.VALA_LIBRARY)&&(element.type!=Config_Type.PO)) {
+					var fullpath=File.new_for_path(Path.build_filename(this.config.basepath,dir,element.file));
+					if (fullpath.query_exists()==false) {
+						this.error_list+=_("Warning: file %s doesn't exists").printf(Path.build_filename(dir,element.file));
+						continue;
+					}
+				}
 				switch(element.type) {
 				case Config_Type.PO:
 					error=this.create_po(dir,data_stream);

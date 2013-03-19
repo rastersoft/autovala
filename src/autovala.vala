@@ -39,6 +39,7 @@ int main(string[] argv) {
 		return 0;
 	}
 
+	bool retval;
 	switch(argv[1]) {
 	case "help":
 		help();
@@ -49,8 +50,9 @@ int main(string[] argv) {
 			return -1;
 		}
 		var gen = new autovala.manage_project();
-		if (gen.init(argv[2])) {
-			gen.show_errors();
+		retval=gen.init(argv[2]);
+		gen.show_errors();
+		if (retval) {
 			GLib.stdout.printf("Aborting\n");
 			return -1;
 		}
@@ -62,8 +64,9 @@ int main(string[] argv) {
 			return -1;
 		}
 		var gen = new autovala.manage_project();
-		if (gen.cmake()) {
-			gen.show_errors();
+		retval=gen.cmake();
+		gen.show_errors();
+		if (retval) {
 			GLib.stdout.printf("Aborting\n");
 			return -1;
 		}
@@ -75,8 +78,9 @@ int main(string[] argv) {
 			return -1;
 		}
 		var gen = new autovala.manage_project();
-		if (gen.autorefresh()) {
-			gen.show_errors();
+		retval=gen.autorefresh();
+		gen.show_errors();
+		if (retval) {
 			GLib.stdout.printf("Aborting\n");
 			return -1;
 		}
