@@ -435,11 +435,11 @@ namespace autovala {
 		private bool set_gir_filename(string gir_filename) {
 
 			if ((this.last_element==null)||(this.last_element.type!=Config_Type.VALA_LIBRARY)) {
-				this.error_list+=_("GIR filename after a non vala_library command (line %d)").printf(this.line_number);
+				this.error_list+=_("Found gir_filename after a non vala_library command (line %d)").printf(this.line_number);
 				return true;
 			}
 
-			if (this.last_element.version_set) {
+			if (this.last_element.gir_filename!="") {
 				this.error_list+=_("Warning: overwriting GIR filename (line %d)").printf(this.line_number);
 			}
 
@@ -450,7 +450,7 @@ namespace autovala {
 		private bool set_version(string version) {
 
 			if (this.last_element==null) {
-				this.error_list+=_("Version number after a non vala_binary or vala_library command (line %d)").printf(this.line_number);
+				this.error_list+=_("Found file_version after a non vala_binary, nor vala_library command (line %d)").printf(this.line_number);
 				return true;
 			}
 
@@ -476,7 +476,7 @@ namespace autovala {
 		private bool add_compiling_options(string options) {
 
 			if (this.last_element==null) {
-				this.error_list+=_("Adding compiling options after a non vala_binary or vala_library command (line %d)").printf(this.line_number);
+				this.error_list+=_("Found compile_options after a non vala_binary, nor vala_library command (line %d)").printf(this.line_number);
 				return true;
 			}
 
@@ -494,6 +494,11 @@ namespace autovala {
 			}
 
 			if (this.last_element==null) {
+				if (check) {
+					this.error_list+=_("Found vala_check_package after a non vala_binary, nor vala_library command (line %d)").printf(this.line_number);
+				} else {
+					this.error_list+=_("Found vala_package after a non vala_binary, nor vala_library command (line %d)").printf(this.line_number);
+				}
 				return true;
 			}
 			this.last_element.add_package(pkg,check,automatic);
