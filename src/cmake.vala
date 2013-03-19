@@ -77,7 +77,7 @@ namespace autovala {
 				data_stream.put_string("list (APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)\n");
 				data_stream.put_string("enable_testing ()\n");
 				foreach(var element in paths) {
-					var dirpath=File.new_for_path(element);
+					var dirpath=File.new_for_path(Path.build_filename(this.config.basepath,element));
 					if (dirpath.query_exists()==false) {
 						this.error_list+=_("Warning: directory %s doesn't exists").printf(element);
 						continue;
@@ -98,7 +98,7 @@ namespace autovala {
 
 			foreach(var element in paths) {
 				if (element!="") { // don't check the main folder
-					var dirpath=File.new_for_path(element);
+					var dirpath=File.new_for_path(Path.build_filename(this.config.basepath,element));
 					if(dirpath.query_exists()==false) {
 						continue;
 					}
@@ -395,6 +395,9 @@ namespace autovala {
 					switch (e.type) {
 					case Config_Type.VALA_BINARY:
 						var directory = File.new_for_path(Path.build_filename(this.config.basepath,e.path));
+						if (directory.query_exists()==false) {
+							continue;
+						}
 						var enumerator = directory.enumerate_children(FileAttribute.STANDARD_NAME, 0);
 						FileInfo file_info;
 						while ((file_info = enumerator.next_file ()) != null) {
@@ -456,6 +459,22 @@ namespace autovala {
 
 		private bool create_vala_binary(string dir,DataOutputStream data_stream, config_element element, bool is_library, bool added_vala_binaries) {
 
+			string[] filelist={};
+			var directory = File.new_for_path (Path.build_filename(this.config.basepath,dir));
+			var enumerator = directory.enumerate_children (FileAttribute.STANDARD_NAME, 0);
+			FileInfo file_info;
+			while ((file_info = enumerator.next_file ()) != null) {
+				if (file_info.get_name().has_suffix(".vala")) {
+					filelist+=file_info.get_name();
+				}
+			}
+
+			// there are no .vala files, so don't add this one
+			if (filelist.length==0) {
+				this.error_list+=_("Warning: folder %s doesn't contain vala sources. Skipping").printf(dir);
+				return false;
+			}
+
 			var fname=File.new_for_path(Path.build_filename(this.config.basepath,dir,"Config.vala.cmake"));
 			if (fname.query_exists()==false) {
 				try {
@@ -511,13 +530,9 @@ namespace autovala {
 				data_stream.put_string("include(ValaPrecompile)\n\n");
 
 				data_stream.put_string("vala_precompile(VALA_C\n");
-				var directory = File.new_for_path (Path.build_filename(this.config.basepath,dir));
-				var enumerator = directory.enumerate_children (FileAttribute.STANDARD_NAME, 0);
-				FileInfo file_info;
-				while ((file_info = enumerator.next_file ()) != null) {
-					if (file_info.get_name().has_suffix(".vala")) {
-						data_stream.put_string("\t"+file_info.get_name()+"\n");
-					}
+
+				foreach (var filename in filelist) {
+					data_stream.put_string("\t"+filename+"\n");
 				}
 				data_stream.put_string("PACKAGES\n");
 				foreach(var module in element.packages) {
