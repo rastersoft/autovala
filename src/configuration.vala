@@ -47,6 +47,7 @@ namespace autovala {
 		public bool version_set;
 		public bool automatic;
 		public Gee.List<package_element ?> packages;
+		public string gir_filename;
 
 		public config_element(string file, string path, Config_Type type,bool automatic) {
 			this.automatic=automatic;
@@ -57,6 +58,7 @@ namespace autovala {
 			this.compile_options="";
 			this.version="1.0.0";
 			this.version_set=false;
+			this.gir_filename="";
 		}
 
 		public void clear_automatic() {
@@ -67,6 +69,14 @@ namespace autovala {
 				}
 			}
 			this.packages=tmp_packages;
+		}
+
+		public void set_gir_filename(string gir_filename) {
+			this.gir_filename=gir_filename;
+			if (this.gir_filename.has_suffix(".gir")==false) {
+				this.gir_filename+=".gir";
+			}
+			this.transform_to_non_automatic();
 		}
 
 		public void set_version(string version) {
@@ -337,6 +347,10 @@ namespace autovala {
 						error|=this.set_version(line.substring(14).strip());
 						continue;
 					}
+					if (line.has_prefix("gir_filename: ")) {
+						error|=this.set_gir_filename(line.substring(14).strip());
+						continue;
+					}
 					if (line.has_prefix("binary: ")) {
 						error|=this.add_entry(line.substring(8).strip(),Config_Type.BINARY,automatic);
 						continue;
@@ -416,6 +430,21 @@ namespace autovala {
 			}
 
 			return error;
+		}
+
+		private bool set_gir_filename(string gir_filename) {
+
+			if ((this.last_element==null)||(this.last_element.type!=Config_Type.VALA_LIBRARY)) {
+				this.error_list+=_("GIR filename after a non vala_library command (line %d)").printf(this.line_number);
+				return true;
+			}
+
+			if (this.last_element.version_set) {
+				this.error_list+=_("Warning: overwriting GIR filename (line %d)").printf(this.line_number);
+			}
+
+			this.last_element.set_gir_filename(gir_filename);
+			return false;
 		}
 
 		private bool set_version(string version) {

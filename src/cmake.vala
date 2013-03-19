@@ -540,12 +540,13 @@ namespace autovala {
 				}
 
 				var final_options=element.compile_options;
-				string gir_filename="";
 				if (is_library) {
 					// If it is a library, generate the Gobject Introspection file
-					var nversion=element.version.split(".");
-					gir_filename=element.file+"-"+nversion[0]+"."+nversion[1]+".gir";
-					final_options="--library="+element.file+" --gir "+gir_filename+" "+element.compile_options;
+					final_options="--library="+element.file;
+					if (element.gir_filename!="") {
+						final_options+=" --gir "+element.gir_filename;
+					}
+					final_options+=" "+element.compile_options;
 				}
 
 				if (final_options!="") {
@@ -594,11 +595,13 @@ namespace autovala {
 					data_stream.put_string(")\n");
 
 					// Install GIR
-					data_stream.put_string("install(FILES\n");
-					data_stream.put_string("\t${CMAKE_CURRENT_BINARY_DIR}/"+gir_filename+"\n");
-					data_stream.put_string("DESTINATION\n");
-					data_stream.put_string("\tshare/gir-1.0/\n");
-					data_stream.put_string(")\n");
+					if (element.gir_filename!="") {
+						data_stream.put_string("install(FILES\n");
+						data_stream.put_string("\t${CMAKE_CURRENT_BINARY_DIR}/"+element.gir_filename+"\n");
+						data_stream.put_string("DESTINATION\n");
+						data_stream.put_string("\tshare/gir-1.0/\n");
+						data_stream.put_string(")\n");
+					}
 				} else {
 
 					// Install executable
