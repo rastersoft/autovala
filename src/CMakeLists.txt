@@ -29,9 +29,9 @@ include(ValaPrecompile)
 
 vala_precompile(VALA_C
 	generate.vala
-	cmake.vala
-	autovala.vala
 	configuration.vala
+	autovala.vala
+	cmake.vala
 PACKAGES
 	gio-2.0
 	gee-1.0

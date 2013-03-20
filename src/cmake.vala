@@ -55,9 +55,15 @@ namespace autovala {
 
 			// Get all the diferent paths in the project
 			// to create in each one its CMakeLists file
+			var ignore_list=new Gee.HashSet<string>();
+			foreach(var element in this.config.configuration_data) {
+				if ((element.type==Config_Type.IGNORE)&&(ignore_list.contains(element.path)==false)) {
+					ignore_list.add(element.path);
+				}
+			}
 			var paths=new Gee.HashSet<string>();
 			foreach(var element in this.config.configuration_data) {
-				if (paths.contains(element.path)==false) {
+				if ((paths.contains(element.path)==false)&&(ignore_list.contains(element.path)==false)) {
 					paths.add(element.path);
 				}
 			}
@@ -87,7 +93,7 @@ namespace autovala {
 						}
 					}
 				}
-				if (this.create_cmake_for_dir("",data_stream)) {
+				if (this.create_cmake_for_dir("",data_stream,ignore_list)) {
 					return true;
 				}
 				data_stream.close();
@@ -116,7 +122,7 @@ namespace autovala {
 						var dis = file.create(FileCreateFlags.NONE);
 						var data_stream = new DataOutputStream(dis);
 						data_stream.put_string("### CMakeLists automatically created with AutoVala\n### Do not edit\n\n");
-						if (this.create_cmake_for_dir(element,data_stream)) {
+						if (this.create_cmake_for_dir(element,data_stream,ignore_list)) {
 							return true;
 						}
 						data_stream.close();
@@ -129,7 +135,7 @@ namespace autovala {
 			return false;
 		}
 
-		private bool create_cmake_for_dir(string dir,DataOutputStream data_stream) {
+		private bool create_cmake_for_dir(string dir,DataOutputStream data_stream,Gee.Set<string> ignore_list) {
 
 			this.append_text="";
 			string includes="";
@@ -144,8 +150,12 @@ namespace autovala {
 				if (element.path!=dir) {
 					continue;
 				}
+				var fullpath_s=Path.build_filename(this.config.basepath,dir,element.file);
+				if (ignore_list.contains(fullpath_s)) {
+					continue;
+				}
 				if ((element.type!=Config_Type.VALA_BINARY)&&(element.type!=Config_Type.VALA_LIBRARY)&&(element.type!=Config_Type.PO)) {
-					var fullpath=File.new_for_path(Path.build_filename(this.config.basepath,dir,element.file));
+					var fullpath=File.new_for_path(fullpath_s);
 					if (fullpath.query_exists()==false) {
 						this.error_list+=_("Warning: file %s doesn't exists").printf(Path.build_filename(dir,element.file));
 						continue;
@@ -156,11 +166,11 @@ namespace autovala {
 					error=this.create_po(dir,data_stream);
 					break;
 				case Config_Type.VALA_BINARY:
-					error=this.create_vala_binary(dir, data_stream,element,false,added_vala_binaries);
+					error=this.create_vala_binary(dir,data_stream,element,false,added_vala_binaries,ignore_list);
 					added_vala_binaries=true;
 					break;
 				case Config_Type.VALA_LIBRARY:
-					error=this.create_vala_binary(dir, data_stream,element,true,added_vala_binaries);
+					error=this.create_vala_binary(dir,data_stream,element,true,added_vala_binaries,ignore_list);
 					added_vala_binaries=true;
 					break;
 				case Config_Type.BINARY:
@@ -457,15 +467,21 @@ namespace autovala {
 			return false;
 		}
 
-		private bool create_vala_binary(string dir,DataOutputStream data_stream, config_element element, bool is_library, bool added_vala_binaries) {
+		private bool create_vala_binary(string dir,DataOutputStream data_stream, config_element element, bool is_library,
+				bool added_vala_binaries, Gee.Set<string> ignore_list) {
 
 			string[] filelist={};
-			var directory = File.new_for_path (Path.build_filename(this.config.basepath,dir));
+			var directory_s=Path.build_filename(this.config.basepath,dir);
+			var directory = File.new_for_path (directory_s);
 			var enumerator = directory.enumerate_children (FileAttribute.STANDARD_NAME, 0);
 			FileInfo file_info;
 			while ((file_info = enumerator.next_file ()) != null) {
-				if (file_info.get_name().has_suffix(".vala")) {
-					filelist+=file_info.get_name();
+				var fname=file_info.get_name();
+				if (fname.has_suffix(".vala")) {
+					var fullpath_s=Path.build_filename(dir,fname);
+					if (false==ignore_list.contains(fullpath_s)) {
+						filelist+=file_info.get_name();
+					}
 				}
 			}
 
