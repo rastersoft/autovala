@@ -618,6 +618,7 @@ namespace autovala {
 		}
 
 		public void list_all() {
+			GLib.stdout.printf("Current configuration:\n");
 			foreach(var e in this.configuration_data) {
 				e.printall();
 			}
@@ -651,6 +652,7 @@ namespace autovala {
 					return true;
 				}
 			}
+			this.error_list+=_("Storing configuration in file %s").printf(this.config_path);
 			try {
 				var dis = file.create(FileCreateFlags.NONE);
 				var data_stream = new DataOutputStream(dis);

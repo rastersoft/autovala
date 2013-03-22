@@ -165,6 +165,7 @@ namespace autovala {
 			if (retval) {
 				return true;
 			}
+
 			this.config.clear_automatic(); // remove all automatic entries
 
 			// files_set will contain all files already processed
@@ -198,8 +199,10 @@ namespace autovala {
 			this.process_folder(files_set,"data",Config_Type.SCHEME,extensions,false);
 			extensions={".plug"};
 			this.process_folder(files_set,"data",Config_Type.EOS_PLUG,extensions,false);
-
+			this.process_binary(files_set,"src",this.config.project_name);
+			this.process_folder(files_set,"src",Config_Type.VALA_BINARY,extensions,true);
 			this.config.save_configuration();
+			this.add_errors(this.config.get_error_list()); // there can be warnings
 			return false;
 		}
 
@@ -213,21 +216,32 @@ namespace autovala {
 					while ((file_info = enumerator.next_file ()) != null) {
 						var fname=file_info.get_name();
 						var ftype=file_info.get_file_type();
-						if (ftype==FileType.REGULAR) {
-							foreach(var e in extensions) {
-								if (fname.has_suffix(e)) {
-									try_to_add(files_set,type,folder,fname);
-									break;
+						if (type!=Config_Type.VALA_BINARY) {
+							if (ftype==FileType.REGULAR) {
+								foreach(var e in extensions) {
+									if (fname.has_suffix(e)) {
+										try_to_add(files_set,type,folder,fname);
+										break;
+									}
 								}
+							} else if ((ftype==FileType.DIRECTORY)&&(recursive)) { // process recursively
+								var newfolder=Path.build_filename(folder,fname);
+								this.process_folder(files_set,newfolder,type,extensions, recursive);
+								continue;
 							}
-						} else if ((ftype==FileType.DIRECTORY)&&(recursive)) { // process recursively
-							var newfolder=Path.build_filename(folder,fname);
-							this.process_folder(files_set,newfolder,type,extensions, recursive);
-							continue;
+						} else {
+							if (ftype==FileType.DIRECTORY) { // process recursively
+								var newfolder=Path.build_filename(folder,fname);
+								this.process_binary(files_set,newfolder,fname);
+								if (recursive) {
+									this.process_folder(files_set,newfolder,type,extensions, recursive);
+								}
+								continue;
+							}
 						}
 					}
 				} catch (Error e) {
-					error_list+=_("Warning: failed to add icons");
+					error_list+=_("Warning: failed to add files at folder %s").printf(folder);
 				}
 			}
 
@@ -244,12 +258,25 @@ namespace autovala {
 				mpath_s=Path.build_filename(path,file_s);
 			}
 			if (files_set.contains(path_s)==true) {
-				return; // this file has been already processed
+				return; // this file has been already processed (or it has a IGNORE flag)
 			}
 			var file=File.new_for_path(path_s);
 			if (file.query_exists()) {
 				this.config.add_new_entry(mpath_s,type,true);
 			}
+		}
+
+		private void process_binary(Gee.Set<string> files_set, string path, string file_s) {
+			var path_s=Path.build_filename(this.config.basepath,path);
+			if (files_set.contains(path_s)) {
+				return; // this folder has been already processed (or it has a IGNORE flag)
+			}
+			var file=File.new_for_path(path_s);
+			if (file.query_exists()==false) {
+				return; // this folder doesn't exists
+			}
+			var mpath_s=Path.build_filename(path,file_s);
+			this.config.add_new_binary(mpath_s,Config_Type.VALA_BINARY, true);
 		}
 	}
 }
