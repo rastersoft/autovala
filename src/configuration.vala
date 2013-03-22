@@ -567,7 +567,6 @@ namespace autovala {
 				this.error_list+=_("Trying to add an entry with the class unconfigured");
 				return true;
 			}
-
 			var filename=l_filename;
 			if (type==Config_Type.PO) {
 				if (false==filename.has_suffix(Path.DIR_SEPARATOR_S)) {
@@ -588,7 +587,6 @@ namespace autovala {
 				}
 				path=file;
 			}
-
 			foreach(var e in this.configuration_data) {
 				bool overwriting;
 				bool retval;
