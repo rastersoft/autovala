@@ -343,8 +343,8 @@ namespace autovala {
 						error|=this.add_package(line.substring(20).strip(),true,automatic);
 						continue;
 					}
-					if (line.has_prefix("file_version: ")) {
-						error|=this.set_version(line.substring(14).strip());
+					if (line.has_prefix("version: ")) {
+						error|=this.set_version(line.substring(9).strip());
 						continue;
 					}
 					if (line.has_prefix("gir_filename: ")) {
@@ -408,8 +408,8 @@ namespace autovala {
 						this.project_name=line.substring(14).strip();
 						continue;
 					}
-					if (line.has_prefix("version: ")) {
-						this.version=int.parse(line.substring(9).strip());
+					if (line.has_prefix("autovala_version: ")) {
+						this.version=int.parse(line.substring(18).strip());
 						if (this.version>this.current_version) {
 							this.config_path="";
 							this.configuration_data=new Gee.ArrayList<config_element ?>();
@@ -657,7 +657,7 @@ namespace autovala {
 				var dis = file.create(FileCreateFlags.NONE);
 				var data_stream = new DataOutputStream(dis);
 				data_stream.put_string("### AutoVala Project ###\n");
-				data_stream.put_string("version: %d\n".printf(this.current_version));
+				data_stream.put_string("autovala_version: %d\n".printf(this.current_version));
 				data_stream.put_string("project_name: "+this.project_name+"\n");
 				data_stream.put_string("vala_version: "+this.vala_version+"\n");
 				this.store_data(Config_Type.PO,data_stream);
@@ -700,7 +700,7 @@ namespace autovala {
 							data_stream.put_string("vala_library: "+fullpathname+"\n");
 						}
 						if (element.version_set) {
-							data_stream.put_string("file_version: "+element.version+"\n");
+							data_stream.put_string("version: "+element.version+"\n");
 						}
 						if (element.compile_options!="") {
 							data_stream.put_string("compile_options: "+element.compile_options+"\n");
