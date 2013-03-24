@@ -37,6 +37,17 @@ namespace autovala {
 		}
 	}
 
+	public class source_element:GLib.Object {
+
+		public string source;
+		public bool automatic;
+
+		public source_element(string source, bool automatic) {
+			this.source=source;
+			this.automatic=automatic;
+		}
+	}
+
 	public class config_element:GLib.Object {
 
 		public string path;
@@ -47,6 +58,7 @@ namespace autovala {
 		public bool version_set;
 		public bool automatic;
 		public Gee.List<package_element ?> packages;
+		public Gee.List<source_element ?> sources;
 		public string gir_filename;
 
 		public config_element(string file, string path, Config_Type type,bool automatic) {
@@ -55,6 +67,7 @@ namespace autovala {
 			this.file=file;
 			this.path=path;
 			this.packages=new Gee.ArrayList<package_element ?>();
+			this.sources=new Gee.ArrayList<source_element ?>();
 			this.compile_options="";
 			this.version="1.0.0";
 			this.version_set=false;
@@ -96,6 +109,22 @@ namespace autovala {
 			/*foreach(var l in this.packages) {
 				l.automatic=false;
 			}*/
+		}
+
+		public void add_source(string source,bool automatic) {
+
+			// adding a non-automatic source to an automatic binary transforms this binary to non-automatic
+			if ((automatic==false)&&(this.automatic==true)) {
+				this.transform_to_non_automatic();
+			}
+
+			foreach(var s in this.sources) {
+				if (s.source==source) {
+					return;
+				}
+			}
+			var element=new source_element(source,automatic);
+			this.sources.add(element);
 		}
 
 		public void add_package(string pkg,bool to_check,bool automatic) {
@@ -343,6 +372,10 @@ namespace autovala {
 						error|=this.add_package(line.substring(20).strip(),true,automatic);
 						continue;
 					}
+					if (line.has_prefix("vala_source: ")) {
+						error|=this.add_source(line.substring(13).strip(),automatic);
+						continue;
+					}
 					if (line.has_prefix("version: ")) {
 						error|=this.set_version(line.substring(9).strip());
 						continue;
@@ -487,6 +520,20 @@ namespace autovala {
 			return false;
 		}
 
+		private bool add_source(string source,bool automatic) {
+
+			if (this.config_path=="") {
+				return true;
+			}
+
+			if (this.last_element==null) {
+				this.error_list+=_("Found vala_source after a non vala_binary, nor vala_library command (line %d)").printf(this.line_number);
+				return true;
+			}
+			this.last_element.add_source(source,automatic);
+			return false;
+		}
+
 		private bool add_package(string pkg,bool check,bool automatic) {
 
 			if (this.config_path=="") {
@@ -594,7 +641,7 @@ namespace autovala {
 				if (retval) {
 					if ((type==Config_Type.VALA_BINARY)||(type==Config_Type.VALA_LIBRARY)) {
 						if(overwriting) { // a binary or a library is overwriting other
-							this.error_list+=_("A binary or library is trying to overwrite another at line %d").printf(line_number);
+							this.error_list+=_("A binary or library is trying to overwrite another at line %d %s %s").printf(line_number,path,file);
 							this.last_element=null;
 							return true;
 						} else {
@@ -714,7 +761,13 @@ namespace autovala {
 							} else {
 								data_stream.put_string("vala_package: ");
 							}
-							data_stream.put_string(Path.build_filename(l.package)+"\n");
+							data_stream.put_string(l.package+"\n");
+						}
+						foreach(var s in element.sources) {
+							if (s.automatic) {
+								data_stream.put_string("*");
+							}
+							data_stream.put_string("vala_source: "+s.source+"\n");
 						}
 						break;
 					case Config_Type.BINARY:

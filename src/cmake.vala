@@ -64,6 +64,11 @@ namespace autovala {
 			var paths=new Gee.HashSet<string>();
 			foreach(var element in this.config.configuration_data) {
 				if ((paths.contains(element.path)==false)&&(ignore_list.contains(element.path)==false)) {
+					if ((element.type==Config_Type.VALA_BINARY)||(element.type==Config_Type.VALA_LIBRARY)) {
+						if (element.sources.size==0) { // don't add binary folders without source files
+							continue;
+						}
+					}
 					paths.add(element.path);
 				}
 			}
@@ -470,27 +475,6 @@ namespace autovala {
 		private bool create_vala_binary(string dir,DataOutputStream data_stream, config_element element, bool is_library,
 				bool added_vala_binaries, Gee.Set<string> ignore_list) {
 
-			string[] filelist={};
-			var directory_s=Path.build_filename(this.config.basepath,dir);
-			var directory = File.new_for_path (directory_s);
-			var enumerator = directory.enumerate_children (FileAttribute.STANDARD_NAME, 0);
-			FileInfo file_info;
-			while ((file_info = enumerator.next_file ()) != null) {
-				var fname=file_info.get_name();
-				if (fname.has_suffix(".vala")) {
-					var fullpath_s=Path.build_filename(dir,fname);
-					if (false==ignore_list.contains(fullpath_s)) {
-						filelist+=file_info.get_name();
-					}
-				}
-			}
-
-			// there are no .vala files, so don't add this one
-			if (filelist.length==0) {
-				this.error_list+=_("Warning: folder %s doesn't contain vala sources. Skipping").printf(dir);
-				return false;
-			}
-
 			var fname=File.new_for_path(Path.build_filename(this.config.basepath,dir,"Config.vala.cmake"));
 			if (fname.query_exists()==false) {
 				try {
@@ -545,10 +529,10 @@ namespace autovala {
 				data_stream.put_string("ensure_vala_version(\""+this.config.vala_version+"\" MINIMUM)\n");
 				data_stream.put_string("include(ValaPrecompile)\n\n");
 
-				data_stream.put_string("vala_precompile(VALA_C\n");
+				data_stream.put_string("vala_precompile(VALA_C "+element.file+"\n");
 
-				foreach (var filename in filelist) {
-					data_stream.put_string("\t"+filename+"\n");
+				foreach (var filename in element.sources) {
+					data_stream.put_string("\t"+filename.source+"\n");
 				}
 				data_stream.put_string("PACKAGES\n");
 				foreach(var module in element.packages) {
