@@ -82,6 +82,13 @@ namespace autovala {
 				}
 			}
 			this.packages=tmp_packages;
+			var tmp_sources=new Gee.ArrayList<source_element ?>();
+			foreach (var s in this.sources) {
+				if (s.automatic==false) {
+					tmp_sources.add(s);
+				}
+			}
+			this.sources=tmp_sources;
 		}
 
 		public void set_gir_filename(string gir_filename) {
@@ -561,7 +568,7 @@ namespace autovala {
 			}
 		}
 
-		public bool add_new_binary(string filename, Config_Type type, bool automatic, string[] ?packages=null, string[] ?check_packages=null, string version="", string compile_options="") {
+		public bool add_new_binary(string filename, Config_Type type, bool automatic, string[] ?sources=null, string[] ?packages=null, string[] ?check_packages=null, string version="", string compile_options="") {
 
 			if ((type!=Config_Type.VALA_BINARY)&&(type!=Config_Type.VALA_LIBRARY)) {
 				return true;
@@ -576,8 +583,20 @@ namespace autovala {
 				this.set_version(version);
 			}
 			bool p_automatic;
+			string source;
+			if (sources!=null) {
+				foreach(var s in sources) {
+					if (s[0]=='*') {
+						p_automatic=true;
+						source=s.substring(1);
+					} else{
+						p_automatic=false;
+						source=s;
+					}
+					this.add_source(source,p_automatic);
+				}
+			}
 			string package;
-
 			if (packages!=null) {
 				foreach(var l in packages) {
 					if (l[0]=='*') {

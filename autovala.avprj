@@ -10,10 +10,10 @@ vala_check_package: gio-2.0
 vala_check_package: gee-1.0
 vala_check_package: gtk+-3.0
 vala_package: posix
-vala_source: cmake.vala
 vala_source: autovala.vala
-vala_source: configuration.vala
-vala_source: generate.vala
+*vala_source: generate.vala
+*vala_source: cmake.vala
+*vala_source: configuration.vala
 *vala_binary: src/prueba/prueba
 vala_library: src/library/library
 version: 1.0.0

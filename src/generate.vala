@@ -193,6 +193,8 @@ namespace autovala {
 			this.process_folder(files_set,"data/interface",Config_Type.GLADE,extensions,true);
 			extensions={".desktop"};
 			this.process_folder(files_set,"data",Config_Type.DESKTOP,extensions,false);
+			extensions={".sh"};
+			this.process_folder(files_set,"data",Config_Type.BINARY,extensions,false);
 			extensions={".service",".service.base"};
 			this.process_folder(files_set,"data",Config_Type.DBUS_SERVICE,extensions,false);
 			extensions={".gschema.xml"};
@@ -275,8 +277,31 @@ namespace autovala {
 			if (file.query_exists()==false) {
 				return; // this folder doesn't exists
 			}
+
 			var mpath_s=Path.build_filename(path,file_s);
-			this.config.add_new_binary(mpath_s,Config_Type.VALA_BINARY, true);
+
+			string[] filelist={};
+			string[] filelist_path={};
+			var enumerator = file.enumerate_children(FileAttribute.STANDARD_NAME+","+FileAttribute.STANDARD_TYPE, 0);
+			FileInfo file_info;
+			while ((file_info = enumerator.next_file ()) != null) {
+				if (file_info.get_file_type()!=FileType.REGULAR) {
+					continue;
+				}
+				var fname=file_info.get_name();
+				if (fname.has_suffix(".vala")) {
+					var fullpath_s=Path.build_filename(path_s,fname);
+					if (false==files_set.contains(fullpath_s)) {
+						filelist+="*"+fname;
+						filelist_path+=fullpath_s;
+					}
+				}
+			}
+			if (file_s.has_prefix("lib")) {
+				this.config.add_new_binary(mpath_s,Config_Type.VALA_LIBRARY, true, filelist);
+			} else {
+				this.config.add_new_binary(mpath_s,Config_Type.VALA_BINARY, true, filelist);
+			}
 		}
 	}
 }
