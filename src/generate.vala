@@ -156,7 +156,7 @@ namespace autovala {
 			return false;
 		}
 
-		public bool autorefresh(string config_path="") {
+		public bool update(string config_path="") {
 
 			this.config=new autovala.configuration();
 			bool retval=this.config.read_configuration(config_path);

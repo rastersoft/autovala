@@ -27,7 +27,7 @@ void help() {
 	GLib.stdout.printf("\tautovala help: shows this help\n");
 	GLib.stdout.printf("\tautovala init project_name: initializates a new Vala CMake project and creates an initial project file\n");
 	GLib.stdout.printf("\tautovala cmake: creates the CMake files from the project file\n");
-	GLib.stdout.printf("\tautovala autorefresh: tries to guess the type for each file in the folders and adds them to the project file\n\n");
+	GLib.stdout.printf("\tautovala update: tries to guess the type for each file in the folders and adds them to the project file\n\n");
 
 }
 
@@ -72,13 +72,13 @@ int main(string[] argv) {
 		}
 		GLib.stdout.printf("Done\n");
 		break;
-	case "autorefresh":
+	case "update":
 		if (argv.length!=2) {
 			help();
 			return -1;
 		}
 		var gen = new autovala.manage_project();
-		retval=gen.autorefresh();
+		retval=gen.update();
 		gen.show_errors();
 		if (retval) {
 			GLib.stdout.printf("Aborting\n");
