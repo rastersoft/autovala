@@ -55,17 +55,19 @@ namespace autovala {
 		public string file;
 		public string compile_options;
 		public string version;
+		public string icon_path;
 		public bool version_set;
 		public bool automatic;
 		public Gee.List<package_element ?> packages;
 		public Gee.List<source_element ?> sources;
 		public string gir_filename;
 
-		public config_element(string file, string path, Config_Type type,bool automatic) {
+		public config_element(string file, string path, Config_Type type,bool automatic,string icon_path) {
 			this.automatic=automatic;
 			this.type=type;
 			this.file=file;
 			this.path=path;
+			this.icon_path=icon_path;
 			this.packages=new Gee.ArrayList<package_element ?>();
 			this.sources=new Gee.ArrayList<source_element ?>();
 			this.compile_options="";
@@ -633,10 +635,19 @@ namespace autovala {
 				this.error_list+=_("Trying to add an entry with the class unconfigured");
 				return true;
 			}
+			
 			var filename=l_filename;
 			if (type==Config_Type.PO) {
 				if (false==filename.has_suffix(Path.DIR_SEPARATOR_S)) {
 					filename+=Path.DIR_SEPARATOR_S;
+				}
+			}
+			string icon_path="";
+			if (type==Config_Type.ICON) {
+				var pos=l_filename.index_of(" ");
+				if (pos!=-1) { // there is a path for the icon; use it instead the default one
+					icon_path=l_filename.substring(0,pos);
+					filename=l_filename.substring(pos+1).strip();
 				}
 			}
 
@@ -673,7 +684,7 @@ namespace autovala {
 				}
 			}
 
-			var element=new config_element(file,path,type,automatic);
+			var element=new config_element(file,path,type,automatic,icon_path);
 			this.configuration_data.add(element);
 			if ((type==Config_Type.VALA_BINARY)||(type==Config_Type.VALA_LIBRARY)) {
 				this.last_element=element;
@@ -793,7 +804,7 @@ namespace autovala {
 						data_stream.put_string("binary: "+fullpathname+"\n");
 						break;
 					case Config_Type.ICON:
-						data_stream.put_string("icon: "+fullpathname+"\n");
+						data_stream.put_string("icon: "+element.icon_path+" "+fullpathname+"\n");
 						break;
 					case Config_Type.PIXMAP:
 						data_stream.put_string("pixmap: "+fullpathname+"\n");

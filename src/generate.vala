@@ -259,6 +259,13 @@ namespace autovala {
 				path_s=Path.build_filename(this.config.basepath,path,file_s);
 				mpath_s=Path.build_filename(path,file_s);
 			}
+			if (type==Config_Type.ICON) {
+				if (file_s.has_suffix("-symbolic.svg")) {
+					mpath_s="status "+mpath_s;
+				} else {
+					mpath_s="apps "+mpath_s;
+				}
+			}
 			if (files_set.contains(path_s)==true) {
 				return; // this file has been already processed (or it has a IGNORE flag)
 			}

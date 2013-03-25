@@ -187,7 +187,7 @@ namespace autovala {
 					}
 					break;
 				case Config_Type.ICON:
-					error=this.create_icon(dir, data_stream, element.file,added_icon_suffix);
+					error=this.create_icon(dir, data_stream, element.file, element.icon_path, added_icon_suffix);
 					added_icon_suffix=true;
 					break;
 				case Config_Type.PIXMAP:
@@ -330,18 +330,23 @@ namespace autovala {
 			return false;
 		}
 
-		private bool create_icon(string dir, DataOutputStream data_stream, string element_file,bool added_suffix) {
+		private bool create_icon(string dir, DataOutputStream data_stream, string element_file,string l_icon_path,bool added_suffix) {
 
 			var full_path=Path.build_filename(this.config.basepath,dir,element_file);
 			int size=0;
 
+			string icon_path=l_icon_path;
+
 			// For each PNG file, find the icon size to which it belongs
 			if (element_file.has_suffix(".png")) {
+				if (icon_path=="") {
+					icon_path="apps";
+				}
 				try {
 					var picture=new Gdk.Pixbuf.from_file(full_path);
 					int w=picture.width;
 					int h=picture.height;
-					int[] sizes = {16, 24, 32, 36, 48, 64, 72, 96, 128, 192, 256};
+					int[] sizes = {16, 22, 24, 32, 36, 48, 64, 72, 96, 128, 192, 256};
 					size=512;
 					foreach (var s in sizes) {
 						if ((w<=s) && (h<=s)) {
@@ -354,7 +359,7 @@ namespace autovala {
 					return true;
 				}
 				try {
-					data_stream.put_string("install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/%s DESTINATION share/icons/hicolor/%d/apps/)\n".printf(element_file,size));
+					data_stream.put_string("install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/%s DESTINATION share/icons/hicolor/%d/%s/)\n".printf(element_file,size,icon_path));
 				} catch (Error e) {
 					this.error_list+=_("Failed to write the CMakeLists file for icon %s\n").printf(full_path);
 					return true;
@@ -363,9 +368,15 @@ namespace autovala {
 				try {
 					// For SVG icons, if they are "symbolic", put them in STATUS, not in APPS
 					if (element_file.has_suffix("-symbolic.svg")) {
-						data_stream.put_string("install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/%s DESTINATION share/icons/hicolor/scalable/status/)\n".printf(element_file));
+						if (icon_path=="") {
+							icon_path="status";
+						}
+						data_stream.put_string("install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/%s DESTINATION share/icons/hicolor/scalable/%s/)\n".printf(element_file,icon_path));
 					} else {
-						data_stream.put_string("install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/%s DESTINATION share/icons/hicolor/scalable/apps/)\n".printf(element_file));
+						if (icon_path=="") {
+							icon_path="apps";
+						}
+						data_stream.put_string("install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/%s DESTINATION share/icons/hicolor/scalable/%s/)\n".printf(element_file,icon_path));
 					}
 				} catch (Error e) {
 					this.error_list+=_("Failed to write the CMakeLists file for icon %s\n").printf(full_path);
