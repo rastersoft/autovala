@@ -256,35 +256,35 @@ namespace autovala {
 			var directory = File.new_for_path(basepath);
 			try {
 				enumerator = directory.enumerate_children(FileAttribute.STANDARD_NAME+","+FileAttribute.STANDARD_TYPE,FileQueryInfoFlags.NOFOLLOW_SYMLINKS,null);
-			} catch (Error e) {
-				return "";
-			}
-			while ((info_file = enumerator.next_file(null)) != null) {
-				full_path="";
-				typeinfo=info_file.get_file_type();
-				if (typeinfo!=FileType.REGULAR) {
-					continue;
-				}
-				filename=info_file.get_name().split(".");
-				extension=filename[filename.length-1];
-				if (extension.casefold()!="avprj".casefold()) {
-					continue;
-				}
-				full_path=Path.build_filename(basepath,info_file.get_name());
-
-				// check it's a AutoVala Project file
-				var file=File.new_for_path(full_path);
-				try {
-					var dis = new DataInputStream (file.read ());
-					string line;
-					line = dis.read_line(null);
-					if (!line.has_prefix("### AutoVala Project ###")) {
+				while ((info_file = enumerator.next_file(null)) != null) {
+					full_path="";
+					typeinfo=info_file.get_file_type();
+					if (typeinfo!=FileType.REGULAR) {
 						continue;
 					}
-				} catch (Error e) {
-					continue;
+					filename=info_file.get_name().split(".");
+					extension=filename[filename.length-1];
+					if (extension.casefold()!="avprj".casefold()) {
+						continue;
+					}
+					full_path=Path.build_filename(basepath,info_file.get_name());
+
+					// check it's a AutoVala Project file
+					var file=File.new_for_path(full_path);
+					try {
+						var dis = new DataInputStream (file.read ());
+						string line;
+						line = dis.read_line(null);
+						if (!line.has_prefix("### AutoVala Project ###")) {
+							continue;
+						}
+					} catch (Error e) {
+						continue;
+					}
+					break;
 				}
-				break;
+			} catch (Error e) {
+				return "";
 			}
 			return (full_path);
 		}

@@ -22,10 +22,90 @@ using Posix;
 
 namespace autovala {
 
+	class namespaces_element:GLib.Object {
+	
+		public string namespace_s;
+		public string current_file;
+		public string filename;
+		public string[] filenames;
+		public int major;
+		public int minor;
+		
+		public namespaces_element(string namespace_s) {
+			this.namespace_s=namespace_s;
+			this.major=0;
+			this.minor=0;
+			this.current_file="";
+			this.filename="";
+			this.filenames={};
+		}
+	
+		public void add_file(string filename) {
+			int c_major;
+			int c_minor;
+			
+			c_major=0;
+			c_minor=0;
+
+			string file;			
+			if (filename.has_suffix(".vapi")) {
+				file=filename.substring(0,filename.length-5); // remove the .vapi extension
+			} else {
+				file=filename;
+			}
+			this.filenames+=file;
+			if (false==Regex.match_simple("-[0-9]+(.[0-9]+)?$",file)) { // no version number; use the shortest filename
+				if ((this.current_file=="")||(file.length<this.current_file.length)) {
+					this.current_file=file;
+					this.filename=file;
+					this.major=0;
+					this.minor=0;
+					return;
+				}
+			}
+			
+			// use the version number and the length
+			
+			var pos=file.last_index_of("-");
+			var version=file.substring(pos+1);
+			var newfile=file.substring(0,pos);
+			pos=version.index_of(".");
+			if (pos==-1) { // only one number
+				c_major=int.parse(version);
+				c_minor=0;
+			} else {
+				c_major=int.parse(version.substring(0,pos));
+				c_minor=int.parse(version.substring(pos+1));
+			}
+			if ((this.current_file=="")||(newfile.length<this.current_file.length)) { // always take the shortest filename
+				this.current_file=newfile;
+				this.filename=file;
+				this.major=c_major;
+				this.minor=c_minor;
+				return;
+			}
+			
+			if (this.current_file==newfile) { // for the same filename, take always the greatest version
+				if((c_major>this.major)||((c_major==this.major)&&(c_minor>this.minor))) {
+					this.major=c_major;
+					this.minor=c_minor;
+					this.filename=file;
+					return;
+				}
+			}
+		}
+	}
+
 	public class manage_project:GLib.Object {
 
 		private configuration config;
 		private string[] error_list;
+		private Gee.Map<string,namespaces_element> namespaces;
+
+		public manage_project() {
+			this.error_list={};
+			this.namespaces=new Gee.HashMap<string,namespaces_element>();
+		}
 
 		public void clear_errors() {
 			this.error_list={};
@@ -65,13 +145,18 @@ namespace autovala {
 				config_path=Posix.realpath(i_config_path);
 			}
 			var directory=File.new_for_path(config_path);
-			var enumerator = directory.enumerate_children(FileAttribute.STANDARD_NAME, 0);
-			FileInfo file_info;
-			while ((file_info = enumerator.next_file ()) != null) {
-				if (file_info.get_name().has_suffix(".avprj")) {
-					error_list+=_("There's already a project in folder %s").printf(config_path);
-					return true; // there's already a project here!!!!
+			try {
+				var enumerator = directory.enumerate_children(FileAttribute.STANDARD_NAME, 0);
+				FileInfo file_info;
+				while ((file_info = enumerator.next_file ()) != null) {
+					if (file_info.get_name().has_suffix(".avprj")) {
+						error_list+=_("There's already a project in folder %s").printf(config_path);
+						return true; // there's already a project here!!!!
+					}
 				}
+			} catch (Error e) {
+				error_list+=_("Failed to list path %s").printf(config_path);
+				return true;
 			}
 
 			try {
@@ -156,7 +241,127 @@ namespace autovala {
 			return false;
 		}
 
+		private bool get_vala_version(out int major, out int minor) {
+		
+			major=0;
+			minor=0;
+		
+			if (0!=Posix.system("valac --version > /var/tmp/current_vala_version")) {
+				return true;
+			}
+			var file=File.new_for_path("/var/tmp/current_vala_version");
+			try {
+				var dis = new DataInputStream(file.read());
+				string ?line;
+				while((line=dis.read_line(null))!=null) {
+					var version=line.split(" ");
+					foreach(var element in version) {
+						if (Regex.match_simple("^[0-9]+.[0-9]+(.[0-9]+)?$",element)) {
+							var numbers=element.split(".");
+							major=int.parse(numbers[0]);
+							minor=int.parse(numbers[1]);
+							return false;
+						}
+					}
+				}
+			} catch (Error e) {
+				return true;
+			}
+			return true;
+		}
+
+		private void check_vapi_file(string basepath, string file_s) {
+		
+			string file=file_s;
+			if (file.has_suffix(".vapi")==false) {
+				return;
+			}
+			file=file.substring(0,file_s.length-5); // remove the .vapi extension
+			
+			var file_f = File.new_for_path (basepath);
+			try {
+				var dis = new DataInputStream (file_f.read ());
+			    string line;
+				while ((line = dis.read_line (null)) != null) {
+					if (line.has_prefix("namespace ")) {
+						var namespace_s=line.split(" ")[1];
+						if (namespace_s=="GLib") { // GLib needs several tricks
+							if (file_s.has_prefix("glib-")) {
+							} else if (file_s.has_prefix("gio-unix-")) {
+								namespace_s="GIO-unix";
+							} else if (file_s.has_prefix("gio")) {
+								namespace_s="GIO-unix";
+							} else if (file_s.has_prefix("gmodule-")) {
+								namespace_s="GModule";
+							} else if (file_s.has_prefix("gobject-")) {
+								namespace_s="GObject";
+							} else {
+								this.error_list+=_("Unknown file %s uses namespace GLib. Contact the author.").printf(file_s);
+								namespace_s="";
+							}
+						}
+						if (namespace_s!="") {
+							namespaces_element element;
+							if (this.namespaces.has_key(namespace_s)) {
+								element=this.namespaces.get(namespace_s);
+							} else {
+								element=new namespaces_element(namespace_s);
+								this.namespaces.set(namespace_s,element);
+							}
+							element.add_file(file_s);
+						}
+						break;
+					}
+				}
+			} catch (Error e) {
+				return;
+			}
+		}
+
+		private void fill_namespaces(string basepath) {
+		
+			/*
+			 * This method fills the NAMESPACES hashmap with a list of each namespace and the files that provides it, and also the "best" one
+			 * (bigger version)
+			 */
+			var newpath=File.new_for_path(Path.build_filename(basepath,"vapi"));
+			if (newpath.query_exists()==false) {
+				return;
+			}
+			FileInfo file_info;
+			FileEnumerator enumerator;
+			try {
+				enumerator = newpath.enumerate_children (FileAttribute.STANDARD_NAME+","+FileAttribute.STANDARD_TYPE, 0);
+				while ((file_info = enumerator.next_file ()) != null) {
+					var fname=file_info.get_name();
+					var ftype=file_info.get_file_type();
+					if (ftype==FileType.DIRECTORY) {
+						continue;
+					}
+					if (fname.has_suffix(".vapi")==false) {
+						continue;
+					}
+					this.check_vapi_file(Path.build_filename(basepath,"vapi",fname),fname);
+				}
+			} catch (Error e) {
+				return;
+			}
+		}
+
 		public bool update(string config_path="") {
+
+			int major;
+			int minor;
+			
+			if (this.get_vala_version(out major, out minor)) {
+				this.error_list+="Can't determine the version of the Vala compiler.";
+				return true;
+			}
+
+			this.fill_namespaces("/usr/share/vala");
+			this.fill_namespaces("/usr/share/vala-%d.%d".printf(major,minor));
+			this.fill_namespaces("/usr/local/share/vala");
+			this.fill_namespaces("/usr/local/share/vala-%d.%d".printf(major,minor));
 
 			this.config=new autovala.configuration();
 			bool retval=this.config.read_configuration(config_path);
@@ -276,6 +481,9 @@ namespace autovala {
 		}
 
 		private void process_binary(Gee.Set<string> files_set, string path, string file_s) {
+		
+			Gee.Set<string> namespaces_list=new Gee.HashSet<string>();
+
 			var path_s=Path.build_filename(this.config.basepath,path);
 			if (files_set.contains(path_s)) {
 				return; // this folder has been already processed (or it has a IGNORE flag)
@@ -289,26 +497,63 @@ namespace autovala {
 
 			string[] filelist={};
 			string[] filelist_path={};
-			var enumerator = file.enumerate_children(FileAttribute.STANDARD_NAME+","+FileAttribute.STANDARD_TYPE, 0);
-			FileInfo file_info;
-			while ((file_info = enumerator.next_file ()) != null) {
-				if (file_info.get_file_type()!=FileType.REGULAR) {
-					continue;
-				}
-				var fname=file_info.get_name();
-				if (fname.has_suffix(".vala")) {
-					var fullpath_s=Path.build_filename(path_s,fname);
-					if (false==files_set.contains(fullpath_s)) {
-						filelist+="*"+fname;
-						filelist_path+=fullpath_s;
+			try {
+				var enumerator = file.enumerate_children(FileAttribute.STANDARD_NAME+","+FileAttribute.STANDARD_TYPE, 0);
+				FileInfo file_info;
+				while ((file_info = enumerator.next_file ()) != null) {
+					if (file_info.get_file_type()!=FileType.REGULAR) {
+						continue;
+					}
+					var fname=file_info.get_name();
+					if (fname.has_suffix(".vala")) {
+						var fullpath_s=Path.build_filename(path_s,fname);
+						if (false==files_set.contains(fullpath_s)) {
+							filelist+="*"+fname;
+							filelist_path+=fullpath_s;
+						}
+						var relative_path=Path.build_filename(path,fname);
+						if (this.get_namespaces(fullpath_s,relative_path,namespaces_list)) {
+							this.error_list+=_("Warning: couldn't get the namespace list for %s").printf(relative_path);
+						}
 					}
 				}
+			} catch (Error e) {
+				this.error_list+=_("Warning: couldn't process binary %s").printf(Path.build_filename(path,file_s));
+				return;
+			}
+			string[] packages={};
+			foreach (var element in namespaces_list) {
+				packages+="*"+this.namespaces.get(element).filename;
 			}
 			if (file_s.has_prefix("lib")) {
-				this.config.add_new_binary(mpath_s,Config_Type.VALA_LIBRARY, true, filelist);
+				this.config.add_new_binary(mpath_s,Config_Type.VALA_LIBRARY, true, filelist,packages);
 			} else {
-				this.config.add_new_binary(mpath_s,Config_Type.VALA_BINARY, true, filelist);
+				this.config.add_new_binary(mpath_s,Config_Type.VALA_BINARY, true, filelist,packages);
 			}
+		}
+		
+		private bool get_namespaces(string fullpath, string relative_path, Gee.Set<string> namespaces_list) {
+
+			var file_f = File.new_for_path (fullpath);
+			try {
+				var dis = new DataInputStream (file_f.read ());
+			    string line;
+				while ((line = dis.read_line (null)) != null) {
+					if (line.has_prefix("using ")) {
+						var namespace_found=line.substring(6,line.length-7).strip();
+						if (this.namespaces.has_key(namespace_found)==false) {
+							this.error_list+=_("Warning: can't find namespace %s in file %s").printf(namespace_found,relative_path);
+							continue;
+						}
+						if (false==namespaces_list.contains(namespace_found)) {
+							namespaces_list.add(namespace_found);
+						}
+					}
+				}
+			} catch (Error e) {
+				return true;
+			}
+			return false;
 		}
 	}
 }
