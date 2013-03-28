@@ -14,8 +14,8 @@ find_package(PkgConfig)
 
 set (VERSION "1.0.0")
 pkg_check_modules(DEPS REQUIRED
-	gio-2.0
 	gee-1.0
+	glib-2.0
 	gtk+-3.0
 )
 
@@ -28,15 +28,15 @@ ensure_vala_version("0.16" MINIMUM)
 include(ValaPrecompile)
 
 vala_precompile(VALA_C autovala
-	cmake.vala
 	autovala.vala
-	configuration.vala
 	generate.vala
+	cmake.vala
+	configuration.vala
 PACKAGES
-	gio-2.0
-	gee-1.0
-	gtk+-3.0
 	posix
+	gee-1.0
+	glib-2.0
+	gtk+-3.0
 OPTIONS
 	-X -O2
 )
