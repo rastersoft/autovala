@@ -521,9 +521,39 @@ namespace autovala {
 				this.error_list+=_("Warning: couldn't process binary %s").printf(Path.build_filename(path,file_s));
 				return;
 			}
+
+			/* Get the packages manually provided by the user, to avoid adding a newer version
+			 * (eg: the user put manually gtk+-2.0; without this, autovala would add automatically gtk+-3.0, with the logical conflict)
+			 */
+			Gee.Set<string> provided_packages=new Gee.HashSet<string>();
+			foreach (var element in this.config.configuration_data) {
+				if ((element.type!=Config_Type.VALA_BINARY)&&(element.type!=Config_Type.VALA_LIBRARY)) {
+					continue;
+				}
+				if ((element.path!=path)||(element.file!=file_s)) {
+					continue;
+				}
+				foreach (var element2 in element.packages) {
+					foreach (var key in this.namespaces.keys) {
+						foreach (var filenames in this.namespaces.get(key).filenames) {
+							if (element2.package==filenames) {
+								if (provided_packages.contains(key)==false) {
+									provided_packages.add(key);
+								}
+							}
+						}
+					}
+				}
+				break;
+			}
+			
 			string[] packages={};
 			foreach (var element in namespaces_list) {
-				packages+="*"+this.namespaces.get(element).filename;
+				if (provided_packages.contains(element)) {
+					continue;
+				}
+				var package=this.namespaces.get(element).filename;
+				packages+="*"+package;
 			}
 			if (file_s.has_prefix("lib")) {
 				this.config.add_new_binary(mpath_s,Config_Type.VALA_LIBRARY, true, filelist,packages);
