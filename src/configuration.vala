@@ -785,14 +785,14 @@ namespace AutoVala {
 
 		private bool store_data(Config_Type type,DataOutputStream data_stream) {
 
+			bool found=false;
+
 			try {
 				foreach(var element in this.configuration_data) {
 					if (element.type!=type) {
 						continue;
 					}
-					if ((element.type==Config_Type.VALA_BINARY)||(element.type==Config_Type.VALA_LIBRARY)) {
-						data_stream.put_string("\n"); // add a separator before each binary or library to simplify manual edition
-					}
+					found=true;
 					if (element.automatic) {
 						data_stream.put_string("*");
 					}
@@ -837,6 +837,8 @@ namespace AutoVala {
 							}
 							data_stream.put_string("vala_source: "+s.source+"\n");
 						}
+						data_stream.put_string("\n"); // add a separator after each new binary or library to simplify manual edition
+						found=false; // avoid to put more than one separator
 						break;
 					case Config_Type.BINARY:
 						data_stream.put_string("binary: "+fullpathname+"\n");
@@ -872,6 +874,9 @@ namespace AutoVala {
 						data_stream.put_string("include: "+fullpathname+"\n");
 						break;
 					}
+				}
+				if (found) {
+					data_stream.put_string("\n"); // add a separator after each new category to simplify manual edition
 				}
 			} catch (Error e) {
 				return true;

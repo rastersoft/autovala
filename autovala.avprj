@@ -10,10 +10,10 @@ vala_version: 0.16
 *vala_check_package: gee-1.0
 *vala_check_package: glib-2.0
 *vala_check_package: gtk+-3.0
-*vala_source: configuration.vala
+*vala_source: cmake.vala
 *vala_source: generate.vala
 *vala_source: autovala.vala
-*vala_source: cmake.vala
+*vala_source: configuration.vala
 
 *vala_binary: src/prueba/prueba
 *version: 1.0.0
@@ -28,3 +28,4 @@ version: 2.0.0
 *vala_source: cmake.vala
 *vala_source: configuration.vala
 *vala_source: generate.vala
+
