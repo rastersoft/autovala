@@ -1,0 +1,2 @@
+ * Check source code for GIO, GObject and GModule package dependencies
+ * Test packages for checking for existence with CMake
