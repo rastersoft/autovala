@@ -3,21 +3,24 @@ autovala_version: 1
 project_name: autovala
 vala_version: 0.16
 *po: po
-vala_binary: src/autovala
-version: 1.0.0
-compile_options: -X -O2
+
+*vala_binary: src/autovala
+*version: 1.0.0
 *vala_package: posix
 *vala_check_package: gee-1.0
 *vala_check_package: glib-2.0
 *vala_check_package: gtk+-3.0
-*vala_source: autovala.vala
-*vala_source: generate.vala
-*vala_source: cmake.vala
 *vala_source: configuration.vala
+*vala_source: generate.vala
+*vala_source: autovala.vala
+*vala_source: cmake.vala
+
 *vala_binary: src/prueba/prueba
+*version: 1.0.0
+
 vala_library: src/library/library
-version: 1.0.0
-compile_options: -X -O2
+version: 2.0.0
+*namespace: AutoVala
 *vala_package: posix
 *vala_check_package: gee-1.0
 *vala_check_package: glib-2.0

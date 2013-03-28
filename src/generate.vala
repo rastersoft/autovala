@@ -20,7 +20,7 @@ using GLib;
 using Gee;
 using Posix;
 
-namespace autovala {
+namespace AutoVala {
 
 	class namespaces_element:GLib.Object {
 	
@@ -107,6 +107,8 @@ namespace autovala {
 		private string[] error_list;
 		private Gee.Map<string,namespaces_element> ?namespaces;
 		private Gee.Set<string> ?pkgconfigs;
+		private string current_namespace;
+		private bool several_namespaces;
 
 		public manage_project() {
 			this.error_list={};
@@ -216,14 +218,6 @@ namespace autovala {
 			this.config=new configuration(project_name);
 			this.config.project_name=project_name;
 			this.config.set_config_filename(Path.build_filename(config_path,project_name+".avprj"));
-			if (this.config.add_new_entry("po/",Config_Type.PO,true)) {
-				this.add_errors(this.config.get_error_list());
-				return true;
-			}
-			if (this.config.add_new_binary("src/"+project_name,Config_Type.VALA_BINARY,true)) {
-				this.add_errors(this.config.get_error_list());
-				return true;
-			}
 			if (this.config.save_configuration()) {
 				this.add_errors(this.config.get_error_list());
 				return true;
@@ -233,13 +227,13 @@ namespace autovala {
 
 		public bool cmake(string config_path="") {
 
-			this.config=new autovala.configuration();
+			this.config=new AutoVala.configuration();
 			bool retval=this.config.read_configuration(config_path);
 			this.add_errors(this.config.get_error_list()); // there can be warnings
 			if (retval) {
 				return true;
 			}
-			var make=new autovala.cmake(this.config);
+			var make=new AutoVala.cmake(this.config);
 			retval=make.create_cmake();
 			this.add_errors(make.get_error_list()); // there can be warnings
 			if (retval) {
@@ -394,6 +388,7 @@ namespace autovala {
 			
 			this.namespaces=new Gee.HashMap<string,namespaces_element>();
 			this.pkgconfigs=new Gee.HashSet<string>();
+			this.current_namespace="";
 
 			if (this.get_vala_version(out major, out minor)) {
 				this.error_list+="Can't determine the version of the Vala compiler.";
@@ -411,7 +406,7 @@ namespace autovala {
 			this.fill_namespaces("/usr/local/share/vala");
 			this.fill_namespaces("/usr/local/share/vala-%d.%d".printf(major,minor));
 
-			this.config=new autovala.configuration();
+			this.config=new AutoVala.configuration();
 			bool retval=this.config.read_configuration(config_path);
 			this.add_errors(this.config.get_error_list()); // there can be warnings
 			this.config.clear_errors();
@@ -530,6 +525,8 @@ namespace autovala {
 
 		private void process_binary(Gee.Set<string> files_set, string path, string file_s) {
 		
+			this.current_namespace="";
+			this.several_namespaces=false;
 			Gee.Set<string> namespaces_list=new Gee.HashSet<string>();
 
 			var path_s=Path.build_filename(this.config.basepath,path);
@@ -609,7 +606,7 @@ namespace autovala {
 				}
 			}
 			if (file_s.has_prefix("lib")) {
-				this.config.add_new_binary(mpath_s,Config_Type.VALA_LIBRARY, true, filelist,packages,check_packages);
+				this.config.add_new_binary(mpath_s,Config_Type.VALA_LIBRARY, true, filelist,packages,check_packages,this.current_namespace,this.several_namespaces);
 			} else {
 				this.config.add_new_binary(mpath_s,Config_Type.VALA_BINARY, true, filelist,packages,check_packages);
 			}
@@ -622,7 +619,8 @@ namespace autovala {
 				var dis = new DataInputStream (file_f.read ());
 			    string line;
 				while ((line = dis.read_line (null)) != null) {
-					if (line.has_prefix("using ")) {
+					line=line.strip();
+					if (line.has_prefix("using ")) { // add the namespaces used by this source file
 						var namespace_found=line.substring(6,line.length-7).strip();
 						if (this.namespaces.has_key(namespace_found)==false) {
 							this.error_list+=_("Warning: can't find namespace %s in file %s").printf(namespace_found,relative_path);
@@ -631,6 +629,12 @@ namespace autovala {
 						if (false==namespaces_list.contains(namespace_found)) {
 							namespaces_list.add(namespace_found);
 						}
+					} else if (line.has_prefix("namespace ")) { // add the namespace in this source file
+						var namespace_found=line.substring(10,line.length-11).strip();
+						if ((this.current_namespace!="")&&(this.current_namespace!=namespace_found)) {
+							this.several_namespaces=true;
+						}
+						this.current_namespace=namespace_found;
 					}
 				}
 			} catch (Error e) {

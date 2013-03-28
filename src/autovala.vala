@@ -49,7 +49,7 @@ int main(string[] argv) {
 			help();
 			return -1;
 		}
-		var gen = new autovala.manage_project();
+		var gen = new AutoVala.manage_project();
 		retval=gen.init(argv[2]);
 		gen.show_errors();
 		if (retval) {
@@ -63,7 +63,7 @@ int main(string[] argv) {
 			help();
 			return -1;
 		}
-		var gen = new autovala.manage_project();
+		var gen = new AutoVala.manage_project();
 		retval=gen.cmake();
 		gen.show_errors();
 		if (retval) {
@@ -77,7 +77,7 @@ int main(string[] argv) {
 			help();
 			return -1;
 		}
-		var gen = new autovala.manage_project();
+		var gen = new AutoVala.manage_project();
 		retval=gen.update();
 		gen.show_errors();
 		if (retval) {

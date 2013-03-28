@@ -21,7 +21,7 @@ using Gee;
 using Posix;
 using Gtk;
 
-namespace autovala {
+namespace AutoVala {
 
 	public class cmake:GLib.Object {
 
@@ -486,6 +486,14 @@ namespace autovala {
 		private bool create_vala_binary(string dir,DataOutputStream data_stream, config_element element, bool is_library,
 				bool added_vala_binaries, Gee.Set<string> ignore_list) {
 
+			string gir_filename="";
+			string lib_filename=element.file;
+			if (element.current_namespace!="") {
+				// Build the GIR filename
+				gir_filename=element.current_namespace+"-"+element.version.split(".")[0]+".0.gir";
+				lib_filename=element.current_namespace;
+			}
+
 			var fname=File.new_for_path(Path.build_filename(this.config.basepath,dir,"Config.vala.cmake"));
 			if (fname.query_exists()==false) {
 				try {
@@ -540,7 +548,7 @@ namespace autovala {
 				data_stream.put_string("ensure_vala_version(\""+this.config.vala_version+"\" MINIMUM)\n");
 				data_stream.put_string("include(ValaPrecompile)\n\n");
 
-				data_stream.put_string("vala_precompile(VALA_C "+element.file+"\n");
+				data_stream.put_string("vala_precompile(VALA_C "+lib_filename+"\n");
 
 				foreach (var filename in element.sources) {
 					data_stream.put_string("\t"+filename.source+"\n");
@@ -553,9 +561,11 @@ namespace autovala {
 				var final_options=element.compile_options;
 				if (is_library) {
 					// If it is a library, generate the Gobject Introspection file
-					final_options="--library="+element.file;
-					if (element.gir_filename!="") {
-						final_options+=" --gir "+element.gir_filename;
+					final_options="--library="+lib_filename;
+					if (gir_filename!="") {
+						final_options+=" --gir "+gir_filename;
+					} else {
+						this.error_list+=_("Warning: no namespace specified in library %s; GIR file will not be generated").printf(element.file);;
 					}
 					final_options+=" "+element.compile_options;
 				}
@@ -568,17 +578,17 @@ namespace autovala {
 				if (is_library) {
 					// Generate both VAPI and headers
 					data_stream.put_string("GENERATE_VAPI\n");
-					data_stream.put_string("\t"+element.file+"\n");
+					data_stream.put_string("\t"+lib_filename+"\n");
 					data_stream.put_string("GENERATE_HEADER\n");
-					data_stream.put_string("\t"+element.file+"\n");
+					data_stream.put_string("\t"+lib_filename+"\n");
 				}
 
 				data_stream.put_string(")\n\n");
 				if (is_library) {
-					data_stream.put_string("add_library("+element.file+" SHARED ${VALA_C})\n\n");
+					data_stream.put_string("add_library("+lib_filename+" SHARED ${VALA_C})\n\n");
 
 					// Set library version number
-					data_stream.put_string("set_target_properties( "+element.file+" PROPERTIES\n");
+					data_stream.put_string("set_target_properties( "+lib_filename+" PROPERTIES\n");
 					data_stream.put_string("VERSION\n");
 					data_stream.put_string("\t"+element.version+"\n");
 					data_stream.put_string("SOVERSION\n");
@@ -586,29 +596,29 @@ namespace autovala {
 
 					// Install library
 					data_stream.put_string("install(TARGETS\n");
-					data_stream.put_string("\t"+element.file+"\n");
+					data_stream.put_string("\t"+lib_filename+"\n");
 					data_stream.put_string("LIBRARY DESTINATION\n");
 					data_stream.put_string("\tlib/\n");
 					data_stream.put_string(")\n");
 
 					// Install headers
 					data_stream.put_string("install(FILES\n");
-					data_stream.put_string("\t${CMAKE_CURRENT_BINARY_DIR}/"+element.file+".h\n");
+					data_stream.put_string("\t${CMAKE_CURRENT_BINARY_DIR}/"+lib_filename+".h\n");
 					data_stream.put_string("DESTINATION\n");
 					data_stream.put_string("\tinclude/"+this.config.project_name+"/\n");
 					data_stream.put_string(")\n");
 
 					// Install VAPI
 					data_stream.put_string("install(FILES\n");
-					data_stream.put_string("\t${CMAKE_CURRENT_BINARY_DIR}/"+element.file+".vapi\n");
+					data_stream.put_string("\t${CMAKE_CURRENT_BINARY_DIR}/"+lib_filename+".vapi\n");
 					data_stream.put_string("DESTINATION\n");
 					data_stream.put_string("\tshare/vala/vapi/\n");
 					data_stream.put_string(")\n");
 
 					// Install GIR
-					if (element.gir_filename!="") {
+					if (gir_filename!="") {
 						data_stream.put_string("install(FILES\n");
-						data_stream.put_string("\t${CMAKE_CURRENT_BINARY_DIR}/"+element.gir_filename+"\n");
+						data_stream.put_string("\t${CMAKE_CURRENT_BINARY_DIR}/"+gir_filename+"\n");
 						data_stream.put_string("DESTINATION\n");
 						data_stream.put_string("\tshare/gir-1.0/\n");
 						data_stream.put_string(")\n");
@@ -616,15 +626,15 @@ namespace autovala {
 				} else {
 
 					// Install executable
-					data_stream.put_string("add_executable("+element.file+" ${VALA_C})\n\n");
+					data_stream.put_string("add_executable("+lib_filename+" ${VALA_C})\n\n");
 					data_stream.put_string("install(TARGETS\n");
-					data_stream.put_string("\t"+element.file+"\n");
+					data_stream.put_string("\t"+lib_filename+"\n");
 					data_stream.put_string("RUNTIME DESTINATION\n");
 					data_stream.put_string("\tbin/\n");
 					data_stream.put_string(")\n\n");
 				}
 			} catch (Error e) {
-				this.error_list+=_("Failed to write the CMakeLists file for binary %s\n").printf(element.file);
+				this.error_list+=_("Failed to write the CMakeLists file for binary %s\n").printf(lib_filename);
 				return true;
 			}
 			return false;

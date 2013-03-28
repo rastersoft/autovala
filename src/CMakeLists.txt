@@ -28,17 +28,15 @@ ensure_vala_version("0.16" MINIMUM)
 include(ValaPrecompile)
 
 vala_precompile(VALA_C autovala
-	autovala.vala
-	generate.vala
-	cmake.vala
 	configuration.vala
+	generate.vala
+	autovala.vala
+	cmake.vala
 PACKAGES
 	posix
 	gee-1.0
 	glib-2.0
 	gtk+-3.0
-OPTIONS
-	-X -O2
 )
 
 add_executable(autovala ${VALA_C})

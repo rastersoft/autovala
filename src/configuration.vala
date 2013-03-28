@@ -20,7 +20,7 @@ using GLib;
 using Gee;
 using Posix;
 
-namespace autovala {
+namespace AutoVala {
 
 	public enum Config_Type {VALA_BINARY, VALA_LIBRARY, BINARY, ICON, PIXMAP, PO, GLADE, DBUS_SERVICE, DESKTOP, AUTOSTART, EOS_PLUG, SCHEME, INCLUDE, IGNORE}
 
@@ -54,13 +54,15 @@ namespace autovala {
 		public Config_Type type;
 		public string file;
 		public string compile_options;
-		public string version;
 		public string icon_path;
+		public string version;
 		public bool version_set;
+		public bool version_manually_set;
 		public bool automatic;
 		public Gee.List<package_element ?> packages;
 		public Gee.List<source_element ?> sources;
-		public string gir_filename;
+		public string current_namespace;
+		public bool namespace_manually_set;
 
 		public config_element(string file, string path, Config_Type type,bool automatic,string icon_path) {
 			this.automatic=automatic;
@@ -73,7 +75,9 @@ namespace autovala {
 			this.compile_options="";
 			this.version="1.0.0";
 			this.version_set=false;
-			this.gir_filename="";
+			this.version_manually_set=false;
+			this.current_namespace="";
+			this.namespace_manually_set=false;
 		}
 
 		public void clear_automatic() {
@@ -91,20 +95,30 @@ namespace autovala {
 				}
 			}
 			this.sources=tmp_sources;
-		}
-
-		public void set_gir_filename(string gir_filename) {
-			this.gir_filename=gir_filename;
-			if (this.gir_filename.has_suffix(".gir")==false) {
-				this.gir_filename+=".gir";
+			if (this.namespace_manually_set==false) {
+				this.current_namespace="";
 			}
-			this.transform_to_non_automatic();
+			if (this.version_manually_set==false) {
+				this.version="1.0.0";
+				this.version_set=false;
+			}
 		}
 
-		public void set_version(string version) {
+		public void set_namespace(string current_namespace,bool automatic) {
+			this.current_namespace=current_namespace;
+			if (automatic==false) {
+				this.namespace_manually_set=true;
+				this.transform_to_non_automatic();
+			}
+		}
+
+		public void set_version(string version,bool automatic) {
 			this.version=version;
 			this.version_set=true;
-			this.transform_to_non_automatic();
+			if (automatic==false) {
+				this.version_manually_set=true;
+				this.transform_to_non_automatic();
+			}
 		}
 
 		public void set_compile_options(string options) {
@@ -386,11 +400,11 @@ namespace autovala {
 						continue;
 					}
 					if (line.has_prefix("version: ")) {
-						error|=this.set_version(line.substring(9).strip());
+						error|=this.set_version(line.substring(9).strip(),automatic);
 						continue;
 					}
-					if (line.has_prefix("gir_filename: ")) {
-						error|=this.set_gir_filename(line.substring(14).strip());
+					if (line.has_prefix("namespace: ")) {
+						error|=this.set_namespace(line.substring(11).strip(),automatic);
 						continue;
 					}
 					if (line.has_prefix("binary: ")) {
@@ -474,29 +488,14 @@ namespace autovala {
 			return error;
 		}
 
-		private bool set_gir_filename(string gir_filename) {
-
-			if ((this.last_element==null)||(this.last_element.type!=Config_Type.VALA_LIBRARY)) {
-				this.error_list+=_("Found gir_filename after a non vala_library command (line %d)").printf(this.line_number);
-				return true;
-			}
-
-			if (this.last_element.gir_filename!="") {
-				this.error_list+=_("Warning: overwriting GIR filename (line %d)").printf(this.line_number);
-			}
-
-			this.last_element.set_gir_filename(gir_filename);
-			return false;
-		}
-
-		private bool set_version(string version) {
+		private bool set_version(string version,bool automatic) {
 
 			if (this.last_element==null) {
 				this.error_list+=_("Found file_version after a non vala_binary, nor vala_library command (line %d)").printf(this.line_number);
 				return true;
 			}
 
-			if (this.last_element.version_set) {
+			if ((this.last_element.version_set==true)&&(this.last_element.version_manually_set==true)&&(automatic==false)) {
 				this.error_list+=_("Warning: overwriting version number (line %d)").printf(this.line_number);
 			}
 
@@ -507,7 +506,9 @@ namespace autovala {
 					return true;
 				}
 			}
-			this.last_element.set_version(version);
+			if ((this.last_element.version_set==false)||((this.last_element.version_manually_set==false)&&(automatic==false))) { // Don't overwrite a preexisting version if the new one is automatic
+				this.last_element.set_version(version,automatic);
+			}
 			return false;
 		}
 
@@ -526,6 +527,22 @@ namespace autovala {
 				this.error_list+=_("Warning: overwriting compile options (line %d)").printf(this.line_number);
 			}
 			this.last_element.set_compile_options(options);
+			return false;
+		}
+
+		private bool set_namespace(string current_namespace,bool automatic) {
+
+			if ((this.last_element==null)||(this.last_element.type!=Config_Type.VALA_LIBRARY)) {
+				this.error_list+=_("Found namespace after a non vala_library command (line %d)").printf(this.line_number);
+				return true;
+			}
+
+			if ((this.last_element.current_namespace!="")&&(automatic==false)) {
+				this.error_list+=_("Warning: overwriting namespace (line %d)").printf(this.line_number);
+			}
+			if ((this.last_element.current_namespace=="")||(automatic==false)) { // Don't overwrite a preexisting namespace if the new one is automatic
+				this.last_element.set_namespace(current_namespace,automatic);
+			}
 			return false;
 		}
 
@@ -570,7 +587,7 @@ namespace autovala {
 			}
 		}
 
-		public bool add_new_binary(string filename, Config_Type type, bool automatic, string[] ?sources=null, string[] ?packages=null, string[] ?check_packages=null, string version="", string compile_options="") {
+		public bool add_new_binary(string filename, Config_Type type, bool automatic, string[] ?sources=null, string[] ?packages=null, string[] ?check_packages=null, string current_namespace="", bool several_namespaces=false, string version="", string compile_options="") {
 
 			if ((type!=Config_Type.VALA_BINARY)&&(type!=Config_Type.VALA_LIBRARY)) {
 				return true;
@@ -582,7 +599,7 @@ namespace autovala {
 
 			this.add_entry(filename,type,automatic);
 			if (version!="") {
-				this.set_version(version);
+				this.set_version(version,false);
 			}
 			bool p_automatic;
 			string source;
@@ -625,6 +642,15 @@ namespace autovala {
 			}
 			if (compile_options!="") {
 				this.add_compiling_options(compile_options);
+			}
+			if (type==Config_Type.VALA_LIBRARY) {
+				if (current_namespace=="") {
+					this.error_list+=_("Warning: library %s uses no namespace. Will not generate .GIR file").printf(filename);
+				} else if (several_namespaces) {
+					this.error_list+=_("Warning: library %s contains several namespaces. Will not generate .GIR file").printf(filename);
+				} else {
+					this.set_namespace(current_namespace,true);
+				}
 			}
 			return false;
 		}
@@ -764,6 +790,9 @@ namespace autovala {
 					if (element.type!=type) {
 						continue;
 					}
+					if ((element.type==Config_Type.VALA_BINARY)||(element.type==Config_Type.VALA_LIBRARY)) {
+						data_stream.put_string("\n"); // add a separator before each binary or library to simplify manual edition
+					}
 					if (element.automatic) {
 						data_stream.put_string("*");
 					}
@@ -776,11 +805,20 @@ namespace autovala {
 						} else {
 							data_stream.put_string("vala_library: "+fullpathname+"\n");
 						}
-						if (element.version_set) {
+						if (element.version!="") {
+							if (element.version_manually_set==false) {
+								data_stream.put_string("*");
+							}
 							data_stream.put_string("version: "+element.version+"\n");
 						}
 						if (element.compile_options!="") {
 							data_stream.put_string("compile_options: "+element.compile_options+"\n");
+						}
+						if (element.current_namespace!="") {
+							if (element.namespace_manually_set==false) {
+								data_stream.put_string("*");
+							}
+							data_stream.put_string("namespace: "+element.current_namespace+"\n");
 						}
 						foreach(var l in element.packages) {
 							if (l.automatic) {
