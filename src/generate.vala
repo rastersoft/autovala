@@ -381,7 +381,7 @@ namespace AutoVala {
 			}
 		}
 
-		public bool update(string config_path="") {
+		public bool refresh(string config_path="") {
 
 			int major;
 			int minor;

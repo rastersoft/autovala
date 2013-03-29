@@ -20,15 +20,17 @@ using GLib;
 using Gee;
 using Posix;
 
+const string project_version="0.1.0";
 
 void help() {
 
-	GLib.stdout.printf("Autovala. Usage:\n");
-	GLib.stdout.printf("\tautovala help: shows this help\n");
-	GLib.stdout.printf("\tautovala init project_name: initializates a new Vala CMake project and creates an initial project file\n");
-	GLib.stdout.printf("\tautovala cmake: creates the CMake files from the project file\n");
-	GLib.stdout.printf("\tautovala update: tries to guess the type for each file in the folders and adds them to the project file\n\n");
-
+	GLib.stdout.printf(_("Autovala. Usage:\n"));
+	GLib.stdout.printf(_("\tautovala help: shows this help\n"));
+	GLib.stdout.printf(_("\tautovala version: shows the current version\n"));
+	GLib.stdout.printf(_("\tautovala init project_name: initializates a new Vala CMake project and creates an initial project file\n"));
+	GLib.stdout.printf(_("\tautovala refresh: tries to guess the type for each file in the folders and adds them to the project file\n"));
+	GLib.stdout.printf(_("\tautovala cmake: creates the CMake files from the project file\n"));
+	GLib.stdout.printf(_("\tautovala update: the same than 'refresh'+'cmake'\n\n"));
 }
 
 
@@ -44,6 +46,9 @@ int main(string[] argv) {
 	case "help":
 		help();
 		break;
+	case "version":
+		GLib.stdout.printf(_("Autovala version: %s\n").printf(project_version));
+		break;
 	case "init":
 		if (argv.length!=3) {
 			help();
@@ -53,10 +58,10 @@ int main(string[] argv) {
 		retval=gen.init(argv[2]);
 		gen.show_errors();
 		if (retval) {
-			GLib.stdout.printf("Aborting\n");
+			GLib.stdout.printf(_("Aborting\n"));
 			return -1;
 		}
-		GLib.stdout.printf("Done\n");
+		GLib.stdout.printf(_("Done\n"));
 		break;
 	case "cmake":
 		if (argv.length!=2) {
@@ -67,10 +72,10 @@ int main(string[] argv) {
 		retval=gen.cmake();
 		gen.show_errors();
 		if (retval) {
-			GLib.stdout.printf("Aborting\n");
+			GLib.stdout.printf(_("Aborting\n"));
 			return -1;
 		}
-		GLib.stdout.printf("Done\n");
+		GLib.stdout.printf(_("Done\n"));
 		break;
 	case "update":
 		if (argv.length!=2) {
@@ -78,13 +83,36 @@ int main(string[] argv) {
 			return -1;
 		}
 		var gen = new AutoVala.manage_project();
-		retval=gen.update();
+		GLib.stdout.printf(_("Updating project file\n"));
+		retval=gen.refresh();
 		gen.show_errors();
 		if (retval) {
-			GLib.stdout.printf("Aborting\n");
+			GLib.stdout.printf(_("Aborting\n"));
+			return -1;
+		} else {
+			GLib.stdout.printf(_("Updating CMake files\n"));
+			retval=gen.cmake();
+			gen.show_errors();
+			if (retval) {
+				GLib.stdout.printf(_("Aborting\n"));
+				return -1;
+			}
+		}
+		GLib.stdout.printf(_("Done\n"));
+		break;
+	case "refresh":
+		if (argv.length!=2) {
+			help();
 			return -1;
 		}
-		GLib.stdout.printf("Done\n");
+		var gen = new AutoVala.manage_project();
+		retval=gen.refresh();
+		gen.show_errors();
+		if (retval) {
+			GLib.stdout.printf(_("Aborting\n"));
+			return -1;
+		}
+		GLib.stdout.printf(_("Done\n"));
 		break;
 	default:
 		help();
