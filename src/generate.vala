@@ -547,6 +547,8 @@ namespace AutoVala {
 
 			string[] filelist={};
 			string[] filelist_path={};
+			string version;
+			string current_version="";
 			try {
 				var enumerator = file.enumerate_children(FileAttribute.STANDARD_NAME+","+FileAttribute.STANDARD_TYPE, 0);
 				FileInfo file_info;
@@ -562,8 +564,14 @@ namespace AutoVala {
 							filelist_path+=fullpath_s;
 						}
 						var relative_path=Path.build_filename(path,fname);
-						if (this.get_namespaces(fullpath_s,relative_path,namespaces_list)) {
+						if (this.get_namespaces(fullpath_s,relative_path,namespaces_list,out version)) {
 							this.error_list+=_("Warning: couldn't get the namespace list for %s").printf(relative_path);
+						}
+						if (version!="") {
+							if ((current_version!="")&&(current_version!=version)) {
+								this.error_list+=_("Warning: overwriting the version number for %s").printf(relative_path);
+							}
+							current_version=version;
 						}
 					}
 				}
@@ -571,6 +579,7 @@ namespace AutoVala {
 				this.error_list+=_("Warning: couldn't process binary %s").printf(Path.build_filename(path,file_s));
 				return;
 			}
+			current_version="*"+current_version;
 
 			/* Get the packages manually provided by the user, to avoid adding a newer version
 			 * (eg: the user put manually gtk+-2.0; without this, autovala would add automatically gtk+-3.0, with the logical conflict)
@@ -611,21 +620,26 @@ namespace AutoVala {
 				}
 			}
 			if (file_s.has_prefix("lib")) {
-				this.config.add_new_binary(mpath_s,Config_Type.VALA_LIBRARY, true, filelist,packages,check_packages,this.current_namespace,this.several_namespaces);
+				this.config.add_new_binary(mpath_s,Config_Type.VALA_LIBRARY, true, filelist,packages,check_packages,current_version,this.current_namespace,this.several_namespaces);
 			} else {
-				this.config.add_new_binary(mpath_s,Config_Type.VALA_BINARY, true, filelist,packages,check_packages);
+				this.config.add_new_binary(mpath_s,Config_Type.VALA_BINARY, true, filelist,packages,check_packages,current_version);
 			}
 		}
 		
-		private bool get_namespaces(string fullpath, string relative_path, Gee.Set<string> namespaces_list) {
+		private bool get_namespaces(string fullpath, string relative_path, Gee.Set<string> namespaces_list,out string version) {
 
+			version="";
 			var file_f = File.new_for_path (fullpath);
 			try {
 				var dis = new DataInputStream (file_f.read ());
 			    string line;
 				while ((line = dis.read_line (null)) != null) {
-					line=line.strip();
-					if (line.has_prefix("using ")) { // add the namespaces used by this source file
+					if (line.has_prefix("const string project_version=\"")) { // add the version
+						var pos=line.index_of("\"",30);
+						if (pos!=-1) {
+							version=line.substring(30,pos-30);
+						}
+					} else if (line.has_prefix("using ")) { // add the packages used by this source file
 						var pos=line.index_of(";");
 						if (pos==-1) {
 							continue;

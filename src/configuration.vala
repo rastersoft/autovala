@@ -502,7 +502,7 @@ namespace AutoVala {
 			if (this.last_element.type==Config_Type.VALA_LIBRARY) {
 				// Only accept version string in the format N, N.N or N.N.N (with N a number of one or more digits)
 				if (false==this.check_version(version)) {
-					this.error_list+=_("Version string not valid for a library. It must be in the form N.N or N.N.N (line %d)").printf(this.line_number);
+					this.error_list+=_("Version string %s not valid for a library. It must be in the form N.N or N.N.N (line %d)").printf(version,this.line_number);
 					return true;
 				}
 			}
@@ -587,19 +587,27 @@ namespace AutoVala {
 			}
 		}
 
-		public bool add_new_binary(string filename, Config_Type type, bool automatic, string[] ?sources=null, string[] ?packages=null, string[] ?check_packages=null, string current_namespace="", bool several_namespaces=false, string version="", string compile_options="") {
+		public bool add_new_binary(string filename, Config_Type type, bool automatic, string[] ?sources=null, string[] ?packages=null, string[] ?check_packages=null, string version="", string current_namespace="", bool several_namespaces=false, string compile_options="") {
 
 			if ((type!=Config_Type.VALA_BINARY)&&(type!=Config_Type.VALA_LIBRARY)) {
 				return true;
 			}
 
-			if ((version!="") && (false==this.check_version(version))) {
+			bool version_automatic=false;
+			string newversion;
+			if (version[0]=='*') {
+				newversion=version.substring(1);
+				version_automatic=true;
+			} else {
+				newversion=version;
+			}
+			if ((newversion!="") && (false==this.check_version(newversion))) {
 				return true;
 			}
 
 			this.add_entry(filename,type,automatic);
-			if (version!="") {
-				this.set_version(version,false);
+			if (newversion!="") {
+				this.set_version(newversion,version_automatic);
 			}
 			bool p_automatic;
 			string source;
