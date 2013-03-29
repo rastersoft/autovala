@@ -621,7 +621,11 @@ namespace AutoVala {
 				while ((line = dis.read_line (null)) != null) {
 					line=line.strip();
 					if (line.has_prefix("using ")) { // add the namespaces used by this source file
-						var namespace_found=line.substring(6,line.length-7).strip();
+						var pos=line.index_of(";");
+						if (pos==-1) {
+							continue;
+						}
+						var namespace_found=line.substring(6,pos-6).strip();
 						if (this.namespaces.has_key(namespace_found)==false) {
 							this.error_list+=_("Warning: can't find namespace %s in file %s").printf(namespace_found,relative_path);
 							continue;
@@ -630,7 +634,11 @@ namespace AutoVala {
 							namespaces_list.add(namespace_found);
 						}
 					} else if (line.has_prefix("namespace ")) { // add the namespace in this source file
-						var namespace_found=line.substring(10,line.length-11).strip();
+						var pos=line.index_of("{");
+						if (pos==-1) {
+							continue;
+						}
+						var namespace_found=line.substring(10,pos-10).strip();
 						if ((this.current_namespace!="")&&(this.current_namespace!=namespace_found)) {
 							this.several_namespaces=true;
 						}
