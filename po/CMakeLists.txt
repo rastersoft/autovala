@@ -3,4 +3,4 @@
 
 include (Translations)
 add_translations_directory("autovala")
-add_translations_catalog("autovala" ../src ../src/prueba )
+add_translations_catalog("autovala" ../src )
