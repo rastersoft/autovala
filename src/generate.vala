@@ -220,7 +220,11 @@ namespace AutoVala {
 			this.config.project_name=project_name;
 			int major;
 			int minor;
-			this.get_vala_version(out major, out minor);
+			if (this.get_vala_version(out major, out minor)) {
+				this.error_list+=_("Can't get the version of the installed Vala binary. Asuming version 0.16");
+				major=0;
+				minor=16;
+			}
 			this.config.vala_version="%d.%d".printf(major,minor);
 			this.config.set_config_filename(Path.build_filename(config_path,project_name+".avprj"));
 			if (this.config.save_configuration()) {
