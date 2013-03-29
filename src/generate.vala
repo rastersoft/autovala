@@ -448,6 +448,7 @@ namespace AutoVala {
 			this.try_to_add(files_set,Config_Type.PO,"po/");
 			string[] extensions={".png",".svg"};
 			this.process_folder(files_set,"data/icons",Config_Type.ICON,extensions,true);
+			extensions={".png",".svg",".jpg"};
 			this.process_folder(files_set,"data/pixmaps",Config_Type.PIXMAP,extensions,true);
 			extensions={".ui"};
 			this.process_folder(files_set,"data/interface",Config_Type.GLADE,extensions,true);
