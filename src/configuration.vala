@@ -22,7 +22,7 @@ using Posix;
 
 namespace AutoVala {
 
-	public enum Config_Type {VALA_BINARY, VALA_LIBRARY, BINARY, ICON, PIXMAP, PO, GLADE, DBUS_SERVICE, DESKTOP, AUTOSTART, EOS_PLUG, SCHEME, INCLUDE, IGNORE}
+	public enum Config_Type {VALA_BINARY, VALA_LIBRARY, BINARY, ICON, PIXMAP, PO, GLADE, DBUS_SERVICE, DESKTOP, AUTOSTART, EOS_PLUG, SCHEME, DATA, INCLUDE, IGNORE}
 
 	public class package_element:GLib.Object {
 
@@ -448,6 +448,10 @@ namespace AutoVala {
 						error|=this.add_entry(line.substring(7).strip(),Config_Type.GLADE,automatic);
 						continue;
 					}
+					if (line.has_prefix("data: ")) {
+						error|=this.add_entry(line.substring(6).strip(),Config_Type.DATA,automatic);
+						continue;
+					}
 					if (line.has_prefix("include: ")) {
 						error|=this.add_entry(line.substring(9).strip(),Config_Type.INCLUDE,automatic);
 						continue;
@@ -671,7 +675,7 @@ namespace AutoVala {
 			}
 			
 			var filename=l_filename;
-			if (type==Config_Type.PO) {
+			if ((type==Config_Type.PO)||(type==Config_Type.DATA)) {
 				if (false==filename.has_suffix(Path.DIR_SEPARATOR_S)) {
 					filename+=Path.DIR_SEPARATOR_S;
 				}
@@ -772,6 +776,7 @@ namespace AutoVala {
 				data_stream.put_string("project_name: "+this.project_name+"\n");
 				data_stream.put_string("vala_version: "+this.vala_version+"\n");
 				this.store_data(Config_Type.PO,data_stream);
+				this.store_data(Config_Type.DATA,data_stream);
 				this.store_data(Config_Type.AUTOSTART,data_stream);
 				this.store_data(Config_Type.VALA_BINARY,data_stream);
 				this.store_data(Config_Type.VALA_LIBRARY,data_stream);
@@ -862,6 +867,9 @@ namespace AutoVala {
 						break;
 					case Config_Type.GLADE:
 						data_stream.put_string("glade: "+fullpathname+"\n");
+						break;
+					case Config_Type.DATA:
+						data_stream.put_string("data: "+element.path+"\n");
 						break;
 					case Config_Type.DBUS_SERVICE:
 						data_stream.put_string("dbus_service: "+fullpathname+"\n");

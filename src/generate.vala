@@ -139,6 +139,16 @@ namespace AutoVala {
 			}
 		}
 
+		private void cant_create(string folder) {
+
+			error_list+=_("Warning: Unable to create the %s directory").printf(folder);
+		}
+
+		private void folder_exists(string folder) {
+
+			error_list+=_("Warning: the %s directory already exists").printf(folder);
+		}
+
 		/**
 		 * Creates a new project from scratch in the specified folder.
 		 * If config_path is an empty string, will use the current folder.
@@ -171,47 +181,84 @@ namespace AutoVala {
 
 			try {
 				var folder=File.new_for_path(Path.build_filename(config_path,"src"));
-				folder.make_directory_with_parents();
+				if (folder.query_exists()) {
+					this.folder_exists("SRC");
+				} else {
+					folder.make_directory_with_parents();
+				}
 			} catch (Error e) {
-				error_list+=_("Warning: Unable to create the SRC directory");
+				this.cant_create("SRC");
 			}
 			try {
 				var folder=File.new_for_path(Path.build_filename(config_path,"po"));
-				folder.make_directory_with_parents();
+				if (folder.query_exists()) {
+					this.folder_exists("PO");
+				} else {
+					folder.make_directory_with_parents();
+				}
 			} catch (Error e) {
-				error_list+=_("Warning: Unable to create the PO directory");
+				this.cant_create("PO");
 			}
 			try {
 				var folder=File.new_for_path(Path.build_filename(config_path,"doc"));
-				folder.make_directory_with_parents();
+				if (folder.query_exists()) {
+					this.folder_exists("DOC");
+				} else {
+					folder.make_directory_with_parents();
+				}
 			} catch (Error e) {
-				error_list+=_("Warning: Unable to create the DOC directory");
+				this.cant_create("DOC");
 			}
 			try {
 				var folder=File.new_for_path(Path.build_filename(config_path,"data"));
-				folder.make_directory_with_parents();
+				if (folder.query_exists()) {
+					this.folder_exists("DATA");
+				} else {
+					folder.make_directory_with_parents();
+				}
 			} catch (Error e) {
-				error_list+=_("Warning: Unable to create the DATA directory");
+				this.cant_create("DATA");
 			}
 			try {
 				var folder=File.new_for_path(Path.build_filename(config_path,"data","icons"));
-				folder.make_directory_with_parents();
+				if (folder.query_exists()) {
+					this.folder_exists("DATA/ICONS");
+				} else {
+					folder.make_directory_with_parents();
+				}
 			} catch (Error e) {
-				error_list+=_("Warning: Unable to create the data/icons directory");
+				this.cant_create("DATA/ICONS");
 			}
 			try {
 				var folder=File.new_for_path(Path.build_filename(config_path,"data","pixmaps"));
-				folder.make_directory_with_parents();
+				if (folder.query_exists()) {
+					this.folder_exists("DATA/PIXMAPS");
+				} else {
+					folder.make_directory_with_parents();
+				}
 			} catch (Error e) {
-				error_list+=_("Warning: Unable to create the data/pixmaps directory");
+				this.cant_create("DATA/PIXMAPS");
 			}
 			try {
 				var folder=File.new_for_path(Path.build_filename(config_path,"data","interface"));
-				folder.make_directory_with_parents();
+				if (folder.query_exists()) {
+					this.folder_exists("DATA/INTERFACE");
+				} else {
+					folder.make_directory_with_parents();
+				}
 			} catch (Error e) {
-				error_list+=_("Warning: Unable to create the data/interface directory");
+				this.cant_create("DATA/INTERFACE");
 			}
-
+			try {
+				var folder=File.new_for_path(Path.build_filename(config_path,"data","local"));
+				if (folder.query_exists()) {
+					this.folder_exists("DATA/LOCAL");
+				} else {
+					folder.make_directory_with_parents();
+				}
+			} catch (Error e) {
+				this.cant_create("DATA/LOCAL");
+			}
 			if (error) {
 				return true;
 			}
@@ -446,6 +493,7 @@ namespace AutoVala {
 			}
 
 			this.try_to_add(files_set,Config_Type.PO,"po/");
+			this.try_to_add(files_set,Config_Type.DATA,"data/local");
 			string[] extensions={".png",".svg"};
 			this.process_folder(files_set,"data/icons",Config_Type.ICON,extensions,true);
 			extensions={".png",".svg",".jpg"};
