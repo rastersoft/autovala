@@ -124,6 +124,7 @@ namespace AutoVala {
 			foreach(var e in this.error_list) {
 				GLib.stdout.printf("%s\n".printf(e));
 			}
+			this.error_list={};
 		}
 
 		public string[] get_error_list() {
@@ -220,6 +221,7 @@ namespace AutoVala {
 			this.config.set_config_filename(Path.build_filename(config_path,project_name+".avprj"));
 			if (this.config.save_configuration()) {
 				this.add_errors(this.config.get_error_list());
+				this.config.clear_errors();
 				return true;
 			}
 			return error;
@@ -230,12 +232,14 @@ namespace AutoVala {
 			this.config=new AutoVala.configuration();
 			bool retval=this.config.read_configuration(config_path);
 			this.add_errors(this.config.get_error_list()); // there can be warnings
+			this.config.clear_errors();
 			if (retval) {
 				return true;
 			}
 			var make=new AutoVala.cmake(this.config);
 			retval=make.create_cmake();
 			this.add_errors(make.get_error_list()); // there can be warnings
+			make.clear_errors();
 			if (retval) {
 				return true;
 			}
@@ -391,7 +395,7 @@ namespace AutoVala {
 			this.current_namespace="";
 
 			if (this.get_vala_version(out major, out minor)) {
-				this.error_list+="Can't determine the version of the Vala compiler.";
+				this.error_list+=_("Can't determine the version of the Vala compiler");
 				return true;
 			}
 
@@ -453,6 +457,7 @@ namespace AutoVala {
 			this.process_folder(files_set,"src",Config_Type.VALA_BINARY,extensions,true);
 			this.config.save_configuration();
 			this.add_errors(this.config.get_error_list()); // there can be warnings
+			this.config.clear_errors();
 			return false;
 		}
 
