@@ -218,6 +218,10 @@ namespace AutoVala {
 
 			this.config=new configuration(project_name);
 			this.config.project_name=project_name;
+			int major;
+			int minor;
+			this.get_vala_version(out major, out minor);
+			this.config.vala_version="%d.%d".printf(major,minor);
 			this.config.set_config_filename(Path.build_filename(config_path,project_name+".avprj"));
 			if (this.config.save_configuration()) {
 				this.add_errors(this.config.get_error_list());

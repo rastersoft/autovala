@@ -213,7 +213,7 @@ namespace AutoVala {
 		public string config_path; // Contains the full path to the configuration file (both path and filename)
 		public string basepath; // Contains the full path where the configuration file is stored
 		public Gee.List<config_element ?> configuration_data; // Contains all the configuration read
-		public string vala_version; // Version of the syntax in the configuration file
+		public string vala_version; // Minimun Vala version needed to compile this
 
 		private int current_version; // Contains the version of the currently supported syntax
 		private string[] error_list;
@@ -230,7 +230,7 @@ namespace AutoVala {
 			this.version=0;
 			this.project_name=project_name;
 			this.error_list={};
-			this.vala_version="0.16.0";
+			this.vala_version="0.16";
 		}
 
 		public void clear_automatic() {
