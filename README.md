@@ -79,6 +79,15 @@ The rules followed by Autovala are the following:
     This is useful for application-specific data, or documentation
 
 
+When Autovala searchs the packages, it uses only the versions available for
+the currently active version. Also, by default, it uses the most recent
+version. But if another version is selected manually, it will use that one
+instead.
+
+Example: if you put "using Gtk;" in your code, by default autovala will use
+the package *gtk+-3.0* to compile it; but if you manually add the package
+*gtk+-2.0* to that binary, Autovala will use Gtk2 instead of Gtk3.
+
 ## USING AUTOVALA ##
 
 Autovala is designed as several Vala classes, so it can be embedded easy in
