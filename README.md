@@ -153,7 +153,8 @@ The next line has the command "project_name". This command sets the name
 assigned to this project.
 
 Then, the next line contains "vala_version", which specifies the minimum Vala
-version needed to compile this project.
+version needed to compile this project. By default, it is filled with the
+version number of the vala version installed when the project was created.
 
 After that, it comes several commands, some of them repeated several times,
 to specify what to do with each file in your project. These commands are:
