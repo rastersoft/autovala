@@ -370,10 +370,8 @@ or "autovala update" is run.
 
 ## TO DO ##
 
-This is still version 0.1.0. It is fully usable, but there are still a lot of
+This is still version 0.2.0. It is fully usable, but there are still a lot of
 things that I want to add to it, and I will need help.
-
- * Copy the contents of the *doc/* folder to *share/doc/PROJECT_NAME*
 
  * Support Valadoc
 
