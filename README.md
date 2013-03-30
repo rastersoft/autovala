@@ -106,7 +106,7 @@ files, of course.
 
 After that, you can copy the desired files into the corresponding folders,
 and create your vala source files. When you are OK for the first compilation,
-just do autovala check the folders to automatically update the .avprj file
+just do Autovala to check the folders and automatically update the .avprj file
 with:
 
         autovala refresh
