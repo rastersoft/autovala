@@ -836,11 +836,12 @@ namespace AutoVala {
 				this.store_data(Config_Type.PO,data_stream);
 				this.store_data(Config_Type.DATA,data_stream);
 				this.store_data(Config_Type.DOC,data_stream);
-				this.store_data(Config_Type.AUTOSTART,data_stream);
+				this.store_data(Config_Type.IGNORE,data_stream);
 				this.store_data(Config_Type.VALA_BINARY,data_stream);
 				this.store_data(Config_Type.VALA_LIBRARY,data_stream);
 				this.store_data(Config_Type.BINARY,data_stream);
 				this.store_data(Config_Type.DESKTOP,data_stream);
+				this.store_data(Config_Type.AUTOSTART,data_stream);
 				this.store_data(Config_Type.DBUS_SERVICE,data_stream);
 				this.store_data(Config_Type.EOS_PLUG,data_stream);
 				this.store_data(Config_Type.SCHEME,data_stream);
@@ -926,6 +927,9 @@ namespace AutoVala {
 						break;
 					case Config_Type.DOC:
 						data_stream.put_string("doc: "+element.path+"\n");
+						break;
+					case Config_Type.IGNORE:
+						data_stream.put_string("ignore: "+element.path+"\n");
 						break;
 					case Config_Type.GLADE:
 						data_stream.put_string("glade: "+fullpathname+"\n");

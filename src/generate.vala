@@ -621,6 +621,35 @@ namespace AutoVala {
 				this.error_list+=_("Warning: couldn't process binary %s").printf(Path.build_filename(path,file_s));
 				return;
 			}
+			
+			// also check the namespaces required by manually added sources
+			foreach(var element in this.config.configuration_data) {
+				if ((element.path==path)&&((element.type==Config_Type.VALA_BINARY)||(element.type==Config_Type.VALA_LIBRARY))) {
+					foreach(var checkfile in element.sources) {
+						if (checkfile.automatic==false) {
+							var fname=checkfile.source;
+							if (fname.has_suffix(".vala")) {
+								var fullpath_s=Path.build_filename(path_s,fname);
+								if (false==files_set.contains(fullpath_s)) {
+									filelist+="*"+fname;
+									filelist_path+=fullpath_s;
+								}
+								var relative_path=Path.build_filename(path,fname);
+								if (this.get_namespaces(fullpath_s,relative_path,namespaces_list,out version)) {
+									this.error_list+=_("Warning: couldn't get the namespace list for %s").printf(relative_path);
+								}
+								if (version!="") {
+									if ((current_version!="")&&(current_version!=version)) {
+										this.error_list+=_("Warning: overwriting the version number for %s").printf(relative_path);
+									}
+									current_version=version;
+								}
+							}
+						}
+					}
+				}
+			}
+			
 			current_version="*"+current_version;
 
 			/* Get the packages manually provided by the user, to avoid adding a newer version

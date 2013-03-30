@@ -29,8 +29,8 @@ include(ValaPrecompile)
 
 vala_precompile(VALA_C autovala
 	generate.vala
-	configuration.vala
 	autovala.vala
+	configuration.vala
 	cmake.vala
 PACKAGES
 	posix
