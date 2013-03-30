@@ -238,10 +238,10 @@ to specify what to do with each file in your project. These commands are:
               Name=com.rastersoft.cronopete
               Exec=@DBUS_PREFIX@/bin/cronopete
               
-This allows to use cmake to install everything in a temporary
-folder, and ensure that the Exec entry points to the right place.
-This is important when using these CMakeLists files for creating
-a .deb or .rpm package.
+   This allows to use cmake to install everything in a temporary
+   folder, and ensure that the Exec entry points to the right place.
+   This is important when using these CMakeLists files for creating
+   a .deb or .rpm package.
               
  * desktop: the file specified is a .desktop file that must be copied to
          share/applications to ensure that it is shown in the applications menu
