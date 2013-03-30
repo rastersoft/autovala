@@ -348,5 +348,7 @@ Sergio Costas Rodriguez
 (Raster Software Vigo)
 
 raster@rastersoft.com
+
 http://www.rastersoft.com
+
 GIT: git://github.com/rastersoft/autovala.git
