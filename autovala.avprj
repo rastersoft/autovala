@@ -15,6 +15,3 @@ vala_version: 0.16
 *vala_source: configuration.vala
 *vala_source: autovala.vala
 
-vala_library: src/library/library
-version: 2.0.0
-
