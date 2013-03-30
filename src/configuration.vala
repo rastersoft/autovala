@@ -234,13 +234,13 @@ namespace AutoVala {
 		}
 
 		public bool get_vala_version(out int major, out int minor) {
-		
+
 			/*
 			 * Maybe a not very elegant way of doing it. I accept patches
 			 */
 			major=0;
 			minor=0;
-		
+
 			if (0!=Posix.system("valac --version > /var/tmp/current_vala_version")) {
 				return true;
 			}
@@ -407,6 +407,26 @@ namespace AutoVala {
 							this.error_list+=_("Vala version string not valid. It must be in the form N.N or N.N.N (line %d)").printf(this.line_number);
 							error=true;
 						} else {
+							var version_elements=version.split(".");
+							int major;
+							int minor;
+							if (this.get_vala_version(out major, out minor)) {
+								this.error_list+=_("Can't get the version of the installed Vala binary. Asuming version 0.16");
+								major=0;
+								minor=16;
+							}
+							int f_major;
+							int f_minor;
+
+							f_major=int.parse(version_elements[0]);
+							f_minor=int.parse(version_elements[1]);
+							if ((f_major>major)||((f_major==major)&&(f_minor>minor))) {
+								this.config_path="";
+								this.configuration_data=new Gee.ArrayList<config_element ?>();
+								this.error_list+=_("This project needs Vala version %s or greater, but you have version %d.%d. Can't open it.").printf(version,major,minor);
+								error=true;
+								break;
+							}
 							this.vala_version=version;
 						}
 						continue;
