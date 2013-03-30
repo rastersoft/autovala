@@ -6,34 +6,33 @@ Autovala is a program and a library designed to help in the creation of
 projects with Vala and CMake.
 
 The idea is quite simple: CMake is very powerful, but writting the CMakeLists
-files are boring and repetitive. Why not let the computer create them, by
+files is boring and repetitive. Why not let the computer create them, by
 guessing what to do with each file? And if, at the end, there are mistakes,
-the user can just fix them in an easy way, and generate the final CMakeLists
-files?
+let the user fix them in an easy way, and generate the final CMakeLists files.
 
 This is what Autovala does. This process is done in three steps:
 
   * First, Autovala checks all the folders and files, and writes a project
     file with the type of each file
-  * Also peeks the source files to determine which Vala packages they need,
+  * It also peeks the source files to determine which Vala packages they need,
     and generate automagically that list
   * After that (and after allowing the user to check, if (s)he wishes, the
     project file), it uses that project file to generate the needed CMakeLists
     files
-    
+
 The rules followed by Autovala are the following:
 
-  * All .vala files in the src/ folder belong to a binary called like the
+  * All .vala files in the *src/* folder belong to a binary called like the
     project name, and will be scanned to determine the packages needed to
     compile them
     
-  * All .vala files in any subfolder in src/ belong to a binary called like
-    the subfolder. So, all the .vala files in, for example, src/binary_test
+  * All .vala files in any subfolder in *src/* belong to a binary called like
+    the subfolder. So all the .vala files in, for example, *src/binary_test/*
     will be compiled to an executable called binary_test.
     
-  * All .vala files in any subfolder in src/ whose name starts with 'lib'
-    belong to a library called like the subfolder. So, all the .vala files
-    in, for example, src/libtest will be compiled as a shared library
+  * All .vala files in any subfolder in *src/* whose name starts with 'lib'
+    belong to a library called like the subfolder. So all the .vala files
+    in, for example, *src/libtest/* will be compiled as a shared library
     called 'test', unless those source files contain a single namespace,
     in which case the namespace will be used for the library name and to
     generate the .vapi and .gir files automatically.
@@ -42,40 +41,40 @@ The rules followed by Autovala are the following:
     format, allowing to keep it inside the sources and avoiding the need
     of editing the project file manually
 
-  * All .png or .svg in the folder data/icons (and subfolders) are considered
-    icons, so it will determine automatically the best-fitting standard icon
+  * All .png or .svg in the folder *data/icons/* (and subfolders) are considered
+    icons, so Autovala will determine automatically the best-fitting standard icon
     size (in the case of .png; for .svg it will put them always in 'scalable')
-    and install them in the corresponding folder: "apps" by default, unless
+    and install them in the corresponding folder: 'apps' by default, unless
     it's an .svg file with a filename ended in -symbolic.svg; in that case it
-    will go to "status". The user can modify the final folder manually for the
+    will go to 'status'. The user can modify the final folder manually for the
     icons (s)he wishes.
     
-  * All .png, .jpg or .svg files in the folder data/pixmaps (and subfolders)
-    are considered pixmaps, and will be copied to share/pixmaps.
+  * All .png, .jpg or .svg files in the folder *data/pixmaps/* (and subfolders)
+    are considered pixmaps, and will be installed in *share/pixmaps/*.
     
-  * All .po files in po/ folder will be considered as po files, and will be
+  * All .po files in *po/* folder will be considered as po files, and will be
     installed in the right locale. Also, will find the .vala and .ui files
     and add them as sources for internationalization process.
     
-  * Each .desktop file in data/ will be copied to share/desktop
+  * Each .desktop file in *data/* will be copied to *share/desktop/*
   
-  * Each .service file in data/ will be presumed to be a DBus service,
-    and will be preprocessed to put the right binary folder (bin/ or local/bin)
+  * Each .service file in *data/* will be presumed to be a DBus service,
+    and will be preprocessed to put the right binary folder (*bin/* or *local/bin*)
 
-  * Each .plug file in data/ will be presumed to be an ElementaryOS PLUG file
+  * Each .plug file in *data/* will be presumed to be an ElementaryOS PLUG file
   
-  * Each .gschema.xml file in data/ will be presumed to be a GTK schema, so
+  * Each .gschema.xml file in *data/* will be presumed to be a GTK schema, so
     will be copied in the right place and force a recompile of the schemas
     (if needed)
     
-  * Each .ui file in data/interface/ will be presumed to be a Glade file,
-    so will be copied to share/project_name/ and taken into account when
+  * Each .ui file in *data/interface/* will be presumed to be a Glade file,
+    so will be copied to *share/project_name/* and taken into account when
     generating the .po and .mo files for internationalization
     
-  * Each .sh file in data/ will be presumed to be a binary script, so will
-    be copied to bin/
+  * Each .sh file in *data/* will be presumed to be a binary script, so will
+    be copied to *bin/*
     
-  * All files and folders in data/local will be copied to share/prject_name/
+  * All files and folders in *data/local/* will be copied to *share/prject_name/*
     This is useful for application-specific data, or documentation
 
 
