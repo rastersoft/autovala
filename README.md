@@ -158,7 +158,11 @@ to specify what to do with each file in your project. These commands are:
       
  * vala_binary:  contains a path and a name, and specifies that, in the path, there
               are several source files that must be compiled to create that
-              binary. Example: vala_binary: src/test_file says that the src
+              binary. Example:
+              
+                      vala_binary: src/test_file
+                      
+              says that the src
               folder contains the source files to create the binary test_file
               After this command will come several subcommands that specifies
               details about this binary. Those are:
@@ -176,8 +180,9 @@ to specify what to do with each file in your project. These commands are:
    * namespace: contains the namespace used in all the source files. It is more
                useful when creating libraries.
                
-   * compile_options: contains the options to pass to the Vala compiler.
-                     Example: "compile_options: -X -O2" for optimizations
+   * compile_options: contains the options to pass to the Vala compiler. Example:
+   
+                     compile_options: -X -O2
 
    * vala_package: specify a package that must be added with --pkg=... to the
                   vala compiler. These are automatically found by Autovala
@@ -206,9 +211,9 @@ to specify what to do with each file in your project. These commands are:
       the icon size and use it to copy it to the right place (only if it's a
       .png file; it it's a .svg will copy to "scalable"). Also, by default, the
       category will be "apps", unless it is a .svg with "-symbolic"; in that
-      case will be put in the "status" category.
+      case will be put in the "status" category. Example:
 
-      Example: "icon: apps finger.svg"
+              icon: apps finger.svg
       
  * pixmap: followed by a picture filename. Will be copied to share/pixmaps
 
@@ -243,10 +248,13 @@ a .deb or .rpm package.
            forget to add X-GNOME-Autostart-enabled=true inside
            
  * include: allows to include the specified file in the CMakeLists of its path
-         This allows to manually add CMake statements.
-         Example: "include: src/mycmake.txt" will append the contents of
-         the file mycmake.txt, located in the src/ folder, to the end of
-         the CMakeLists.txt file also located in the src/ folder
+         This allows to manually add CMake statements. Example:
+         
+                 include: src/mycmake.txt
+         
+         will append the contents of the file mycmake.txt, located in the src/
+         folder, to the end of the CMakeLists.txt file also located in the
+         src/ folder
          
  * ignore: the path that follows will be ignored when Autovala guesses each
         file. Examples:
