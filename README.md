@@ -121,7 +121,7 @@ project, because it will search for the first .avprj file located in the
 current folder or upstream.
 
 
-PROJECT FILE FORMAT
+## PROJECT FILE FORMAT ##
 
 The project file has a very simple format. Ussually you should not need to
 manually edit it, but when the guesses of autovala are incorrect, you can do
@@ -348,6 +348,24 @@ This is:
 
 Now the change will remain, no matter how many times I run "autovala refresh"
 or "autovala update".
+
+
+## TO DO ##
+
+This is still version 0.1.0. It is fully usable, but there are still a lot of
+things that I want to add to it, and I will need help.
+
+ * Allow that a binary being compiled be able to use a library compiled in the
+   same project
+   
+   This is a must if I want to distribute Autovala both as a library, and as
+   a command line program that uses that library.
+   
+ * Generate automatically the .pc file for a library (for pkg-config)
+ 
+   I need help with the format of the .pc files
+
+ * Integrate it as a plugin for Gedit
 
 
 ## CONTACTING THE AUTHOR ##
