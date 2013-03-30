@@ -169,12 +169,12 @@ to specify what to do with each file in your project. These commands are:
               are several source files that must be compiled to create that
               binary. Example:
               
-                      vala_binary: src/test_file
+        vala_binary: src/test_file
                       
-              says that the src
-              folder contains the source files to create the binary test_file
-              After this command will come several subcommands that specifies
-              details about this binary. Those are:
+   says that the src
+   folder contains the source files to create the binary test_file
+   After this command will come several subcommands that specifies
+   details about this binary. Those are:
              
    * version: contains the version of this binary file. It is more useful when
              creating libraries. If it is not set manually in the project file,
@@ -183,8 +183,8 @@ to specify what to do with each file in your project. These commands are:
              
                    const string project_version="X.Y.Z";
                
-             and will use that number as version. If it is unable to find it
-             in none of the source files, then it will use 1.0.0 by default.
+   and will use that number as version. If it is unable to find it
+   in none of the source files, then it will use 1.0.0 by default.
              
    * namespace: contains the namespace used in all the source files. It is more
                useful when creating libraries.
