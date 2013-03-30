@@ -314,7 +314,7 @@ Let's say that the version number is incorrect; we want the version number
     *vala_source: configuration.vala
     *vala_source: autovala.vala
 
-This change is INCORRECT, because I kept the asterisk in the line I changed.
+This change is *INCORRECT*, because I kept the asterisk in the line I changed.
 That means that the next time that I run "autovala refresh" or "autovala update"
 that change will dissapear.
 
