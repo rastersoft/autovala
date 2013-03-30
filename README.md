@@ -1,4 +1,4 @@
-# AUTOVALA 0.1.0 #
+# AUTOVALA 0.2.0 #
 
 ## WHAT IS IT? ##
 
@@ -74,9 +74,11 @@ The rules followed by Autovala are the following:
   * Each .sh file in *data/* will be presumed to be a binary script, so will
     be copied to *bin/*
     
-  * All files and folders in *data/local/* will be copied to *share/prject_name/*
-    This is useful for application-specific data, or documentation
+  * All files and folders in *data/local/* will be copied to *share/project_name/*
+    This is useful for application-specific data
 
+  * All files and folders in *doc/* will be copied to *share/doc/project_name/*
+    This is useful for documentation
 
 When Autovala searchs the packages, it uses only the versions available for
 the currently active version. Also, by default, it uses the most recent
@@ -172,7 +174,10 @@ to specify what to do with each file in your project. These commands are:
     The program identifier for Gettext is the project name.
 
  * data: specifies a folder with local data that must be installed in
-      share/project_name
+      share/project_name. By default it's "data/local".
+      
+ * doc: specifies a folder with the documentation that must be installed in
+      share/doc/project_name. By default it's "doc".
       
  * vala_binary:  contains a path and a name, and specifies that, in the path, there
               are several source files that must be compiled to create that
