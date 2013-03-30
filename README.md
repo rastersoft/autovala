@@ -58,7 +58,7 @@ The rules followed by Autovala are the following:
     
   * Each .desktop file in *data/* will be copied to *share/desktop/*
   
-  * Each .service file in *data/* will be presumed to be a DBus service,
+  * Each .service file in *data/* will be presumed to be a D-Bus service,
     and will be preprocessed to put the right binary folder ( *bin/* or *local/bin/* )
 
   * Each .plug file in *data/* will be presumed to be an ElementaryOS PLUG file
