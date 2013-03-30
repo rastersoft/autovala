@@ -12,7 +12,7 @@ configure_file (${CMAKE_SOURCE_DIR}/src/Config.vala.cmake ${CMAKE_BINARY_DIR}/sr
 add_definitions(-DGETTEXT_PACKAGE=\"${GETTEXT_PACKAGE}\")
 find_package(PkgConfig)
 
-set (VERSION "0.2.0")
+set (VERSION "0.3.0")
 pkg_check_modules(DEPS REQUIRED
 	gee-1.0
 	glib-2.0
@@ -28,10 +28,10 @@ ensure_vala_version("0.16" MINIMUM)
 include(ValaPrecompile)
 
 vala_precompile(VALA_C autovala
-	generate.vala
 	autovala.vala
 	configuration.vala
 	cmake.vala
+	generate.vala
 PACKAGES
 	posix
 	gee-1.0
