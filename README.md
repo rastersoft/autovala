@@ -99,7 +99,7 @@ autovala in your desired project's folder with:
         autovala init PROJECT_NAME
         
 This will create a PROJECT_NAME.avprj file, with the most basic info about
-your project (the format for this file will be discused later). It will also
+your project (the format for this file will be explained later). It will also
 try to create the basic folders for a vala project, and will show a warning
 if they already exist. It will never delete a file, except the CMakeLists,
 files, of course.
