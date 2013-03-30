@@ -1,6 +1,8 @@
 AUTOVALA 0.1.0
+==============
 
 WHAT IS IT?
+-----------
 
 Autovala is a program and a library designed to help in the creation of
 projects with Vala and CMake.
@@ -80,6 +82,7 @@ The rules followed by Autovala are the following:
 
 
 USING AUTOVALA
+--------------
 
 Autovala is designed as several Vala classes, so it can be embedded easy in
 other projects. My idea is to embedd it as a GEdit plugin; but until then,
@@ -257,6 +260,7 @@ ignore: the path that follows will be ignored when Autovala guesses each
 
 
 KEEPING YOUR CHANGES
+--------------------
 
 By default, nearly all the lines in the project file starts with an asterisk.
 Those lines contains automatically created commands, and every time the user
@@ -343,6 +347,7 @@ or "autovala update".
 
 
 CONTACTING THE AUTHOR
+---------------------
 
 Sergio Costas Rodriguez
 (Raster Software Vigo)
