@@ -89,8 +89,8 @@ the package *gtk+-3.0* to compile it; but if you manually add the package
 
 ## USING AUTOVALA ##
 
-Autovala is designed as several Vala classes, so it can be embedded easy in
-other projects. My idea is to embedd it as a GEdit plugin; but until then,
+Autovala is designed as several Vala classes, so it can be embedded easily in
+other projects. My idea is to embed it as a Gedit plugin; but until then,
 you can use it from command line.
 
 Before all, you need to install in your project folder the CMake modules for
@@ -98,29 +98,30 @@ Vala. You can download them from launchpad using bazaar:
 
         bzr checkout lp:~elementary-apps/+junk/cmake-modules
         
-It will create a folder called *cmake-modules*. Inside will be a folder called
-*cmake*. Copy the later to your project folder.
+This will create a folder called *cmake-modules*. Inside it will be a folder
+called *cmake*. Copy the later to your project folder.
 
-The first thing to do is initializate the project. This is done by calling
+The first thing to do is to initializate the project. This is done by calling
 autovala in your desired project's folder with:
 
         autovala init PROJECT_NAME
         
-This will create a PROJECT_NAME.avprj file, with the most basic info about
+This will create a *PROJECT_NAME.avprj* file, with the most basic info about
 your project (the format for this file will be explained later). It will also
 try to create the basic folders for a vala project, and will show a warning
-if they already exist. It will never delete a file, except the CMakeLists,
+if they already exist. It will never delete a file, except the *CMakeLists*
 files, of course.
 
-After that, you can copy the desired files into the corresponding folders,
+After that, you can copy the desired files into the corresponding folders
 and create your vala source files. When you are OK for the first compilation,
-just do Autovala to check the folders and automatically update the .avprj file
-with:
+just use Autovala to check the folders and automatically update the .avprj
+file with:
 
         autovala refresh
         
 Now the .avprj has all the guessed info about your project, so you can
-create the CMakeLists files from that data using:
+check and modify it if you want (more on that later), or create the CMakeLists
+files from that data using:
 
         autovala cmake
 
@@ -139,7 +140,7 @@ current folder or upstream.
 
 ## PROJECT FILE FORMAT ##
 
-The project file has a very simple format. Ussually you should not need to
+The project file has a very simple format. Ussually you don't need to
 manually edit it, but when the guesses of autovala are incorrect, you can do
 it, and your changes will be remembered each time you refresh the file.
 
@@ -147,7 +148,7 @@ The file is based on commands in the format:
 
         command: data
 
-One in each line. Every line that starts with # is ignored (is a comment),
+one in each line. Every line that starts with # is ignored (is a comment),
 but also will be removed when the file is recreated.
 
 The first line in a project file is, always, ### AutoVala Project ###. This
@@ -320,7 +321,7 @@ We can see that all the commands have been added automatically, because they
 are prepended by an asterisk.
 
 Let's say that the version number is incorrect; we want the version number
-0.1.0. So I edit the file and modify it to look like this:
+0.1.0. So we edit the file and modify it (incorrectly) to look like this:
 
     ### AutoVala Project ###
     autovala_version: 1
@@ -339,11 +340,11 @@ Let's say that the version number is incorrect; we want the version number
     *vala_source: configuration.vala
     *vala_source: autovala.vala
 
-This change is *INCORRECT*, because I kept the asterisk in the line I changed.
-That means that the next time that I run "autovala refresh" or "autovala update"
-that change will dissapear.
+This change is *INCORRECT*, because it keeps the asterisk in the changed line.
+That means that the next time that "autovala refresh" or "autovala update"
+is run, that change will dissapear and will be replaced by the old guess.
 
-To ensure that my change remains, it must be put in a line without the asterisk
+To ensure that the change remains, it must be put in a line *without* the asterisk
 This is:
 
     ### AutoVala Project ###
@@ -363,14 +364,21 @@ This is:
     *vala_source: configuration.vala
     *vala_source: autovala.vala
 
-Now the change will remain, no matter how many times I run "autovala refresh"
-or "autovala update".
+Now the change will remain, no matter how many times "autovala refresh"
+or "autovala update" is run.
 
 
 ## TO DO ##
 
 This is still version 0.1.0. It is fully usable, but there are still a lot of
 things that I want to add to it, and I will need help.
+
+ * Don't allow to regenerate the project when the installed vala version is
+   older than the minimun needed by the project
+
+ * Create the *install* and *doc* folders during initialization
+
+ * Copy the contents of the *doc/* folder to *share/doc/PROJECT_NAME*
 
  * Allow that a binary being compiled be able to use a library compiled in the
    same project
