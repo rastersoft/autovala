@@ -85,6 +85,14 @@ Autovala is designed as several Vala classes, so it can be embedded easy in
 other projects. My idea is to embedd it as a GEdit plugin; but until then,
 you can use it from command line.
 
+Before all, you need to install in your project folder the CMake modules for
+Vala. You can download them from launchpad using bazaar:
+
+        bzr checkout lp:~elementary-apps/+junk/cmake-modules
+        
+It will create a folder called *cmake-modules*. Inside will be a folder called
+*cmake*. Copy the later to your project folder.
+
 The first thing to do is initializate the project. This is done by calling
 autovala in your desired project's folder with:
 
