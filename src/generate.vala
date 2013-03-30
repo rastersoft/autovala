@@ -267,7 +267,7 @@ namespace AutoVala {
 			this.config.project_name=project_name;
 			int major;
 			int minor;
-			if (this.get_vala_version(out major, out minor)) {
+			if (this.config.get_vala_version(out major, out minor)) {
 				this.error_list+=_("Can't get the version of the installed Vala binary. Asuming version 0.16");
 				major=0;
 				minor=16;
@@ -299,38 +299,6 @@ namespace AutoVala {
 				return true;
 			}
 			return false;
-		}
-
-		private bool get_vala_version(out int major, out int minor) {
-		
-			/*
-			 * Maybe a not very elegant way of doing it. I accept patches
-			 */
-			major=0;
-			minor=0;
-		
-			if (0!=Posix.system("valac --version > /var/tmp/current_vala_version")) {
-				return true;
-			}
-			var file=File.new_for_path("/var/tmp/current_vala_version");
-			try {
-				var dis = new DataInputStream(file.read());
-				string ?line;
-				while((line=dis.read_line(null))!=null) {
-					var version=line.split(" ");
-					foreach(var element in version) {
-						if (Regex.match_simple("^[0-9]+.[0-9]+(.[0-9]+)?$",element)) {
-							var numbers=element.split(".");
-							major=int.parse(numbers[0]);
-							minor=int.parse(numbers[1]);
-							return false;
-						}
-					}
-				}
-			} catch (Error e) {
-				return true;
-			}
-			return true;
 		}
 
 		private void fill_pkgconfig_files(string basepath) {
@@ -449,23 +417,29 @@ namespace AutoVala {
 			this.pkgconfigs=new Gee.HashSet<string>();
 			this.current_namespace="";
 
-			if (this.get_vala_version(out major, out minor)) {
+			this.config=new AutoVala.configuration();
+			if (this.config.get_vala_version(out major, out minor)) {
 				this.error_list+=_("Can't determine the version of the Vala compiler");
 				return true;
 			}
 
 			this.fill_pkgconfig_files("/usr/lib");
+			this.fill_pkgconfig_files("/usr/share");
 			this.fill_pkgconfig_files("/usr/lib/i386-linux-gnu");
 			this.fill_pkgconfig_files("/usr/lib/x86_64-linux-gnu");
 			this.fill_pkgconfig_files("/usr/local/lib");
+			this.fill_pkgconfig_files("/usr/local/share");
 			this.fill_pkgconfig_files("/usr/local/lib/i386-linux-gnu");
 			this.fill_pkgconfig_files("/usr/local/lib/x86_64-linux-gnu");
+			var other_pkgconfig=GLib.Environment.get_variable("PKG_CONFIG_PATH").split(":");
+			foreach(var element in other_pkgconfig) {
+				this.fill_pkgconfig_files(element);
+			}
 			this.fill_namespaces("/usr/share/vala");
 			this.fill_namespaces("/usr/share/vala-%d.%d".printf(major,minor));
 			this.fill_namespaces("/usr/local/share/vala");
 			this.fill_namespaces("/usr/local/share/vala-%d.%d".printf(major,minor));
 
-			this.config=new AutoVala.configuration();
 			bool retval=this.config.read_configuration(config_path);
 			this.add_errors(this.config.get_error_list()); // there can be warnings
 			this.config.clear_errors();

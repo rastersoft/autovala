@@ -380,8 +380,6 @@ things that I want to add to it, and I will need help.
 
  * Copy the contents of the *doc/* folder to *share/doc/PROJECT_NAME*
 
- * Search pkg files also in PKG_CONFIG_PATH and in *share/pkgconfig/*
-
  * Support Valadoc
 
  * Allow that a binary being compiled be able to use a library compiled in the

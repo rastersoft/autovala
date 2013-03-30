@@ -28,9 +28,9 @@ ensure_vala_version("0.16" MINIMUM)
 include(ValaPrecompile)
 
 vala_precompile(VALA_C autovala
+	configuration.vala
 	generate.vala
 	cmake.vala
-	configuration.vala
 	autovala.vala
 PACKAGES
 	posix

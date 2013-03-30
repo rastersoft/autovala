@@ -233,6 +233,38 @@ namespace AutoVala {
 			this.vala_version="0.16";
 		}
 
+		public bool get_vala_version(out int major, out int minor) {
+		
+			/*
+			 * Maybe a not very elegant way of doing it. I accept patches
+			 */
+			major=0;
+			minor=0;
+		
+			if (0!=Posix.system("valac --version > /var/tmp/current_vala_version")) {
+				return true;
+			}
+			var file=File.new_for_path("/var/tmp/current_vala_version");
+			try {
+				var dis = new DataInputStream(file.read());
+				string ?line;
+				while((line=dis.read_line(null))!=null) {
+					var version=line.split(" ");
+					foreach(var element in version) {
+						if (Regex.match_simple("^[0-9]+.[0-9]+(.[0-9]+)?$",element)) {
+							var numbers=element.split(".");
+							major=int.parse(numbers[0]);
+							minor=int.parse(numbers[1]);
+							return false;
+						}
+					}
+				}
+			} catch (Error e) {
+				return true;
+			}
+			return true;
+		}
+
 		public void clear_automatic() {
 			var new_config=new Gee.ArrayList<config_element ?>();
 			foreach (var element in this.configuration_data) {
