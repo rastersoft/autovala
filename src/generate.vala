@@ -210,6 +210,16 @@ namespace AutoVala {
 				this.cant_create("DOC");
 			}
 			try {
+				var folder=File.new_for_path(Path.build_filename(config_path,"install"));
+				if (folder.query_exists()) {
+					this.folder_exists("INSTALL");
+				} else {
+					folder.make_directory_with_parents();
+				}
+			} catch (Error e) {
+				this.cant_create("INSTALL");
+			}
+			try {
 				var folder=File.new_for_path(Path.build_filename(config_path,"data"));
 				if (folder.query_exists()) {
 					this.folder_exists("DATA");
@@ -458,7 +468,7 @@ namespace AutoVala {
 				if ((element.type==Config_Type.VALA_BINARY)||(element.type==Config_Type.VALA_LIBRARY)) {
 					continue;
 				}
-				if ((element.type==Config_Type.IGNORE)||(element.type==Config_Type.PO)) {
+				if ((element.type==Config_Type.IGNORE)||(element.type==Config_Type.PO)||(element.type==Config_Type.DATA)||(element.type==Config_Type.DOC)) {
 					path_s=Path.build_filename(this.config.basepath,element.path);
 				} else {
 					path_s=Path.build_filename(this.config.basepath,element.path,element.file);
@@ -467,7 +477,8 @@ namespace AutoVala {
 			}
 
 			this.try_to_add(files_set,Config_Type.PO,"po/");
-			this.try_to_add(files_set,Config_Type.DATA,"data/local");
+			this.try_to_add(files_set,Config_Type.DATA,"data/local/");
+			this.try_to_add(files_set,Config_Type.DOC,"doc/");
 			string[] extensions={".png",".svg"};
 			this.process_folder(files_set,"data/icons",Config_Type.ICON,extensions,true);
 			extensions={".png",".svg",".jpg"};

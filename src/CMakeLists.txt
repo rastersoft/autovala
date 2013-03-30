@@ -28,8 +28,8 @@ ensure_vala_version("0.16" MINIMUM)
 include(ValaPrecompile)
 
 vala_precompile(VALA_C autovala
-	configuration.vala
 	generate.vala
+	configuration.vala
 	cmake.vala
 	autovala.vala
 PACKAGES

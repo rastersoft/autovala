@@ -22,7 +22,8 @@ using Posix;
 
 namespace AutoVala {
 
-	public enum Config_Type {VALA_BINARY, VALA_LIBRARY, BINARY, ICON, PIXMAP, PO, GLADE, DBUS_SERVICE, DESKTOP, AUTOSTART, EOS_PLUG, SCHEME, DATA, INCLUDE, IGNORE}
+	public enum Config_Type {VALA_BINARY, VALA_LIBRARY, BINARY, ICON, PIXMAP, PO, GLADE, DBUS_SERVICE, DESKTOP, AUTOSTART,
+							 EOS_PLUG, SCHEME, DATA, DOC, INCLUDE, IGNORE}
 
 	public class package_element:GLib.Object {
 
@@ -223,7 +224,7 @@ namespace AutoVala {
 		private int line_number;
 
 		public configuration(string project_name="") {
-			this.current_version=1; // currently we support version 1 of the syntax
+			this.current_version=2; // currently we support version 2 of the syntax
 			this.config_path="";
 			this.configuration_data=new Gee.ArrayList<config_element ?>();
 			this.last_element=null;
@@ -474,6 +475,11 @@ namespace AutoVala {
 					if (line.has_prefix("po: ")) {
 						var po_folder=line.substring(4).strip();
 						error|=this.add_entry(po_folder,Config_Type.PO,automatic);
+						continue;
+					}
+					if (line.has_prefix("doc: ")) {
+						var po_folder=line.substring(5).strip();
+						error|=this.add_entry(po_folder,Config_Type.DOC,automatic);
 						continue;
 					}
 					if (line.has_prefix("dbus_service: ")) {
@@ -727,7 +733,7 @@ namespace AutoVala {
 			}
 			
 			var filename=l_filename;
-			if ((type==Config_Type.PO)||(type==Config_Type.DATA)) {
+			if ((type==Config_Type.PO)||(type==Config_Type.DATA)||(type==Config_Type.DOC)) {
 				if (false==filename.has_suffix(Path.DIR_SEPARATOR_S)) {
 					filename+=Path.DIR_SEPARATOR_S;
 				}
@@ -829,6 +835,7 @@ namespace AutoVala {
 				data_stream.put_string("vala_version: "+this.vala_version+"\n");
 				this.store_data(Config_Type.PO,data_stream);
 				this.store_data(Config_Type.DATA,data_stream);
+				this.store_data(Config_Type.DOC,data_stream);
 				this.store_data(Config_Type.AUTOSTART,data_stream);
 				this.store_data(Config_Type.VALA_BINARY,data_stream);
 				this.store_data(Config_Type.VALA_LIBRARY,data_stream);
@@ -916,6 +923,9 @@ namespace AutoVala {
 						break;
 					case Config_Type.PO:
 						data_stream.put_string("po: "+element.path+"\n");
+						break;
+					case Config_Type.DOC:
+						data_stream.put_string("doc: "+element.path+"\n");
 						break;
 					case Config_Type.GLADE:
 						data_stream.put_string("glade: "+fullpathname+"\n");
