@@ -382,6 +382,8 @@ things that I want to add to it, and I will need help.
 
  * Search pkg files also in PKG_CONFIG_PATH and in *share/pkgconfig/*
 
+ * Support Valadoc
+
  * Allow that a binary being compiled be able to use a library compiled in the
    same project
    
