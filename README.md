@@ -261,9 +261,9 @@ to specify what to do with each file in your project. These commands are:
          
                  include: src/mycmake.txt
          
-         will append the contents of the file mycmake.txt, located in the src/
-         folder, to the end of the CMakeLists.txt file also located in the
-         src/ folder
+   will append the contents of the file mycmake.txt, located in the src/
+   folder, to the end of the CMakeLists.txt file also located in the
+   src/ folder
          
  * ignore: the path that follows will be ignored when Autovala guesses each
         file. Examples:
