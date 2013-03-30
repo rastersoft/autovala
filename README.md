@@ -11,11 +11,11 @@ guessing what to do with each file? And if, at the end, there are mistakes,
 the user can just fix them in an easy way, and generate the final CMakeLists
 files?
 
-This is what Autovala does. This process is done in two steps:
+This is what Autovala does. This process is done in three steps:
 
   * First, Autovala checks all the folders and files, and writes a project
     file with the type of each file
-  * Also peek the source files to determine which Vala packages they need,
+  * Also peeks the source files to determine which Vala packages they need,
     and generate automagically that list
   * After that (and after allowing the user to check, if (s)he wishes, the
     project file), it uses that project file to generate the needed CMakeLists
