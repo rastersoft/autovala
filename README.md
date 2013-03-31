@@ -1,4 +1,4 @@
-# AUTOVALA 0.4.0 #
+# AUTOVALA 0.5.0 #
 
 ## WHAT IS IT? ##
 
@@ -380,7 +380,7 @@ or "autovala update" is run.
 
 ## TO DO ##
 
-This is still version 0.2.0. It is fully usable, but there are still a lot of
+This is still version 0.5.0. It is fully usable, but there are still a lot of
 things that I want to add to it, and I will need help.
 
  * Allow that a binary being compiled be able to use a library compiled in the

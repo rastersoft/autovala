@@ -108,7 +108,6 @@ namespace AutoVala {
 						this.error_list+=_("Warning: directory %s doesn't exists").printf(element);
 						continue;
 					} else {
-						GLib.stdout.printf("Check %s\n",element);
 						if (element!="src") {
 							bool has_childrens=false;
 							try {

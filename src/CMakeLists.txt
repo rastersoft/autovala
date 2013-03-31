@@ -12,7 +12,8 @@ configure_file (${CMAKE_SOURCE_DIR}/src/Config.vala.cmake ${CMAKE_BINARY_DIR}/sr
 add_definitions(-DGETTEXT_PACKAGE=\"${GETTEXT_PACKAGE}\")
 find_package(PkgConfig)
 
-set (VERSION "0.4.0")
+set (VERSION "0.5.0")
+
 pkg_check_modules(DEPS REQUIRED
 	gee-1.0
 	glib-2.0
@@ -37,8 +38,8 @@ set(VALA_PACKAGES
 set(APP_SOURCES
 	generate.vala
 	autovala.vala
-	cmake.vala
 	configuration.vala
+	cmake.vala
 )
 
 vala_precompile(VALA_C autovala
