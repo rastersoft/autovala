@@ -20,7 +20,5 @@ if(BUILD_VALADOC)
 	endif()
 endif()
 
-add_subdirectory(doc)
 add_subdirectory(src)
 add_subdirectory(po)
-add_subdirectory(data/local)

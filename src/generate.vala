@@ -463,10 +463,22 @@ namespace AutoVala {
 			// files_set will contain all files already processed
 			// First, fill it with manually configured files
 			var files_set=new Gee.HashSet<string>();
+			// And also get all the paths with binaries and libraries
+			Gee.Map<string,string> binaries=new Gee.HashMap<string,string>();
+			Gee.Map<string,string> libraries=new Gee.HashMap<string,string>();
 			string path_s;
 			foreach(var element in this.config.configuration_data) {
 				// but don't add VALA_BINARY or VALA_LIBRARY, because those would need extra automatic configuration
-				if ((element.type==Config_Type.VALA_BINARY)||(element.type==Config_Type.VALA_LIBRARY)) {
+				if (element.type==Config_Type.VALA_BINARY) {
+					if (false==binaries.has_key(element.path)) {
+						binaries.set(element.path,element.file);
+					}
+					continue;
+				}
+				if (element.type==Config_Type.VALA_LIBRARY) {
+					if (false==libraries.has_key(element.path)) {
+						libraries.set(element.path,element.file);
+					}
 					continue;
 				}
 				if ((element.type==Config_Type.IGNORE)||(element.type==Config_Type.PO)||(element.type==Config_Type.DATA)||(element.type==Config_Type.DOC)) {
@@ -475,6 +487,9 @@ namespace AutoVala {
 					path_s=Path.build_filename(this.config.basepath,element.path,element.file);
 				}
 				files_set.add(path_s);
+			}
+			if ((false==binaries.has_key("src"))&&(false==libraries.has_key("src"))) {
+				binaries.set("src",this.config.project_name);
 			}
 
 			this.try_to_add(files_set,Config_Type.PO,"po/");
@@ -496,8 +511,12 @@ namespace AutoVala {
 			this.process_folder(files_set,"data",Config_Type.SCHEME,extensions,false);
 			extensions={".plug"};
 			this.process_folder(files_set,"data",Config_Type.EOS_PLUG,extensions,false);
-			this.process_binary(files_set,"src",this.config.project_name);
-			this.process_folder(files_set,"src",Config_Type.VALA_BINARY,extensions,true);
+			foreach(var binary_path in libraries.keys) {
+				this.process_binary(files_set,binary_path,libraries.get(binary_path),Config_Type.VALA_LIBRARY);
+			}
+			foreach(var binary_path in binaries.keys) {
+				this.process_binary(files_set,binary_path,binaries.get(binary_path),Config_Type.VALA_BINARY);
+			}
 			this.config.save_configuration();
 			this.add_errors(this.config.get_error_list()); // there can be warnings
 			this.config.clear_errors();
@@ -525,15 +544,6 @@ namespace AutoVala {
 							} else if ((ftype==FileType.DIRECTORY)&&(recursive)) { // process recursively
 								var newfolder=Path.build_filename(folder,fname);
 								this.process_folder(files_set,newfolder,type,extensions, recursive);
-								continue;
-							}
-						} else {
-							if (ftype==FileType.DIRECTORY) { // process recursively
-								var newfolder=Path.build_filename(folder,fname);
-								this.process_binary(files_set,newfolder,fname);
-								if (recursive) {
-									this.process_folder(files_set,newfolder,type,extensions, recursive);
-								}
 								continue;
 							}
 						}
@@ -571,7 +581,7 @@ namespace AutoVala {
 			}
 		}
 
-		private void process_binary(Gee.Set<string> files_set, string path, string file_s) {
+		private void process_binary(Gee.Set<string> files_set, string path, string file_s,Config_Type type) {
 
 			this.current_namespace="";
 			this.several_namespaces=false;
@@ -691,7 +701,7 @@ namespace AutoVala {
 					packages+="*"+package.filename;
 				}
 			}
-			if (file_s.has_prefix("lib")) {
+			if (type==Config_Type.VALA_LIBRARY) {
 				this.config.add_new_binary(mpath_s,Config_Type.VALA_LIBRARY, true, filelist,packages,check_packages,current_version,this.current_namespace,this.several_namespaces);
 			} else {
 				this.config.add_new_binary(mpath_s,Config_Type.VALA_BINARY, true, filelist,packages,check_packages,current_version);

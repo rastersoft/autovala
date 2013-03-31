@@ -594,8 +594,8 @@ namespace AutoVala {
 
 		private bool set_namespace(string current_namespace,bool automatic) {
 
-			if ((this.last_element==null)||(this.last_element.type!=Config_Type.VALA_LIBRARY)) {
-				this.error_list+=_("Found namespace after a non vala_library command (line %d)").printf(this.line_number);
+			if (this.last_element==null) {
+				this.error_list+=_("Found namespace after a non vala_binary, nor vala_library command (line %d)").printf(this.line_number);
 				return true;
 			}
 

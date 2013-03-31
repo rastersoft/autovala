@@ -35,10 +35,10 @@ set(VALA_PACKAGES
 )
 
 set(APP_SOURCES
-	autovala.vala
 	generate.vala
-	configuration.vala
+	autovala.vala
 	cmake.vala
+	configuration.vala
 )
 
 vala_precompile(VALA_C autovala
