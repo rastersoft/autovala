@@ -1,4 +1,4 @@
-# AUTOVALA 0.3.0 #
+# AUTOVALA 0.4.0 #
 
 ## WHAT IS IT? ##
 
@@ -139,6 +139,11 @@ These commands can be called from any of the folders or subfolders of the
 project, because it will search for the first .avprj file located in the
 current folder or upstream.
 
+Once created the CMakeLists.txt files, just go to the folder *install/*
+and run *cmake ..* to generate the makefiles and other temporary files.
+You can also use *cmake .. -DBUILD_VALADOC=ON* to add Valadoc support.
+This is still an experimental feature, that relies on some changes to the
+cmake for vala package, so it's possible that it doesn't work for you yet.
 
 ## PROJECT FILE FORMAT ##
 
@@ -377,8 +382,6 @@ or "autovala update" is run.
 
 This is still version 0.2.0. It is fully usable, but there are still a lot of
 things that I want to add to it, and I will need help.
-
- * Support Valadoc
 
  * Allow that a binary being compiled be able to use a library compiled in the
    same project

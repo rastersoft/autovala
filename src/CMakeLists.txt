@@ -27,16 +27,24 @@ include(ValaVersion)
 ensure_vala_version("0.16" MINIMUM)
 include(ValaPrecompile)
 
-vala_precompile(VALA_C autovala
-	autovala.vala
-	configuration.vala
-	cmake.vala
-	generate.vala
-PACKAGES
+set(VALA_PACKAGES
 	posix
 	gee-1.0
 	glib-2.0
 	gtk+-3.0
+)
+
+set(APP_SOURCES
+	autovala.vala
+	cmake.vala
+	generate.vala
+	configuration.vala
+)
+
+vala_precompile(VALA_C autovala
+	${APP_SOURCES}
+PACKAGES
+	${VALA_PACKAGES}
 )
 
 add_executable(autovala ${VALA_C})
@@ -47,3 +55,11 @@ RUNTIME DESTINATION
 	bin/
 )
 
+if(HAVE_VALADOC)
+	valadoc(autovala
+		${CMAKE_BINARY_DIR}/valadoc
+		${APP_SOURCES}
+	PACKAGES
+		${VALA_PACKAGES}
+	)
+endif()

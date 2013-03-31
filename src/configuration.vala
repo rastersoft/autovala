@@ -302,7 +302,7 @@ namespace AutoVala {
 
 			var directory = File.new_for_path(basepath);
 			try {
-				enumerator = directory.enumerate_children(FileAttribute.STANDARD_NAME+","+FileAttribute.STANDARD_TYPE,FileQueryInfoFlags.NOFOLLOW_SYMLINKS,null);
+				enumerator = directory.enumerate_children(GLib.FileAttribute.STANDARD_NAME+","+GLib.FileAttribute.STANDARD_TYPE,GLib.FileQueryInfoFlags.NOFOLLOW_SYMLINKS,null);
 				while ((info_file = enumerator.next_file(null)) != null) {
 					full_path="";
 					typeinfo=info_file.get_file_type();
@@ -731,7 +731,7 @@ namespace AutoVala {
 				this.error_list+=_("Trying to add an entry with the class unconfigured");
 				return true;
 			}
-			
+
 			var filename=l_filename;
 			if ((type==Config_Type.PO)||(type==Config_Type.DATA)||(type==Config_Type.DOC)) {
 				if (false==filename.has_suffix(Path.DIR_SEPARATOR_S)) {

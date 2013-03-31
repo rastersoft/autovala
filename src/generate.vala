@@ -23,7 +23,7 @@ using Posix;
 namespace AutoVala {
 
 	class namespaces_element:GLib.Object {
-	
+
 		public string namespace_s;
 		public string current_file;
 		public string filename;
@@ -31,7 +31,7 @@ namespace AutoVala {
 		public int major;
 		public int minor;
 		public bool checkable;
-		
+
 		public namespaces_element(string namespace_s) {
 			this.namespace_s=namespace_s;
 			this.major=0;
@@ -41,15 +41,15 @@ namespace AutoVala {
 			this.filenames={};
 			this.checkable=false;
 		}
-	
+
 		public void add_file(string filename,Gee.Set<string> pkgconfigs) {
 			int c_major;
 			int c_minor;
-			
+
 			c_major=0;
 			c_minor=0;
 
-			string file;			
+			string file;
 			if (filename.has_suffix(".vapi")) {
 				file=filename.substring(0,filename.length-5); // remove the .vapi extension
 			} else {
@@ -66,9 +66,9 @@ namespace AutoVala {
 					return;
 				}
 			}
-			
+
 			// use the version number and the length
-			
+
 			var pos=file.last_index_of("-");
 			var version=file.substring(pos+1);
 			var newfile=file.substring(0,pos);
@@ -88,7 +88,7 @@ namespace AutoVala {
 				this.checkable=pkgconfigs.contains(file);
 				return;
 			}
-			
+
 			if (this.current_file==newfile) { // for the same filename, take always the greatest version
 				if((c_major>this.major)||((c_major==this.major)&&(c_minor>this.minor))) {
 					this.major=c_major;
@@ -338,7 +338,7 @@ namespace AutoVala {
 		}
 
 		private void check_vapi_file(string basepath, string file_s) {
-		
+
 			/*
 			 * This method checks the namespace provided by a .vapi file
 			 */
@@ -347,7 +347,7 @@ namespace AutoVala {
 				return;
 			}
 			file=file.substring(0,file_s.length-5); // remove the .vapi extension
-			
+
 			var file_f = File.new_for_path (basepath);
 			try {
 				var dis = new DataInputStream (file_f.read ());
@@ -389,7 +389,7 @@ namespace AutoVala {
 		}
 
 		private void fill_namespaces(string basepath) {
-		
+
 			/*
 			 * This method fills the NAMESPACES hashmap with a list of each namespace and the files that provides it, and also the "best" one
 			 * (bigger version)
@@ -422,7 +422,7 @@ namespace AutoVala {
 
 			int major;
 			int minor;
-			
+
 			this.namespaces=new Gee.HashMap<string,namespaces_element>();
 			this.pkgconfigs=new Gee.HashSet<string>();
 			this.current_namespace="";
@@ -441,15 +441,16 @@ namespace AutoVala {
 			this.fill_pkgconfig_files("/usr/local/share");
 			this.fill_pkgconfig_files("/usr/local/lib/i386-linux-gnu");
 			this.fill_pkgconfig_files("/usr/local/lib/x86_64-linux-gnu");
-			var other_pkgconfig=GLib.Environment.get_variable("PKG_CONFIG_PATH").split(":");
-			foreach(var element in other_pkgconfig) {
-				this.fill_pkgconfig_files(element);
+			var other_pkgconfig=GLib.Environment.get_variable("PKG_CONFIG_PATH");
+			if (other_pkgconfig!=null) {
+				foreach(var element in other_pkgconfig.split(":")) {
+					this.fill_pkgconfig_files(element);
+				}
 			}
 			this.fill_namespaces("/usr/share/vala");
 			this.fill_namespaces("/usr/share/vala-%d.%d".printf(major,minor));
 			this.fill_namespaces("/usr/local/share/vala");
 			this.fill_namespaces("/usr/local/share/vala-%d.%d".printf(major,minor));
-
 			bool retval=this.config.read_configuration(config_path);
 			this.add_errors(this.config.get_error_list()); // there can be warnings
 			this.config.clear_errors();
@@ -571,7 +572,7 @@ namespace AutoVala {
 		}
 
 		private void process_binary(Gee.Set<string> files_set, string path, string file_s) {
-		
+
 			this.current_namespace="";
 			this.several_namespaces=false;
 			Gee.Set<string> namespaces_list=new Gee.HashSet<string>();
@@ -621,7 +622,7 @@ namespace AutoVala {
 				this.error_list+=_("Warning: couldn't process binary %s").printf(Path.build_filename(path,file_s));
 				return;
 			}
-			
+
 			// also check the namespaces required by manually added sources
 			foreach(var element in this.config.configuration_data) {
 				if ((element.path==path)&&((element.type==Config_Type.VALA_BINARY)||(element.type==Config_Type.VALA_LIBRARY))) {
@@ -649,7 +650,7 @@ namespace AutoVala {
 					}
 				}
 			}
-			
+
 			current_version="*"+current_version;
 
 			/* Get the packages manually provided by the user, to avoid adding a newer version
@@ -676,7 +677,7 @@ namespace AutoVala {
 				}
 				break;
 			}
-			
+
 			string[] packages={};
 			string[] check_packages={};
 			foreach (var element in namespaces_list) {
@@ -696,7 +697,7 @@ namespace AutoVala {
 				this.config.add_new_binary(mpath_s,Config_Type.VALA_BINARY, true, filelist,packages,check_packages,current_version);
 			}
 		}
-		
+
 		private bool get_namespaces(string fullpath, string relative_path, Gee.Set<string> namespaces_list,out string version) {
 
 			version="";
