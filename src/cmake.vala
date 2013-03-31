@@ -100,14 +100,40 @@ namespace AutoVala {
 				data_stream.put_string("endif()\n\n");
 
 				foreach(var element in paths) {
+					if (element=="") {
+						continue;
+					}
 					var dirpath=File.new_for_path(Path.build_filename(this.config.basepath,element));
 					if (dirpath.query_exists()==false) {
 						this.error_list+=_("Warning: directory %s doesn't exists").printf(element);
 						continue;
 					} else {
-						if (element!="") {
-							data_stream.put_string("add_subdirectory("+element+")\n");
+						if (element!="src") {
+							bool has_childrens=false;
+							try {
+								var enumerator = dirpath.enumerate_children (FileAttribute.STANDARD_NAME+","+FileAttribute.STANDARD_TYPE, 0);
+								FileInfo file_info;
+								while ((file_info = enumerator.next_file ()) != null) {
+									var fname=file_info.get_name();
+									var ftype=file_info.get_file_type();
+									if (ftype==FileType.DIRECTORY) {
+										continue; // don't add folders that only contains folders
+									}
+									if (fname=="CMakeLists.txt") {
+										continue;
+									}
+									has_childrens=true; // found a file, so we add it
+									break;
+								}
+							} catch (Error e) {
+								this.error_list+=_("Warning: can't access folder %s").printf(element);
+								continue;
+							}
+							if (has_childrens==false) {
+								continue;
+							}
 						}
+						data_stream.put_string("add_subdirectory("+element+")\n");
 					}
 				}
 				if (this.create_cmake_for_dir("",data_stream,ignore_list)) {
