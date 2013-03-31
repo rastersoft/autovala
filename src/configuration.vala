@@ -649,7 +649,7 @@ namespace AutoVala {
 			}
 		}
 
-		public bool add_new_binary(string filename, Config_Type type, bool automatic, string[] ?sources=null, string[] ?packages=null, string[] ?check_packages=null, string version="", string current_namespace="", bool several_namespaces=false, string compile_options="") {
+		public bool add_new_binary(string filename, Config_Type type, bool automatic, Gee.Set<string> ?sources=null, string[] ?packages=null, string[] ?check_packages=null, string version="", string current_namespace="", bool several_namespaces=false, string compile_options="") {
 
 			if ((type!=Config_Type.VALA_BINARY)&&(type!=Config_Type.VALA_LIBRARY)) {
 				return true;

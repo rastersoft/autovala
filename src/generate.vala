@@ -512,10 +512,10 @@ namespace AutoVala {
 			extensions={".plug"};
 			this.process_folder(files_set,"data",Config_Type.EOS_PLUG,extensions,false);
 			foreach(var binary_path in libraries.keys) {
-				this.process_binary(files_set,binary_path,libraries.get(binary_path),Config_Type.VALA_LIBRARY);
+				this.process_binary(files_set,binary_path,binaries,libraries,Config_Type.VALA_LIBRARY);
 			}
 			foreach(var binary_path in binaries.keys) {
-				this.process_binary(files_set,binary_path,binaries.get(binary_path),Config_Type.VALA_BINARY);
+				this.process_binary(files_set,binary_path,binaries,libraries,Config_Type.VALA_BINARY);
 			}
 			this.config.save_configuration();
 			this.add_errors(this.config.get_error_list()); // there can be warnings
@@ -581,8 +581,36 @@ namespace AutoVala {
 			}
 		}
 
-		private void process_binary(Gee.Set<string> files_set, string path, string file_s,Config_Type type) {
+		private void check_files(string fname,string path,string path_s,Gee.Set<string> files_set,Gee.Set<string> filelist,
+					 Gee.Set<string> filelist_path,Gee.Set<string> namespaces_list, ref string version, ref string current_version) {
+			if (fname.has_suffix(".vala")) {
+				var fullpath_s=Path.build_filename(path_s,fname);
+				if (false==files_set.contains(fullpath_s)) {
+					filelist.add("*"+fname);
+					filelist_path.add(fullpath_s);
+				}
+				var relative_path=Path.build_filename(path,fname);
+				if (this.get_namespaces(fullpath_s,relative_path,namespaces_list,out version)) {
+					this.error_list+=_("Warning: couldn't get the namespace list for %s").printf(relative_path);
+				}
+				if (version!="") {
+					if ((current_version!="")&&(current_version!=version)) {
+						this.error_list+=_("Warning: overwriting the version number for %s").printf(relative_path);
+					}
+					current_version=version;
+				}
+			}
+		}
 
+		private void process_binary(Gee.Set<string> files_set, string path, Gee.Map<string,string>binaries, Gee.Map<string,string>libraries,
+									Config_Type type) {
+
+			string file_s;
+			if (type==Config_Type.VALA_BINARY) {
+				file_s=binaries.get(path);
+			} else {
+				file_s=libraries.get(path);
+			}
 			this.current_namespace="";
 			this.several_namespaces=false;
 			Gee.Set<string> namespaces_list=new Gee.HashSet<string>();
@@ -591,71 +619,60 @@ namespace AutoVala {
 			if (files_set.contains(path_s)) {
 				return; // this folder has been already processed (or it has a IGNORE flag)
 			}
+
 			var file=File.new_for_path(path_s);
 			if (file.query_exists()==false) {
 				return; // this folder doesn't exists
 			}
 
-			var mpath_s=Path.build_filename(path,file_s);
-
-			string[] filelist={};
-			string[] filelist_path={};
-			string version;
+			Gee.Set<string> filelist=new Gee.HashSet<string>();
+			Gee.Set<string> filelist_path=new Gee.HashSet<string>();
+			string version="";
 			string current_version="";
-			try {
-				var enumerator = file.enumerate_children(FileAttribute.STANDARD_NAME+","+FileAttribute.STANDARD_TYPE, 0);
-				FileInfo file_info;
-				while ((file_info = enumerator.next_file ()) != null) {
-					if (file_info.get_file_type()!=FileType.REGULAR) {
-						continue;
-					}
-					var fname=file_info.get_name();
-					if (fname.has_suffix(".vala")) {
-						var fullpath_s=Path.build_filename(path_s,fname);
-						if (false==files_set.contains(fullpath_s)) {
-							filelist+="*"+fname;
-							filelist_path+=fullpath_s;
-						}
-						var relative_path=Path.build_filename(path,fname);
-						if (this.get_namespaces(fullpath_s,relative_path,namespaces_list,out version)) {
-							this.error_list+=_("Warning: couldn't get the namespace list for %s").printf(relative_path);
-						}
-						if (version!="") {
-							if ((current_version!="")&&(current_version!=version)) {
-								this.error_list+=_("Warning: overwriting the version number for %s").printf(relative_path);
-							}
-							current_version=version;
-						}
-					}
+			var folderlist=new Gee.ArrayList<string>();
+			folderlist.add("");
+
+			var mpath_s=Path.build_filename(path,file_s);
+			string searchpath;
+			string fname;
+			do {
+				searchpath=folderlist.read_only_view[0];
+				folderlist.remove(searchpath);
+				if (searchpath!="") {
+					file=File.new_for_path(Path.build_filename(this.config.basepath,path,searchpath));
 				}
-			} catch (Error e) {
-				this.error_list+=_("Warning: couldn't process binary %s").printf(Path.build_filename(path,file_s));
-				return;
-			}
+				try {
+					var enumerator = file.enumerate_children(FileAttribute.STANDARD_NAME+","+FileAttribute.STANDARD_TYPE, 0);
+					FileInfo file_info;
+					while ((file_info = enumerator.next_file ()) != null) {
+						var filetype=file_info.get_file_type();
+						if(searchpath=="") {
+							fname=file_info.get_name();
+						} else {
+							fname=Path.build_filename(searchpath,file_info.get_name());
+						}
+						if (filetype==FileType.REGULAR) {
+							this.check_files(fname,path,path_s,files_set,filelist,filelist_path,namespaces_list, ref version, ref current_version);
+							continue;
+						} else if (filetype==FileType.DIRECTORY) {
+							var tmp_path=Path.build_filename(path,fname);
+							if ((binaries.has_key(tmp_path)==false)&&(libraries.has_key(tmp_path)==false)) {
+								folderlist.add(fname);
+							}
+						}
+					}
+				} catch (Error e) {
+					this.error_list+=_("Warning: couldn't process binary %s").printf(Path.build_filename(path,file_s));
+					return;
+				}
+			} while(folderlist.size>0);
 
 			// also check the namespaces required by manually added sources
 			foreach(var element in this.config.configuration_data) {
 				if ((element.path==path)&&((element.type==Config_Type.VALA_BINARY)||(element.type==Config_Type.VALA_LIBRARY))) {
 					foreach(var checkfile in element.sources) {
 						if (checkfile.automatic==false) {
-							var fname=checkfile.source;
-							if (fname.has_suffix(".vala")) {
-								var fullpath_s=Path.build_filename(path_s,fname);
-								if (false==files_set.contains(fullpath_s)) {
-									filelist+="*"+fname;
-									filelist_path+=fullpath_s;
-								}
-								var relative_path=Path.build_filename(path,fname);
-								if (this.get_namespaces(fullpath_s,relative_path,namespaces_list,out version)) {
-									this.error_list+=_("Warning: couldn't get the namespace list for %s").printf(relative_path);
-								}
-								if (version!="") {
-									if ((current_version!="")&&(current_version!=version)) {
-										this.error_list+=_("Warning: overwriting the version number for %s").printf(relative_path);
-									}
-									current_version=version;
-								}
-							}
+							this.check_files(checkfile.source,path,path_s,files_set,filelist,filelist_path,namespaces_list, ref version, ref current_version);
 						}
 					}
 				}

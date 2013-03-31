@@ -13,7 +13,6 @@ add_definitions(-DGETTEXT_PACKAGE=\"${GETTEXT_PACKAGE}\")
 find_package(PkgConfig)
 
 set (VERSION "0.5.0")
-
 pkg_check_modules(DEPS REQUIRED
 	gee-1.0
 	glib-2.0
@@ -36,10 +35,10 @@ set(VALA_PACKAGES
 )
 
 set(APP_SOURCES
-	generate.vala
-	autovala.vala
 	configuration.vala
 	cmake.vala
+	autovala.vala
+	generate.vala
 )
 
 vala_precompile(VALA_C autovala

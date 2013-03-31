@@ -24,18 +24,13 @@ The rules followed by Autovala are the following:
 
   * All .vala files in the *src/* folder belong to a binary called like the
     project name, and will be scanned to determine the packages needed to
-    compile them
+    compile them. The .vala files in the subfolders are also added, unless
+    there is another binary or library that already posesses that folder
     
-  * All .vala files in any subfolder in *src/* belong to a binary called like
-    the subfolder. So all the .vala files in, for example, *src/binary_test/*
-    will be compiled to an executable called binary_test.
-    
-  * All .vala files in any subfolder in *src/* whose name starts with 'lib'
-    belong to a library called like the subfolder. So all the .vala files
-    in, for example, *src/libtest/* will be compiled as a shared library
-    called 'test', unless those source files contain a single namespace,
-    in which case the namespace will be used for the library name and to
-    generate the .vapi and .gir files automatically.
+  * All .vala files in a folder posessed by a binary or library belong to
+    it, and will be  scanned to determine the packages needed to
+    compile them. The .vala files in the subfolders are also added, unless
+    there is another binary or library that already posesses that folder
     
   * The sources will be scanned to find the version number in a specific
     format, allowing to keep it inside the sources and avoiding the need
