@@ -1,4 +1,4 @@
-# AUTOVALA 0.1.0 #
+# AUTOVALA 0.4.0 #
 
 ## WHAT IS IT? ##
 
@@ -74,9 +74,11 @@ The rules followed by Autovala are the following:
   * Each .sh file in *data/* will be presumed to be a binary script, so will
     be copied to *bin/*
     
-  * All files and folders in *data/local/* will be copied to *share/prject_name/*
-    This is useful for application-specific data, or documentation
+  * All files and folders in *data/local/* will be copied to *share/project_name/*
+    This is useful for application-specific data
 
+  * All files and folders in *doc/* will be copied to *share/doc/project_name/*
+    This is useful for documentation
 
 When Autovala searchs the packages, it uses only the versions available for
 the currently active version. Also, by default, it uses the most recent
@@ -137,6 +139,11 @@ These commands can be called from any of the folders or subfolders of the
 project, because it will search for the first .avprj file located in the
 current folder or upstream.
 
+Once created the CMakeLists.txt files, just go to the folder *install/*
+and run *cmake ..* to generate the makefiles and other temporary files.
+You can also use *cmake .. -DBUILD_VALADOC=ON* to add Valadoc support.
+This is still an experimental feature, that relies on some changes to the
+cmake for vala package, so it's possible that it doesn't work for you yet.
 
 ## PROJECT FILE FORMAT ##
 
@@ -172,7 +179,10 @@ to specify what to do with each file in your project. These commands are:
     The program identifier for Gettext is the project name.
 
  * data: specifies a folder with local data that must be installed in
-      share/project_name
+      share/project_name. By default it's "data/local".
+      
+ * doc: specifies a folder with the documentation that must be installed in
+      share/doc/project_name. By default it's "doc".
       
  * vala_binary:  contains a path and a name, and specifies that, in the path, there
               are several source files that must be compiled to create that
@@ -370,19 +380,8 @@ or "autovala update" is run.
 
 ## TO DO ##
 
-This is still version 0.1.0. It is fully usable, but there are still a lot of
+This is still version 0.2.0. It is fully usable, but there are still a lot of
 things that I want to add to it, and I will need help.
-
- * Don't allow to regenerate the project when the installed vala version is
-   older than the minimun needed by the project
-
- * Create the *install* and *doc* folders during initialization
-
- * Copy the contents of the *doc/* folder to *share/doc/PROJECT_NAME*
-
- * Search pkg files also in PKG_CONFIG_PATH and in *share/pkgconfig/*
-
- * Support Valadoc
 
  * Allow that a binary being compiled be able to use a library compiled in the
    same project

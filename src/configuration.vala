@@ -22,7 +22,8 @@ using Posix;
 
 namespace AutoVala {
 
-	public enum Config_Type {VALA_BINARY, VALA_LIBRARY, BINARY, ICON, PIXMAP, PO, GLADE, DBUS_SERVICE, DESKTOP, AUTOSTART, EOS_PLUG, SCHEME, DATA, INCLUDE, IGNORE}
+	public enum Config_Type {VALA_BINARY, VALA_LIBRARY, BINARY, ICON, PIXMAP, PO, GLADE, DBUS_SERVICE, DESKTOP, AUTOSTART,
+							 EOS_PLUG, SCHEME, DATA, DOC, INCLUDE, IGNORE}
 
 	public class package_element:GLib.Object {
 
@@ -223,7 +224,7 @@ namespace AutoVala {
 		private int line_number;
 
 		public configuration(string project_name="") {
-			this.current_version=1; // currently we support version 1 of the syntax
+			this.current_version=2; // currently we support version 2 of the syntax
 			this.config_path="";
 			this.configuration_data=new Gee.ArrayList<config_element ?>();
 			this.last_element=null;
@@ -231,6 +232,38 @@ namespace AutoVala {
 			this.project_name=project_name;
 			this.error_list={};
 			this.vala_version="0.16";
+		}
+
+		public bool get_vala_version(out int major, out int minor) {
+
+			/*
+			 * Maybe a not very elegant way of doing it. I accept patches
+			 */
+			major=0;
+			minor=0;
+
+			if (0!=Posix.system("valac --version > /var/tmp/current_vala_version")) {
+				return true;
+			}
+			var file=File.new_for_path("/var/tmp/current_vala_version");
+			try {
+				var dis = new DataInputStream(file.read());
+				string ?line;
+				while((line=dis.read_line(null))!=null) {
+					var version=line.split(" ");
+					foreach(var element in version) {
+						if (Regex.match_simple("^[0-9]+.[0-9]+(.[0-9]+)?$",element)) {
+							var numbers=element.split(".");
+							major=int.parse(numbers[0]);
+							minor=int.parse(numbers[1]);
+							return false;
+						}
+					}
+				}
+			} catch (Error e) {
+				return true;
+			}
+			return true;
 		}
 
 		public void clear_automatic() {
@@ -269,7 +302,7 @@ namespace AutoVala {
 
 			var directory = File.new_for_path(basepath);
 			try {
-				enumerator = directory.enumerate_children(FileAttribute.STANDARD_NAME+","+FileAttribute.STANDARD_TYPE,FileQueryInfoFlags.NOFOLLOW_SYMLINKS,null);
+				enumerator = directory.enumerate_children(GLib.FileAttribute.STANDARD_NAME+","+GLib.FileAttribute.STANDARD_TYPE,GLib.FileQueryInfoFlags.NOFOLLOW_SYMLINKS,null);
 				while ((info_file = enumerator.next_file(null)) != null) {
 					full_path="";
 					typeinfo=info_file.get_file_type();
@@ -375,6 +408,26 @@ namespace AutoVala {
 							this.error_list+=_("Vala version string not valid. It must be in the form N.N or N.N.N (line %d)").printf(this.line_number);
 							error=true;
 						} else {
+							var version_elements=version.split(".");
+							int major;
+							int minor;
+							if (this.get_vala_version(out major, out minor)) {
+								this.error_list+=_("Can't get the version of the installed Vala binary. Asuming version 0.16");
+								major=0;
+								minor=16;
+							}
+							int f_major;
+							int f_minor;
+
+							f_major=int.parse(version_elements[0]);
+							f_minor=int.parse(version_elements[1]);
+							if ((f_major>major)||((f_major==major)&&(f_minor>minor))) {
+								this.config_path="";
+								this.configuration_data=new Gee.ArrayList<config_element ?>();
+								this.error_list+=_("This project needs Vala version %s or greater, but you have version %d.%d. Can't open it.").printf(version,major,minor);
+								error=true;
+								break;
+							}
 							this.vala_version=version;
 						}
 						continue;
@@ -422,6 +475,11 @@ namespace AutoVala {
 					if (line.has_prefix("po: ")) {
 						var po_folder=line.substring(4).strip();
 						error|=this.add_entry(po_folder,Config_Type.PO,automatic);
+						continue;
+					}
+					if (line.has_prefix("doc: ")) {
+						var po_folder=line.substring(5).strip();
+						error|=this.add_entry(po_folder,Config_Type.DOC,automatic);
 						continue;
 					}
 					if (line.has_prefix("dbus_service: ")) {
@@ -673,9 +731,9 @@ namespace AutoVala {
 				this.error_list+=_("Trying to add an entry with the class unconfigured");
 				return true;
 			}
-			
+
 			var filename=l_filename;
-			if ((type==Config_Type.PO)||(type==Config_Type.DATA)) {
+			if ((type==Config_Type.PO)||(type==Config_Type.DATA)||(type==Config_Type.DOC)) {
 				if (false==filename.has_suffix(Path.DIR_SEPARATOR_S)) {
 					filename+=Path.DIR_SEPARATOR_S;
 				}
@@ -777,11 +835,13 @@ namespace AutoVala {
 				data_stream.put_string("vala_version: "+this.vala_version+"\n");
 				this.store_data(Config_Type.PO,data_stream);
 				this.store_data(Config_Type.DATA,data_stream);
-				this.store_data(Config_Type.AUTOSTART,data_stream);
+				this.store_data(Config_Type.DOC,data_stream);
+				this.store_data(Config_Type.IGNORE,data_stream);
 				this.store_data(Config_Type.VALA_BINARY,data_stream);
 				this.store_data(Config_Type.VALA_LIBRARY,data_stream);
 				this.store_data(Config_Type.BINARY,data_stream);
 				this.store_data(Config_Type.DESKTOP,data_stream);
+				this.store_data(Config_Type.AUTOSTART,data_stream);
 				this.store_data(Config_Type.DBUS_SERVICE,data_stream);
 				this.store_data(Config_Type.EOS_PLUG,data_stream);
 				this.store_data(Config_Type.SCHEME,data_stream);
@@ -864,6 +924,12 @@ namespace AutoVala {
 						break;
 					case Config_Type.PO:
 						data_stream.put_string("po: "+element.path+"\n");
+						break;
+					case Config_Type.DOC:
+						data_stream.put_string("doc: "+element.path+"\n");
+						break;
+					case Config_Type.IGNORE:
+						data_stream.put_string("ignore: "+element.path+"\n");
 						break;
 					case Config_Type.GLADE:
 						data_stream.put_string("glade: "+fullpathname+"\n");

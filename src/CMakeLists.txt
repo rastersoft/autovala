@@ -12,7 +12,7 @@ configure_file (${CMAKE_SOURCE_DIR}/src/Config.vala.cmake ${CMAKE_BINARY_DIR}/sr
 add_definitions(-DGETTEXT_PACKAGE=\"${GETTEXT_PACKAGE}\")
 find_package(PkgConfig)
 
-set (VERSION "0.1.0")
+set (VERSION "0.3.0")
 pkg_check_modules(DEPS REQUIRED
 	gee-1.0
 	glib-2.0
@@ -27,16 +27,24 @@ include(ValaVersion)
 ensure_vala_version("0.16" MINIMUM)
 include(ValaPrecompile)
 
-vala_precompile(VALA_C autovala
-	generate.vala
-	cmake.vala
-	configuration.vala
-	autovala.vala
-PACKAGES
+set(VALA_PACKAGES
 	posix
 	gee-1.0
 	glib-2.0
 	gtk+-3.0
+)
+
+set(APP_SOURCES
+	autovala.vala
+	cmake.vala
+	generate.vala
+	configuration.vala
+)
+
+vala_precompile(VALA_C autovala
+	${APP_SOURCES}
+PACKAGES
+	${VALA_PACKAGES}
 )
 
 add_executable(autovala ${VALA_C})
@@ -47,3 +55,11 @@ RUNTIME DESTINATION
 	bin/
 )
 
+if(HAVE_VALADOC)
+	valadoc(autovala
+		${CMAKE_BINARY_DIR}/valadoc
+		${APP_SOURCES}
+	PACKAGES
+		${VALA_PACKAGES}
+	)
+endif()

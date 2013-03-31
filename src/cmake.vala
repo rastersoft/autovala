@@ -86,7 +86,19 @@ namespace AutoVala {
 				data_stream.put_string("cmake_minimum_required (VERSION 2.6)\n");
 				data_stream.put_string("cmake_policy (VERSION 2.8)\n");
 				data_stream.put_string("list (APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)\n");
-				data_stream.put_string("enable_testing ()\n");
+				data_stream.put_string("enable_testing ()\n\n");
+				data_stream.put_string("option(BUILD_VALADOC \"Build API documentation if Valadoc is available\" OFF)\n\n");
+				data_stream.put_string("set(HAVE_VALADOC OFF)\n");
+				data_stream.put_string("if(BUILD_VALADOC)\n");
+				data_stream.put_string("\tfind_package(Valadoc)\n");
+				data_stream.put_string("\tif(VALADOC_FOUND)\n");
+				data_stream.put_string("\t\tset(HAVE_VALADOC ON)\n");
+				data_stream.put_string("\t\tinclude(Valadoc)\n");
+				data_stream.put_string("\telse()\n");
+				data_stream.put_string("\t\tmessage(\"Valadoc not found, will not build documentation\")\n");
+				data_stream.put_string("\tendif()\n");
+				data_stream.put_string("endif()\n\n");
+
 				foreach(var element in paths) {
 					var dirpath=File.new_for_path(Path.build_filename(this.config.basepath,element));
 					if (dirpath.query_exists()==false) {
@@ -159,7 +171,7 @@ namespace AutoVala {
 				if (ignore_list.contains(fullpath_s)) {
 					continue;
 				}
-				if ((element.type!=Config_Type.VALA_BINARY)&&(element.type!=Config_Type.VALA_LIBRARY)&&(element.type!=Config_Type.PO)&&(element.type!=Config_Type.DATA)) {
+				if ((element.type!=Config_Type.VALA_BINARY)&&(element.type!=Config_Type.VALA_LIBRARY)&&(element.type!=Config_Type.PO)&&(element.type!=Config_Type.DATA)&&(element.type!=Config_Type.DOC)) {
 					var fullpath=File.new_for_path(fullpath_s);
 					if (fullpath.query_exists()==false) {
 						this.error_list+=_("Warning: file %s doesn't exists").printf(Path.build_filename(dir,element.file));
@@ -169,6 +181,9 @@ namespace AutoVala {
 				switch(element.type) {
 				case Config_Type.DATA:
 					error=this.create_data(dir,data_stream);
+					break;
+				case Config_Type.DOC:
+					error=this.create_doc(dir,data_stream);
 					break;
 				case Config_Type.PO:
 					error=this.create_po(dir,data_stream);
@@ -411,18 +426,44 @@ namespace AutoVala {
 				data_stream.put_string("\t\tinstall(DIRECTORY\n");
 				data_stream.put_string("\t\t\t${file_data}\n");
 				data_stream.put_string("\t\tDESTINATION\n");
-				data_stream.put_string("\t\t\tshare/"+this.config.project_name);
-				data_stream.put_string("\n\t\t)\n");
+				data_stream.put_string("\t\t\t"+Path.build_filename("share",this.config.project_name)+"\n");
+				data_stream.put_string("\t\t)\n");
 				data_stream.put_string("\tELSE()\n");
 				data_stream.put_string("\t\tinstall(FILES\n");
 				data_stream.put_string("\t\t\t${file_data}\n");
 				data_stream.put_string("\t\tDESTINATION\n");
-				data_stream.put_string("\t\t\tshare/"+this.config.project_name);
-				data_stream.put_string("\n\t\t)\n");
+				data_stream.put_string("\t\t\t"+Path.build_filename("share",this.config.project_name)+"\n");
+				data_stream.put_string("\t\t)\n");
 				data_stream.put_string("\tENDIF()\n");
 				data_stream.put_string("endforeach()\n\n");
 			} catch (Error e) {
 				this.error_list+=_("Failed to install local files at %s\n").printf(dir);
+				return true;
+			}
+			return false;
+		}
+
+		private bool create_doc(string dir,DataOutputStream data_stream) {
+
+			try {
+				data_stream.put_string("file(GLOB list_data RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *)\n");
+				data_stream.put_string("foreach(file_data ${list_data})\n");
+				data_stream.put_string("\tIF(IS_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/${file_data})\n");
+				data_stream.put_string("\t\tinstall(DIRECTORY\n");
+				data_stream.put_string("\t\t\t${file_data}\n");
+				data_stream.put_string("\t\tDESTINATION\n");
+				data_stream.put_string("\t\t\t"+Path.build_filename("share/doc",this.config.project_name)+"\n");
+				data_stream.put_string("\t\t)\n");
+				data_stream.put_string("\tELSE()\n");
+				data_stream.put_string("\t\tinstall(FILES\n");
+				data_stream.put_string("\t\t\t${file_data}\n");
+				data_stream.put_string("\t\tDESTINATION\n");
+				data_stream.put_string("\t\t\t"+Path.build_filename("share/doc",this.config.project_name)+"\n");
+				data_stream.put_string("\t\t)\n");
+				data_stream.put_string("\tENDIF()\n");
+				data_stream.put_string("endforeach()\n\n");
+			} catch (Error e) {
+				this.error_list+=_("Failed to install document files at %s\n").printf(dir);
 				return true;
 			}
 			return false;
@@ -577,15 +618,23 @@ namespace AutoVala {
 				data_stream.put_string("ensure_vala_version(\""+this.config.vala_version+"\" MINIMUM)\n");
 				data_stream.put_string("include(ValaPrecompile)\n\n");
 
-				data_stream.put_string("vala_precompile(VALA_C "+lib_filename+"\n");
-
-				foreach (var filename in element.sources) {
-					data_stream.put_string("\t"+filename.source+"\n");
-				}
-				data_stream.put_string("PACKAGES\n");
+				data_stream.put_string("set(VALA_PACKAGES\n");
 				foreach(var module in element.packages) {
 					data_stream.put_string("\t"+module.package+"\n");
 				}
+				data_stream.put_string(")\n\n");
+
+				data_stream.put_string("set(APP_SOURCES\n");
+				foreach (var filename in element.sources) {
+					data_stream.put_string("\t"+filename.source+"\n");
+				}
+				data_stream.put_string(")\n\n");
+
+
+				data_stream.put_string("vala_precompile(VALA_C "+lib_filename+"\n");
+				data_stream.put_string("\t${APP_SOURCES}\n");
+				data_stream.put_string("PACKAGES\n");
+				data_stream.put_string("\t${VALA_PACKAGES}\n");
 
 				var final_options=element.compile_options;
 				if (is_library) {
@@ -662,6 +711,16 @@ namespace AutoVala {
 					data_stream.put_string("\tbin/\n");
 					data_stream.put_string(")\n\n");
 				}
+
+				data_stream.put_string("if(HAVE_VALADOC)\n");
+				data_stream.put_string("\tvaladoc("+this.config.project_name+"\n");
+				data_stream.put_string("\t\t${CMAKE_BINARY_DIR}/valadoc\n");
+				data_stream.put_string("\t\t${APP_SOURCES}\n");
+				data_stream.put_string("\tPACKAGES\n");
+				data_stream.put_string("\t\t${VALA_PACKAGES}\n");
+				data_stream.put_string("\t)\n");
+				data_stream.put_string("endif()\n");
+
 			} catch (Error e) {
 				this.error_list+=_("Failed to write the CMakeLists file for binary %s\n").printf(lib_filename);
 				return true;
