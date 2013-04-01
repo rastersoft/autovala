@@ -8,6 +8,13 @@ oficial repository. You can get the oficial files with
 
     bzr checkout lp:~elementary-apps/+junk/cmake-modules
 
+This will create a folder called *cmake-modules*. Inside
+it will be a folder called *cmake*. Copy the later to the
+Autovala project folder, overwriting the files inside.
+
+Don't forget to keep the files FindValadoc.cmake and
+Valadoc.cmake, needed to work with Valadoc.
+
 To compile and install it, just open a terminal, go
 to the directory where you downloaded the git repository
 and type:
