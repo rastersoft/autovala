@@ -1,0 +1,19 @@
+HOW TO INSTALL
+
+You need CMake, Vala 0.16 or later, libgee and gtk+.
+The repository includes a version of CMake for Vala
+that includes some changes (not mine) to support
+Valadoc. These changes still aren't available at the
+oficial repository. You can get the oficial files with
+
+    bzr checkout lp:~elementary-apps/+junk/cmake-modules
+
+To compile and install it, just open a terminal, go
+to the directory where you downloaded the git repository
+and type:
+
+    mkdir install
+    cmake ..
+    make
+    sudo make install
+    
