@@ -1,0 +1,11 @@
+div.main_frame {
+
+	width: 800px;
+	background-color: #FFFFFF;
+	margin: 2px auto 2px auto;
+	border: 2px;
+	border-style: solid;
+	border-color: #000000;
+	padding: 20px;
+
+}
