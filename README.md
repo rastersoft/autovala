@@ -24,22 +24,9 @@ This is what Autovala does. This process is done in three steps:
 ## USING AUTOVALA ##
 
 
-The DOC folder contains the Wiki dumped in HTML format. Just open the **index.html** file
-with your browser, and enjoy.
-
-
-## TO DO ##
-
-This is still version 0.5.0. It is fully usable, but there are still a lot of
-things that I want to add to it, and I will need help.
-
- * Allow that a binary being compiled be able to use a library compiled in the
-   same project. This is a must if I want to distribute Autovala both as a library, and as
-   a command line program that uses that library.
-   
- * Generate automatically the .pc file for a library (for pkg-config). I need help with the format of the .pc files
-
- * Integrate it as a plugin for Gedit
+The DOC folder contains the Wiki dumped in HTML format. Just open the
+**index.html** file with your browser, or go to the **Wiki section** in GitHub,
+and enjoy.
 
 
 ## CONTACTING THE AUTHOR ##
