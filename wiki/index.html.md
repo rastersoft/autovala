@@ -16,3 +16,4 @@ Autovala uses simple rules, like: "png files go to usr/share/pixmaps", and so on
 [Project file format (needed for manual editing)](Project-File-Format)  
 [Keeping your changes](Keeping-your-changes): needed when you manually edit the .avprj file  
 [Autovala tricks](tricks)  
+[Things TO DO](To-Do)  

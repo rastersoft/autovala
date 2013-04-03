@@ -1,10 +1,10 @@
 div.main_frame {
-	width: 800px;
+	width: 900px;
 	background-color: #FFFFFF;
 	margin: 2px auto 2px auto;
 	border: 2px;
 	border-style: solid;
-	border-color: #000000;
+	border-color: #C0C0C0;
 	padding: 20px;
 }
 
@@ -20,5 +20,23 @@ pre {
 }
 
 body {
-	background-color: #E0E0E0;
+	background-color: #F0F0F0;
+	line-height:170%;
+}
+
+h1 {
+	width: 100%;
+	border-top: 0px;
+	border-left: 0px;
+	border-bottom: 1px;
+	border-right: 0px;
+	border-style: solid;
+	border-color: #E0E0E0;
+}
+
+p {
+
+	margin-top: 1.3em;
+	margin-bottom: 1.3em;
+
 }
