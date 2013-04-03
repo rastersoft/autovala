@@ -43,9 +43,7 @@ INTERFACE should contain the .ui files from Glade.
 
 Finally, LOCAL is a place where to put everything you want to get copied "as-is" into usr/share/PROJECT_NAME/.
 
-When you are OK for the first compilation,
-just use Autovala to check the folders and automatically update the .avprj
-file with:
+When you are OK for the first compilation, just use Autovala to check the folders and automatically update the .avprj file with:
 
         autovala refresh
         
@@ -54,7 +52,7 @@ When using this command, Autovala will guess all the info about your project and
         autovala cmake
 
 Now you can go to the INSTALL folder and type 'cmake ..' to generate the makefiles for compile your project.
-You can also use *cmake .. -DBUILD_VALADOC=ON* to add Valadoc support; but remember that this is still an experimental feature that relies on some changes to the cmake for vala package, so it's possible that it doesn't work for you yet.
+You can also use *cmake .. -DBUILD_VALADOC=ON* to add Valadoc support; but if you are using Ubuntu 12.10, maybe you should try to compile Valadoc from scratch, because it seems to be a bug in the version shipped from Canonical (more on this in the [tricks section](tricks)).
 
 Since it's very common to call those two commands, one after the other, you can just use:
 

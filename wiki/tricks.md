@@ -1,10 +1,24 @@
 # Tricks for Autovala
 
+## Setting the version number
+
+To simplify the maintenance of the code, Autovala allows to set the version number in an easy way inside the source code of your binary or library. That way you will always be sure to use the right number both for the *About* and *--version* commands, and for the library major and minor values.
+
+To do so, just put in one (no matter which) of the *.vala* source files the following statement:
+
+    const string project_version="XX.YY.ZZ";
+
+As expected, this will define a global string with the version number inside. The interesting thing is that Autovala will peek inside all the source files for this kind of string, and will use it whenever it needs a version number. For binaries maybe is not really very useful, but for libraries it is, because there you can set the major and minor version numbers.
+
+The format for the version number can be both XX.YY or XX.YY.ZZ, but X, Y and Z must be numbers. So you can use *0.5.34* or *12.5* as version numbers, but not *1.4rc1*, *7*...
+
+If no version number is defined in the source code, nor manually set in the project file, Autovala will use *1.0.0* whenever it needs it.
+
 ## Creating several binaries
 
-By default, Autovala presumes that every source file inside SRC or its subdirectories belongs to a single binary. But maybe you want to generate several binaries because your program needs several executables.
+By default, Autovala presumes that every source file inside *src* or its subdirectories belongs to a single binary. But maybe you want to generate several binaries because your program needs several executables.
 
-Let's suppose that you have a project called *myproject*, with a folder hierarchy like this:
+Let's suppose that you have a project called *myproject*, with a folder hierarchy inside *src* like this:
 
     src
      +file1.vala
@@ -18,7 +32,7 @@ Let's suppose that you have a project called *myproject*, with a folder hierarch
          +file6.vala
 
 
-And let's suppose that you want to compile *file5.vala* and *file6.vala* as a different executable called *otherprogram*. By default, after running 'autovala refresh', it will create a single executable called *myproject*, using all the source files (*file1.vala* to *file6.vala*), and the *.avprj* file will look like this:
+And let's suppose that you want to compile *file5.vala* and *file6.vala* as a different executable called *otherprogram*. By default, after running 'autovala refresh', it will create a single executable called *myproject*, using all the source files ( *file1.vala* to *file6.vala* ), and the *.avprj* file will look like this:
 
     ### AutoVala Project ###
     autovala_version: 2
@@ -45,3 +59,22 @@ Save it and run 'autovala update'. If you edit again the project file, you will 
 ## Creating libraries
 
 Creating a library is as easy as editing the project file and replacing the command *vala_binary* with *vala_library* and running again 'autovala update'.
+
+When creating a library, Autovala will peek the source files and check the namespace used inside. If all files uses the same namespace, it will use it, by default, as the name for the library, and also to generate the *.vapi* and *.gir* files (and, in the future, the *.pc* file for pkg-config). Of course, is possible to set this name manually by editing the project file and modifying the command **namespace**.
+
+The major and minor numbers for the library are taken from the version number set by the user (read the entry [Setting the version number](tricks#setting-the-version-number) ). They will be used for the library itself, the *.vapi* file and in the future, for the *.pc* file. The *.gir* introspection file uses the version number *major.0* instead of *major.minor* to ensure compatibility.
+
+## Compiling Valadoc in Ubuntu
+
+At the time of writing this, the version of Valadoc shipped with Ubuntu 12.10 has a bug and sometimes fails. The solution is to manually compile it from the sources.
+
+To get the sources, just use
+
+    git clone http://git.gnome.org/browse/valadoc
+
+Then, don't forget to uninstall the **valadoc** and **libvaladoc1** packages, install the packages **libgee-0.8-dev** and **libgraphviz-dev**, and then just run
+
+    ./autogen.sh
+    make
+    sudo make install
+    sudo ldconfig
