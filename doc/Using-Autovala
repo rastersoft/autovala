@@ -2,80 +2,42 @@
 <head>
 <link rel="stylesheet" type="text/css" href="view.css" />
 </head>
-<body bgcolor="#E0E0E0">
+<body>
 <div class="main_frame">
 <p><a href="index.html">Home</a></p>
 <h1>Using Autovala</h1>
-
 <p>Autovala is designed as several Vala classes, so it can be embedded easily in other projects. My idea is to embed it as a Gedit plugin; but until then, you can use it from command line.</p>
-
 <p>Before all, you need to install in your project folder the CMake modules for Vala. The repository contains a version modified to work with Valadoc, but you can always download the last oficial version from launchpad using bazaar:</p>
-
-<pre><code>    bzr checkout lp:~elementary-apps/+junk/cmake-modules
-</code></pre>
-
-<p>This will create a folder called <em>cmake-modules</em>. Inside it will be a folder
-called <em>cmake</em>. Copy the later to your project folder.</p>
-
-<p>The first thing to do is to initializate the project. This is done by calling
-autovala in your desired project's folder with:</p>
-
-<pre><code>    autovala init PROJECT_NAME
-</code></pre>
-
-<p>This will create a <em>PROJECT_NAME.avprj</em> file, with the most basic info about
-your project (the format for this file will be explained later). It will also
-try to create the basic folders for a vala project, and will show a warning
-if they already exist. It will never delete a file, except the <em>CMakeLists</em>
-files, of course. The folder hierarchy is:</p>
-
-<pre><code>.
-+src
-+install
-+doc
-+po
-+data
-   +icons
-   +pixmaps
-   +interface
-   +local
-</code></pre>
-
+<pre><code>    bzr checkout lp:~elementary-apps/+junk/cmake-modules</code></pre>
+<p>This will create a folder called <em>cmake-modules</em>. Inside it will be a folder<br />called <em>cmake</em>. Copy the later to your project folder.</p>
+<p>The first thing to do is to initializate the project. This is done by calling<br />autovala in your desired project's folder with:</p>
+<pre><code>    autovala init PROJECT_NAME</code></pre>
+<p>This will create a <em>PROJECT_NAME.avprj</em> file, with the most basic info about<br />your project (the format for this file will be explained later). It will also<br />try to create the basic folders for a vala project, and will show a warning<br />if they already exist. It will never delete a file, except the <em>CMakeLists</em><br />files, of course. The folder hierarchy is:</p>
+<pre><code>    .
+    +src
+    +install
+    +doc
+    +po
+    +data
+       +icons
+       +pixmaps
+       +interface
+       +local</code></pre>
 <p>By default, Autovala will compile all the .vala source files located inside SRC and its subfolders into a single binary called like the project's name. How to generate libraries or several binaries is explained in the <a href="tricks">tricks section</a>.</p>
-
 <p>INSTALL is the folder where to build everything. More about it later.</p>
-
 <p>As can be supposed, DOC has to contain the documentation, and PO will contain the files with translatable strings. These strings are extracted from the .vala files and the .ui ones (from glade).</p>
-
 <p>DATA is where you must put things like D-Bus activation files, .desktop files, scripts, and so on. ICONS folder and subfolders should contain the icons (in png or svg format), and Autovala will automagically take into account its size to put them in the right place.</p>
-
 <p>INTERFACE should contain the .ui files from Glade.</p>
-
-<p>Finally, LOCAL is a place where to put everything you want to get copied "as-is" into usr/share/PROJECT_NAME/.</p>
-
+<p>Finally, LOCAL is a place where to put everything you want to get copied &quot;as-is&quot; into usr/share/PROJECT_NAME/.</p>
 <p>When you are OK for the first compilation, just use Autovala to check the folders and automatically update the .avprj file with:</p>
-
-<pre><code>    autovala refresh
-</code></pre>
-
+<pre><code>    autovala refresh</code></pre>
 <p>When using this command, Autovala will guess all the info about your project and put it in the .avprj file, so you can check and modify it if you want (more on that later). If everything is OK, just create the CMakeLists files from that data using:</p>
-
-<pre><code>    autovala cmake
-</code></pre>
-
-<p>Now you can go to the INSTALL folder and type 'cmake ..' to generate the makefiles for compile your project.
-You can also use <em>cmake .. -DBUILD_VALADOC=ON</em> to add Valadoc support; but if you are using Ubuntu 12.10, maybe you should try to compile Valadoc from scratch, because it seems to be a bug in the version shipped from Canonical (more on this in the <a href="tricks">tricks section</a>).</p>
-
+<pre><code>    autovala cmake</code></pre>
+<p>Now you can go to the INSTALL folder and type 'cmake ..' to generate the makefiles for compile your project.<br />You can also use <em>cmake .. -DBUILD_VALADOC=ON</em> to add Valadoc support; but if you are using Ubuntu 12.10, maybe you should try to compile Valadoc from scratch, because it seems to be a bug in the version shipped from Canonical (more on this in the <a href="tricks">tricks section</a>).</p>
 <p>Since it's very common to call those two commands, one after the other, you can just use:</p>
-
-<pre><code>    autovala update
-</code></pre>
-
+<pre><code>    autovala update</code></pre>
 <p>which will, first, update your .avprj file, and if there are no errors, will regenerate the CMakeLists files, all in one command.</p>
-
-<p>These commands can be called from any of the folders or subfolders of the
-project, because it will search for the first .avprj file located in the
-current folder or upstream.</p>
+<p>These commands can be called from any of the folders or subfolders of the<br />project, because it will search for the first .avprj file located in the<br />current folder or upstream.</p>
 <p><a href="index.html">Home</a></p>
 </div>
 </body>

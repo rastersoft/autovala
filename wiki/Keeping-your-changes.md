@@ -16,22 +16,22 @@ that the manual data is preserver always.
 
 Example: let's suppose we have this project file:
 
-    ### AutoVala Project ###
-    autovala_version: 1
-    project_name: autovala
-    vala_version: 0.16
-    *po: po
+        ### AutoVala Project ###
+        autovala_version: 1
+        project_name: autovala
+        vala_version: 0.16
+        *po: po
 
-    *vala_binary: src/autovala
-    *version: 1.0.0
-    *vala_package: posix
-    *vala_check_package: gee-1.0
-    *vala_check_package: glib-2.0
-    *vala_check_package: gtk+-3.0
-    *vala_source: cmake.vala
-    *vala_source: generate.vala
-    *vala_source: configuration.vala
-    *vala_source: autovala.vala
+        *vala_binary: src/autovala
+        *version: 1.0.0
+        *vala_package: posix
+        *vala_check_package: gee-1.0
+        *vala_check_package: glib-2.0
+        *vala_check_package: gtk+-3.0
+        *vala_source: cmake.vala
+        *vala_source: generate.vala
+        *vala_source: configuration.vala
+        *vala_source: autovala.vala
 
 We can see that all the commands have been added automatically, because they
 are prepended by an asterisk.
@@ -39,22 +39,22 @@ are prepended by an asterisk.
 Let's say that the version number is incorrect; we want the version number
 0.1.0. So we edit the file and modify it (incorrectly) to look like this:
 
-    ### AutoVala Project ###
-    autovala_version: 1
-    project_name: autovala
-    vala_version: 0.16
-    *po: po
-    
-    *vala_binary: src/autovala
-    *version: 0.1.0
-    *vala_package: posix
-    *vala_check_package: gee-1.0
-    *vala_check_package: glib-2.0
-    *vala_check_package: gtk+-3.0
-    *vala_source: cmake.vala
-    *vala_source: generate.vala
-    *vala_source: configuration.vala
-    *vala_source: autovala.vala
+        ### AutoVala Project ###
+        autovala_version: 1
+        project_name: autovala
+        vala_version: 0.16
+        *po: po
+
+        *vala_binary: src/autovala
+        *version: 0.1.0
+        *vala_package: posix
+        *vala_check_package: gee-1.0
+        *vala_check_package: glib-2.0
+        *vala_check_package: gtk+-3.0
+        *vala_source: cmake.vala
+        *vala_source: generate.vala
+        *vala_source: configuration.vala
+        *vala_source: autovala.vala
 
 This change is *INCORRECT*, because it keeps the asterisk in the changed line.
 That means that the next time that "autovala refresh" or "autovala update"
@@ -63,22 +63,22 @@ is run, that change will disappear and will be replaced by the old guess.
 To ensure that the change remains, it must be put in a line *without* the asterisk
 This is:
 
-    ### AutoVala Project ###
-    autovala_version: 1
-    project_name: autovala
-    vala_version: 0.16
-    *po: po
+        ### AutoVala Project ###
+        autovala_version: 1
+        project_name: autovala
+        vala_version: 0.16
+        *po: po
 
-    *vala_binary: src/autovala
-    version: 0.1.0
-    *vala_package: posix
-    *vala_check_package: gee-1.0
-    *vala_check_package: glib-2.0
-    *vala_check_package: gtk+-3.0
-    *vala_source: cmake.vala
-    *vala_source: generate.vala
-    *vala_source: configuration.vala
-    *vala_source: autovala.vala
+        *vala_binary: src/autovala
+        version: 0.1.0
+        *vala_package: posix
+        *vala_check_package: gee-1.0
+        *vala_check_package: glib-2.0
+        *vala_check_package: gtk+-3.0
+        *vala_source: cmake.vala
+        *vala_source: generate.vala
+        *vala_source: configuration.vala
+        *vala_source: autovala.vala
 
 Now the change will remain, no matter how many times "autovala refresh"
 or "autovala update" is run.

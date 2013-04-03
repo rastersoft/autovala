@@ -1,22 +1,11 @@
-<html>
-<head>
-<link rel="stylesheet" type="text/css" href="view.css" />
-</head>
-<body>
-<div class="main_frame">
-<p><a href="index.html">Home</a></p>
-<h1>AUTOVALA</h1>
+<h1 id="autovala">AUTOVALA</h1>
 <p>Autovala is a program and a library designed to help in the creation of projects with Vala and CMake.</p>
 <p>The idea is quite simple: CMake is very powerful, but writting the CMakeLists files is boring and repetitive. Why not let the computer create them, by guessing what to do with each file? And if, at the end, there are mistakes, let the user fix them in an easy way, and generate the final CMakeLists files.</p>
 <p>This is what Autovala does. This process is done in three steps:</p>
 <ul>
-<li>First, Autovala checks all the folders and files, and creates a project with the type of each file<br /></li>
-<li>It also peeks the source files to determine which Vala packages they need, and generate automagically that list<br /></li>
+<li>First, Autovala checks all the folders and files, and creates a project with the type of each file</li>
+<li>It also peeks the source files to determine which Vala packages they need, and generate automagically that list</li>
 <li>After that (and after allowing the user to check, if (s)he wishes, the project file), it uses that project file to generate the needed CMakeLists files</li>
 </ul>
 <p>Autovala uses simple rules, like: &quot;png files go to usr/share/pixmaps&quot;, and so on. It even takes into account things like the size and type of picture. For a detailed (and, maybe, boring) explanation of the rules followed by Autovala, check <a href="Rules">rules page</a>.</p>
 <p><a href="Using-Autovala">Using autovala</a><br /><a href="Project-File-Format">Project file format (needed for manual editing)</a><br /><a href="Keeping-your-changes">Keeping your changes</a>: needed when you manually edit the .avprj file<br /><a href="tricks">Autovala tricks</a></p>
-<p><a href="index.html">Home</a></p>
-</div>
-</body>
-</html>

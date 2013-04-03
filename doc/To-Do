@@ -2,21 +2,20 @@
 <head>
 <link rel="stylesheet" type="text/css" href="view.css" />
 </head>
-<body bgcolor="#E0E0E0">
+<body>
 <div class="main_frame">
 <p><a href="index.html">Home</a></p>
 <p>While Autovala is fully usable, there are still a lot of things that I want to add to it, and I will need help.</p>
-
 <ul>
-<li><p>Allow that a binary being compiled be able to use a library compiled in the
-same project</p>
-
-<p>This is a must if I want to distribute Autovala both as a library, and as
-a command line program that uses that library.</p></li>
-<li><p>Generate automatically the .pc file for a library (for pkg-config)</p>
-
-<p>I need help with the format of the .pc files</p></li>
-<li><p>Integrate it as a plugin for Gedit</p></li>
+<li>Allow that a binary being compiled be able to use a library compiled in the<br /> same project</li>
+</ul>
+<p>This is a must if I want to distribute Autovala both as a library, and as<br /> a command line program that uses that library.</p>
+<ul>
+<li>Generate automatically the .pc file for a library (for pkg-config)</li>
+</ul>
+<p>I need help with the format of the .pc files</p>
+<ul>
+<li>Integrate it as a plugin for Gedit</li>
 </ul>
 <p><a href="index.html">Home</a></p>
 </div>

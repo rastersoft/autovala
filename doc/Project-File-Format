@@ -2,150 +2,68 @@
 <head>
 <link rel="stylesheet" type="text/css" href="view.css" />
 </head>
-<body bgcolor="#E0E0E0">
+<body>
 <div class="main_frame">
 <p><a href="index.html">Home</a></p>
 <h1>Project File Format</h1>
-
-<p>The project file has a very simple format. Usually you don't need to
-manually edit it, but when the guesses of autovala are incorrect, you can do
-it, and your changes will be remembered each time you refresh the file.</p>
-
+<p>The project file has a very simple format. Usually you don't need to manually edit it, but when the guesses of autovala are incorrect, you can do it, and your changes will be remembered each time you refresh the file.</p>
 <p>The file is based on commands in the format:</p>
-
-<pre><code>    command: data
-</code></pre>
-
-<p>one in each line. Every line that starts with # is ignored (is a comment),
-but also will be removed when the file is recreated.</p>
-
-<p>The first line in a project file is, always, ### AutoVala Project ###. This
-string identifies it as an Autovala project file.</p>
-
-<p>The next line has the command "autovala_version". This command specifies which
-version of the syntax uses this file, to avoid an old version of Autovala
-to open a newer, with commands that it wouldn't understand.</p>
-
-<p>The next line has the command "project_name". This command sets the name
-assigned to this project.</p>
-
-<p>Then, the next line contains "vala_version", which specifies the minimum Vala
-version needed to compile this project. By default, it is filled with the
-version number of the vala version installed when the project was created.</p>
-
-<p>After that, it comes several commands, some of them repeated several times,
-to specify what to do with each file in your project. These commands are:</p>
-
+<pre><code>    command: data</code></pre>
+<p>one in each line. Every line that starts with # is ignored (is a comment), but also will be removed when the file is recreated.</p>
+<p>The first line in a project file is, always, ### AutoVala Project ###. This string identifies it as an Autovala project file.</p>
+<p>The next line has the command &quot;autovala_version&quot;. This command specifies which version of the syntax uses this file, to avoid an old version of Autovala to open a newer, with commands that it wouldn't understand.</p>
+<p>The next line has the command &quot;project_name&quot;. This command sets the name assigned to this project.</p>
+<p>Then, the next line contains &quot;vala_version&quot;, which specifies the minimum Vala version needed to compile this project. By default, it is filled with the version number of the vala version installed when the project was created.</p>
+<p>After that, it comes several commands, some of them repeated several times, to specify what to do with each file in your project. These commands are:</p>
 <ul>
-<li><p>po: specifies the folder where to store the translations. By default it's "po".
-The program identifier for Gettext is the project name.</p></li>
-<li><p>data: specifies a folder with local data that must be installed in
-  share/project_name. By default it's "data/local".</p></li>
-<li><p>doc: specifies a folder with the documentation that must be installed in
-  share/doc/project_name. By default it's "doc".</p></li>
-<li><p>vala_binary:  contains a path and a name, and specifies that, in the path, there
-          are several source files that must be compiled to create that
-          binary. Example:</p>
-
-<pre><code>vala_binary: src/test_file
-</code></pre>
-
-<p>says that the src
-folder contains the source files to create the binary test_file
-After this command will come several subcommands that specifies
-details about this binary. Those are:</p>
-
-<ul>
-<li><p>version: contains the version of this binary file. It is more useful when
-     creating libraries. If it is not set manually in the project file,
-     Autovala will check the source files for a global variable with
-     the format:</p>
-
-<pre><code>       const string project_version="X.Y.Z";
-</code></pre></li>
+<li><p>po: specifies the folder where to store the translations. By default it's &quot;po&quot;. The program identifier for Gettext is the project name.</p></li>
+<li><p>data: specifies a folder with local data that must be installed in share/project_name. By default it's &quot;data/local&quot;.</p></li>
+<li><p>doc: specifies a folder with the documentation that must be installed in share/doc/project_name. By default it's &quot;doc&quot;.</p></li>
+<li><p>vala_binary: contains a path and a name, and specifies that, in the path, there are several source files that must be compiled to create that binary. Example:</p>
+<pre><code>    vala_binary: src/test_file</code></pre></li>
 </ul>
-
-<p>and will use that number as version. If it is unable to find it
-in none of the source files, then it will use 1.0.0 by default.</p>
-
+<p>says that the src folder contains the source files to create the binary test_file.</p>
+<p>After this command will come several subcommands that specifies details about this binary. Those are:</p>
 <ul>
-<li><p>namespace: contains the namespace used in all the source files. It is more
-       useful when creating libraries.</p></li>
+<li><p>version: contains the version of this binary file. It is more useful when creating libraries. If it is not set manually in the project file, Autovala will check the source files for a global variable with the format:</p>
+<pre><code>        const string project_version=&quot;X.Y.Z&quot;;</code></pre></li>
+</ul>
+<p>and will use that number as version. If it is unable to find it in none of the source files, then it will use 1.0.0 by default.</p>
+<ul>
+<li><p>namespace: contains the namespace used in all the source files. It is more useful when creating libraries.</p></li>
 <li><p>compile_options: contains the options to pass to the Vala compiler. Example:</p>
-
-<pre><code>         compile_options: -X -O2
-</code></pre></li>
-<li><p>vala_package: specify a package that must be added with --pkg=... to the
-          vala compiler. These are automatically found by Autovala
-          by reading the sources and processing the "Using" directives</p></li>
-<li><p>vala<em>check</em>package: is like vala<em>package, but these packages must, also,
-                be checked during cmake to ensure that they are
-                installed in the system. Autovala founds these
-                automatically by reading the sources, as with
-                vala</em>package, and checking if the corresponding .pc
-                file exists</p></li>
-<li><p>vala_source: this command specifies one source file that belongs to this
-         binary</p>
-
-<pre><code>   The last three subcommand can be repeated as many times as
-   needed to specify all the sources and packages needed.
-</code></pre></li>
-</ul></li>
-<li><p>vala<em>library: the same than vala</em>binary, but creates a dynamic linking library.
-          It uses the same subcommands.</p></li>
-<li><p>binary: specifies that the file is a precompiled binary (or a shell script) that
-    must be copied as-is to bin/</p></li>
-<li><p>icon: followed by the category and the icon path/name. Autovala will determine
-  the icon size and use it to copy it to the right place (only if it's a
-  .png file; it it's a .svg will copy to "scalable"). Also, by default, the
-  category will be "apps", unless it is a .svg with "-symbolic"; in that
-  case will be put in the "status" category. Example:</p>
-
-<pre><code>      icon: apps finger.svg
-</code></pre></li>
+<pre><code>        compile_options: -X -O2</code></pre></li>
+<li><p>vala_package: specify a package that must be added with --pkg=... to the vala compiler. These are automatically found by Autovala by reading the sources and processing the &quot;Using&quot; directives</p></li>
+<li><p>vala_check_package: is like vala_package, but these packages must, also, be checked during cmake to ensure that they are installed in the system. Autovala founds these automatically by reading the sources, as with vala_package, and checking if the corresponding .pc file exists</p></li>
+<li><p>vala_source: this command specifies one source file that belongs to this binary</p>
+<pre><code>        The last three subcommand can be repeated as many times as
+        needed to specify all the sources and packages needed.</code></pre></li>
+<li><p>vala_library: the same than vala_binary, but creates a dynamic linking library. It uses the same subcommands.</p></li>
+<li><p>binary: specifies that the file is a precompiled binary (or a shell script) that must be copied as-is to bin/</p></li>
+<li><p>icon: followed by the category and the icon path/name. Autovala will determine the icon size and use it to copy it to the right place (only if it's a .png file; it it's a .svg will copy to &quot;scalable&quot;). Also, by default, the category will be &quot;apps&quot;, unless it is a .svg with &quot;-symbolic&quot;; in that case will be put in the &quot;status&quot; category. Example:</p>
+<pre><code>    icon: apps finger.svg</code></pre></li>
 <li><p>pixmap: followed by a picture filename. Will be copied to share/pixmaps</p></li>
-<li><p>glade: the file specified is a glade UI file, that will be installed in
-   share/project_name/ These files, and the .vala source files, will
-   be used with gettext to get the translatable strings.</p></li>
-<li><p>dbus<em>service: the file specified is a D-Bus service. The file must be written
-          as a classic D-Bus service file, but prefixing the binary
-          filename with @DBUS</em>PREFIX@. Example from Cronopete:</p>
-
-<pre><code>      [D-BUS Service]
-      Name=com.rastersoft.cronopete
-      Exec=@DBUS_PREFIX@/bin/cronopete
-</code></pre>
-
-<p>This allows to use cmake to install everything in a temporary
-folder, and ensure that the Exec entry points to the right place.
-This is important when using these CMakeLists files for creating
-a .deb or .rpm package.</p></li>
-<li><p>desktop: the file specified is a .desktop file that must be copied to
-     share/applications to ensure that it is shown in the applications menu</p></li>
+<li><p>glade: the file specified is a glade UI file, that will be installed in share/project_name/ These files, and the .vala source files, will be used with gettext to get the translatable strings.</p></li>
+<li><p>dbus_service: the file specified is a D-Bus service. The file must be written as a classic D-Bus service file, but prefixing the binary filename with @DBUS_PREFIX@. Example from Cronopete:</p>
+<pre><code>    [D-BUS Service]
+    Name=com.rastersoft.cronopete
+    Exec=@DBUS_PREFIX@/bin/cronopete</code></pre></li>
+</ul>
+<p>This allows to use cmake to install everything in a temporary folder, and ensure that the Exec entry points to the right place. This is important when using these CMakeLists files for creating a <em>.deb</em> or <em>.rpm</em> package.</p>
+<ul>
+<li><p>desktop: the file specified is a .desktop file that must be copied to share/applications to ensure that it is shown in the applications menu</p></li>
 <li><p>eos_plug: the file is an ElementaryOS plug for the configuration system</p></li>
-<li><p>scheme: the file is a GSettings file that contains configuration settings.
-    It is automagically compiled if needed.</p></li>
-<li><p>autostart: the file is a .desktop one, but must be installed in
-       /etc/xdg/autostart because the program specified there must be
-       launched automatically when starting the desktop session. Don't
-       forget to add X-GNOME-Autostart-enabled=true inside</p></li>
-<li><p>include: allows to include the specified file in the CMakeLists of its path
-     This allows to manually add CMake statements. Example:</p>
+<li><p>scheme: the file is a GSettings file that contains configuration settings. It is automagically compiled if needed.</p></li>
+<li><p>autostart: the file is a .desktop one, but must be installed in /etc/xdg/autostart because the program specified there must be launched automatically when starting the desktop session. Don't forget to add X-GNOME-Autostart-enabled=true inside</p></li>
+<li><p>include: allows to include the specified file in the CMakeLists of its path. This allows to manually add CMake statements. Example:</p>
+<pre><code>    include: src/mycmake.txt</code></pre></li>
+</ul>
+<p>will append the contents of the file <em>mycmake.txt</em>, located in the <em>src/</em> folder, to the end of the <em>CMakeLists.txt</em> file also located in the <em>src/</em> folder</p>
+<ul>
+<li><p>ignore: the path that follows will be ignored when Autovala guesses each file. Examples:</p>
+<pre><code>    ignore: src/PROG/test.vala will ignore the file test.vala when automatically creating the PROG binary
 
-<pre><code>         include: src/mycmake.txt
-</code></pre>
-
-<p>will append the contents of the file mycmake.txt, located in the src/
-folder, to the end of the CMakeLists.txt file also located in the
-src/ folder</p></li>
-<li><p>ignore: the path that follows will be ignored when Autovala guesses each
-    file. Examples:</p>
-
-<pre><code>ignore: src/PROG/test.vala will ignore the file test.vala when automatically creating the PROG binary
-
-
-ignore: src/OTHER will ignore the folder OTHER when creating binaries
-</code></pre></li>
+    ignore: src/OTHER will ignore the folder OTHER when creating binaries</code></pre></li>
 </ul>
 <p><a href="index.html">Home</a></p>
 </div>

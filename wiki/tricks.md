@@ -6,7 +6,7 @@ To simplify the maintenance of the code, Autovala allows to set the version numb
 
 To do so, just put in one (no matter which) of the *.vala* source files the following statement:
 
-    const string project_version="XX.YY.ZZ";
+        const string project_version="XX.YY.ZZ";
 
 As expected, this will define a global string with the version number inside. The interesting thing is that Autovala will peek inside all the source files for this kind of string, and will use it whenever it needs a version number. For binaries maybe is not really very useful, but for libraries it is, because there you can set the major and minor version numbers.
 
@@ -20,38 +20,38 @@ By default, Autovala presumes that every source file inside *src* or its subdire
 
 Let's suppose that you have a project called *myproject*, with a folder hierarchy inside *src* like this:
 
-    src
-     +file1.vala
-     +file2.vala
-     +a_folder
-     |   +file3.vala
-     |   +file4.vala
-     |
-     +another_folder
-         +file5.vala
-         +file6.vala
+        src
+         +file1.vala
+         +file2.vala
+         +a_folder
+         |   +file3.vala
+         |   +file4.vala
+         |
+         +another_folder
+             +file5.vala
+             +file6.vala
 
 
 And let's suppose that you want to compile *file5.vala* and *file6.vala* as a different executable called *otherprogram*. By default, after running 'autovala refresh', it will create a single executable called *myproject*, using all the source files ( *file1.vala* to *file6.vala* ), and the *.avprj* file will look like this:
 
-    ### AutoVala Project ###
-    autovala_version: 2
-    project_name: myproject
-    vala_version: 0.16
+        ### AutoVala Project ###
+        autovala_version: 2
+        project_name: myproject
+        vala_version: 0.16
 
-    *vala_binary: src/myproject
-    [several commands specific of this binary]
-    
+        *vala_binary: src/myproject
+        [several commands specific of this binary]
+
 What we have to do is add a new *vala_binary* command to the file, specifying the path and the executable name we want (and WITHOUT an asterisk before; read [Keeping your changes](wiki/Keeping-Your-Changes) to understand why). So edit it and add this:
 
-    ### AutoVala Project ###
-    autovala_version: 2
-    project_name: myproject
-    vala_version: 0.16
+        ### AutoVala Project ###
+        autovala_version: 2
+        project_name: myproject
+        vala_version: 0.16
 
-    vala_binary: src/another_folder/otherprogram
-    *vala_binary: src/myproject
-    [several commands specific of this binary]
+        vala_binary: src/another_folder/otherprogram
+        *vala_binary: src/myproject
+        [several commands specific of this binary]
 
 Save it and run 'autovala update'. If you edit again the project file, you will see that Autovala automatically added all the packages and other data to the new executable, and will keep doing every time you run it.
 
@@ -70,11 +70,11 @@ At the time of writing this, the version of Valadoc shipped with Ubuntu 12.10 ha
 
 To get the sources, just use
 
-    git clone http://git.gnome.org/browse/valadoc
+        git clone http://git.gnome.org/browse/valadoc
 
 Then, don't forget to uninstall the **valadoc** and **libvaladoc1** packages, install the packages **libgee-0.8-dev** and **libgraphviz-dev**, and then just run
 
-    ./autogen.sh
-    make
-    sudo make install
-    sudo ldconfig
+        ./autogen.sh
+        make
+        sudo make install
+        sudo ldconfig

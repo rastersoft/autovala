@@ -1,5 +1,4 @@
 div.main_frame {
-
 	width: 800px;
 	background-color: #FFFFFF;
 	margin: 2px auto 2px auto;
@@ -7,5 +6,19 @@ div.main_frame {
 	border-style: solid;
 	border-color: #000000;
 	padding: 20px;
+}
 
+pre {
+	width: 100%;
+	background-color: #F0F0F0;
+	border: 1px;
+	border-style: solid;
+	border-radius: 3px;
+	border-color: #D0D0D0;
+	padding: 0px;
+	margin: 0px;
+}
+
+body {
+	background-color: #E0E0E0;
 }
