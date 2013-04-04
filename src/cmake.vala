@@ -656,11 +656,18 @@ namespace AutoVala {
 				}
 				data_stream.put_string(")\n\n");
 
+				data_stream.put_string("set(CUSTOM_VAPIS_LIST\n");
+				foreach (var filename in element.vapis) {
+					data_stream.put_string("\t${CMAKE_SOURCE_DIR}/"+Path.build_filename(dir,filename.vapi)+"\n");
+				}
+				data_stream.put_string(")\n\n");
 
 				data_stream.put_string("vala_precompile(VALA_C "+lib_filename+"\n");
 				data_stream.put_string("\t${APP_SOURCES}\n");
 				data_stream.put_string("PACKAGES\n");
 				data_stream.put_string("\t${VALA_PACKAGES}\n");
+				data_stream.put_string("CUSTOM_VAPIS\n");
+				data_stream.put_string("\t${CUSTOM_VAPIS_LIST}\n");
 
 				var final_options=element.compile_options;
 				if (is_library) {
@@ -744,6 +751,8 @@ namespace AutoVala {
 				data_stream.put_string("\t\t${APP_SOURCES}\n");
 				data_stream.put_string("\tPACKAGES\n");
 				data_stream.put_string("\t\t${VALA_PACKAGES}\n");
+				data_stream.put_string("\tCUSTOM_VAPIS\n");
+				data_stream.put_string("\t\t${CUSTOM_VAPIS_LIST}\n");
 				data_stream.put_string("\t)\n");
 				data_stream.put_string("endif()\n");
 

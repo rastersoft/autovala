@@ -15,6 +15,7 @@
 <p>This will create a <em>PROJECT_NAME.avprj</em> file, with the most basic info about your project (the format for this file will be explained later). It will also try to create the basic folders for a vala project, and will show a warning if they already exist. It will never delete a file, except the <em>CMakeLists</em> files, of course. The folder hierarchy is:</p>
 <pre><code>    .
     +src
+       +vapis
     +install
     +doc
     +po
@@ -24,6 +25,7 @@
        +interface
        +local</code></pre>
 <p>By default, Autovala will compile all the <em>.vala</em> source files located inside <em>src/</em> and its subfolders into a single binary called like the project's name. How to generate libraries or several binaries is explained in the <a href="tricks">tricks section</a>.</p>
+<p><strong>VAPIS</strong> is where you can put your custom VAPI files, when you need some for compiling your project.</p>
 <p><strong>INSTALL</strong> is the folder where to build everything. More about it later.</p>
 <p>As can be supposed, <strong>DOC</strong> has to contain the documentation, and <strong>PO</strong> will contain the files with translatable strings. These strings are extracted from the <em>.vala</em> files and the <em>.ui</em> ones (from glade).</p>
 <p><strong>DATA</strong> is where you must put things like D-Bus activation files, <em>.desktop</em> files, scripts, and so on. <strong>ICONS</strong> folder and subfolders should contain the icons (in png or svg format), and Autovala will automagically take into account its size to put them in the right place.</p>

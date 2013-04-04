@@ -26,7 +26,6 @@ namespace AutoVala {
 							 EOS_PLUG, SCHEME, DATA, DOC, INCLUDE, IGNORE}
 
 	public class package_element:GLib.Object {
-
 		public string package;
 		public bool do_check;
 		public bool automatic;
@@ -39,12 +38,21 @@ namespace AutoVala {
 	}
 
 	public class source_element:GLib.Object {
-
 		public string source;
 		public bool automatic;
 
 		public source_element(string source, bool automatic) {
 			this.source=source;
+			this.automatic=automatic;
+		}
+	}
+
+	public class vapi_element:GLib.Object {
+		public string vapi;
+		public bool automatic;
+
+		public vapi_element(string vapi, bool automatic) {
+			this.vapi=vapi;
 			this.automatic=automatic;
 		}
 	}
@@ -62,6 +70,7 @@ namespace AutoVala {
 		public bool automatic;
 		public Gee.List<package_element ?> packages;
 		public Gee.List<source_element ?> sources;
+		public Gee.List<vapi_element ?> vapis;
 		public string current_namespace;
 		public bool namespace_manually_set;
 
@@ -73,6 +82,7 @@ namespace AutoVala {
 			this.icon_path=icon_path;
 			this.packages=new Gee.ArrayList<package_element ?>();
 			this.sources=new Gee.ArrayList<source_element ?>();
+			this.vapis=new Gee.ArrayList<vapi_element ?>();
 			this.compile_options="";
 			this.version="1.0.0";
 			this.version_set=false;
@@ -151,6 +161,22 @@ namespace AutoVala {
 			this.sources.add(element);
 		}
 
+		public void add_vapi(string vapi,bool automatic) {
+
+			// adding a non-automatic source to an automatic binary transforms this binary to non-automatic
+			if ((automatic==false)&&(this.automatic==true)) {
+				this.transform_to_non_automatic();
+			}
+
+			foreach(var s in this.vapis) {
+				if (s.vapi==vapi) {
+					return;
+				}
+			}
+			var element=new vapi_element(vapi,automatic);
+			this.vapis.add(element);
+		}
+
 		public void add_package(string pkg,bool to_check,bool automatic) {
 
 			// adding a non-automatic package to an automatic binary transforms this binary to non-automatic
@@ -224,7 +250,7 @@ namespace AutoVala {
 		private int line_number;
 
 		public configuration(string project_name="") {
-			this.current_version=2; // currently we support version 2 of the syntax
+			this.current_version=3; // currently we support version 3 of the syntax
 			this.config_path="";
 			this.configuration_data=new Gee.ArrayList<config_element ?>();
 			this.last_element=null;
@@ -444,6 +470,10 @@ namespace AutoVala {
 						error|=this.add_package(line.substring(14).strip(),false,automatic);
 						continue;
 					}
+					if (line.has_prefix("vala_vapi: ")) {
+						error|=this.add_vapi(line.substring(11).strip(),automatic);
+						continue;
+					}
 					if (line.has_prefix("vala_check_package: ")) {
 						error|=this.add_package(line.substring(20).strip(),true,automatic);
 						continue;
@@ -640,6 +670,20 @@ namespace AutoVala {
 			return false;
 		}
 
+		private bool add_vapi(string vapi,bool automatic) {
+
+			if (this.config_path=="") {
+				return true;
+			}
+
+			if (this.last_element==null) {
+				this.error_list+=_("Found vala_vapi after a non vala_binary, nor vala_library command (line %d)").printf(this.line_number);
+				return true;
+			}
+			this.last_element.add_vapi(vapi,automatic);
+			return false;
+		}
+
 		public bool add_new_entry(string filename, Config_Type type, bool automatic) {
 
 			if ((type!=Config_Type.VALA_BINARY)&&(type!=Config_Type.VALA_LIBRARY)) {
@@ -649,7 +693,7 @@ namespace AutoVala {
 			}
 		}
 
-		public bool add_new_binary(string filename, Config_Type type, bool automatic, Gee.Set<string> ?sources=null, string[] ?packages=null, string[] ?check_packages=null, string version="", string current_namespace="", bool several_namespaces=false, string compile_options="") {
+		public bool add_new_binary(string filename, Config_Type type, bool automatic, Gee.Set<string> ?sources=null, string[] ?packages=null, string[] ?check_packages=null, string[] ?vapis=null, string version="", string current_namespace="", bool several_namespaces=false, string compile_options="") {
 
 			if ((type!=Config_Type.VALA_BINARY)&&(type!=Config_Type.VALA_LIBRARY)) {
 				return true;
@@ -708,6 +752,19 @@ namespace AutoVala {
 						package=l;
 					}
 					this.add_package(package,true,p_automatic);
+				}
+			}
+			string vapi;
+			if (vapis!=null) {
+				foreach(var l in vapis) {
+					if (l[0]=='*') {
+						p_automatic=true;
+						vapi=l.substring(1);
+					} else{
+						p_automatic=false;
+						vapi=l;
+					}
+					this.add_vapi(vapi,p_automatic);
 				}
 			}
 			if (compile_options!="") {
@@ -909,6 +966,12 @@ namespace AutoVala {
 								data_stream.put_string("*");
 							}
 							data_stream.put_string("vala_source: "+s.source+"\n");
+						}
+						foreach(var v in element.vapis) {
+							if (v.automatic) {
+								data_stream.put_string("*");
+							}
+							data_stream.put_string("vala_vapi: "+v.vapi+"\n");
 						}
 						data_stream.put_string("\n"); // add a separator after each new binary or library to simplify manual edition
 						found=false; // avoid to put more than one separator

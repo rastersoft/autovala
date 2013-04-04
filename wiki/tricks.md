@@ -78,3 +78,19 @@ Then, don't forget to uninstall the **valadoc** and **libvaladoc1** packages, in
         make
         sudo make install
         sudo ldconfig
+
+## Using D-Bus service files
+
+A D-Bus service file is a file that specifies which binary provides a specific D-Bus service. To ensure that Autovala find them, you must put these files in the *data/* folder, and ensure that their extension is *.service*.
+
+The problem with these files is that the binary path must be expressed in absolute format; this is: if the binary to run is "mybinary", you have to put */usr/bin/mybinary*, or */usr/local/bin/mybinary*, or the full path where *mybinary* is. This can be a problem, because with CMake, by default, uses */usr/local/bin*, unless you specify it to use */usr/bin* when creating a *.deb* or *.rpm* package.
+
+To avoid this problem, you only need to use the macro *\@DBUS_PREFIX\@* in the path. This CMake macro will be expanded automatically to the base path ( */usr* or */usr/local* ), so you only will need to add *bin/* and the binary name.
+
+An example (extracted from Cronopete):
+
+            [D-BUS Service]
+            Name=com.rastersoft.cronopete
+            Exec=@DBUS_PREFIX@/bin/cronopete
+
+In this file, the *com.rastersoft.cronopete* service is provided by the binary *cronopete*. The specific folder ( *local* or not *local* ) will be determined automatically by Autovala.

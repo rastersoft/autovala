@@ -41,10 +41,15 @@ set(APP_SOURCES
 	generate.vala
 )
 
+set(CUSTOM_VAPIS_LIST
+)
+
 vala_precompile(VALA_C autovala
 	${APP_SOURCES}
 PACKAGES
 	${VALA_PACKAGES}
+CUSTOM_VAPIS
+	${CUSTOM_VAPIS_LIST}
 )
 
 add_executable(autovala ${VALA_C})
@@ -61,5 +66,7 @@ if(HAVE_VALADOC)
 		${APP_SOURCES}
 	PACKAGES
 		${VALA_PACKAGES}
+	CUSTOM_VAPIS
+		${CUSTOM_VAPIS_LIST}
 	)
 endif()

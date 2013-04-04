@@ -190,6 +190,16 @@ namespace AutoVala {
 				this.cant_create("SRC");
 			}
 			try {
+				var folder=File.new_for_path(Path.build_filename(config_path,"src","vapis"));
+				if (folder.query_exists()) {
+					this.folder_exists("SRC/VAPIS");
+				} else {
+					folder.make_directory_with_parents();
+				}
+			} catch (Error e) {
+				this.cant_create("SRC/VAPIS");
+			}
+			try {
 				var folder=File.new_for_path(Path.build_filename(config_path,"po"));
 				if (folder.query_exists()) {
 					this.folder_exists("PO");
@@ -705,6 +715,24 @@ namespace AutoVala {
 				break;
 			}
 
+			// Get all the custom VAPIs for this binary/library
+			string[] custom_vapis={};
+			file=File.new_for_path(Path.build_filename(this.config.basepath,path,"vapis"));
+			if(file.query_exists()) {
+				try {
+					var enumerator = file.enumerate_children(FileAttribute.STANDARD_NAME, 0);
+					FileInfo file_info;
+					while ((file_info = enumerator.next_file ()) != null) {
+						fname=file_info.get_name();
+						if(fname.has_suffix(".vapi")==false) {
+							continue;
+						}
+						custom_vapis+="*"+Path.build_filename("vapis",fname);
+					}
+				} catch (Error e) {
+					this.error_list+=_("Warning: can't read the VAPIS folder for %s").printf(path);
+				}
+			}
 			string[] packages={};
 			string[] check_packages={};
 			foreach (var element in namespaces_list) {
@@ -719,9 +747,9 @@ namespace AutoVala {
 				}
 			}
 			if (type==Config_Type.VALA_LIBRARY) {
-				this.config.add_new_binary(mpath_s,Config_Type.VALA_LIBRARY, true, filelist,packages,check_packages,current_version,this.current_namespace,this.several_namespaces);
+				this.config.add_new_binary(mpath_s,Config_Type.VALA_LIBRARY, true, filelist,packages,check_packages,custom_vapis,current_version,this.current_namespace,this.several_namespaces);
 			} else {
-				this.config.add_new_binary(mpath_s,Config_Type.VALA_BINARY, true, filelist,packages,check_packages,current_version);
+				this.config.add_new_binary(mpath_s,Config_Type.VALA_BINARY, true, filelist,packages,check_packages,custom_vapis,current_version);
 			}
 		}
 

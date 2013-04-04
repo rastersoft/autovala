@@ -7,9 +7,11 @@
 <p><a href="index.html">Home</a></p>
 <h1>Project File Format</h1>
 <p>The project file has a very simple format. Usually you don't need to manually edit it, but when the guesses of autovala are incorrect, you can do it, and your changes will be remembered each time you refresh the file.</p>
+<p>The current version for the project file format is <strong>3</strong>.</p>
 <p>The file is based on commands in the format:</p>
 <pre><code>    command: data</code></pre>
 <p>one in each line. Every line that starts with # is ignored (is a comment), but also will be removed when the file is recreated.</p>
+<p>Except where otherwise is specified, the paths must be relative to the project path.</p>
 <p>The first line in a project file is, always, ### AutoVala Project ###. This string identifies it as an Autovala project file.</p>
 <p>The next line has the command &quot;autovala_version&quot;. This command specifies which version of the syntax uses this file, to avoid an old version of Autovala to open a newer, with commands that it wouldn't understand.</p>
 <p>The next line has the command &quot;project_name&quot;. This command sets the name assigned to this project.</p>
@@ -35,9 +37,10 @@
 <pre><code>        compile_options: -X -O2</code></pre></li>
 <li><p>vala_package: specify a package that must be added with --pkg=... to the vala compiler. These are automatically found by Autovala by reading the sources and processing the &quot;Using&quot; directives</p></li>
 <li><p>vala_check_package: is like vala_package, but these packages must, also, be checked during cmake to ensure that they are installed in the system. Autovala founds these automatically by reading the sources, as with vala_package, and checking if the corresponding .pc file exists</p></li>
-<li><p>vala_source: this command specifies one source file that belongs to this binary</p>
+<li><p>vala_source: this command specifies one source file that belongs to this binary. The path must be relative to the binary/library path.</p>
 <pre><code>        The last three subcommand can be repeated as many times as
         needed to specify all the sources and packages needed.</code></pre></li>
+<li><p>vala_vapi: this command specifies one custom <em>.vapi</em> file, needed to compile your project. Each file must be prepended by the relative path from the project folder. The path must be relative to the binary/library path.</p></li>
 <li><p>vala_library: the same than vala_binary, but creates a dynamic linking library. It uses the same subcommands.</p></li>
 <li><p>binary: specifies that the file is a precompiled binary (or a shell script) that must be copied as-is to bin/</p></li>
 <li><p>icon: followed by the category and the icon path/name. Autovala will determine the icon size and use it to copy it to the right place (only if it's a .png file; it it's a .svg will copy to &quot;scalable&quot;). Also, by default, the category will be &quot;apps&quot;, unless it is a .svg with &quot;-symbolic&quot;; in that case will be put in the &quot;status&quot; category. Example:</p>

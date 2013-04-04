@@ -16,6 +16,7 @@ This will create a *PROJECT_NAME.avprj* file, with the most basic info about you
 
         .
         +src
+           +vapis
         +install
         +doc
         +po
@@ -26,6 +27,8 @@ This will create a *PROJECT_NAME.avprj* file, with the most basic info about you
            +local
 
 By default, Autovala will compile all the *.vala* source files located inside *src/* and its subfolders into a single binary called like the project's name. How to generate libraries or several binaries is explained in the [tricks section](tricks).
+
+**VAPIS** is where you can put your custom VAPI files, when you need some for compiling your project.
 
 **INSTALL** is the folder where to build everything. More about it later.
 

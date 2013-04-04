@@ -57,6 +57,15 @@
     make
     sudo make install
     sudo ldconfig</code></pre>
+<h2>Using D-Bus service files</h2>
+<p>A D-Bus service file is a file that specifies which binary provides a specific D-Bus service. To ensure that Autovala find them, you must put these files in the <em>data/</em> folder, and ensure that their extension is <em>.service</em>.</p>
+<p>The problem with these files is that the binary path must be expressed in absolute format; this is: if the binary to run is &quot;mybinary&quot;, you have to put <em>/usr/bin/mybinary</em>, or <em>/usr/local/bin/mybinary</em>, or the full path where <em>mybinary</em> is. This can be a problem, because with CMake, by default, uses <em>/usr/local/bin</em>, unless you specify it to use <em>/usr/bin</em> when creating a <em>.deb</em> or <em>.rpm</em> package.</p>
+<p>To avoid this problem, you only need to use the macro <em>\@DBUS_PREFIX\@</em> in the path. This CMake macro will be expanded automatically to the base path ( <em>/usr</em> or <em>/usr/local</em> ), so you only will need to add <em>bin/</em> and the binary name.</p>
+<p>An example (extracted from Cronopete):</p>
+<pre><code>        [D-BUS Service]
+        Name=com.rastersoft.cronopete
+        Exec=@DBUS_PREFIX@/bin/cronopete</code></pre>
+<p>In this file, the <em>com.rastersoft.cronopete</em> service is provided by the binary <em>cronopete</em>. The specific folder ( <em>local</em> or not <em>local</em> ) will be determined automatically by Autovala.</p>
 <p><a href="index.html">Home</a></p>
 </div>
 </body>
