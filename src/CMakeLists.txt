@@ -36,8 +36,8 @@ set(VALA_PACKAGES
 
 set(APP_SOURCES
 	configuration.vala
-	autovala.vala
 	cmake.vala
+	autovala.vala
 	generate.vala
 )
 
@@ -62,7 +62,7 @@ RUNTIME DESTINATION
 
 if(HAVE_VALADOC)
 	valadoc(autovala
-		${CMAKE_CURRENT_BINARY_DIR}/valadoc
+		${CMAKE_BINARY_DIR}/valadoc/autovala
 		${APP_SOURCES}
 	PACKAGES
 		${VALA_PACKAGES}
@@ -70,7 +70,7 @@ if(HAVE_VALADOC)
 		${CUSTOM_VAPIS_LIST}
 	)
 	install(DIRECTORY
-		${CMAKE_CURRENT_BINARY_DIR}/valadoc
+		${CMAKE_BINARY_DIR}/valadoc
 	DESTINATION
 		share/doc/autovala
 	)
