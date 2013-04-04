@@ -12,7 +12,7 @@ configure_file (${CMAKE_SOURCE_DIR}/src/Config.vala.cmake ${CMAKE_BINARY_DIR}/sr
 add_definitions(-DGETTEXT_PACKAGE=\"${GETTEXT_PACKAGE}\")
 find_package(PkgConfig)
 
-set (VERSION "0.5.0")
+set (VERSION "0.6.0")
 pkg_check_modules(DEPS REQUIRED
 	gee-1.0
 	glib-2.0
@@ -36,8 +36,8 @@ set(VALA_PACKAGES
 
 set(APP_SOURCES
 	configuration.vala
-	cmake.vala
 	autovala.vala
+	cmake.vala
 	generate.vala
 )
 
@@ -62,11 +62,16 @@ RUNTIME DESTINATION
 
 if(HAVE_VALADOC)
 	valadoc(autovala
-		${CMAKE_BINARY_DIR}/valadoc
+		${CMAKE_CURRENT_BINARY_DIR}/valadoc
 		${APP_SOURCES}
 	PACKAGES
 		${VALA_PACKAGES}
 	CUSTOM_VAPIS
 		${CUSTOM_VAPIS_LIST}
+	)
+	install(DIRECTORY
+		${CMAKE_CURRENT_BINARY_DIR}/valadoc
+	DESTINATION
+		share/doc/autovala
 	)
 endif()

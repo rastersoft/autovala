@@ -747,15 +747,20 @@ namespace AutoVala {
 
 				data_stream.put_string("if(HAVE_VALADOC)\n");
 				data_stream.put_string("\tvaladoc("+this.config.project_name+"\n");
-				data_stream.put_string("\t\t${CMAKE_BINARY_DIR}/valadoc\n");
+				data_stream.put_string("\t\t${CMAKE_CURRENT_BINARY_DIR}/valadoc\n");
 				data_stream.put_string("\t\t${APP_SOURCES}\n");
 				data_stream.put_string("\tPACKAGES\n");
 				data_stream.put_string("\t\t${VALA_PACKAGES}\n");
 				data_stream.put_string("\tCUSTOM_VAPIS\n");
 				data_stream.put_string("\t\t${CUSTOM_VAPIS_LIST}\n");
 				data_stream.put_string("\t)\n");
-				data_stream.put_string("endif()\n");
 
+				data_stream.put_string("\tinstall(DIRECTORY\n");
+				data_stream.put_string("\t\t${CMAKE_CURRENT_BINARY_DIR}/valadoc\n");
+				data_stream.put_string("\tDESTINATION\n");
+				data_stream.put_string("\t\t"+Path.build_filename("share/doc",this.config.project_name)+"\n");
+				data_stream.put_string("\t)\n");
+				data_stream.put_string("endif()\n");
 			} catch (Error e) {
 				this.error_list+=_("Failed to write the CMakeLists file for binary %s\n").printf(lib_filename);
 				return true;
