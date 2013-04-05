@@ -1,4 +1,4 @@
-# AUTOVALA 0.6.0 #
+# AUTOVALA 0.7.0 #
 
 ## WHAT IS IT? ##
 

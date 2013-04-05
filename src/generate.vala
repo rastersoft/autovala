@@ -496,6 +496,7 @@ namespace AutoVala {
 				} else {
 					path_s=Path.build_filename(this.config.basepath,element.path,element.file);
 				}
+				GLib.stdout.printf("No usar %s\n",path_s);
 				files_set.add(path_s);
 			}
 			if ((false==binaries.has_key("src"))&&(false==libraries.has_key("src"))) {
@@ -627,7 +628,7 @@ namespace AutoVala {
 
 			var path_s=Path.build_filename(this.config.basepath,path);
 			if (files_set.contains(path_s)) {
-				return; // this folder has been already processed (or it has a IGNORE flag)
+				return; // this folder has been already processed (or it has an IGNORE flag)
 			}
 
 			var file=File.new_for_path(path_s);
@@ -666,6 +667,11 @@ namespace AutoVala {
 							continue;
 						} else if (filetype==FileType.DIRECTORY) {
 							var tmp_path=Path.build_filename(path,fname);
+							var fullpath=Path.build_filename(this.config.basepath,path,fname);
+							GLib.stdout.printf("fullpath: %s\n",fullpath);
+							if (files_set.contains(fullpath)) {
+								continue; // this folder has been already processed (or it has an IGNORE flag)
+							}
 							if ((binaries.has_key(tmp_path)==false)&&(libraries.has_key(tmp_path)==false)) {
 								folderlist.add(fname);
 							}
@@ -725,6 +731,10 @@ namespace AutoVala {
 					while ((file_info = enumerator.next_file ()) != null) {
 						fname=file_info.get_name();
 						if(fname.has_suffix(".vapi")==false) {
+							continue;
+						}
+						var fullpath=Path.build_filename(this.config.basepath,path,"vapis",fname);
+						if(files_set.contains(fullpath)) {
 							continue;
 						}
 						custom_vapis+="*"+Path.build_filename("vapis",fname);
