@@ -7,7 +7,6 @@
 <p><a href="index.html">Home</a></p>
 <p>While Autovala is fully usable, there are still a lot of things that I want to add to it, and I will need help.</p>
 <ul>
-<li><p>Support custom VAPI files</p></li>
 <li><p>Support localization of desktop files</p></li>
 <li><p>Allow that a binary being compiled be able to use a library compiled in the same project</p>
 <p>This is a must if I want to distribute Autovala both as a library, and as a command line program that uses that library.</p></li>
