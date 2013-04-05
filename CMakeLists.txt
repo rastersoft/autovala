@@ -20,6 +20,14 @@ if(BUILD_VALADOC)
 	endif()
 endif()
 
+find_package(PkgConfig)
+
+pkg_check_modules(DEPS REQUIRED
+	gee-1.0
+	glib-2.0
+	gtk+-3.0
+)
+
 add_subdirectory(doc)
 add_subdirectory(src)
 add_subdirectory(po)

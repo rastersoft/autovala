@@ -20,7 +20,7 @@ using GLib;
 using Gee;
 using Posix;
 
-const string project_version="0.7.0";
+const string project_version="0.8.0";
 
 void help() {
 

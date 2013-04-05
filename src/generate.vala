@@ -496,7 +496,6 @@ namespace AutoVala {
 				} else {
 					path_s=Path.build_filename(this.config.basepath,element.path,element.file);
 				}
-				GLib.stdout.printf("No usar %s\n",path_s);
 				files_set.add(path_s);
 			}
 			if ((false==binaries.has_key("src"))&&(false==libraries.has_key("src"))) {
@@ -668,7 +667,6 @@ namespace AutoVala {
 						} else if (filetype==FileType.DIRECTORY) {
 							var tmp_path=Path.build_filename(path,fname);
 							var fullpath=Path.build_filename(this.config.basepath,path,fname);
-							GLib.stdout.printf("fullpath: %s\n",fullpath);
 							if (files_set.contains(fullpath)) {
 								continue; // this folder has been already processed (or it has an IGNORE flag)
 							}

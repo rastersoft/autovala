@@ -1,6 +1,12 @@
 ### CMakeLists automatically created with AutoVala
 ### Do not edit
 
+if(${CMAKE_INSTALL_PREFIX} MATCHES usr/local/? )
+	set( INSTALL_PREFIX "/usr/local")
+else()
+	set( INSTALL_PREFIX "/usr")
+endif()
+
 set (DATADIR "${CMAKE_INSTALL_PREFIX}/share")
 set (PKGDATADIR "${DATADIR}/autovala")
 set (GETTEXT_PACKAGE "autovala")
@@ -10,15 +16,7 @@ set (PREFIX ${CMAKE_INSTALL_PREFIX})
 
 configure_file (${CMAKE_SOURCE_DIR}/src/Config.vala.cmake ${CMAKE_BINARY_DIR}/src/Config.vala)
 add_definitions(-DGETTEXT_PACKAGE=\"${GETTEXT_PACKAGE}\")
-find_package(PkgConfig)
-
-set (VERSION "0.7.0")
-pkg_check_modules(DEPS REQUIRED
-	gee-1.0
-	glib-2.0
-	gtk+-3.0
-)
-
+set (VERSION "0.8.0")
 add_definitions(${DEPS_CFLAGS})
 link_libraries(${DEPS_LIBRARIES})
 link_directories(${DEPS_LIBRARY_DIRS})
@@ -36,8 +34,8 @@ set(VALA_PACKAGES
 
 set(APP_SOURCES
 	configuration.vala
-	cmake.vala
 	autovala.vala
+	cmake.vala
 	generate.vala
 )
 

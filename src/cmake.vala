@@ -99,6 +99,25 @@ namespace AutoVala {
 				data_stream.put_string("\tendif()\n");
 				data_stream.put_string("endif()\n\n");
 
+				data_stream.put_string("find_package(PkgConfig)\n\n");
+				data_stream.put_string("pkg_check_modules(DEPS REQUIRED\n");
+				Gee.Set<string> tocheck=new Gee.HashSet<string>();
+				foreach(var element in config.configuration_data) {
+					if ((element.type!=Config_Type.VALA_BINARY)&&(element.type!=Config_Type.VALA_LIBRARY)) {
+						continue;
+					}
+					foreach(var module in element.packages) {
+						if (module.do_check) {
+							if (tocheck.contains(module.package)) {
+								continue;
+							}
+							data_stream.put_string("\t"+module.package+"\n");
+							tocheck.add(module.package);
+						}
+					}
+				}
+				data_stream.put_string(")\n\n");
+
 				foreach(var element in paths) {
 					if (element=="") {
 						continue;
@@ -591,27 +610,33 @@ namespace AutoVala {
 			}
 
 			var fname=File.new_for_path(Path.build_filename(this.config.basepath,dir,"Config.vala.cmake"));
-			if (fname.query_exists()==false) {
-				try {
-					var dis = fname.create(FileCreateFlags.NONE);
-					var data_stream2 = new DataOutputStream(dis);
-					data_stream2.put_string("namespace Constants {\n");
-					data_stream2.put_string("\tpublic const string DATADIR = \"@DATADIR@\";\n");
-					data_stream2.put_string("\tpublic const string PKGDATADIR = \"@PKGDATADIR@\";\n");
-					data_stream2.put_string("\tpublic const string GETTEXT_PACKAGE = \"@GETTEXT_PACKAGE@\";\n");
-					data_stream2.put_string("\tpublic const string RELEASE_NAME = \"@RELEASE_NAME@\";\n");
-					data_stream2.put_string("\tpublic const string VERSION = \"@VERSION@\";\n");
-					data_stream2.put_string("\tpublic const string PLUGINDIR = \"@PLUGINDIR@\";\n");
-					data_stream2.put_string("}\n");
-					data_stream2.close();
-				} catch (Error e) {
-					this.error_list+=_("Failed to create the Config.vala.cmake file\n");
-					return true;
+			try {
+				if (fname.query_exists()) {
+					fname.delete();
 				}
+				var dis = fname.create(FileCreateFlags.NONE);
+				var data_stream2 = new DataOutputStream(dis);
+				data_stream2.put_string("namespace Constants {\n");
+				data_stream2.put_string("\tpublic const string DATADIR = \"@DATADIR@\";\n");
+				data_stream2.put_string("\tpublic const string PKGDATADIR = \"@PKGDATADIR@\";\n");
+				data_stream2.put_string("\tpublic const string GETTEXT_PACKAGE = \"@GETTEXT_PACKAGE@\";\n");
+				data_stream2.put_string("\tpublic const string RELEASE_NAME = \"@RELEASE_NAME@\";\n");
+				data_stream2.put_string("\tpublic const string VERSION = \"@VERSION@\";\n");
+				data_stream2.put_string("\tpublic const string PLUGINDIR = \"@PLUGINDIR@\";\n");
+				data_stream2.put_string("}\n");
+				data_stream2.close();
+			} catch (Error e) {
+				this.error_list+=_("Failed to create the Config.vala.cmake file\n");
+				return true;
 			}
 
 			try {
 				if (added_vala_binaries==false) {
+					data_stream.put_string("if(${CMAKE_INSTALL_PREFIX} MATCHES usr/local/? )\n");
+					data_stream.put_string("\tset( INSTALL_PREFIX \"/usr/local\")\n");
+					data_stream.put_string("else()\n");
+					data_stream.put_string("\tset( INSTALL_PREFIX \"/usr\")\n");
+					data_stream.put_string("endif()\n\n");
 					data_stream.put_string("set (DATADIR \"${CMAKE_INSTALL_PREFIX}/share\")\n");
 					data_stream.put_string("set (PKGDATADIR \"${DATADIR}/"+config.project_name+"\")\n");
 					data_stream.put_string("set (GETTEXT_PACKAGE \""+config.project_name+"\")\n");
@@ -624,17 +649,40 @@ namespace AutoVala {
 						data_stream.put_string("configure_file (${CMAKE_SOURCE_DIR}/Config.vala.cmake ${CMAKE_BINARY_DIR}/Config.vala)\n");
 					}
 					data_stream.put_string("add_definitions(-DGETTEXT_PACKAGE=\\\"${GETTEXT_PACKAGE}\\\")\n");
-					data_stream.put_string("find_package(PkgConfig)\n\n");
+				}
+
+				string pc_filename="";
+
+				if (is_library) {
+					fname=File.new_for_path(Path.build_filename(this.config.basepath,dir,lib_filename+".pc"));
+					if (fname.query_exists()) {
+						fname.delete();
+					}
+					try {
+						var dis = fname.create(FileCreateFlags.NONE);
+						var data_stream2 = new DataOutputStream(dis);
+						data_stream2.put_string("prefix = \"@INSTALL_PREFIX@\"\n");
+						data_stream2.put_string("exec_prefix=${prefix}\n");
+						data_stream2.put_string("libdir=${exec_prefix}/lib\n");
+						data_stream2.put_string("includedir=${exec_prefix}/include\n\n");
+						data_stream2.put_string("Name: "+lib_filename+"\n");
+						data_stream2.put_string("Version "+element.version+"\n");
+						data_stream2.put_string("Libs: -L${libdir} -l"+lib_filename+"\n");
+						data_stream2.put_string("Cflags: -I${includedir}\n");
+						data_stream2.close();
+					} catch (Error e) {
+						this.error_list+=_("Failed to create the Config.vala.cmake file\n");
+						return true;
+					}
+					if (dir!="") {
+						pc_filename=dir+"/"+lib_filename+".pc";
+					} else {
+						pc_filename=lib_filename+".pc";
+					}
+					data_stream.put_string("configure_file (${CMAKE_SOURCE_DIR}/"+pc_filename+" ${CMAKE_BINARY_DIR}/"+pc_filename+")\n");
 				}
 
 				data_stream.put_string("set (VERSION \""+element.version+"\")\n");
-				data_stream.put_string("pkg_check_modules(DEPS REQUIRED\n");
-				foreach(var module in element.packages) {
-					if (module.do_check) {
-						data_stream.put_string("\t"+module.package+"\n");
-					}
-				}
-				data_stream.put_string(")\n\n");
 
 				data_stream.put_string("add_definitions(${DEPS_CFLAGS})\n");
 				data_stream.put_string("link_libraries(${DEPS_LIBRARIES})\n");
@@ -734,6 +782,14 @@ namespace AutoVala {
 						data_stream.put_string("\tshare/gir-1.0/\n");
 						data_stream.put_string(")\n");
 					}
+
+					// Install PC
+					data_stream.put_string("install(FILES\n");
+					data_stream.put_string("\t${CMAKE_CURRENT_BINARY_DIR}/"+pc_filename+"\n");
+					data_stream.put_string("DESTINATION\n");
+					data_stream.put_string("\tlib/pkgconfig/\n");
+					data_stream.put_string(")\n");
+
 				} else {
 
 					// Install executable
