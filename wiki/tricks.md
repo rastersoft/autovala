@@ -60,9 +60,9 @@ Save it and run 'autovala update'. If you edit again the project file, you will 
 
 Creating a library is as easy as editing the project file and replacing the command *vala_binary* with *vala_library* and running again 'autovala update'.
 
-When creating a library, Autovala will peek the source files and check the namespace used inside. If all files uses the same namespace, it will use it, by default, as the name for the library, and also to generate the *.vapi* and *.gir* files (and, in the future, the *.pc* file for pkg-config). Of course, is possible to set this name manually by editing the project file and modifying the command **namespace**.
+When creating a library, Autovala will peek the source files and check the namespace used inside. If all files uses the same namespace, it will use it, by default, as the name for the library, and also to generate the *.vapi*, *.gir* and *.pc* files. Of course, is possible to set this name manually by editing the project file and modifying the command **namespace**.
 
-The major and minor numbers for the library are taken from the version number set by the user (read the entry [Setting the version number](tricks#setting-the-version-number) ). They will be used for the library itself, the *.vapi* file and in the future, for the *.pc* file. The *.gir* introspection file uses the version number *major.0* instead of *major.minor* to ensure compatibility.
+The major and minor numbers for the library are taken from the version number set by the user (read the entry [Setting the version number](tricks#setting-the-version-number) ). They will be used for the library itself, the *.vapi* and the *.pc* files. The *.gir* introspection file uses the version number *major.0* instead of *major.minor* to ensure compatibility.
 
 ## Compiling Valadoc in Ubuntu
 
