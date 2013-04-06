@@ -16,7 +16,7 @@ set (PREFIX ${CMAKE_INSTALL_PREFIX})
 
 configure_file (${CMAKE_SOURCE_DIR}/src/Config.vala.cmake ${CMAKE_BINARY_DIR}/src/Config.vala)
 add_definitions(-DGETTEXT_PACKAGE=\"${GETTEXT_PACKAGE}\")
-set (VERSION "0.8.0")
+set (VERSION "0.9.0")
 add_definitions(${DEPS_CFLAGS})
 link_libraries(${DEPS_LIBRARIES})
 link_directories(${DEPS_LIBRARY_DIRS})
@@ -34,8 +34,8 @@ set(VALA_PACKAGES
 
 set(APP_SOURCES
 	configuration.vala
-	autovala.vala
 	cmake.vala
+	autovala.vala
 	generate.vala
 )
 

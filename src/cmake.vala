@@ -651,7 +651,7 @@ namespace AutoVala {
 					data_stream.put_string("add_definitions(-DGETTEXT_PACKAGE=\\\"${GETTEXT_PACKAGE}\\\")\n");
 				}
 
-				string pc_filename="";
+				string pc_filename=lib_filename+".pc";
 
 				if (is_library) {
 					fname=File.new_for_path(Path.build_filename(this.config.basepath,dir,lib_filename+".pc"));
@@ -674,12 +674,7 @@ namespace AutoVala {
 						this.error_list+=_("Failed to create the Config.vala.cmake file\n");
 						return true;
 					}
-					if (dir!="") {
-						pc_filename=dir+"/"+lib_filename+".pc";
-					} else {
-						pc_filename=lib_filename+".pc";
-					}
-					data_stream.put_string("configure_file (${CMAKE_SOURCE_DIR}/"+pc_filename+" ${CMAKE_BINARY_DIR}/"+pc_filename+")\n");
+					data_stream.put_string("configure_file (${CMAKE_CURRENT_SOURCE_DIR}/"+pc_filename+" ${CMAKE_CURRENT_BINARY_DIR}/"+pc_filename+")\n");
 				}
 
 				data_stream.put_string("set (VERSION \""+element.version+"\")\n");
