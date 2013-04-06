@@ -260,7 +260,7 @@ namespace AutoVala {
 		private int line_number;
 
 		public configuration(string project_name="") {
-			this.current_version=3; // currently we support version 3 of the syntax
+			this.current_version=4; // currently we support version 4 of the syntax
 			this.config_path="";
 			this.configuration_data=new Gee.ArrayList<config_element ?>();
 			this.last_element=null;
