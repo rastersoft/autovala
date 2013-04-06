@@ -28,10 +28,12 @@ namespace AutoVala {
 		private string[] error_list;
 		private configuration config;
 		private string append_text;
+		private Gee.Map<string,string>? local_modules;
 
 		public cmake(configuration conf) {
 			this.config=conf;
 			this.error_list={};
+			this.local_modules=null;
 		}
 
 		public void clear_errors() {
@@ -55,21 +57,26 @@ namespace AutoVala {
 
 			// Get all the diferent paths in the project
 			// to create in each one its CMakeLists file
+			// Also store the paths for local libraries
+			this.local_modules=new Gee.HashMap<string,string>();
 			var ignore_list=new Gee.HashSet<string>();
 			foreach(var element in this.config.configuration_data) {
 				if ((element.type==Config_Type.IGNORE)&&(ignore_list.contains(element.path)==false)) {
 					ignore_list.add(element.path);
 				}
+				if ((element.type==Config_Type.VALA_LIBRARY)&&(element.current_namespace!="")&&(this.local_modules.has_key(element.current_namespace)==false)) {
+					this.local_modules.set(element.current_namespace,element.path);
+				}
 			}
-			var paths=new Gee.HashSet<string>();
+			var paths=new Gee.HashMap<string,config_element>();
 			foreach(var element in this.config.configuration_data) {
-				if ((paths.contains(element.path)==false)&&(ignore_list.contains(element.path)==false)) {
+				if ((paths.has_key(element.path)==false)&&(ignore_list.contains(element.path)==false)) {
 					if ((element.type==Config_Type.VALA_BINARY)||(element.type==Config_Type.VALA_LIBRARY)) {
 						if (element.sources.size==0) { // don't add binary folders without source files
 							continue;
 						}
 					}
-					paths.add(element.path);
+					paths.set(element.path,element);
 				}
 			}
 
@@ -107,7 +114,7 @@ namespace AutoVala {
 						continue;
 					}
 					foreach(var module in element.packages) {
-						if (module.do_check) {
+						if (module.type==package_type.do_check) {
 							if (tocheck.contains(module.package)) {
 								continue;
 							}
@@ -118,43 +125,64 @@ namespace AutoVala {
 				}
 				data_stream.put_string(")\n\n");
 
-				foreach(var element in paths) {
-					if (element=="") {
-						continue;
-					}
-					var dirpath=File.new_for_path(Path.build_filename(this.config.basepath,element));
-					if (dirpath.query_exists()==false) {
-						this.error_list+=_("Warning: directory %s doesn't exists").printf(element);
-						continue;
-					} else {
-						if (element!="src") {
-							bool has_childrens=false;
-							try {
-								var enumerator = dirpath.enumerate_children (FileAttribute.STANDARD_NAME+","+FileAttribute.STANDARD_TYPE, 0);
-								FileInfo file_info;
-								while ((file_info = enumerator.next_file ()) != null) {
-									var fname=file_info.get_name();
-									var ftype=file_info.get_file_type();
-									if (ftype==FileType.DIRECTORY) {
-										continue; // don't add folders that only contains folders
-									}
-									if (fname=="CMakeLists.txt") {
-										continue;
-									}
-									has_childrens=true; // found a file, so we add it
-									break;
-								}
-							} catch (Error e) {
-								this.error_list+=_("Warning: can't access folder %s").printf(element);
-								continue;
-							}
-							if (has_childrens==false) {
-								continue;
+				// now, put all the binary and library folders, in order of satisfied dependencies
+				Gee.Set<string> packages_found=new Gee.HashSet<string>();
+				bool all_processed=false;
+				while(all_processed==false) {
+					bool added_one=false;
+					all_processed=true;
+					foreach(var path in paths.keys) {
+						var element=paths.get(path);
+						if (element.processed) {
+							continue;
+						}
+						if ((element.type!=Config_Type.VALA_LIBRARY)&&(element.type!=Config_Type.VALA_BINARY)) {
+							element.processed=true;
+							add_folder_to_main_cmakelists(path,data_stream);
+							added_one=true;
+							continue;
+						}
+						all_processed=false;
+						bool valid=true;
+						foreach(var package in element.packages) {
+							if((package.type==package_type.local)&&(false==packages_found.contains(package.package))) {
+								valid=false;
+								break;
 							}
 						}
-						data_stream.put_string("add_subdirectory("+element+")\n");
+						if (valid==false) { // has dependencies still not satisfied
+							continue;
+						}
+						add_folder_to_main_cmakelists(path,data_stream);
+						added_one=true;
+						element.processed=true;
+						if ((element.type==Config_Type.VALA_LIBRARY)&&(element.current_namespace!="")) {
+							packages_found.add(element.current_namespace);
+						}
+					}
+					if ((all_processed==false)&&(added_one==false)) {
+						string error=_("The following local dependencies cannot be satisfied:");
+						foreach(var path in paths.keys) {
+							var element=paths.get(path);
+							if ((element.processed)||((element.type!=Config_Type.VALA_LIBRARY)&&(element.type!=Config_Type.VALA_BINARY))) {
+								continue;
+							}
+							if (element.type==Config_Type.VALA_LIBRARY) {
+								error+=_("\n\tLibrary %s, packages:").printf(Path.build_filename(element.path,element.file));
+							} else {
+								error+=_("\n\tBinary %s, packages:").printf(Path.build_filename(element.path,element.file));
+							}
+							foreach(var package in element.packages) {
+								if((package.type==package_type.local)&&(false==packages_found.contains(package.package))) {
+									error+=" "+package.package;
+								}
+							}
+						}
+						this.error_list+=error;
+						return true;
 					}
 				}
+
 				if (this.create_cmake_for_dir("",data_stream,ignore_list)) {
 					return true;
 				}
@@ -164,7 +192,7 @@ namespace AutoVala {
 				return true;
 			}
 
-			foreach(var element in paths) {
+			foreach(var element in paths.keys) {
 				if (element!="") { // don't check the main folder
 					var dirpath=File.new_for_path(Path.build_filename(this.config.basepath,element));
 					if(dirpath.query_exists()==false) {
@@ -195,6 +223,47 @@ namespace AutoVala {
 				}
 			}
 			return false;
+		}
+
+		private void add_folder_to_main_cmakelists(string element, DataOutputStream data_stream) {
+
+			var dirpath=File.new_for_path(Path.build_filename(this.config.basepath,element));
+			if (dirpath.query_exists()==false) {
+				this.error_list+=_("Warning: directory %s doesn't exists").printf(element);
+				return;
+			} else {
+				if (element!="src") {
+					bool has_childrens=false;
+					try {
+						var enumerator = dirpath.enumerate_children (FileAttribute.STANDARD_NAME+","+FileAttribute.STANDARD_TYPE, 0);
+						FileInfo file_info;
+						while ((file_info = enumerator.next_file ()) != null) {
+							var fname=file_info.get_name();
+							var ftype=file_info.get_file_type();
+							if (ftype==FileType.DIRECTORY) {
+								continue; // don't add folders that only contains folders
+							}
+							if (fname=="CMakeLists.txt") {
+								continue;
+							}
+							has_childrens=true; // found a file, so we add it
+							break;
+						}
+					} catch (Error e) {
+						this.error_list+=_("Warning: can't access folder %s").printf(element);
+						return;
+					}
+					if (has_childrens==false) {
+						return;
+					}
+				}
+				try {
+					data_stream.put_string("add_subdirectory("+element+")\n");
+				} catch (Error e) {
+					this.error_list+=_("Warning: can't add subdirectory %s\n").printf(element);
+				}
+			}
+
 		}
 
 		private bool create_cmake_for_dir(string dir,DataOutputStream data_stream,Gee.Set<string> ignore_list) {
@@ -680,8 +749,39 @@ namespace AutoVala {
 				data_stream.put_string("set (VERSION \""+element.version+"\")\n");
 
 				data_stream.put_string("add_definitions(${DEPS_CFLAGS})\n");
-				data_stream.put_string("link_libraries(${DEPS_LIBRARIES})\n");
-				data_stream.put_string("link_directories(${DEPS_LIBRARY_DIRS})\n");
+
+				bool added_prefix=false;
+				foreach(var module in element.packages) {
+					if (module.type==package_type.local) {
+						if (this.local_modules.has_key(module.package)) {
+							if (added_prefix==false) {
+								data_stream.put_string("include_directories( ");
+								added_prefix=true;
+							}
+							data_stream.put_string("${CMAKE_BINARY_DIR}/"+local_modules.get(module.package)+" ");
+						} else {
+							this.error_list+=_("Warning: Can't set package %s for binary %s").printf(module.package,element.file);
+						}
+					}
+				}
+				if (added_prefix) {
+					data_stream.put_string(")\n");
+				}
+
+				data_stream.put_string("link_libraries( ${DEPS_LIBRARIES} ");
+				foreach(var module in element.packages) {
+					if ((module.type==package_type.local)&&(this.local_modules.has_key(module.package))) {
+						data_stream.put_string("-l"+module.package+" ");
+					}
+				}
+				data_stream.put_string(")\n");
+				data_stream.put_string("link_directories( ${DEPS_LIBRARY_DIRS} ");
+				foreach(var module in element.packages) {
+					if ((module.type==package_type.local)&&(this.local_modules.has_key(module.package))) {
+						data_stream.put_string("${CMAKE_BINARY_DIR}/"+local_modules.get(module.package)+" ");
+					}
+				}
+				data_stream.put_string(")\n");
 				data_stream.put_string("find_package(Vala REQUIRED)\n");
 				data_stream.put_string("include(ValaVersion)\n");
 				data_stream.put_string("ensure_vala_version(\""+this.config.vala_version+"\" MINIMUM)\n");
@@ -689,7 +789,9 @@ namespace AutoVala {
 
 				data_stream.put_string("set(VALA_PACKAGES\n");
 				foreach(var module in element.packages) {
-					data_stream.put_string("\t"+module.package+"\n");
+					if(module.type!=package_type.local) {
+						data_stream.put_string("\t"+module.package+"\n");
+					}
 				}
 				data_stream.put_string(")\n\n");
 
@@ -702,6 +804,13 @@ namespace AutoVala {
 				data_stream.put_string("set(CUSTOM_VAPIS_LIST\n");
 				foreach (var filename in element.vapis) {
 					data_stream.put_string("\t${CMAKE_SOURCE_DIR}/"+Path.build_filename(dir,filename.vapi)+"\n");
+				}
+				foreach(var module in element.packages) {
+					if (module.type==package_type.local) {
+						if (this.local_modules.has_key(module.package)) {
+							data_stream.put_string("\t${CMAKE_BINARY_DIR}/"+Path.build_filename(local_modules.get(module.package),module.package+".vapi")+"\n");
+						}
+					}
 				}
 				data_stream.put_string(")\n\n");
 

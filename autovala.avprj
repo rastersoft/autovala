@@ -1,5 +1,5 @@
 ### AutoVala Project ###
-autovala_version: 3
+autovala_version: 4
 project_name: autovala
 vala_version: 0.16
 *po: po
@@ -9,13 +9,13 @@ vala_version: 0.16
 *doc: doc
 
 *vala_binary: src/autovala
-*version: 0.9.0
+*version: 0.10.0
 *vala_package: posix
 *vala_check_package: gee-1.0
 *vala_check_package: glib-2.0
 *vala_check_package: gtk+-3.0
-*vala_source: configuration.vala
-*vala_source: cmake.vala
+*vala_source: autovala_lib/generate.vala
+*vala_source: autovala_lib/cmake.vala
 *vala_source: autovala.vala
-*vala_source: generate.vala
+*vala_source: autovala_lib/configuration.vala
 

@@ -16,10 +16,10 @@ set (PREFIX ${CMAKE_INSTALL_PREFIX})
 
 configure_file (${CMAKE_SOURCE_DIR}/src/Config.vala.cmake ${CMAKE_BINARY_DIR}/src/Config.vala)
 add_definitions(-DGETTEXT_PACKAGE=\"${GETTEXT_PACKAGE}\")
-set (VERSION "0.9.0")
+set (VERSION "0.10.0")
 add_definitions(${DEPS_CFLAGS})
-link_libraries(${DEPS_LIBRARIES})
-link_directories(${DEPS_LIBRARY_DIRS})
+link_libraries( ${DEPS_LIBRARIES} )
+link_directories( ${DEPS_LIBRARY_DIRS} )
 find_package(Vala REQUIRED)
 include(ValaVersion)
 ensure_vala_version("0.16" MINIMUM)
@@ -33,10 +33,10 @@ set(VALA_PACKAGES
 )
 
 set(APP_SOURCES
-	configuration.vala
-	cmake.vala
+	autovala_lib/generate.vala
+	autovala_lib/cmake.vala
 	autovala.vala
-	generate.vala
+	autovala_lib/configuration.vala
 )
 
 set(CUSTOM_VAPIS_LIST
