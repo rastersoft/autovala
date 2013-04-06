@@ -1,0 +1,62 @@
+<html>
+<head>
+<link rel="stylesheet" type="text/css" href="view.css" />
+</head>
+<body>
+<div class="main_frame">
+<p><a href="index.html">Home</a></p>
+<ul>
+<li>version 0.10.0 (2013-04-07)
+<ul>
+<li>Allows to link an executable with a library from the same project<br /></li>
+<li>Now Autovala itself is a shared library, and the command line uses it<br /></li>
+<li>Fixed several bugs in the .pc generation<br /></li>
+<li>Fixed the installation paths for include files<br /></li>
+</ul></li>
+<li>version 0.9.0 (2013-04-06)
+<ul>
+<li>Fixed a bug in the .pc generation<br /></li>
+</ul></li>
+<li>version 0.8.0 (2013-04-06)
+<ul>
+<li>Automatically generates the .pc file for libraries<br /></li>
+<li>Fixed a bug with CMake when creating more than one binary and/or library<br /></li>
+</ul></li>
+<li>version 0.7.0 (2013-04-05)
+<ul>
+<li>Now honors the IGNORE command with VAPI files and source folders<br /></li>
+</ul></li>
+<li>version 0.6.0 (2013-04-05)
+<ul>
+<li>Added support for CUSTOM VAPI files<br /></li>
+<li>Installs Valadoc file sin a better place<br /></li>
+<li>Added instructions in HTML format, extracted from GitHub's wiki<br /></li>
+</ul></li>
+<li>version 0.5.0 (2013-04-01)
+<ul>
+<li>Adds all source files at SRC and their subdirectories<br /></li>
+</ul></li>
+<li>version 0.4.0 (2013-03-31)
+<ul>
+<li>Fixed a bug when PKG_CONFIG_PATH is empty<br /></li>
+</ul></li>
+<li>version 0.3.0 (2013-03-30)
+<ul>
+<li>Added support for source files that are not in the same folder than the binary they belong to<br /></li>
+<li>Added documentation about DOC command<br /></li>
+<li>Valadoc support<br /></li>
+</ul></li>
+<li>version 0.2.0 (2013-03-30)
+<ul>
+<li>Now recognizes the DOC folder<br /></li>
+<li>Now also search libraries in PKG_CONFIG_PATH<br /></li>
+</ul></li>
+<li>version 0.1.0 (2013-03-29)
+<ul>
+<li>First public version</li>
+</ul></li>
+</ul>
+<p><a href="index.html">Home</a></p>
+</div>
+</body>
+</html>
