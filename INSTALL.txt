@@ -20,6 +20,7 @@ to the directory where you downloaded the git repository
 and type:
 
     mkdir install
+    cd install
     cmake ..
     make
     sudo make install
