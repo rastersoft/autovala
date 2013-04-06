@@ -25,14 +25,16 @@ namespace AutoVala {
 	public enum Config_Type {VALA_BINARY, VALA_LIBRARY, BINARY, ICON, PIXMAP, PO, GLADE, DBUS_SERVICE, DESKTOP, AUTOSTART,
 							 EOS_PLUG, SCHEME, DATA, DOC, INCLUDE, IGNORE}
 
+	public enum package_type {no_check, do_check, local}
+
 	public class package_element:GLib.Object {
 		public string package;
-		public bool do_check;
+		public package_type type;
 		public bool automatic;
 
-		public package_element(string package, bool do_check, bool automatic) {
+		public package_element(string package, package_type type, bool automatic) {
 			this.package=package;
-			this.do_check=do_check;
+			this.type=type;
 			this.automatic=automatic;
 		}
 	}
@@ -177,7 +179,7 @@ namespace AutoVala {
 			this.vapis.add(element);
 		}
 
-		public void add_package(string pkg,bool to_check,bool automatic) {
+		public void add_package(string pkg,package_type type,bool automatic) {
 
 			// adding a non-automatic package to an automatic binary transforms this binary to non-automatic
 			if ((automatic==false)&& (this.automatic==true)) {
@@ -189,7 +191,7 @@ namespace AutoVala {
 					return;
 				}
 			}
-			var element=new package_element(pkg,to_check,automatic);
+			var element=new package_element(pkg,type,automatic);
 			this.packages.add(element);
 		}
 
@@ -220,8 +222,16 @@ namespace AutoVala {
 			GLib.stdout.printf("Path: %s, file: %s\n",this.path,this.file);
 			foreach(var l in this.packages) {
 				GLib.stdout.printf("\tPackage: %s",l.package);
-				if (l.do_check) {
+				switch (l.type) {
+				case package_type.no_check:
+					GLib.stdout.printf(" (don't check it)");
+					break;
+				case package_type.do_check:
 					GLib.stdout.printf(" (check it)");
+					break;
+				case package_type.local:
+					GLib.stdout.printf(" (local package)");
+					break;
 				}
 				if (l.automatic) {
 					GLib.stdout.printf(" (added automatically)");
@@ -467,7 +477,7 @@ namespace AutoVala {
 						continue;
 					}
 					if (line.has_prefix("vala_package: ")) {
-						error|=this.add_package(line.substring(14).strip(),false,automatic);
+						error|=this.add_package(line.substring(14).strip(),package_type.no_check,automatic);
 						continue;
 					}
 					if (line.has_prefix("vala_vapi: ")) {
@@ -475,7 +485,11 @@ namespace AutoVala {
 						continue;
 					}
 					if (line.has_prefix("vala_check_package: ")) {
-						error|=this.add_package(line.substring(20).strip(),true,automatic);
+						error|=this.add_package(line.substring(20).strip(),package_type.do_check,automatic);
+						continue;
+					}
+					if (line.has_prefix("vala_local_package: ")) {
+						error|=this.add_package(line.substring(20).strip(),package_type.local,automatic);
 						continue;
 					}
 					if (line.has_prefix("vala_source: ")) {
@@ -652,21 +666,17 @@ namespace AutoVala {
 			return false;
 		}
 
-		private bool add_package(string pkg,bool check,bool automatic) {
+		private bool add_package(string pkg,package_type type,bool automatic) {
 
 			if (this.config_path=="") {
 				return true;
 			}
 
 			if (this.last_element==null) {
-				if (check) {
-					this.error_list+=_("Found vala_check_package after a non vala_binary, nor vala_library command (line %d)").printf(this.line_number);
-				} else {
-					this.error_list+=_("Found vala_package after a non vala_binary, nor vala_library command (line %d)").printf(this.line_number);
-				}
+				this.error_list+=_("Found XXXXX_package after a non vala_binary, nor vala_library command (line %d)").printf(this.line_number);
 				return true;
 			}
-			this.last_element.add_package(pkg,check,automatic);
+			this.last_element.add_package(pkg,type,automatic);
 			return false;
 		}
 
@@ -693,7 +703,7 @@ namespace AutoVala {
 			}
 		}
 
-		public bool add_new_binary(string filename, Config_Type type, bool automatic, Gee.Set<string> ?sources=null, string[] ?packages=null, string[] ?check_packages=null, string[] ?vapis=null, string version="", string current_namespace="", bool several_namespaces=false, string compile_options="") {
+		public bool add_new_binary(string filename, Config_Type type, bool automatic, Gee.Set<string> ?sources=null, string[] ?packages=null, string[] ?check_packages=null, string[] ?local_packages=null,string[] ?vapis=null, string version="", string current_namespace="", bool several_namespaces=false, string compile_options="") {
 
 			if ((type!=Config_Type.VALA_BINARY)&&(type!=Config_Type.VALA_LIBRARY)) {
 				return true;
@@ -739,7 +749,7 @@ namespace AutoVala {
 						p_automatic=false;
 						package=l;
 					}
-					this.add_package(package,false,p_automatic);
+					this.add_package(package,package_type.no_check,p_automatic);
 				}
 			}
 			if (check_packages!=null) {
@@ -751,7 +761,19 @@ namespace AutoVala {
 						p_automatic=false;
 						package=l;
 					}
-					this.add_package(package,true,p_automatic);
+					this.add_package(package,package_type.do_check,p_automatic);
+				}
+			}
+			if (local_packages!=null) {
+				foreach(var l in local_packages) {
+					if (l[0]=='*') {
+						p_automatic=true;
+						package=l.substring(1);
+					} else{
+						p_automatic=false;
+						package=l;
+					}
+					this.add_package(package,package_type.local,p_automatic);
 				}
 			}
 			string vapi;
@@ -954,10 +976,16 @@ namespace AutoVala {
 							if (l.automatic) {
 								data_stream.put_string("*");
 							}
-							if (l.do_check) {
+							switch(l.type) {
+							case package_type.do_check:
 								data_stream.put_string("vala_check_package: ");
-							} else {
+								break;
+							case package_type.no_check:
 								data_stream.put_string("vala_package: ");
+								break;
+							case package_type.local:
+								data_stream.put_string("vala_local_package: ");
+								break;
 							}
 							data_stream.put_string(l.package+"\n");
 						}

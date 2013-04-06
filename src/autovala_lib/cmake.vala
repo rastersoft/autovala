@@ -28,10 +28,12 @@ namespace AutoVala {
 		private string[] error_list;
 		private configuration config;
 		private string append_text;
+		private Gee.Map<string,string>? local_modules;
 
 		public cmake(configuration conf) {
 			this.config=conf;
 			this.error_list={};
+			this.local_modules=null;
 		}
 
 		public void clear_errors() {
@@ -55,10 +57,15 @@ namespace AutoVala {
 
 			// Get all the diferent paths in the project
 			// to create in each one its CMakeLists file
+			// Also store the paths for local libraries
+			this.local_modules=new Gee.HashMap<string,string>();
 			var ignore_list=new Gee.HashSet<string>();
 			foreach(var element in this.config.configuration_data) {
 				if ((element.type==Config_Type.IGNORE)&&(ignore_list.contains(element.path)==false)) {
 					ignore_list.add(element.path);
+				}
+				if ((element.type==Config_Type.VALA_LIBRARY)&&(element.current_namespace!="")&&(this.local_modules.has_key(element.current_namespace)==false)) {
+					this.local_modules.set(element.current_namespace,element.path);
 				}
 			}
 			var paths=new Gee.HashSet<string>();
@@ -107,7 +114,7 @@ namespace AutoVala {
 						continue;
 					}
 					foreach(var module in element.packages) {
-						if (module.do_check) {
+						if (module.type==package_type.do_check) {
 							if (tocheck.contains(module.package)) {
 								continue;
 							}
@@ -680,8 +687,39 @@ namespace AutoVala {
 				data_stream.put_string("set (VERSION \""+element.version+"\")\n");
 
 				data_stream.put_string("add_definitions(${DEPS_CFLAGS})\n");
-				data_stream.put_string("link_libraries(${DEPS_LIBRARIES})\n");
-				data_stream.put_string("link_directories(${DEPS_LIBRARY_DIRS})\n");
+
+				bool added_prefix=false;
+				foreach(var module in element.packages) {
+					if (module.type==package_type.local) {
+						if (this.local_modules.has_key(module.package)) {
+							if (added_prefix==false) {
+								data_stream.put_string("include_directories( ");
+								added_prefix=true;
+							}
+							data_stream.put_string("${CMAKE_BINARY_DIR}/"+local_modules.get(module.package)+" ");
+						} else {
+							this.error_list+=_("Warning: Can't set package %s for binary %s").printf(module.package,element.file);
+						}
+					}
+				}
+				if (added_prefix) {
+					data_stream.put_string(")\n");
+				}
+
+				data_stream.put_string("link_libraries( ${DEPS_LIBRARIES} ");
+				foreach(var module in element.packages) {
+					if ((module.type==package_type.local)&&(this.local_modules.has_key(module.package))) {
+						data_stream.put_string("-l"+module.package+" ");
+					}
+				}
+				data_stream.put_string(")\n");
+				data_stream.put_string("link_directories( ${DEPS_LIBRARY_DIRS} ");
+				foreach(var module in element.packages) {
+					if ((module.type==package_type.local)&&(this.local_modules.has_key(module.package))) {
+						data_stream.put_string("${CMAKE_BINARY_DIR}/"+local_modules.get(module.package)+" ");
+					}
+				}
+				data_stream.put_string(")\n");
 				data_stream.put_string("find_package(Vala REQUIRED)\n");
 				data_stream.put_string("include(ValaVersion)\n");
 				data_stream.put_string("ensure_vala_version(\""+this.config.vala_version+"\" MINIMUM)\n");
@@ -689,7 +727,9 @@ namespace AutoVala {
 
 				data_stream.put_string("set(VALA_PACKAGES\n");
 				foreach(var module in element.packages) {
-					data_stream.put_string("\t"+module.package+"\n");
+					if(module.type!=package_type.local) {
+						data_stream.put_string("\t"+module.package+"\n");
+					}
 				}
 				data_stream.put_string(")\n\n");
 
@@ -702,6 +742,13 @@ namespace AutoVala {
 				data_stream.put_string("set(CUSTOM_VAPIS_LIST\n");
 				foreach (var filename in element.vapis) {
 					data_stream.put_string("\t${CMAKE_SOURCE_DIR}/"+Path.build_filename(dir,filename.vapi)+"\n");
+				}
+				foreach(var module in element.packages) {
+					if (module.type==package_type.local) {
+						if (this.local_modules.has_key(module.package)) {
+							data_stream.put_string("\t${CMAKE_BINARY_DIR}/"+Path.build_filename(local_modules.get(module.package),module.package+".vapi")+"\n");
+						}
+					}
 				}
 				data_stream.put_string(")\n\n");
 

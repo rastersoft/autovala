@@ -106,6 +106,7 @@ namespace AutoVala {
 		private configuration config;
 		private string[] error_list;
 		private Gee.Map<string,namespaces_element> ?namespaces;
+		private Gee.Map<string,config_element> ?local_namespaces;
 		private Gee.Set<string> ?pkgconfigs;
 		private string current_namespace;
 		private bool several_namespaces;
@@ -113,6 +114,7 @@ namespace AutoVala {
 		public manage_project() {
 			this.error_list={};
 			this.namespaces=null;
+			this.local_namespaces=null;
 			this.pkgconfigs=null;
 		}
 
@@ -434,6 +436,7 @@ namespace AutoVala {
 			int minor;
 
 			this.namespaces=new Gee.HashMap<string,namespaces_element>();
+			this.local_namespaces=new Gee.HashMap<string,config_element>();
 			this.pkgconfigs=new Gee.HashSet<string>();
 			this.current_namespace="";
 
@@ -530,6 +533,7 @@ namespace AutoVala {
 			this.config.save_configuration();
 			this.add_errors(this.config.get_error_list()); // there can be warnings
 			this.config.clear_errors();
+			this.config.list_all();
 			return false;
 		}
 
@@ -615,6 +619,20 @@ namespace AutoVala {
 		private void process_binary(Gee.Set<string> files_set, string path, Gee.Map<string,string>binaries, Gee.Map<string,string>libraries,
 									Config_Type type) {
 
+			this.local_namespaces=new Gee.HashMap<string,config_element>();
+			// find the block in the configuration for this path
+			foreach(var element in this.config.configuration_data) {
+				if ((element.path==path)&&((element.type==Config_Type.VALA_BINARY)||(element.type==Config_Type.VALA_LIBRARY))) {
+					foreach(var package in element.packages) {
+						if(package.type==package_type.local) {
+							if (this.local_namespaces.has_key(package.package)==false) {
+								this.local_namespaces.set(package.package,element);
+							}
+						}
+					}
+				}
+			}
+
 			string file_s;
 			if (type==Config_Type.VALA_BINARY) {
 				file_s=binaries.get(path);
@@ -681,7 +699,8 @@ namespace AutoVala {
 				}
 			} while(folderlist.size>0);
 
-			// also check the namespaces required by manually added sources
+			this.local_namespaces=new Gee.HashMap<string,config_element>();
+			// also check the namespaces required by manually added sources, and local libraries
 			foreach(var element in this.config.configuration_data) {
 				if ((element.path==path)&&((element.type==Config_Type.VALA_BINARY)||(element.type==Config_Type.VALA_LIBRARY))) {
 					foreach(var checkfile in element.sources) {
@@ -743,21 +762,26 @@ namespace AutoVala {
 			}
 			string[] packages={};
 			string[] check_packages={};
+			string[] local_packages={};
 			foreach (var element in namespaces_list) {
 				if (provided_packages.contains(element)) {
 					continue;
 				}
-				var package=this.namespaces.get(element);
-				if (package.checkable) {
-					check_packages+="*"+package.filename;
+				if (this.namespaces.has_key(element)) {
+					var package=this.namespaces.get(element);
+					if (package.checkable) {
+						check_packages+="*"+package.filename;
+					} else {
+						packages+="*"+package.filename;
+					}
 				} else {
-					packages+="*"+package.filename;
+					local_packages+=element;
 				}
 			}
 			if (type==Config_Type.VALA_LIBRARY) {
-				this.config.add_new_binary(mpath_s,Config_Type.VALA_LIBRARY, true, filelist,packages,check_packages,custom_vapis,current_version,this.current_namespace,this.several_namespaces);
+				this.config.add_new_binary(mpath_s,Config_Type.VALA_LIBRARY, true, filelist,packages,check_packages,local_packages,custom_vapis,current_version,this.current_namespace,this.several_namespaces);
 			} else {
-				this.config.add_new_binary(mpath_s,Config_Type.VALA_BINARY, true, filelist,packages,check_packages,custom_vapis,current_version);
+				this.config.add_new_binary(mpath_s,Config_Type.VALA_BINARY, true, filelist,packages,check_packages,local_packages,custom_vapis,current_version);
 			}
 		}
 
@@ -780,7 +804,7 @@ namespace AutoVala {
 							continue;
 						}
 						var namespace_found=line.substring(6,pos-6).strip();
-						if (this.namespaces.has_key(namespace_found)==false) {
+						if ((this.namespaces.has_key(namespace_found)==false)&&(this.local_namespaces.has_key(namespace_found)==false)) {
 							this.error_list+=_("Warning: can't find namespace %s in file %s").printf(namespace_found,relative_path);
 							continue;
 						}
