@@ -8,14 +8,22 @@ vala_version: 0.16
 
 *doc: doc
 
-*vala_binary: src/autovala
+vala_binary: src/autovala
 *version: 0.10.0
+vala_local_package: AutoVala
+*vala_package: posix
+*vala_check_package: gee-1.0
+*vala_check_package: glib-2.0
+*vala_source: autovala.vala
+
+vala_library: src/autovala_lib/autovala_lib
+version: 0.10
+*namespace: AutoVala
 *vala_package: posix
 *vala_check_package: gee-1.0
 *vala_check_package: glib-2.0
 *vala_check_package: gtk+-3.0
-*vala_source: autovala_lib/generate.vala
-*vala_source: autovala_lib/cmake.vala
-*vala_source: autovala_lib/configuration.vala
-*vala_source: autovala.vala
+*vala_source: configuration.vala
+*vala_source: cmake.vala
+*vala_source: generate.vala
 

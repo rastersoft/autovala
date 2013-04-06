@@ -712,6 +712,7 @@ namespace AutoVala {
 					data_stream.put_string("set (RELEASE_NAME \""+config.project_name+"\")\n");
 					data_stream.put_string("set (CMAKE_C_FLAGS \"\")\n");
 					data_stream.put_string("set (PREFIX ${CMAKE_INSTALL_PREFIX})\n\n");
+					data_stream.put_string("set (DOLLAR \"$\")\n\n");
 					if (dir!="") {
 						data_stream.put_string("configure_file (${CMAKE_SOURCE_DIR}/"+dir+"/Config.vala.cmake ${CMAKE_BINARY_DIR}/"+dir+"/Config.vala)\n");
 					} else {
@@ -731,13 +732,13 @@ namespace AutoVala {
 						var dis = fname.create(FileCreateFlags.NONE);
 						var data_stream2 = new DataOutputStream(dis);
 						data_stream2.put_string("prefix = \"@INSTALL_PREFIX@\"\n");
-						data_stream2.put_string("exec_prefix=${prefix}\n");
-						data_stream2.put_string("libdir=${exec_prefix}/lib\n");
-						data_stream2.put_string("includedir=${exec_prefix}/include\n\n");
+						data_stream2.put_string("exec_prefix=@DOLLAR@{prefix}\n");
+						data_stream2.put_string("libdir=@DOLLAR@{exec_prefix}/lib\n");
+						data_stream2.put_string("includedir=@DOLLAR@{exec_prefix}/include\n\n");
 						data_stream2.put_string("Name: "+lib_filename+"\n");
 						data_stream2.put_string("Version "+element.version+"\n");
-						data_stream2.put_string("Libs: -L${libdir} -l"+lib_filename+"\n");
-						data_stream2.put_string("Cflags: -I${includedir}\n");
+						data_stream2.put_string("Libs: -L@DOLLAR@{libdir} -l"+lib_filename+"\n");
+						data_stream2.put_string("Cflags: -I@DOLLAR@{includedir}\n");
 						data_stream2.close();
 					} catch (Error e) {
 						this.error_list+=_("Failed to create the Config.vala.cmake file\n");

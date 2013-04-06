@@ -14,12 +14,15 @@ set (RELEASE_NAME "autovala")
 set (CMAKE_C_FLAGS "")
 set (PREFIX ${CMAKE_INSTALL_PREFIX})
 
+set (DOLLAR "$")
+
 configure_file (${CMAKE_SOURCE_DIR}/src/Config.vala.cmake ${CMAKE_BINARY_DIR}/src/Config.vala)
 add_definitions(-DGETTEXT_PACKAGE=\"${GETTEXT_PACKAGE}\")
 set (VERSION "0.10.0")
 add_definitions(${DEPS_CFLAGS})
-link_libraries( ${DEPS_LIBRARIES} )
-link_directories( ${DEPS_LIBRARY_DIRS} )
+include_directories( ${CMAKE_BINARY_DIR}/src/autovala_lib )
+link_libraries( ${DEPS_LIBRARIES} -lAutoVala )
+link_directories( ${DEPS_LIBRARY_DIRS} ${CMAKE_BINARY_DIR}/src/autovala_lib )
 find_package(Vala REQUIRED)
 include(ValaVersion)
 ensure_vala_version("0.16" MINIMUM)
@@ -29,17 +32,14 @@ set(VALA_PACKAGES
 	posix
 	gee-1.0
 	glib-2.0
-	gtk+-3.0
 )
 
 set(APP_SOURCES
-	autovala_lib/generate.vala
-	autovala_lib/cmake.vala
-	autovala_lib/configuration.vala
 	autovala.vala
 )
 
 set(CUSTOM_VAPIS_LIST
+	${CMAKE_BINARY_DIR}/src/autovala_lib/AutoVala.vapi
 )
 
 vala_precompile(VALA_C autovala

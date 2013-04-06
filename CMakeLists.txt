@@ -29,5 +29,6 @@ pkg_check_modules(DEPS REQUIRED
 )
 
 add_subdirectory(doc)
-add_subdirectory(src)
 add_subdirectory(po)
+add_subdirectory(src/autovala_lib)
+add_subdirectory(src)
