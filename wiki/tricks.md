@@ -41,7 +41,7 @@ Let's suppose that you have a project called *myproject*, with a folder hierarch
 And let's suppose that you want to compile *file5.vala* and *file6.vala* as a different executable called *otherprogram*. By default, after running 'autovala refresh', it will create a single executable called *myproject*, using all the source files ( *file1.vala* to *file6.vala* ), and the *.avprj* file will look like this:
 
         ### AutoVala Project ###
-        autovala_version: 2
+        autovala_version: 4
         project_name: myproject
         vala_version: 0.16
 
@@ -51,7 +51,7 @@ And let's suppose that you want to compile *file5.vala* and *file6.vala* as a di
 What we have to do is add a new *vala_binary* command to the file, specifying the path and the executable name we want (and WITHOUT an asterisk before; read [Keeping your changes](wiki/Keeping-Your-Changes) to understand why). So edit it and add this:
 
         ### AutoVala Project ###
-        autovala_version: 2
+        autovala_version: 4
         project_name: myproject
         vala_version: 0.16
 
@@ -69,6 +69,42 @@ Creating a library is as easy as editing the project file and replacing the comm
 When creating a library, Autovala will peek the source files and check the namespace used inside. If all files uses the same namespace, it will use it, by default, as the name for the library, and also to generate the *.vapi*, *.gir* and *.pc* files. Of course, is possible to set this name manually by editing the project file and modifying the command **namespace**.
 
 The major and minor numbers for the library are taken from the version number set by the user (read the entry [Setting the version number](tricks#setting-the-version-number) ). They will be used for the library itself, the *.vapi* and the *.pc* files. The *.gir* introspection file uses the version number *major.0* instead of *major.minor* to ensure compatibility.
+
+## Linking an executable against a library from the same project
+
+Let's say that the project contains one or more libraries and an executable, and the executable must use that library we are creating in the same project.
+
+
+Let's supose that the executable is *myexecutable*, and the library is *mylibrary* (using the namespace *mylibrarynamespace*). The *.avprj* file will look like this:
+
+        ### AutoVala Project ###
+        autovala_version: 4
+        project_name: myproject
+        vala_version: 0.16
+
+        vala_library: src/mylibrary_src/mylibrary
+        [several commands specific of this library]
+        
+        *vala_binary: src/myexecutable
+        [several commands specific of this binary]
+
+To allow *myexecutable* to use *mylibrary*, just add to *myexecutable* a **vala_local_package** statement with the namespace of the library it needs. In this example, the *.avprj* will become:
+
+        ### AutoVala Project ###
+        autovala_version: 4
+        project_name: myproject
+        vala_version: 0.16
+
+        vala_library: src/mylibrary_src/mylibrary
+        [several commands specific of this library]
+        
+        *vala_binary: src/myexecutable
+        vala_local_package: mylibrarynamespace
+        [several commands specific of this binary]
+
+Run *autovala update*, *cmake ..*, and everything should compile fine.
+
+Of course, if your executable needs several local libraries, you have to add one *vala_local_package* statement per library.
 
 ## Compiling Valadoc in Ubuntu
 
