@@ -75,6 +75,7 @@ namespace AutoVala {
 		public Gee.List<vapi_element ?> vapis;
 		public string current_namespace;
 		public bool namespace_manually_set;
+		public bool processed;
 
 		public config_element(string file, string path, Config_Type type,bool automatic,string icon_path) {
 			this.automatic=automatic;

@@ -533,7 +533,6 @@ namespace AutoVala {
 			this.config.save_configuration();
 			this.add_errors(this.config.get_error_list()); // there can be warnings
 			this.config.clear_errors();
-			this.config.list_all();
 			return false;
 		}
 
