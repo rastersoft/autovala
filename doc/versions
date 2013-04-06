@@ -9,7 +9,7 @@
 <li>version 0.10.0 (2013-04-07)
 <ul>
 <li>Allows to link an executable with a library from the same project<br /></li>
-<li>Now Autovala itself is a shared library, and the command line uses it<br /></li>
+<li>Now Autovala itself is a shared library, and the command line binary uses it<br /></li>
 <li>Fixed several bugs in the .pc generation<br /></li>
 <li>Fixed the installation paths for include files<br /></li>
 </ul></li>
