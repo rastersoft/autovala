@@ -35,8 +35,8 @@ set(VALA_PACKAGES
 set(APP_SOURCES
 	autovala_lib/generate.vala
 	autovala_lib/cmake.vala
-	autovala.vala
 	autovala_lib/configuration.vala
+	autovala.vala
 )
 
 set(CUSTOM_VAPIS_LIST

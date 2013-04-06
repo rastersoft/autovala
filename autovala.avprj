@@ -16,6 +16,6 @@ vala_version: 0.16
 *vala_check_package: gtk+-3.0
 *vala_source: autovala_lib/generate.vala
 *vala_source: autovala_lib/cmake.vala
-*vala_source: autovala.vala
 *vala_source: autovala_lib/configuration.vala
+*vala_source: autovala.vala
 
