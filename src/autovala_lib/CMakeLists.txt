@@ -69,12 +69,12 @@ SOVERSION
 install(TARGETS
 	AutoVala
 LIBRARY DESTINATION
-	lib/autovala/
+	lib/
 )
 install(FILES
 	${CMAKE_CURRENT_BINARY_DIR}/AutoVala.h
 DESTINATION
-	include/autovala/
+	include/
 )
 install(FILES
 	${CMAKE_CURRENT_BINARY_DIR}/AutoVala.vapi

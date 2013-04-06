@@ -738,8 +738,8 @@ namespace AutoVala {
 						data_stream2.put_string("Name: "+lib_filename+"\n");
 						data_stream2.put_string("Description: "+lib_filename+"\n");
 						data_stream2.put_string("Version: "+element.version+"\n");
-						data_stream2.put_string("Libs: -L@DOLLAR@{libdir}/"+this.config.project_name+" -l"+lib_filename+"\n");
-						data_stream2.put_string("Cflags: -I@DOLLAR@{includedir}/"+this.config.project_name+"\n");
+						data_stream2.put_string("Libs: -L@DOLLAR@{libdir} -l"+lib_filename+"\n");
+						data_stream2.put_string("Cflags: -I@DOLLAR@{includedir}\n");
 						data_stream2.close();
 					} catch (Error e) {
 						this.error_list+=_("Failed to create the Config.vala.cmake file\n");
@@ -863,14 +863,14 @@ namespace AutoVala {
 					data_stream.put_string("install(TARGETS\n");
 					data_stream.put_string("\t"+lib_filename+"\n");
 					data_stream.put_string("LIBRARY DESTINATION\n");
-					data_stream.put_string("\tlib/"+this.config.project_name+"/\n");
+					data_stream.put_string("\tlib/\n");
 					data_stream.put_string(")\n");
 
 					// Install headers
 					data_stream.put_string("install(FILES\n");
 					data_stream.put_string("\t${CMAKE_CURRENT_BINARY_DIR}/"+lib_filename+".h\n");
 					data_stream.put_string("DESTINATION\n");
-					data_stream.put_string("\tinclude/"+this.config.project_name+"/\n");
+					data_stream.put_string("\tinclude/\n");
 					data_stream.put_string(")\n");
 
 					// Install VAPI
