@@ -1,5 +1,11 @@
 # Tricks for Autovala
 
+* [Setting the version number](https://github.com/rastersoft/autovala/wiki/tricks#setting-the-version-number)
+* [Creating several binaries](https://github.com/rastersoft/autovala/wiki/tricks#creating-several-binaries)
+* [Creating libraries](https://github.com/rastersoft/autovala/wiki/tricks#creating-libraries)
+* [Compiling Valadoc in Ubuntu](https://github.com/rastersoft/autovala/wiki/tricks#compiling-valadoc-in-ubuntu)
+* [Using D-Bus service files](https://github.com/rastersoft/autovala/wiki/tricks#using-d-bus-service-files)
+
 ## Setting the version number
 
 To simplify the maintenance of the code, Autovala allows to set the version number in an easy way inside the source code of your binary or library. That way you will always be sure to use the right number both for the *About* and *--version* commands, and for the library major and minor values.

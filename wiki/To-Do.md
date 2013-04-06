@@ -8,4 +8,4 @@ While Autovala is fully usable, there are still a lot of things that I want to a
 
      This is a must if I want to distribute Autovala both as a library, and as a command line program that uses that library.
 
- * Integrate it as a plugin for Gedit
+ * Integrate it as a plugin for Gedit or, even better, integrate it with [Valencia](http://redmine.yorba.org/projects/valencia/wiki)

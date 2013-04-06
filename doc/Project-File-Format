@@ -37,10 +37,9 @@
 <pre><code>        compile_options: -X -O2</code></pre></li>
 <li><p>vala_package: specify a package that must be added with --pkg=... to the vala compiler. These are automatically found by Autovala by reading the sources and processing the &quot;Using&quot; directives</p></li>
 <li><p>vala_check_package: is like vala_package, but these packages must, also, be checked during cmake to ensure that they are installed in the system. Autovala founds these automatically by reading the sources, as with vala_package, and checking if the corresponding .pc file exists</p></li>
-<li><p>vala_source: this command specifies one source file that belongs to this binary. The path must be relative to the binary/library path.</p>
-<pre><code>        The last three subcommand can be repeated as many times as
-        needed to specify all the sources and packages needed.</code></pre></li>
-<li><p>vala_vapi: this command specifies one custom <em>.vapi</em> file, needed to compile your project. Each file must be prepended by the relative path from the project folder. The path must be relative to the binary/library path.</p></li>
+<li><p>vala_source: this command specifies one source file that belongs to this binary. The path must be relative to the binary/library path.</p></li>
+<li><p>vala_vapi: this command specifies one custom <em>.vapi</em> file, needed to compile your project. Each file must be prepended by the relative path from the project folder. The path must be relative to the binary/library path.</p>
+<pre><code>        The last four subcommands can be repeated as many times as needed to specify all the sources and packages needed.</code></pre></li>
 <li><p>vala_library: the same than vala_binary, but creates a dynamic linking library. It uses the same subcommands.</p></li>
 <li><p>binary: specifies that the file is a precompiled binary (or a shell script) that must be copied as-is to bin/</p></li>
 <li><p>icon: followed by the category and the icon path/name. Autovala will determine the icon size and use it to copy it to the right place (only if it's a .png file; it it's a .svg will copy to &quot;scalable&quot;). Also, by default, the category will be &quot;apps&quot;, unless it is a .svg with &quot;-symbolic&quot;; in that case will be put in the &quot;status&quot; category. Example:</p>

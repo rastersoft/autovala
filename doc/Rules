@@ -24,7 +24,7 @@
 <li><p>All files and folders in doc/ will be copied to share/doc/project_name/ This is useful for documentation</p></li>
 </ul>
 <p>When Autovala searchs the packages, it uses only the versions available for the currently active version. Also, by default, it uses the most recent version. But if another version is selected manually, it will use that one instead.</p>
-<p>Example: if you put &quot;using Gtk;&quot; in your code, by default Autovala will use the package gtk+-3.0 to compile it; but if you manually add the package gtk+-2.0 to that binary, Autovala will use Gtk2 instead of Gtk3.</p>
+<p><strong>Example:</strong> if you put &quot;using Gtk;&quot; in your code, by default Autovala will use the package gtk+-3.0 to compile it; but if you manually add the package gtk+-2.0 to that binary, Autovala will use Gtk2 instead of Gtk3.</p>
 <p><a href="index.html">Home</a></p>
 </div>
 </body>

@@ -54,10 +54,9 @@ After that, it comes several commands, some of them repeated several times, to s
 
    * vala_source: this command specifies one source file that belongs to this binary. The path must be relative to the binary/library path.
 
-                The last three subcommand can be repeated as many times as
-                needed to specify all the sources and packages needed.
-
    * vala_vapi: this command specifies one custom *.vapi* file, needed to compile your project. Each file must be prepended by the relative path from the project folder. The path must be relative to the binary/library path.
+
+                The last four subcommands can be repeated as many times as needed to specify all the sources and packages needed.
 
  * vala_library: the same than vala_binary, but creates a dynamic linking library. It uses the same subcommands.
 
