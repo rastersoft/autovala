@@ -30,7 +30,8 @@ and enjoy.
 
 
 ## History of versions ##
-
+* version 0.12.0 (2013-04-09)
+    * When checking VAPI files, now will give priority to the version number inside it (gir_version), and only when there is no such number will use the one in the filename
 * version 0.11.0 (2013-04-07)
     * Includes the *Constant* namespace in the executables (but not in libraries to avoid clash)
     * Enabled gettext to allow to translate the messages in Autovala
