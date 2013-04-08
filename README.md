@@ -31,6 +31,13 @@ and enjoy.
 
 ## History of versions ##
 
+* version 0.11.0 (2013-04-07)
+    * Includes the *Constant* namespace in the executables (but not in libraries to avoid clash)
+    * Enabled gettext to allow to translate the messages in Autovala
+    * Translation to spanish
+    * Fixed messages
+    * Fixed a bug in Constants that prevented defining the VERSION field
+    * New format for the version string inside source code, that allows to set it in libraries without clash
 * version 0.10.0 (2013-04-07)
     * Allows to link an executable with a library from the same project
     * Now Autovala itself is a shared library, and the command line binary uses it
