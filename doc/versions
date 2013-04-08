@@ -6,6 +6,13 @@
 <div class="main_frame">
 <p><a href="index.html">Home</a></p>
 <ul>
+<li>version 0.11.0 (2013-04-07)
+<ul>
+<li>Includes the <em>Constant</em> namespace in the executables (but not in libraries to avoid clash)<br /></li>
+<li>Enabled gettext to allow to translate the messages in Autovala<br /></li>
+<li>Translation to spanish<br /></li>
+<li>Fixed messages<br /></li>
+</ul></li>
 <li>version 0.10.0 (2013-04-07)
 <ul>
 <li>Allows to link an executable with a library from the same project<br /></li>
