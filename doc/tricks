@@ -16,10 +16,13 @@
 <h2>Setting the version number</h2>
 <p>To simplify the maintenance of the code, Autovala allows to set the version number in an easy way inside the source code of your binary or library. That way you will always be sure to use the right number both for the <em>About</em> and <em>--version</em> commands, and for the library major and minor values.</p>
 <p>To do so, just put in one (no matter which) of the <em>.vala</em> source files the following statement:</p>
-<pre><code>    const string project_version=&quot;XX.YY.ZZ&quot;;</code></pre>
+<pre><code>    // project version=XX.YY.ZZ</code></pre>
 <p>As expected, this will define a global string with the version number inside. The interesting thing is that Autovala will peek inside all the source files for this kind of string, and will use it whenever it needs a version number. For binaries maybe is not really very useful, but for libraries it is, because there you can set the major and minor version numbers.</p>
 <p>The format for the version number can be both XX.YY or XX.YY.ZZ, but X, Y and Z must be numbers. So you can use <em>0.5.34</em> or <em>12.5</em> as version numbers, but not <em>1.4rc1</em>, <em>7</em>...</p>
 <p>If no version number is defined in the source code, nor manually set in the project file, Autovala will use <em>1.0.0</em> whenever it needs it.</p>
+<p>There was an old method, which was putting the statement:</p>
+<pre><code>    const string project_version=&quot;XX.YY.ZZ&quot;;</code></pre>
+<p>This method is now deprecated, because you can still access the version number through the <em>Constants</em> namespace, and with the new method you can set the version number in libraries too, without symbol clash.</p>
 <h2>Creating several binaries</h2>
 <p>By default, Autovala presumes that every source file inside <em>src</em> or its subdirectories belongs to a single binary. But maybe you want to generate several binaries because your program needs several executables.</p>
 <p>Let's suppose that you have a project called <em>myproject</em>, with a folder hierarchy inside <em>src</em> like this:</p>

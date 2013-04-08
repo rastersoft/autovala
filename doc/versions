@@ -12,6 +12,8 @@
 <li>Enabled gettext to allow to translate the messages in Autovala<br /></li>
 <li>Translation to spanish<br /></li>
 <li>Fixed messages<br /></li>
+<li>Fixed a bug in Constants that prevented defining the VERSION field<br /></li>
+<li>New format for the version string inside source code, that allows to set it in libraries without clash<br /></li>
 </ul></li>
 <li>version 0.10.0 (2013-04-07)
 <ul>
