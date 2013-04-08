@@ -792,11 +792,14 @@ namespace AutoVala {
 				var dis = new DataInputStream (file_f.read ());
 			    string line;
 				while ((line = dis.read_line (null)) != null) {
-					if (line.has_prefix("const string project_version=\"")) { // add the version
+					if (line.has_prefix("const string project_version=\"")) { // add the version (old, deprecated format)
+						this.error_list+=_("Warning: The contruction 'const string project_version=\"...\"' is deprecated. Replace it with '// project version=...'");
 						var pos=line.index_of("\"",30);
 						if (pos!=-1) {
 							version=line.substring(30,pos-30);
 						}
+					} else if (line.strip().has_prefix("// project version=")) { // add the version
+						version=line.strip().substring(19);
 					} else if (line.has_prefix("using ")) { // add the packages used by this source file
 						var pos=line.index_of(";");
 						if (pos==-1) {

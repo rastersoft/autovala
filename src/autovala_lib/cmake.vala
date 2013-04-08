@@ -712,7 +712,8 @@ namespace AutoVala {
 					data_stream.put_string("set (GETTEXT_PACKAGE \""+config.project_name+"\")\n");
 					data_stream.put_string("set (RELEASE_NAME \""+config.project_name+"\")\n");
 					data_stream.put_string("set (CMAKE_C_FLAGS \"\")\n");
-					data_stream.put_string("set (PREFIX ${CMAKE_INSTALL_PREFIX})\n\n");
+					data_stream.put_string("set (PREFIX ${CMAKE_INSTALL_PREFIX})\n");
+					data_stream.put_string("set (VERSION \""+element.version+"\")\n");
 					data_stream.put_string("set (DOLLAR \"$\")\n\n");
 					if (dir!="") {
 						data_stream.put_string("configure_file (${CMAKE_SOURCE_DIR}/"+dir+"/Config.vala.cmake ${CMAKE_BINARY_DIR}/"+dir+"/Config.vala)\n");

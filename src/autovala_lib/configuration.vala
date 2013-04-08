@@ -20,6 +20,8 @@ using GLib;
 using Gee;
 using Posix;
 
+// project version=0.11
+
 namespace AutoVala {
 
 	public enum Config_Type {VALA_BINARY, VALA_LIBRARY, BINARY, ICON, PIXMAP, PO, GLADE, DBUS_SERVICE, DESKTOP, AUTOSTART,

@@ -12,13 +12,19 @@ To simplify the maintenance of the code, Autovala allows to set the version numb
 
 To do so, just put in one (no matter which) of the *.vala* source files the following statement:
 
-        const string project_version="XX.YY.ZZ";
+        // project version=XX.YY.ZZ
 
 As expected, this will define a global string with the version number inside. The interesting thing is that Autovala will peek inside all the source files for this kind of string, and will use it whenever it needs a version number. For binaries maybe is not really very useful, but for libraries it is, because there you can set the major and minor version numbers.
 
 The format for the version number can be both XX.YY or XX.YY.ZZ, but X, Y and Z must be numbers. So you can use *0.5.34* or *12.5* as version numbers, but not *1.4rc1*, *7*...
 
 If no version number is defined in the source code, nor manually set in the project file, Autovala will use *1.0.0* whenever it needs it.
+
+There was an old method, which was putting the statement:
+
+        const string project_version="XX.YY.ZZ";
+
+This method is now deprecated, because you can still access the version number through the *Constants* namespace, and with the new method you can set the version number in libraries too, without symbol clash.
 
 ## Creating several binaries
 

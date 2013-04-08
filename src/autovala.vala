@@ -20,7 +20,7 @@ using GLib;
 using Gee;
 using Posix;
 
-const string project_version="0.11.0";
+// project version=0.11.0
 
 void help() {
 
@@ -30,10 +30,10 @@ void help() {
 
 int main(string[] argv) {
 
-	Intl.bindtextdomain("autovala", Path.build_filename(Constants.DATADIR,"locale"));
+	Intl.bindtextdomain(Constants.GETTEXT_PACKAGE, Path.build_filename(Constants.DATADIR,"locale"));
 	Intl.setlocale (LocaleCategory.ALL, "");
-	Intl.textdomain("autovala");
-	Intl.bind_textdomain_codeset("autovala", "utf-8" );
+	Intl.textdomain(Constants.GETTEXT_PACKAGE);
+	Intl.bind_textdomain_codeset(Constants.GETTEXT_PACKAGE, "utf-8" );
 
 	if (argv.length==1) {
 		help();
@@ -46,7 +46,7 @@ int main(string[] argv) {
 		help();
 		break;
 	case "version":
-		GLib.stdout.printf("Autovala version: %s\n".printf(project_version));
+		GLib.stdout.printf("Autovala version: %s\n".printf(Constants.VERSION));
 		break;
 	case "init":
 		if (argv.length!=3) {
