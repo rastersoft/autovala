@@ -20,21 +20,20 @@ using GLib;
 using Gee;
 using Posix;
 
-const string project_version="0.10.0";
+const string project_version="0.11.0";
 
 void help() {
 
-	GLib.stdout.printf(_("Autovala. Usage:\n"));
-	GLib.stdout.printf(_("\tautovala help: shows this help\n"));
-	GLib.stdout.printf(_("\tautovala version: shows the current version\n"));
-	GLib.stdout.printf(_("\tautovala init project_name: initializates a new Vala CMake project and creates an initial project file\n"));
-	GLib.stdout.printf(_("\tautovala refresh: tries to guess the type for each file in the folders and adds them to the project file\n"));
-	GLib.stdout.printf(_("\tautovala cmake: creates the CMake files from the project file\n"));
-	GLib.stdout.printf(_("\tautovala update: the same than 'refresh'+'cmake'\n\n"));
+	GLib.stdout.printf(_("Autovala. Usage:\n\tautovala help: shows this help\n\tautovala version: shows the current version\n\tautovala init project_name: initializates a new Vala CMake project and creates an initial project file\n\tautovala refresh: tries to guess the type for each file in the folders and adds them to the project file\n\tautovala cmake: creates the CMake files from the project file\n\tautovala update: the same than 'refresh'+'cmake'\n\n"));
 }
 
 
 int main(string[] argv) {
+
+	Intl.bindtextdomain("autovala", Path.build_filename(Constants.DATADIR,"locale"));
+	Intl.setlocale (LocaleCategory.ALL, "");
+	Intl.textdomain("autovala");
+	Intl.bind_textdomain_codeset("autovala", "utf-8" );
 
 	if (argv.length==1) {
 		help();
@@ -47,7 +46,7 @@ int main(string[] argv) {
 		help();
 		break;
 	case "version":
-		GLib.stdout.printf(_("Autovala version: %s\n").printf(project_version));
+		GLib.stdout.printf("Autovala version: %s\n".printf(project_version));
 		break;
 	case "init":
 		if (argv.length!=3) {

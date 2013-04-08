@@ -9,7 +9,7 @@ vala_version: 0.16
 *doc: doc
 
 vala_binary: src/autovala
-*version: 0.10.0
+*version: 0.11.0
 vala_local_package: AutoVala
 *vala_package: posix
 *vala_check_package: gee-1.0

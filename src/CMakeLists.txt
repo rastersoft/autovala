@@ -18,7 +18,7 @@ set (DOLLAR "$")
 
 configure_file (${CMAKE_SOURCE_DIR}/src/Config.vala.cmake ${CMAKE_BINARY_DIR}/src/Config.vala)
 add_definitions(-DGETTEXT_PACKAGE=\"${GETTEXT_PACKAGE}\")
-set (VERSION "0.10.0")
+set (VERSION "0.11.0")
 add_definitions(${DEPS_CFLAGS})
 include_directories( ${CMAKE_BINARY_DIR}/src/autovala_lib )
 link_libraries( ${DEPS_LIBRARIES} -lAutoVala )
@@ -35,6 +35,7 @@ set(VALA_PACKAGES
 )
 
 set(APP_SOURCES
+	${CMAKE_CURRENT_BINARY_DIR}/Config.vala
 	autovala.vala
 )
 

@@ -576,7 +576,7 @@ namespace AutoVala {
 						if (this.version>this.current_version) {
 							this.config_path="";
 							this.configuration_data=new Gee.ArrayList<config_element ?>();
-							this.error_list+=_("This project was created with a newer version. Can't open it.");
+							this.error_list+=_("This project was created with a newer version of Autovala. Can't open it.");
 							error=true;
 							break;
 						}
@@ -598,7 +598,7 @@ namespace AutoVala {
 		private bool set_version(string version,bool automatic) {
 
 			if (this.last_element==null) {
-				this.error_list+=_("Found file_version after a non vala_binary, nor vala_library command (line %d)").printf(this.line_number);
+				this.error_list+=_("Found 'file_version' command after a non vala_binary, nor vala_library command (line %d)").printf(this.line_number);
 				return true;
 			}
 
@@ -626,7 +626,7 @@ namespace AutoVala {
 		private bool add_compiling_options(string options) {
 
 			if (this.last_element==null) {
-				this.error_list+=_("Found compile_options after a non vala_binary, nor vala_library command (line %d)").printf(this.line_number);
+				this.error_list+=_("Found 'compile_options' command after a non vala_binary, nor vala_library command (line %d)").printf(this.line_number);
 				return true;
 			}
 
@@ -640,7 +640,7 @@ namespace AutoVala {
 		private bool set_namespace(string current_namespace,bool automatic) {
 
 			if (this.last_element==null) {
-				this.error_list+=_("Found namespace after a non vala_binary, nor vala_library command (line %d)").printf(this.line_number);
+				this.error_list+=_("Found 'namespace' command after a non vala_binary, nor vala_library command (line %d)").printf(this.line_number);
 				return true;
 			}
 
@@ -674,7 +674,7 @@ namespace AutoVala {
 			}
 
 			if (this.last_element==null) {
-				this.error_list+=_("Found XXXXX_package after a non vala_binary, nor vala_library command (line %d)").printf(this.line_number);
+				this.error_list+=_("Found 'XXXXX_package' command after a non vala_binary, nor vala_library command (line %d)").printf(this.line_number);
 				return true;
 			}
 			this.last_element.add_package(pkg,type,automatic);
@@ -688,7 +688,7 @@ namespace AutoVala {
 			}
 
 			if (this.last_element==null) {
-				this.error_list+=_("Found vala_vapi after a non vala_binary, nor vala_library command (line %d)").printf(this.line_number);
+				this.error_list+=_("Found 'vala_vapi' command after a non vala_binary, nor vala_library command (line %d)").printf(this.line_number);
 				return true;
 			}
 			this.last_element.add_vapi(vapi,automatic);
