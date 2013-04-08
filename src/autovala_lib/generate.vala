@@ -42,12 +42,12 @@ namespace AutoVala {
 			this.checkable=false;
 		}
 
-		public void add_file(string filename,Gee.Set<string> pkgconfigs) {
+		public void add_file(string filename,Gee.Set<string> pkgconfigs, int gir_major, int gir_minor) {
 			int c_major;
 			int c_minor;
 
-			c_major=0;
-			c_minor=0;
+			c_major=gir_major;
+			c_minor=gir_minor;
 
 			string file;
 			if (filename.has_suffix(".vapi")) {
@@ -56,30 +56,27 @@ namespace AutoVala {
 				file=filename;
 			}
 			this.filenames+=file;
-			if (false==Regex.match_simple("-[0-9]+(.[0-9]+)?$",file)) { // no version number; use the shortest filename
-				if ((this.current_file=="")||(file.length<this.current_file.length)) {
-					this.current_file=file;
-					this.filename=file;
-					this.major=0;
-					this.minor=0;
-					this.checkable=pkgconfigs.contains(file);
-					return;
+			string newfile=file;
+			// if the filename has a version number, remove it
+			if (Regex.match_simple("-[0-9]+(.[0-9]+)?$",file)) {
+				var pos=file.last_index_of("-");
+				newfile=file.substring(0,pos);
+				// if there is no version number inside, use the one in the filename
+				if ((c_major==0)&&(c_minor==0)) {
+					var version=file.substring(pos+1);
+					pos=version.index_of(".");
+					if (pos==-1) { // only one number
+						c_major=int.parse(version);
+						c_minor=0;
+					} else {
+						c_major=int.parse(version.substring(0,pos));
+						c_minor=int.parse(version.substring(pos+1));
+					}
+				} else {
+
 				}
 			}
 
-			// use the version number and the length
-
-			var pos=file.last_index_of("-");
-			var version=file.substring(pos+1);
-			var newfile=file.substring(0,pos);
-			pos=version.index_of(".");
-			if (pos==-1) { // only one number
-				c_major=int.parse(version);
-				c_minor=0;
-			} else {
-				c_major=int.parse(version.substring(0,pos));
-				c_minor=int.parse(version.substring(pos+1));
-			}
 			if ((this.current_file=="")||(newfile.length<this.current_file.length)) { // always take the shortest filename
 				this.current_file=newfile;
 				this.filename=file;
@@ -88,7 +85,6 @@ namespace AutoVala {
 				this.checkable=pkgconfigs.contains(file);
 				return;
 			}
-
 			if (this.current_file==newfile) { // for the same filename, take always the greatest version
 				if((c_major>this.major)||((c_major==this.major)&&(c_minor>this.minor))) {
 					this.major=c_major;
@@ -361,10 +357,30 @@ namespace AutoVala {
 			file=file.substring(0,file_s.length-5); // remove the .vapi extension
 
 			var file_f = File.new_for_path (basepath);
+			int gir_major=0;
+			int gir_minor=0;
+			MatchInfo found_string;
+			MatchInfo found_version;
 			try {
+				var reg_expression=new GLib.Regex("gir_version( )*=( )*\"[0-9]+(.[0-9]+)?\"");
+				var reg_expression2=new GLib.Regex("[0-9]+(.[0-9]+)?");
 				var dis = new DataInputStream (file_f.read ());
-			    string line;
+				string line;
 				while ((line = dis.read_line (null)) != null) {
+					if (reg_expression.match(line,0,out found_string)) {
+						if (reg_expression2.match(found_string.fetch(0),0, out found_version)) {
+							var version=found_version.fetch(0);
+							var pos=version.index_of(".");
+							if (pos==-1) { // single number
+								gir_major=int.parse(version);
+								gir_minor=0;
+							} else {
+								var elements=version.split(".");
+								gir_major=int.parse(elements[0]);
+								gir_minor=int.parse(elements[1]);
+							}
+						}
+					}
 					if (line.has_prefix("namespace ")) {
 						var namespace_s=line.split(" ")[1];
 						if (namespace_s=="GLib") { // GLib needs several tricks
@@ -390,7 +406,7 @@ namespace AutoVala {
 								element=new namespaces_element(namespace_s);
 								this.namespaces.set(namespace_s,element);
 							}
-							element.add_file(file_s,this.pkgconfigs);
+							element.add_file(file_s,this.pkgconfigs,gir_major,gir_minor);
 						}
 						break;
 					}
@@ -790,7 +806,7 @@ namespace AutoVala {
 			var file_f = File.new_for_path (fullpath);
 			try {
 				var dis = new DataInputStream (file_f.read ());
-			    string line;
+				string line;
 				while ((line = dis.read_line (null)) != null) {
 					if (line.has_prefix("const string project_version=\"")) { // add the version (old, deprecated format)
 						this.error_list+=_("Warning: The contruction 'const string project_version=\"...\"' is deprecated. Replace it with '// project version=...'");
