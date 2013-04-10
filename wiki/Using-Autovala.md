@@ -6,7 +6,7 @@ Before all, you need to install in your project folder the CMake modules for Val
 
         bzr checkout lp:~elementary-apps/+junk/cmake-modules
 
-This will create a folder called *cmake-modules*. Inside it will be a folder called *cmake*. Copy the later to your project folder.
+This will create a folder called *cmake-modules*. Inside it will be a folder called *cmake*. Copy the later to your project folder, overwriting the existing files (this will keep the files needed for Valadoc).
 
 The first thing to do is to initializate the project. This is done by calling autovala in your desired project's folder with:
 

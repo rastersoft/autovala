@@ -10,6 +10,7 @@
 <li><a href="https://github.com/rastersoft/autovala/wiki/tricks#setting-the-version-number">Setting the version number</a><br /></li>
 <li><a href="https://github.com/rastersoft/autovala/wiki/tricks#creating-several-binaries">Creating several binaries</a><br /></li>
 <li><a href="https://github.com/rastersoft/autovala/wiki/tricks#creating-libraries">Creating libraries</a><br /></li>
+<li><a href="https://github.com/rastersoft/autovala/wiki/tricks#linking-an-executable-against-a-library-from-the-same-project">Linking an executable against a library from the same project</a><br /></li>
 <li><a href="https://github.com/rastersoft/autovala/wiki/tricks#compiling-valadoc-in-ubuntu">Compiling Valadoc in Ubuntu</a><br /></li>
 <li><a href="https://github.com/rastersoft/autovala/wiki/tricks#using-d-bus-service-files">Using D-Bus service files</a></li>
 </ul>

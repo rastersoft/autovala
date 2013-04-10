@@ -9,7 +9,7 @@
 <p>Autovala is designed as several Vala classes, so it can be embedded easily in other projects. My idea is to embed it as a Gedit plugin; but until then, you can use it from command line.</p>
 <p>Before all, you need to install in your project folder the CMake modules for Vala. The repository contains a version modified to work with Valadoc, but you can always download the last oficial version from launchpad using bazaar:</p>
 <pre><code>    bzr checkout lp:~elementary-apps/+junk/cmake-modules</code></pre>
-<p>This will create a folder called <em>cmake-modules</em>. Inside it will be a folder called <em>cmake</em>. Copy the later to your project folder.</p>
+<p>This will create a folder called <em>cmake-modules</em>. Inside it will be a folder called <em>cmake</em>. Copy the later to your project folder, overwriting the existing files (this will keep the files needed for Valadoc).</p>
 <p>The first thing to do is to initializate the project. This is done by calling autovala in your desired project's folder with:</p>
 <pre><code>    autovala init PROJECT_NAME</code></pre>
 <p>This will create a <em>PROJECT_NAME.avprj</em> file, with the most basic info about your project (the format for this file will be explained later). It will also try to create the basic folders for a vala project, and will show a warning if they already exist. It will never delete a file, except the <em>CMakeLists</em> files, of course. The folder hierarchy is:</p>
