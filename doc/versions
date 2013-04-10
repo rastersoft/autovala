@@ -6,6 +6,15 @@
 <div class="main_frame">
 <p><a href="index.html">Home</a></p>
 <ul>
+<li>version 0.13.0 (2013-04-11)
+<ul>
+<li>In libraries, includes the <em>librarynamespaceConstant</em> namespace to allow to get access to build data without clash (only when the library has a namespace)<br /></li>
+<li>Added <em>clear</em> command, to remove the automatic parts in the <em>.avprj</em> file<br /></li>
+</ul></li>
+<li>version 0.12.0 (2013-04-09)
+<ul>
+<li>When checking VAPI files, now will give priority to the version number inside it (gir_version), and only when there is no such number will use the one in the filename<br /></li>
+</ul></li>
 <li>version 0.11.0 (2013-04-07)
 <ul>
 <li>Includes the <em>Constant</em> namespace in the executables (but not in libraries to avoid clash)<br /></li>

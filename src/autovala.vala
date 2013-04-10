@@ -20,11 +20,11 @@ using GLib;
 using Gee;
 using Posix;
 
-// project version=0.12.0
+// project version=0.13.0
 
 void help() {
 
-	GLib.stdout.printf(_("Autovala. Usage:\n\tautovala help: shows this help\n\tautovala version: shows the current version\n\tautovala init project_name: initializates a new Vala CMake project and creates an initial project file\n\tautovala refresh: tries to guess the type for each file in the folders and adds them to the project file\n\tautovala cmake: creates the CMake files from the project file\n\tautovala update: the same than 'refresh'+'cmake'\n\n"));
+	GLib.stdout.printf(_("Autovala. Usage:\n\tautovala help: shows this help\n\tautovala version: shows the current version\n\tautovala init project_name: initializates a new Vala CMake project and creates an initial project file\n\tautovala refresh: tries to guess the type for each file in the folders and adds them to the project file\n\tautovala cmake: creates the CMake files from the project file\n\tautovala update: the same than 'refresh'+'cmake'\n\tautovala clear: removes the automatic parts in the project file, leaving only the manual ones.\n\n"));
 }
 
 
@@ -111,6 +111,22 @@ int main(string[] argv) {
 			GLib.stdout.printf(_("Aborting\n"));
 			return -1;
 		}
+		GLib.stdout.printf(_("Done\n"));
+		break;
+	case "clear":
+		if (argv.length!=2) {
+			help();
+			return -1;
+		}
+		var config=new AutoVala.configuration();
+		retval=config.read_configuration();
+		config.show_errors();
+		if (retval) {
+			GLib.stdout.printf(_("Aborting\n"));
+			return -1;
+		}
+		config.clear_automatic();
+		config.save_configuration();
 		GLib.stdout.printf(_("Done\n"));
 		break;
 	default:

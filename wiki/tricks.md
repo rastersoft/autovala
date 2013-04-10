@@ -76,6 +76,10 @@ When creating a library, Autovala will peek the source files and check the names
 
 The major and minor numbers for the library are taken from the version number set by the user (read the entry [Setting the version number](tricks#setting-the-version-number) ). They will be used for the library itself, the *.vapi* and the *.pc* files. The *.gir* introspection file uses the version number *major.0* instead of *major.minor* to ensure compatibility.
 
+Libraries also can have the constants namespace, but modified to avoid clash between the variables in the library and the same in the binary. The final namespace for constants namespace in libraries is *libraryNameSpaceConstants*. Of course, this will work ONLY IF YOUR LIBRARY HAS DEFINED A NAMESPACE. If not, this variables will NOT be added.
+
+An example: if your library uses the namespace *aBeautifulNameSpace*, then the namespace for the constants will be *aBeautifulNameSpaceConstants*.
+
 ## Linking an executable against a library from the same project
 
 Let's say that the project contains one or more libraries and an executable, and the executable must use that library we are creating in the same project.

@@ -13,13 +13,13 @@ set (GETTEXT_PACKAGE "autovala")
 set (RELEASE_NAME "autovala")
 set (CMAKE_C_FLAGS "")
 set (PREFIX ${CMAKE_INSTALL_PREFIX})
-set (VERSION "0.12")
+set (VERSION "0.13")
 set (DOLLAR "$")
 
 configure_file (${CMAKE_SOURCE_DIR}/src/autovala_lib/Config.vala.cmake ${CMAKE_BINARY_DIR}/src/autovala_lib/Config.vala)
 add_definitions(-DGETTEXT_PACKAGE=\"${GETTEXT_PACKAGE}\")
 configure_file (${CMAKE_CURRENT_SOURCE_DIR}/AutoVala.pc ${CMAKE_CURRENT_BINARY_DIR}/AutoVala.pc)
-set (VERSION "0.12")
+set (VERSION "0.13")
 add_definitions(${DEPS_CFLAGS})
 link_libraries( ${DEPS_LIBRARIES} )
 link_directories( ${DEPS_LIBRARY_DIRS} )
@@ -36,6 +36,7 @@ set(VALA_PACKAGES
 )
 
 set(APP_SOURCES
+	${CMAKE_CURRENT_BINARY_DIR}/Config.vala
 	configuration.vala
 	cmake.vala
 	generate.vala
@@ -62,7 +63,7 @@ add_library(AutoVala SHARED ${VALA_C})
 
 set_target_properties( AutoVala PROPERTIES
 VERSION
-	0.12
+	0.13
 SOVERSION
 	0 )
 

@@ -686,13 +686,16 @@ namespace AutoVala {
 				}
 				var dis = fname.create(FileCreateFlags.NONE);
 				var data_stream2 = new DataOutputStream(dis);
-				data_stream2.put_string("namespace Constants {\n");
+				if (is_library && (element.current_namespace!="")) {
+					data_stream2.put_string("namespace "+lib_filename+"Constants {\n");
+				} else {
+					data_stream2.put_string("namespace Constants {\n");
+				}
 				data_stream2.put_string("\tpublic const string DATADIR = \"@DATADIR@\";\n");
 				data_stream2.put_string("\tpublic const string PKGDATADIR = \"@PKGDATADIR@\";\n");
 				data_stream2.put_string("\tpublic const string GETTEXT_PACKAGE = \"@GETTEXT_PACKAGE@\";\n");
 				data_stream2.put_string("\tpublic const string RELEASE_NAME = \"@RELEASE_NAME@\";\n");
 				data_stream2.put_string("\tpublic const string VERSION = \"@VERSION@\";\n");
-				data_stream2.put_string("\tpublic const string PLUGINDIR = \"@PLUGINDIR@\";\n");
 				data_stream2.put_string("}\n");
 				data_stream2.close();
 			} catch (Error e) {
@@ -800,7 +803,7 @@ namespace AutoVala {
 				data_stream.put_string(")\n\n");
 
 				data_stream.put_string("set(APP_SOURCES\n");
-				if (is_library==false) {
+				if ((is_library==false)||(element.current_namespace!="")) {
 					data_stream.put_string("\t${CMAKE_CURRENT_BINARY_DIR}/Config.vala\n");
 				}
 				foreach (var filename in element.sources) {

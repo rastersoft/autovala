@@ -20,7 +20,7 @@ using GLib;
 using Gee;
 using Posix;
 
-// project version=0.12
+// project version=0.13
 
 namespace AutoVala {
 
@@ -914,7 +914,7 @@ namespace AutoVala {
 				data_stream.put_string("### AutoVala Project ###\n");
 				data_stream.put_string("autovala_version: %d\n".printf(this.current_version));
 				data_stream.put_string("project_name: "+this.project_name+"\n");
-				data_stream.put_string("vala_version: "+this.vala_version+"\n");
+				data_stream.put_string("vala_version: "+this.vala_version+"\n\n");
 				this.store_data(Config_Type.PO,data_stream);
 				this.store_data(Config_Type.DATA,data_stream);
 				this.store_data(Config_Type.DOC,data_stream);
@@ -960,7 +960,7 @@ namespace AutoVala {
 						} else {
 							data_stream.put_string("vala_library: "+fullpathname+"\n");
 						}
-						if (element.version!="") {
+						if ((element.version!="")&&(element.version_set==true)) {
 							if (element.version_manually_set==false) {
 								data_stream.put_string("*");
 							}

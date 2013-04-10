@@ -4,5 +4,4 @@ namespace Constants {
 	public const string GETTEXT_PACKAGE = "@GETTEXT_PACKAGE@";
 	public const string RELEASE_NAME = "@RELEASE_NAME@";
 	public const string VERSION = "@VERSION@";
-	public const string PLUGINDIR = "@PLUGINDIR@";
 }
