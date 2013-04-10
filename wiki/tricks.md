@@ -1,11 +1,11 @@
 # Tricks for Autovala
 
-* [Setting the version number](https://github.com/rastersoft/autovala/wiki/tricks#setting-the-version-number)
-* [Creating several binaries](https://github.com/rastersoft/autovala/wiki/tricks#creating-several-binaries)
-* [Creating libraries](https://github.com/rastersoft/autovala/wiki/tricks#creating-libraries)
-* [Linking an executable against a library from the same project](https://github.com/rastersoft/autovala/wiki/tricks#linking-an-executable-against-a-library-from-the-same-project)
-* [Compiling Valadoc in Ubuntu](https://github.com/rastersoft/autovala/wiki/tricks#compiling-valadoc-in-ubuntu)
-* [Using D-Bus service files](https://github.com/rastersoft/autovala/wiki/tricks#using-d-bus-service-files)
+* [Setting the version number](tricks#setting-the-version-number)
+* [Creating several binaries](tricks#creating-several-binaries)
+* [Creating libraries](tricks#creating-libraries)
+* [Linking an executable against a library from the same project](tricks#linking-an-executable-against-a-library-from-the-same-project)
+* [Compiling Valadoc in Ubuntu](tricks#compiling-valadoc-in-ubuntu)
+* [Using D-Bus service files](tricks#using-d-bus-service-files)
 
 ## Setting the version number
 

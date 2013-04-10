@@ -7,12 +7,12 @@
 <p><a href="index.html">Home</a></p>
 <h1>Tricks for Autovala</h1>
 <ul>
-<li><a href="https://github.com/rastersoft/autovala/wiki/tricks#setting-the-version-number">Setting the version number</a><br /></li>
-<li><a href="https://github.com/rastersoft/autovala/wiki/tricks#creating-several-binaries">Creating several binaries</a><br /></li>
-<li><a href="https://github.com/rastersoft/autovala/wiki/tricks#creating-libraries">Creating libraries</a><br /></li>
-<li><a href="https://github.com/rastersoft/autovala/wiki/tricks#linking-an-executable-against-a-library-from-the-same-project">Linking an executable against a library from the same project</a><br /></li>
-<li><a href="https://github.com/rastersoft/autovala/wiki/tricks#compiling-valadoc-in-ubuntu">Compiling Valadoc in Ubuntu</a><br /></li>
-<li><a href="https://github.com/rastersoft/autovala/wiki/tricks#using-d-bus-service-files">Using D-Bus service files</a></li>
+<li><a href="tricks#setting-the-version-number">Setting the version number</a><br /></li>
+<li><a href="tricks#creating-several-binaries">Creating several binaries</a><br /></li>
+<li><a href="tricks#creating-libraries">Creating libraries</a><br /></li>
+<li><a href="tricks#linking-an-executable-against-a-library-from-the-same-project">Linking an executable against a library from the same project</a><br /></li>
+<li><a href="tricks#compiling-valadoc-in-ubuntu">Compiling Valadoc in Ubuntu</a><br /></li>
+<li><a href="tricks#using-d-bus-service-files">Using D-Bus service files</a></li>
 </ul>
 <h2>Setting the version number</h2>
 <p>To simplify the maintenance of the code, Autovala allows to set the version number in an easy way inside the source code of your binary or library. That way you will always be sure to use the right number both for the <em>About</em> and <em>--version</em> commands, and for the library major and minor values.</p>
