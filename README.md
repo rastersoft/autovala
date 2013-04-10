@@ -30,6 +30,9 @@ and enjoy.
 
 
 ## History of versions ##
+* version 0.13.0 (2013-04-11)
+    * In libraries, includes the *librarynamespaceConstant* namespace to allow to get access to build data without clash (only when the library has a namespace)
+    * Added *clear* command, to remove the automatic parts in the *.avprj* file
 * version 0.12.0 (2013-04-09)
     * When checking VAPI files, now will give priority to the version number inside it (gir_version), and only when there is no such number will use the one in the filename
 * version 0.11.0 (2013-04-07)
