@@ -917,7 +917,7 @@ namespace AutoVala {
 				}
 
 				data_stream.put_string("if(HAVE_VALADOC)\n");
-				data_stream.put_string("\tvaladoc("+this.config.project_name+"\n");
+				data_stream.put_string("\tvaladoc("+lib_filename+"\n");
 				data_stream.put_string("\t\t${CMAKE_BINARY_DIR}/"+Path.build_filename("valadoc",lib_filename)+"\n");
 				data_stream.put_string("\t\t${APP_SOURCES}\n");
 				data_stream.put_string("\tPACKAGES\n");

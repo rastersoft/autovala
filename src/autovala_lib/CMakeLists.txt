@@ -93,7 +93,7 @@ DESTINATION
 	lib/pkgconfig/
 )
 if(HAVE_VALADOC)
-	valadoc(autovala
+	valadoc(AutoVala
 		${CMAKE_BINARY_DIR}/valadoc/AutoVala
 		${APP_SOURCES}
 	PACKAGES

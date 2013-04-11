@@ -386,6 +386,25 @@ namespace AutoVala {
 			this.basepath=GLib.Path.get_dirname(this.config_path);
 		}
 
+
+		/**
+		 * This method reads the configuration file for a project.
+		 *
+		 * If no file/path is given, it will search from the current
+		 * path upwards until it finds a file with .avprj (in lowercase) extension.
+		 * 
+		 * If the path of a file with .avprj extension is passed, it will try to open that file
+		 *
+		 * If another kind of file, or a path is given, it will search for a file with .avprj extension in that path (or in the path
+		 * passed), and upwards. This allows to just pass the path to a file of a project, and it will automatically find the project
+		 * configuration file.
+		 *
+		 * @param open_file The path where to start to search for a configuration file
+		 *
+		 * @return //false// if there was no error; //true// if there was an error. this.error_list will contain one or more strings with all
+		 * the warnings and errors
+		 */
+
 		public bool read_configuration(string open_file="") {
 
 			this.configuration_data=new Gee.ArrayList<config_element ?>();
