@@ -324,6 +324,7 @@ namespace AutoVala {
 			foreach(var e in this.error_list) {
 				GLib.stdout.printf("%s\n".printf(e));
 			}
+			this.clear_errors();
 		}
 
 		public string[] get_error_list() {
@@ -390,9 +391,31 @@ namespace AutoVala {
 			this.configuration_data=new Gee.ArrayList<config_element ?>();
 
 			this.config_path="";
-			if (open_file=="") {
-				var basepath=GLib.Environment.get_current_dir().split(Path.DIR_SEPARATOR_S);
-				int len=basepath.length;
+			if (false==open_file.has_suffix(".avprj")) {
+				string[] basepath;
+				int len;
+				if (open_file=="") {
+					basepath=GLib.Environment.get_current_dir().split(Path.DIR_SEPARATOR_S);
+					len=basepath.length;
+				} else {
+					string tmp_basepath;
+					if (GLib.Path.is_absolute(open_file)) {
+						tmp_basepath=open_file;
+					} else {
+						tmp_basepath=GLib.Path.build_filename(GLib.Environment.get_current_dir(),open_file);
+					}
+					basepath=tmp_basepath.split(Path.DIR_SEPARATOR_S);
+					var filepath=File.new_for_path(tmp_basepath);
+					if (filepath.query_exists()==false) {
+						this.error_list+="The path passed to READ_CONFIGURATION doesn't exists";
+						return true;
+					}
+					len=basepath.length;
+					if (filepath.query_file_type(FileQueryInfoFlags.NOFOLLOW_SYMLINKS)!=FileType.DIRECTORY) {
+						len--; // if it's not a directory, remove the file name
+					}
+				}
+
 				while(len>=0) {
 					var path=Path.DIR_SEPARATOR_S;
 					for(var i=0;i<len;i++) {
@@ -405,6 +428,7 @@ namespace AutoVala {
 					len--;
 				}
 				if (this.config_path=="") {
+					this.error_list+="No configuration file found";
 					return true; // no configuration file found
 				}
 			} else {

@@ -122,7 +122,7 @@ namespace AutoVala {
 			foreach(var e in this.error_list) {
 				GLib.stdout.printf("%s\n".printf(e));
 			}
-			this.error_list={};
+			this.clear_errors();
 		}
 
 		public string[] get_error_list() {

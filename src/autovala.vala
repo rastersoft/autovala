@@ -127,6 +127,7 @@ int main(string[] argv) {
 		}
 		config.clear_automatic();
 		config.save_configuration();
+		config.show_errors();
 		GLib.stdout.printf(_("Done\n"));
 		break;
 	default:
