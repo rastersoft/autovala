@@ -64,5 +64,9 @@ Since it's very common to call those two commands, one after the other, you can 
 
 which will, first, update your *.avprj* file, and if there are no errors, will regenerate the *CMakeLists* files, all in one command.
 
+If you want to remove all the automatically added lines in the project file, leaving only the manually added ones, you can use:
+
+        autovala clear
+
 These commands can be called from any of the folders or subfolders of the project, because it will search for the first *.avprj* file located in the current folder or upstream.
 

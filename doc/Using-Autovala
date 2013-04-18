@@ -45,6 +45,8 @@
 <p>Since it's very common to call those two commands, one after the other, you can just use:</p>
 <pre><code>    autovala update</code></pre>
 <p>which will, first, update your <em>.avprj</em> file, and if there are no errors, will regenerate the <em>CMakeLists</em> files, all in one command.</p>
+<p>If you want to remove all the automatically added lines in the project file, leaving only the manually added ones, you can use:</p>
+<pre><code>    autovala clear</code></pre>
 <p>These commands can be called from any of the folders or subfolders of the project, because it will search for the first <em>.avprj</em> file located in the current folder or upstream.</p>
 <p><a href="index.html">Home</a></p>
 </div>
