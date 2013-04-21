@@ -6,6 +6,10 @@
 <div class="main_frame">
 <p><a href="index.html">Home</a></p>
 <ul>
+<li>version 0.14.0 (2013-04-21)
+<ul>
+<li>Now the autovala library can use its own translated messages instead the ones from the main app (useful when embedding autovala in other programs)<br /></li>
+</ul></li>
 <li>version 0.13.0 (2013-04-11)
 <ul>
 <li>In libraries, includes the <em>librarynamespaceConstant</em> namespace to allow to get access to build data without clash (only when the library has a namespace)<br /></li>

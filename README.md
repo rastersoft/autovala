@@ -30,6 +30,9 @@ and enjoy.
 
 
 ## History of versions ##
+
+* version 0.14.0 (2013-04-21)
+    * Now the autovala library can use its own translated messages instead the ones from the main app (useful when embedding autovala in other programs)
 * version 0.13.0 (2013-04-11)
     * In libraries, includes the *librarynamespaceConstant* namespace to allow to get access to build data without clash (only when the library has a namespace)
     * Added *clear* command, to remove the automatic parts in the *.avprj* file

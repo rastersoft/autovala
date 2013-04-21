@@ -10,7 +10,7 @@ vala_version: 0.16
 *doc: doc
 
 vala_binary: src/autovala
-*version: 0.13.0
+*version: 0.14.0
 vala_local_package: AutoVala
 *vala_package: posix
 *vala_check_package: gee-1.0
@@ -18,7 +18,7 @@ vala_local_package: AutoVala
 *vala_source: autovala.vala
 
 vala_library: src/autovala_lib/autovala_lib
-*version: 0.13
+*version: 0.14
 *namespace: AutoVala
 *vala_package: posix
 *vala_check_package: gee-1.0
