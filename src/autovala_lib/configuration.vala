@@ -262,6 +262,11 @@ namespace AutoVala {
 		private int version;
 		private int line_number;
 
+		/**
+		 * @param project_name The name for this project. Left blank if opening an existing project.
+		 * @param init_gettext When called from an internal function, get it to false to avoid initializating gettext twice
+		 */
+
 		public configuration(string project_name="",bool init_gettext=true) {
 			if (init_gettext) {
 				Intl.bindtextdomain(AutoValaConstants.GETTEXT_PACKAGE, Path.build_filename(AutoValaConstants.DATADIR,"locale"));
@@ -275,6 +280,15 @@ namespace AutoVala {
 			this.error_list={};
 			this.vala_version="0.16";
 		}
+
+		/**
+		 * Returns the version of Vala compiler installed in the system (the default one)
+		 *
+		 * @param major Returns the major version number
+		 * @param minor Returns the minor version number
+		 *
+		 * @return //false// if there was no error, //true// if the version can't be determined
+		 */
 
 		public bool get_vala_version(out int major, out int minor) {
 
@@ -308,6 +322,12 @@ namespace AutoVala {
 			return true;
 		}
 
+		/**
+		 * Removes all the automatic-made configuration parameters
+		 *
+		 * After calling this method, only the ones manually added by the user will remain
+		 */
+
 		public void clear_automatic() {
 			var new_config=new Gee.ArrayList<config_element ?>();
 			foreach (var element in this.configuration_data) {
@@ -319,9 +339,17 @@ namespace AutoVala {
 			this.configuration_data=new_config;
 		}
 
+		/**
+		 * Clears the error list
+		 */
+
 		public void clear_errors() {
 			this.error_list={};
 		}
+
+		/**
+		 * Prints the list of errors and warnings to the standard output
+		 */
 
 		public void show_errors() {
 			foreach(var e in this.error_list) {
@@ -329,6 +357,12 @@ namespace AutoVala {
 			}
 			this.clear_errors();
 		}
+
+		/**
+		 * Return the list of errors and warnings, to allow to show it from another program
+		 *
+		 * @return An array with one error or warning in each string
+		 */
 
 		public string[] get_error_list() {
 			return this.error_list;
@@ -379,6 +413,15 @@ namespace AutoVala {
 			return (full_path);
 		}
 
+		/**
+		 * Sets the configuration file
+		 *
+		 * This method is useful when creating a new project; after creating a new configuration object (specifying the project name), use
+		 * this method to set the path and filename where to store it, before calling //save_configuration()//.
+		 *
+		 * @param path The path for the configuration file. If given as a relative path, it will be internally expanded to the full path
+		 */
+
 		public void set_config_filename(string path) {
 
 			if (GLib.Path.is_absolute(path)) {
@@ -391,7 +434,7 @@ namespace AutoVala {
 
 
 		/**
-		 * This method reads the configuration file for a project.
+		 * Reads the configuration file for a project.
 		 *
 		 * If no file/path is given, it will search from the current
 		 * path upwards until it finds a file with .avprj (in lowercase) extension.
@@ -743,6 +786,18 @@ namespace AutoVala {
 			return false;
 		}
 
+		/**
+		 * Adds a new entry of the specified type to the current configuration
+		 *
+		 * This method can't be used for binaries or libraries; use //add_new_binary()// instead
+		 *
+		 * @param filename The filename (must be relative to the project's base path)
+		 * @param type The type of file (can't be Config_Type.VALA_BINARY or Config_Type.VALA_LIBRARY)
+		 * @param automatic If //false//, this entry is a manual one, while if //true//, this entry has been determined automatically
+		 *
+		 * @return //false// if there was no error, //true// if there was an error
+		 */
+
 		public bool add_new_entry(string filename, Config_Type type, bool automatic) {
 
 			if ((type!=Config_Type.VALA_BINARY)&&(type!=Config_Type.VALA_LIBRARY)) {
@@ -751,6 +806,25 @@ namespace AutoVala {
 				return true;
 			}
 		}
+
+		/**
+		 * Adds a new entry of the type //binary// or //library// to the current configuration
+		 *
+		 * @param filename The path and filename for the binary or library (must be relative to the project's base path)
+		 * @param type The type of file (must be Config_Type.VALA_BINARY or Config_Type.VALA_LIBRARY)
+		 * @param automatic If //false//, this entry is a manual one, while if //true//, this entry has been determined automatically
+		 * @param sources A list of source files to add to this binary/library. They must be specified relative to the path set in //filename//
+		 * @param packages A list of the Vala packages that this binary or library needs, that doesn't have a //pkgconfig// file
+		 * @param check_packages A list of the Vala packages that this binary or library needs, that have a //pkgconfig// file
+		 * @param local_packages A list of the Vala libraries that are being built in this same project needed by this binary or library
+		 * @param vapis A list of custom VAPI files needes by this binary or library. The path must be relative to the path set in //filename//
+		 * @param version A string with the version number of this binary or library, in the format XX.YY or XX.YY.ZZ
+		 * @param current_namespace The namespace defined for this binary or library
+		 * @param several_namespaces //true// if the file contains several namespaces; //false// if it contains only one or none
+		 * @param compile_options A textual string with the compilation options to pass to the Vala compiler
+		 *
+		 * @return //false// if there was no error, //true// if there was an error
+		 */
 
 		public bool add_new_binary(string filename, Config_Type type, bool automatic, Gee.Set<string> ?sources=null, string[] ?packages=null, string[] ?check_packages=null, string[] ?local_packages=null,string[] ?vapis=null, string version="", string current_namespace="", bool several_namespaces=false, string compile_options="") {
 
@@ -918,12 +992,24 @@ namespace AutoVala {
 			return false;
 		}
 
+		/**
+		 * Prints to stdout all the entries in this configuration class
+		 */
+
 		public void list_all() {
 			GLib.stdout.printf("Current configuration:\n");
 			foreach(var e in this.configuration_data) {
 				e.printall();
 			}
 		}
+
+		/**
+		 * Saves this configuration to the current filename, overwriting it if it already exists
+		 *
+		 * @param filename If a path and filename is given, the configuration will be stored there instead of in the current filename. The current filename is overwriten with this value
+		 *
+		 * @return //false// if there was no error, //true// if there was an error
+		 */
 
 		public bool save_configuration(string filename="") {
 
