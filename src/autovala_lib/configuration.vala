@@ -262,7 +262,10 @@ namespace AutoVala {
 		private int version;
 		private int line_number;
 
-		public configuration(string project_name="") {
+		public configuration(string project_name="",bool init_gettext=true) {
+			if (init_gettext) {
+				Intl.bindtextdomain(AutoValaConstants.GETTEXT_PACKAGE, Path.build_filename(AutoValaConstants.DATADIR,"locale"));
+			}
 			this.current_version=4; // currently we support version 4 of the syntax
 			this.config_path="";
 			this.configuration_data=new Gee.ArrayList<config_element ?>();

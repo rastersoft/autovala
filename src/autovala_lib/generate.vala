@@ -108,6 +108,7 @@ namespace AutoVala {
 		private bool several_namespaces;
 
 		public manage_project() {
+			GLib.Intl.bindtextdomain(AutoValaConstants.GETTEXT_PACKAGE, Path.build_filename(AutoValaConstants.DATADIR,"locale"));
 			this.error_list={};
 			this.namespaces=null;
 			this.local_namespaces=null;
@@ -281,7 +282,7 @@ namespace AutoVala {
 				return true;
 			}
 
-			this.config=new configuration(project_name);
+			this.config=new AutoVala.configuration(project_name,false);
 			this.config.project_name=project_name;
 			int major;
 			int minor;
@@ -302,7 +303,7 @@ namespace AutoVala {
 
 		public bool cmake(string config_path="") {
 
-			this.config=new AutoVala.configuration();
+			this.config=new AutoVala.configuration("",false);
 			bool retval=this.config.read_configuration(config_path);
 			this.add_errors(this.config.get_error_list()); // there can be warnings
 			this.config.clear_errors();
@@ -456,7 +457,7 @@ namespace AutoVala {
 			this.pkgconfigs=new Gee.HashSet<string>();
 			this.current_namespace="";
 
-			this.config=new AutoVala.configuration();
+			this.config=new AutoVala.configuration("",false);
 			if (this.config.get_vala_version(out major, out minor)) {
 				this.error_list+=_("Can't determine the version of the Vala compiler");
 				return true;
