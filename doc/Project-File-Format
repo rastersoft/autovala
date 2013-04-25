@@ -35,6 +35,7 @@
 <li><p>namespace: contains the namespace used in all the source files. It is more useful when creating libraries.</p></li>
 <li><p>compile_options: contains the options to pass to the Vala compiler. Example:</p>
 <pre><code>        compile_options: -X -O2</code></pre></li>
+<li><p>destination: specifies a custom path where to install this library or binary. If the path is given in relative format (this is, if it doesn't start with an slash) the file will be installed relative to the PREFIX (<em>/usr</em> or <em>/usr/local</em>); but if it is given in absolute format (this is, the path starts with a slash) the file will be installed in that precise folder.</p></li>
 <li><p>vala_package: specify a package that must be added with --pkg=... to the vala compiler. These are automatically found by Autovala by reading the sources and processing the &quot;Using&quot; directives</p></li>
 <li><p>vala_check_package: is like vala_package, but these packages must, also, be checked during cmake to ensure that they are installed in the system. Autovala founds these automatically by reading the sources, as with vala_package, and checking if the corresponding .pc file exists</p></li>
 <li><p>vala_local_package: is like vala_package, but these packages aren't installed in the system. Instead, they belong to this project, and will be compiled automatically before this binary/library.</p></li>
@@ -67,6 +68,10 @@
 <pre><code>    ignore: src/PROG/test.vala will ignore the file test.vala when automatically creating the PROG binary
 
     ignore: src/OTHER will ignore the folder OTHER when creating binaries</code></pre></li>
+<li><p>custom: followed by a path/filename and another path. Installs the specified file in the path. If the path is given in relative format (this is, if it doesn't start with an slash) the file will be installed relative to the PREFIX (<em>/usr</em> or <em>/usr/local</em>); but if it is given in absolute format (this is, the path starts with a slash) the file will be installed in that precise folder. Examples:</p>
+<pre><code>    custom: data/config_system.txt share/ will install the file *config_system.txt* in */usr/share* or */usr/local/share*
+
+    custom: data/config_system.txt /etc/myfolder will install the file *config_system.txt* in */etc/myfolder*</code></pre></li>
 </ul>
 <p><a href="index.html">Home</a></p>
 </div>

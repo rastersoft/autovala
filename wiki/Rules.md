@@ -14,7 +14,7 @@ The rules followed by Autovala are the following:
 
 * All .po files in po/ folder will be considered as po files, and will be installed in the right locale. Also, will find the .vala and .ui files and add them as sources for internationalization process.
 
-* Each .desktop file in data/ will be copied to share/desktop/
+* Each .desktop file in data/ will be copied to share/desktop/, unless it contains the line *X-GNOME-Autostart-enabled=*, in which case it will be copied to */etc/xdg/autostart*.
 
 * Each .service file in data/ will be presumed to be a D-Bus service, and will be preprocessed to put the right binary folder ( bin/ or local/bin/ )
 

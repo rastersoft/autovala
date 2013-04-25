@@ -31,6 +31,10 @@ and enjoy.
 
 ## History of versions ##
 
+* version 0.15.0 (2013-04-26)
+    * Allows to specify manually the destination directory for binaries and libraries (useful for plugins)
+    * Allows to install files in a manually specified destination directory
+    * Autodetects autorun *.desktop* files and install them in the right place
 * version 0.14.0 (2013-04-21)
     * Now the autovala library can use its own translated messages instead the ones from the main app (useful when embedding autovala in other programs)
 * version 0.13.0 (2013-04-11)

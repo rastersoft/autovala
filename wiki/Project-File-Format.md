@@ -48,6 +48,8 @@ After that, it comes several commands, some of them repeated several times, to s
 
                 compile_options: -X -O2
 
+   * destination: specifies a custom path where to install this library or binary. If the path is given in relative format (this is, if it doesn't start with an slash) the file will be installed relative to the PREFIX (*/usr* or */usr/local*); but if it is given in absolute format (this is, the path starts with a slash) the file will be installed in that precise folder.
+
    * vala_package: specify a package that must be added with --pkg=... to the vala compiler. These are automatically found by Autovala by reading the sources and processing the "Using" directives
 
    * vala_check_package: is like vala_package, but these packages must, also, be checked during cmake to ensure that they are installed in the system. Autovala founds these automatically by reading the sources, as with vala_package, and checking if the corresponding .pc file exists
@@ -99,3 +101,9 @@ After that, it comes several commands, some of them repeated several times, to s
             ignore: src/PROG/test.vala will ignore the file test.vala when automatically creating the PROG binary
 
             ignore: src/OTHER will ignore the folder OTHER when creating binaries
+
+ * custom: followed by a path/filename and another path. Installs the specified file in the path. If the path is given in relative format (this is, if it doesn't start with an slash) the file will be installed relative to the PREFIX (*/usr* or */usr/local*); but if it is given in absolute format (this is, the path starts with a slash) the file will be installed in that precise folder. Examples:
+ 
+            custom: data/config_system.txt share/ will install the file *config_system.txt* in */usr/share* or */usr/local/share*
+
+            custom: data/config_system.txt /etc/myfolder will install the file *config_system.txt* in */etc/myfolder*

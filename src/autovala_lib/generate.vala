@@ -607,6 +607,19 @@ namespace AutoVala {
 			}
 			var file=File.new_for_path(path_s);
 			if (file.query_exists()) {
+				if (type==Config_Type.DESKTOP) {
+					try {
+						var dis = new DataInputStream (file.read ());
+						string line;
+						while ((line = dis.read_line (null)) != null) {
+							if (line.has_prefix("X-GNOME-Autostart-enabled=")) {
+								this.config.add_new_entry(mpath_s,Config_Type.AUTOSTART,true);
+								return;
+							}
+						}
+					} catch(Error e) {
+					}
+				}
 				this.config.add_new_entry(mpath_s,type,true);
 			}
 		}

@@ -147,3 +147,9 @@ An example (extracted from Cronopete):
             Exec=@DBUS_PREFIX@/bin/cronopete
 
 In this file, the *com.rastersoft.cronopete* service is provided by the binary *cronopete*. The specific folder ( *local* or not *local* ) will be determined automatically by Autovala.
+
+## Special variables in CMAKE
+
+Several variables are defined in CMake files that can be useful. The first one is *AUTOVALA_INSTALL_PREFIX*. This variable can contain */usr* or */usr/local*, based on the PREFIX passed to CMake. The advantage is that it will detect the *final* installation path, not the current one, which is useful when creating *.deb* or *.rpm* packages, because those are first built in a different path.
+
+Also is available the variable *FINAL_AUTOVALA_PATH*. This variable allows to append an absolute path, and will convert it to a relative path. An example: if the *CMAKE_INSTALL_PREFIX* is *../debian/tmp/usr*, then *FINAL_AUTOVALA_PATH* will be *../debian/tmp/usr/..*, which allows to install files in the *root* of the package.

@@ -6,6 +6,12 @@
 <div class="main_frame">
 <p><a href="index.html">Home</a></p>
 <ul>
+<li>version 0.15.0 (2013-04-26)
+<ul>
+<li>Allows to specify manually the destination directory for binaries and libraries (useful for plugins)<br /></li>
+<li>Allows to install files in a manually specified destination directory<br /></li>
+<li>Autodetects autorun <em>.desktop</em> files and install them in the right place<br /></li>
+</ul></li>
 <li>version 0.14.0 (2013-04-21)
 <ul>
 <li>Now the autovala library can use its own translated messages instead the ones from the main app (useful when embedding autovala in other programs)<br /></li>

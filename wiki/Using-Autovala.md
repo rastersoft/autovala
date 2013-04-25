@@ -32,7 +32,7 @@ By default, Autovala will compile all the *.vala* source files located inside *s
 		public const string PKGDATADIR      Folder with data needed by the program
 		public const string GETTEXT_PACKAGE GetText Domain Name
 		public const string RELEASE_NAME    Project name
-		public const string VERSION =       Binary version
+		public const string VERSION         Binary version
 
 **VAPIS** is where you can put your custom VAPI files, when you need some for compiling your project.
 

@@ -14,7 +14,7 @@
 <li><p>All .png or .svg in the folder data/icons/ (and subfolders) are considered icons, so Autovala will determine automatically the best-fitting standard icon size (in the case of .png; for .svg it will put them always in 'scalable') and install them in the corresponding folder: 'apps' by default, unless it's an .svg file with a filename ended in -symbolic.svg; in that case it will go to 'status'. The user can modify the final folder manually for the icons (s)he wishes.</p></li>
 <li><p>All .png, .jpg or .svg files in the folder data/pixmaps/ (and subfolders) are considered pixmaps, and will be installed in share/pixmaps/.</p></li>
 <li><p>All .po files in po/ folder will be considered as po files, and will be installed in the right locale. Also, will find the .vala and .ui files and add them as sources for internationalization process.</p></li>
-<li><p>Each .desktop file in data/ will be copied to share/desktop/</p></li>
+<li><p>Each .desktop file in data/ will be copied to share/desktop/, unless it contains the line <em>X-GNOME-Autostart-enabled=</em>, in which case it will be copied to <em>/etc/xdg/autostart</em>.</p></li>
 <li><p>Each .service file in data/ will be presumed to be a D-Bus service, and will be preprocessed to put the right binary folder ( bin/ or local/bin/ )</p></li>
 <li><p>Each .plug file in data/ will be presumed to be an ElementaryOS PLUG file</p></li>
 <li><p>Each .gschema.xml file in data/ will be presumed to be a GTK schema, so will be copied in the right place and force a recompile of the schemas (if needed)</p></li>
