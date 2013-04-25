@@ -1,10 +1,11 @@
-prefix =@INSTALL_PREFIX@
+prefix=@AUTOVALA_INSTALL_PREFIX@
+real_prefix=@CMAKE_INSTALL_PREFIX@
 exec_prefix=@DOLLAR@{prefix}
 libdir=@DOLLAR@{exec_prefix}/lib
 includedir=@DOLLAR@{exec_prefix}/include
 
 Name: AutoVala
 Description: AutoVala
-Version: 0.14
+Version: 0.15
 Libs: -L@DOLLAR@{libdir} -lAutoVala
 Cflags: -I@DOLLAR@{includedir}

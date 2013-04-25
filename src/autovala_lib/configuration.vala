@@ -20,12 +20,12 @@ using GLib;
 using Gee;
 using Posix;
 
-// project version=0.14
+// project version=0.15
 
 namespace AutoVala {
 
 	public enum Config_Type {VALA_BINARY, VALA_LIBRARY, BINARY, ICON, PIXMAP, PO, GLADE, DBUS_SERVICE, DESKTOP, AUTOSTART,
-							 EOS_PLUG, SCHEME, DATA, DOC, INCLUDE, IGNORE}
+							 EOS_PLUG, SCHEME, DATA, DOC, INCLUDE, IGNORE, CUSTOM}
 
 	public enum package_type {no_check, do_check, local}
 
@@ -69,6 +69,7 @@ namespace AutoVala {
 		public string compile_options;
 		public string icon_path;
 		public string version;
+		public string? destination;
 		public bool version_set;
 		public bool version_manually_set;
 		public bool automatic;
@@ -94,6 +95,14 @@ namespace AutoVala {
 			this.version_manually_set=false;
 			this.current_namespace="";
 			this.namespace_manually_set=false;
+			this.destination=null;
+		}
+
+		public void set_destination(string ?destination) {
+			if (destination!=null) {
+				this.destination=destination;
+				this.transform_to_non_automatic();
+			}
 		}
 
 		public void clear_automatic() {
@@ -223,6 +232,9 @@ namespace AutoVala {
 
 		public void printall() {
 			GLib.stdout.printf("Path: %s, file: %s\n",this.path,this.file);
+			if(this.destination!=null) {
+				GLib.stdout.printf("\tDestination: %s\n",this.destination);
+			}
 			foreach(var l in this.packages) {
 				GLib.stdout.printf("\tPackage: %s",l.package);
 				switch (l.type) {
@@ -271,7 +283,7 @@ namespace AutoVala {
 			if (init_gettext) {
 				Intl.bindtextdomain(AutoValaConstants.GETTEXT_PACKAGE, Path.build_filename(AutoValaConstants.DATADIR,"locale"));
 			}
-			this.current_version=4; // currently we support version 4 of the syntax
+			this.current_version=5; // currently we support version 5 of the syntax
 			this.config_path="";
 			this.configuration_data=new Gee.ArrayList<config_element ?>();
 			this.last_element=null;
@@ -588,6 +600,14 @@ namespace AutoVala {
 						error|=this.add_source(line.substring(13).strip(),automatic);
 						continue;
 					}
+					if (line.has_prefix("vala_destination: ")) {
+						error|=this.add_destination(line.substring(18).strip());
+						continue;
+					}
+					if (line.has_prefix("custom: ")) {
+						error|=this.add_entry(line.substring(8).strip(),Config_Type.CUSTOM,automatic);
+						continue;
+					}
 					if (line.has_prefix("version: ")) {
 						error|=this.set_version(line.substring(9).strip(),automatic);
 						continue;
@@ -758,6 +778,23 @@ namespace AutoVala {
 			return false;
 		}
 
+		private bool add_destination(string destination) {
+
+			if (this.config_path=="") {
+				return true;
+			}
+
+			if (this.last_element==null) {
+				this.error_list+=_("Found vala_destination after a non vala_binary, nor vala_library command (line %d)").printf(this.line_number);
+				return true;
+			}
+			if (this.last_element.destination!=null) {
+				this.error_list+=_("Warning: overwriting destination (line %d)").printf(this.line_number);
+			}
+			this.last_element.set_destination(destination);
+			return false;
+		}
+
 		private bool add_package(string pkg,package_type type,bool automatic) {
 
 			if (this.config_path=="") {
@@ -826,7 +863,7 @@ namespace AutoVala {
 		 * @return //false// if there was no error, //true// if there was an error
 		 */
 
-		public bool add_new_binary(string filename, Config_Type type, bool automatic, Gee.Set<string> ?sources=null, string[] ?packages=null, string[] ?check_packages=null, string[] ?local_packages=null,string[] ?vapis=null, string version="", string current_namespace="", bool several_namespaces=false, string compile_options="") {
+		public bool add_new_binary(string filename, Config_Type type, bool automatic, Gee.Set<string> ?sources=null, string[] ?packages=null, string[] ?check_packages=null, string[] ?local_packages=null,string[] ?vapis=null, string version="", string? destination=null, string current_namespace="", bool several_namespaces=false, string compile_options="") {
 
 			if ((type!=Config_Type.VALA_BINARY)&&(type!=Config_Type.VALA_LIBRARY)) {
 				return true;
@@ -847,6 +884,9 @@ namespace AutoVala {
 			this.add_entry(filename,type,automatic);
 			if (newversion!="") {
 				this.set_version(newversion,version_automatic);
+			}
+			if (destination!=null) {
+				this.add_destination(destination);
 			}
 			bool p_automatic;
 			string source;
@@ -929,12 +969,25 @@ namespace AutoVala {
 
 		private bool add_entry(string l_filename, Config_Type type,bool automatic) {
 
+			string destination="";
+
 			if (this.config_path=="") {
 				this.error_list+=_("Trying to add an entry with the class unconfigured");
 				return true;
 			}
 
 			var filename=l_filename;
+			if (type==Config_Type.CUSTOM) {
+				var pos=l_filename.index_of_char(' ');
+				if (pos==-1) {
+					this.error_list+=_("custom command needs two parameters.");
+					return true;
+				} else {
+					filename=l_filename.substring(0,pos).strip();
+					destination=l_filename.substring(pos+1).strip();
+				}
+			}
+
 			if ((type==Config_Type.PO)||(type==Config_Type.DATA)||(type==Config_Type.DOC)) {
 				if (false==filename.has_suffix(Path.DIR_SEPARATOR_S)) {
 					filename+=Path.DIR_SEPARATOR_S;
@@ -983,6 +1036,9 @@ namespace AutoVala {
 			}
 
 			var element=new config_element(file,path,type,automatic,icon_path);
+			if (type==Config_Type.CUSTOM) {
+				element.set_destination(destination);
+			}
 			this.configuration_data.add(element);
 			if ((type==Config_Type.VALA_BINARY)||(type==Config_Type.VALA_LIBRARY)) {
 				this.last_element=element;
@@ -1051,6 +1107,7 @@ namespace AutoVala {
 				this.store_data(Config_Type.DATA,data_stream);
 				this.store_data(Config_Type.DOC,data_stream);
 				this.store_data(Config_Type.IGNORE,data_stream);
+				this.store_data(Config_Type.CUSTOM,data_stream);
 				this.store_data(Config_Type.VALA_BINARY,data_stream);
 				this.store_data(Config_Type.VALA_LIBRARY,data_stream);
 				this.store_data(Config_Type.BINARY,data_stream);
@@ -1107,6 +1164,9 @@ namespace AutoVala {
 							}
 							data_stream.put_string("namespace: "+element.current_namespace+"\n");
 						}
+						if (element.destination!=null) {
+							data_stream.put_string("vala_destination: "+element.destination+"\n");
+						}
 						foreach(var l in element.packages) {
 							if (l.automatic) {
 								data_stream.put_string("*");
@@ -1147,6 +1207,9 @@ namespace AutoVala {
 						break;
 					case Config_Type.PIXMAP:
 						data_stream.put_string("pixmap: "+fullpathname+"\n");
+						break;
+					case Config_Type.CUSTOM:
+						data_stream.put_string("custom: "+fullpathname+" "+element.destination+"\n");
 						break;
 					case Config_Type.PO:
 						data_stream.put_string("po: "+element.path+"\n");

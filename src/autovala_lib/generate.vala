@@ -795,7 +795,7 @@ namespace AutoVala {
 				}
 			}
 			if (type==Config_Type.VALA_LIBRARY) {
-				this.config.add_new_binary(mpath_s,Config_Type.VALA_LIBRARY, true, filelist,packages,check_packages,local_packages,custom_vapis,current_version,this.current_namespace,this.several_namespaces);
+				this.config.add_new_binary(mpath_s,Config_Type.VALA_LIBRARY, true, filelist,packages,check_packages,local_packages,custom_vapis,current_version,null,this.current_namespace,this.several_namespaces);
 			} else {
 				this.config.add_new_binary(mpath_s,Config_Type.VALA_BINARY, true, filelist,packages,check_packages,local_packages,custom_vapis,current_version);
 			}

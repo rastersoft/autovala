@@ -213,6 +213,23 @@ namespace AutoVala {
 						var dis = file.create(FileCreateFlags.NONE);
 						var data_stream = new DataOutputStream(dis);
 						data_stream.put_string("### CMakeLists automatically created with AutoVala\n### Do not edit\n\n");
+						data_stream.put_string("if(${CMAKE_INSTALL_PREFIX} MATCHES usr/local/? )\n");
+						data_stream.put_string("\tset( AUTOVALA_INSTALL_PREFIX \"/usr/local\")\n");
+						data_stream.put_string("else()\n");
+						data_stream.put_string("\tset( AUTOVALA_INSTALL_PREFIX \"/usr\")\n");
+						data_stream.put_string("endif()\n\n");
+						data_stream.put_string("STRING (REPLACE \"/\" \";\" AUTOVALA_PATH_LIST ${CMAKE_INSTALL_PREFIX})\n");
+						data_stream.put_string("SET (FINAL_AUTOVALA_PATH \"\")\n\n");
+						data_stream.put_string("FOREACH(element ${AUTOVALA_PATH_LIST})\n");
+						data_stream.put_string("\tIF (${FOUND_USR})\n");
+						data_stream.put_string("\t\tSET(FINAL_AUTOVALA_PATH ${FINAL_AUTOVALA_PATH}/.. )\n");
+						data_stream.put_string("\tELSE()\n");
+						data_stream.put_string("\t\tIF(${element} STREQUAL \"usr\")\n");
+						data_stream.put_string("\t\t\tSET(FOUND_USR 1)\n");
+						data_stream.put_string("\t\t\tSET(FINAL_AUTOVALA_PATH ${FINAL_AUTOVALA_PATH}.. )\n");
+						data_stream.put_string("\t\tENDIF()\n");
+						data_stream.put_string("\tENDIF()\n");
+						data_stream.put_string("ENDFOREACH()\n\n");
 						if (this.create_cmake_for_dir(element,data_stream,ignore_list)) {
 							return true;
 						}
@@ -274,7 +291,6 @@ namespace AutoVala {
 			bool added_vala_binaries=false;
 			bool added_icon_suffix=false;
 			bool added_dbus_prefix=false;
-			bool added_autostart_prefix=false;
 			bool added_scheme_prefix=false;
 
 			bool error=false;
@@ -294,6 +310,9 @@ namespace AutoVala {
 					}
 				}
 				switch(element.type) {
+				case Config_Type.CUSTOM:
+					error=this.create_custom(dir,element,data_stream);
+					break;
 				case Config_Type.DATA:
 					error=this.create_data(dir,data_stream);
 					break;
@@ -345,8 +364,7 @@ namespace AutoVala {
 					}
 					break;
 				case Config_Type.AUTOSTART:
-					error=this.create_autostart(dir,data_stream,element.file,added_autostart_prefix);
-					added_autostart_prefix=true;
+					error=this.create_autostart(dir,data_stream,element.file);
 					break;
 				case Config_Type.EOS_PLUG:
 					try {
@@ -400,33 +418,12 @@ namespace AutoVala {
 			return error;
 		}
 
-		private bool create_autostart(string dir, DataOutputStream data_stream, string element_file,bool added_autostart_prefix) {
+		private bool create_autostart(string dir, DataOutputStream data_stream, string element_file) {
 
 			// .desktop files for programs that must be launched automatically during gnome/kde/whatever startup
-			// We need to know where we are installing all, because if we put a fixed /etc/xdg/autostart, the process will
-			// fail when creating a deb or rpm packages, because they preinstall everything at CMAKE_INSTALL_PREFIX
-			if (added_autostart_prefix==false) {
-				try {
-					data_stream.put_string("STRING (REPLACE \"/\" \";\" PATH_LIST ${CMAKE_INSTALL_PREFIX})\n");
-					data_stream.put_string("SET (FINAL_PATH \"\")\n\n");
-					data_stream.put_string("FOREACH(element ${PATH_LIST})\n");
-					data_stream.put_string("\tIF (${FOUND_USR})\n");
-					data_stream.put_string("\t\tSET(FINAL_PATH ${FINAL_PATH}/.. )\n");
-					data_stream.put_string("\tELSE()\n");
-					data_stream.put_string("\t\tIF(${element} STREQUAL \"usr\")\n");
-					data_stream.put_string("\t\t\tSET(FOUND_USR 1)\n");
-					data_stream.put_string("\t\t\tSET(FINAL_PATH ${FINAL_PATH}.. )\n");
-					data_stream.put_string("\t\tENDIF()\n");
-					data_stream.put_string("\tENDIF()\n");
-					data_stream.put_string("ENDFOREACH()\n\n");
-				} catch (Error e) {
-					this.error_list+=_("Can't append data to CMakeLists file at %s").printf(dir);
-					return true;
-				}
-			}
 
 			try {
-				data_stream.put_string("install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/"+element_file+" DESTINATION ${FINAL_PATH}/etc/xdg/autostart/ )\n");
+				data_stream.put_string("install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/"+element_file+" DESTINATION ${FINAL_AUTOVALA_PATH}/etc/xdg/autostart/ )\n");
 			} catch (Error e) {
 				this.error_list+=_("Failed to write the CMakeLists file for %s").printf(element_file);
 				return true;
@@ -435,17 +432,29 @@ namespace AutoVala {
 		}
 
 
+		private bool create_custom(string dir,config_element element,DataOutputStream data_stream) {
+			string destination;
+			if (element.destination[0]!='/') {
+				destination=element.destination;
+			} else {
+				destination="${FINAL_AUTOVALA_PATH}%s".printf(element.destination);
+			}
+			try {
+				data_stream.put_string("install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/%s DESTINATION %s/)\n".printf(element.file,destination));
+			} catch (Error e) {
+				this.error_list+=_("Failed to write the CMakeLists file for custom file %s").printf(element.file);
+				return true;
+			}
+			return false;
+		}
+
 		private bool create_dbus_service(string dir, DataOutputStream data_stream, string element_file,bool added_dbus_prefix) {
 
 			// DBus files must have the full path for the binary, so, in case we are building a deb or rpm package, we need to know
 			// where the binary will be really
 			if (added_dbus_prefix==false) {
 				try {
-					data_stream.put_string("IF(${CMAKE_INSTALL_PREFIX} MATCHES usr/local/? )\n");
-					data_stream.put_string("\tSET( DBUS_PREFIX \"/usr/local\")\n");
-					data_stream.put_string("ELSE()\n");
-					data_stream.put_string("\tSET (DBUS_PREFIX \"/usr\")\n");
-					data_stream.put_string("ENDIF()\n\n");
+					data_stream.put_string("SET(DBUS_PREFIX ${AUTOVALA_INSTALL_PREFIX})\n");
 				} catch (Error e) {
 					this.error_list+=_("Can't append data to CMakeLists file at %s").printf(dir);
 					return true;
@@ -680,6 +689,17 @@ namespace AutoVala {
 				lib_filename=element.current_namespace;
 			}
 
+			string ?destination;
+			if (element.destination==null) {
+				destination=null;
+			} else {
+				if (element.destination[0]!='/') {
+					destination=element.destination;
+				} else {
+					destination="${FINAL_AUTOVALA_PATH}%s".printf(element.destination);
+				}
+			}
+
 			var fname=File.new_for_path(Path.build_filename(this.config.basepath,dir,"Config.vala.cmake"));
 			try {
 				if (fname.query_exists()) {
@@ -706,12 +726,7 @@ namespace AutoVala {
 
 			try {
 				if (added_vala_binaries==false) {
-					data_stream.put_string("if(${CMAKE_INSTALL_PREFIX} MATCHES usr/local/? )\n");
-					data_stream.put_string("\tset( INSTALL_PREFIX \"/usr/local\")\n");
-					data_stream.put_string("else()\n");
-					data_stream.put_string("\tset( INSTALL_PREFIX \"/usr\")\n");
-					data_stream.put_string("endif()\n\n");
-					data_stream.put_string("set (DATADIR \"${CMAKE_INSTALL_PREFIX}/share\")\n");
+					data_stream.put_string("set (DATADIR \"${AUTOVALA_INSTALL_PREFIX}/share\")\n");
 					data_stream.put_string("set (PKGDATADIR \"${DATADIR}/"+config.project_name+"\")\n");
 					data_stream.put_string("set (GETTEXT_PACKAGE \""+config.project_name+"\")\n");
 					data_stream.put_string("set (RELEASE_NAME \""+config.project_name+"\")\n");
@@ -737,7 +752,8 @@ namespace AutoVala {
 					try {
 						var dis = fname.create(FileCreateFlags.NONE);
 						var data_stream2 = new DataOutputStream(dis);
-						data_stream2.put_string("prefix =@INSTALL_PREFIX@\n");
+						data_stream2.put_string("prefix=@AUTOVALA_INSTALL_PREFIX@\n");
+						data_stream2.put_string("real_prefix=@CMAKE_INSTALL_PREFIX@\n");
 						data_stream2.put_string("exec_prefix=@DOLLAR@{prefix}\n");
 						data_stream2.put_string("libdir=@DOLLAR@{exec_prefix}/lib\n");
 						data_stream2.put_string("includedir=@DOLLAR@{exec_prefix}/include\n\n");
@@ -872,21 +888,33 @@ namespace AutoVala {
 					data_stream.put_string("install(TARGETS\n");
 					data_stream.put_string("\t"+lib_filename+"\n");
 					data_stream.put_string("LIBRARY DESTINATION\n");
-					data_stream.put_string("\tlib/\n");
+					if (destination==null) {
+						data_stream.put_string("\tlib/\n");
+					} else {
+						data_stream.put_string("\t%s\n".printf(destination));
+					}
 					data_stream.put_string(")\n");
 
 					// Install headers
 					data_stream.put_string("install(FILES\n");
 					data_stream.put_string("\t${CMAKE_CURRENT_BINARY_DIR}/"+lib_filename+".h\n");
 					data_stream.put_string("DESTINATION\n");
-					data_stream.put_string("\tinclude/\n");
+					if (destination==null) {
+						data_stream.put_string("\tinclude/\n");
+					} else {
+						data_stream.put_string("\t%s\n".printf(destination));
+					}
 					data_stream.put_string(")\n");
 
 					// Install VAPI
 					data_stream.put_string("install(FILES\n");
 					data_stream.put_string("\t${CMAKE_CURRENT_BINARY_DIR}/"+lib_filename+".vapi\n");
 					data_stream.put_string("DESTINATION\n");
-					data_stream.put_string("\tshare/vala/vapi/\n");
+					if (destination==null) {
+						data_stream.put_string("\tshare/vala/vapi/\n");
+					} else {
+						data_stream.put_string("\t%s\n".printf(destination));
+					}
 					data_stream.put_string(")\n");
 
 					// Install GIR
@@ -894,7 +922,11 @@ namespace AutoVala {
 						data_stream.put_string("install(FILES\n");
 						data_stream.put_string("\t${CMAKE_CURRENT_BINARY_DIR}/"+gir_filename+"\n");
 						data_stream.put_string("DESTINATION\n");
+					if (destination==null) {
 						data_stream.put_string("\tshare/gir-1.0/\n");
+					} else {
+						data_stream.put_string("\t%s\n".printf(destination));
+					}
 						data_stream.put_string(")\n");
 					}
 
@@ -902,7 +934,11 @@ namespace AutoVala {
 					data_stream.put_string("install(FILES\n");
 					data_stream.put_string("\t${CMAKE_CURRENT_BINARY_DIR}/"+pc_filename+"\n");
 					data_stream.put_string("DESTINATION\n");
-					data_stream.put_string("\tlib/pkgconfig/\n");
+					if (destination==null) {
+						data_stream.put_string("\tlib/pkgconfig/\n");
+					} else {
+						data_stream.put_string("\t%s\n".printf(destination));
+					}
 					data_stream.put_string(")\n");
 
 				} else {
@@ -912,7 +948,11 @@ namespace AutoVala {
 					data_stream.put_string("install(TARGETS\n");
 					data_stream.put_string("\t"+lib_filename+"\n");
 					data_stream.put_string("RUNTIME DESTINATION\n");
-					data_stream.put_string("\tbin/\n");
+					if (destination==null) {
+						data_stream.put_string("\tbin/\n");
+					} else {
+						data_stream.put_string("\t%s\n".printf(destination));
+					}
 					data_stream.put_string(")\n\n");
 				}
 
