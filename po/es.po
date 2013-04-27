@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-04-27 22:35+0200\n"
-"PO-Revision-Date: 2013-04-27 22:40+0200\n"
+"POT-Creation-Date: 2013-04-28 01:11+0200\n"
+"PO-Revision-Date: 2013-04-28 01:11+0200\n"
 "Last-Translator: \n"
 "Language-Team: American English <kde-i18n-doc@kde.org>\n"
 "Language: en_US\n"
@@ -44,18 +44,19 @@ msgstr ""
 "proyecto\n"
 "\tautovala update: mismo resultado que 'refresh'+'cmake'\n"
 "\tautovala clear: elimina las partes automáticas en el fichero de proyecto, "
-"dejando "
-"sólo las añadidas manualmente.\n"
+"dejando sólo las añadidas manualmente.\n"
 "\n"
 
 #: ../src/autovala.vala:60 ../src/autovala.vala:74 ../src/autovala.vala:89
 #: ../src/autovala.vala:96 ../src/autovala.vala:111 ../src/autovala.vala:125
+#: ../src/gedit_plugin/plugin.vala:117 ../src/gedit_plugin/plugin.vala:123
 #, c-format
 msgid "Aborting\n"
 msgstr "Abortando\n"
 
 #: ../src/autovala.vala:63 ../src/autovala.vala:77 ../src/autovala.vala:100
 #: ../src/autovala.vala:114 ../src/autovala.vala:131
+#: ../src/gedit_plugin/plugin.vala:125
 #, c-format
 msgid "Done\n"
 msgstr "Hecho\n"
@@ -65,7 +66,7 @@ msgstr "Hecho\n"
 msgid "Updating project file\n"
 msgstr "Actualizando el fichero de proyecto\n"
 
-#: ../src/autovala.vala:92
+#: ../src/autovala.vala:92 ../src/gedit_plugin/plugin.vala:119
 #, c-format
 msgid "Updating CMake files\n"
 msgstr "Actualizando los ficheros de CMake\n"
@@ -476,27 +477,35 @@ msgstr ""
 msgid "Warning: can't find namespace %s in file %s"
 msgstr "Aviso: el namespace %s en el fichero %s no se ha encontrado"
 
-#: ../src/gedit_plugin/plugin.vala:74
+#: ../src/gedit_plugin/plugin.vala:112
+msgid "Updating project and cmake files\n"
+msgstr "Actualizando ficheros de proyecto y de CMake\n"
+
+#: ../src/gedit_plugin/plugin.vala:133
+msgid "Failed to get access to the project file\n"
+msgstr "No se ha podido acceder al fichero de proyecto\n"
+
+#: ../src/gedit_plugin/plugin.vala:158
 msgid "Autovala"
 msgstr "Autovala"
 
-#: ../src/gedit_plugin/plugin.vala:82
+#: ../src/gedit_plugin/plugin.vala:166
 msgid "New project"
 msgstr "Nuevo proyecto"
 
-#: ../src/gedit_plugin/plugin.vala:90
+#: ../src/gedit_plugin/plugin.vala:174
 msgid "Open project file"
 msgstr "Abrir fichero de proyecto"
 
-#: ../src/gedit_plugin/plugin.vala:98
-msgid "Refresh project"
-msgstr "Refrescar proyecto"
+#: ../src/gedit_plugin/plugin.vala:182
+msgid "Refresh project file"
+msgstr "Refrescar fichero de proyecto"
 
-#: ../src/gedit_plugin/plugin.vala:106
+#: ../src/gedit_plugin/plugin.vala:190
 msgid "Run CMake"
 msgstr "Ejecutar CMake"
 
-#: ../src/gedit_plugin/plugin.vala:114
+#: ../src/gedit_plugin/plugin.vala:198
 msgid "Build project"
 msgstr "Construir proyecto"
 

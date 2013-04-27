@@ -40,5 +40,6 @@ vala_package: PeasGtk-1.0
 *vala_check_package: gee-1.0
 *vala_check_package: glib-2.0
 *vala_check_package: gedit
+*vala_check_package: gtk+-3.0
 *vala_source: plugin.vala
 

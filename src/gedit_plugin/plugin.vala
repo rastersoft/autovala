@@ -36,10 +36,12 @@ namespace AutoVala_gedit {
 		private Gtk.ActionEntry[] entry_list1;
 		private Gtk.ActionEntry[] entry_list2;
 		private string ?last_filename;
+		private Gtk.TextView output;
+		private Gtk.TextBuffer t_buffer;
+		private Gedit.Panel panel;
 
 		public window () {
 			GLib.Object ();
-			this.last_filename=null;
 		}
 
 		public Gedit.Window window {
@@ -50,8 +52,30 @@ namespace AutoVala_gedit {
 			print("Nuevo proyecto\n");
 		}
 
+		private void clear_text() {
+			this.t_buffer=new Gtk.TextBuffer(null);
+			this.output.set_buffer(this.t_buffer);
+		}
+
+		private void insert_text(string text,bool add_cr) {
+			time_t datetime;
+			time_t(out datetime);
+			var localtime=GLib.Time.local(datetime);
+			this.t_buffer.insert_at_cursor("[%d:%d:%d] ".printf(localtime.hour,localtime.minute,localtime.second),-1);
+			if (add_cr) {
+				this.t_buffer.insert_at_cursor(text+"\n",-1);
+			} else {
+				this.t_buffer.insert_at_cursor(text,-1);
+			}
+		}
+
+		private void show_errors(string[] error_list) {
+			foreach(var e in error_list) {
+				this.insert_text(e,true);
+			}
+		}
+
 		public void open_project(Gtk.Action action) {
-			bool found=false;
 			bool opened=false;
 			var document=this.window.get_active_document();
 			if (document!=null) {
@@ -70,7 +94,7 @@ namespace AutoVala_gedit {
 						}
 						File prj_file=File.new_for_path(config.config_path);
 						if (opened==false) {
-							var tab=this.window.create_tab_from_location (prj_file, null, 0, 0, false, true);
+							this.window.create_tab_from_location (prj_file, null, 0, 0, false, true);
 						} else {
 							this.window.set_active_tab(this.window.get_tab_from_location(prj_file));
 						}
@@ -80,7 +104,40 @@ namespace AutoVala_gedit {
 		}
 
 		public void refresh_project(Gtk.Action action) {
-			print("Refrescar proyecto\n");
+			bool opened=false;
+			var document=this.window.get_active_document();
+			if (document!=null) {
+				var openfile=document.get_location();
+				if (openfile!=null) {
+					opened=true;
+					var current_filename=openfile.get_path();
+					var gen = new AutoVala.manage_project();
+					this.clear_text();
+					this.insert_text(_("Updating project and cmake files\n"),false);
+					var retval=gen.refresh(current_filename);
+					this.show_errors(gen.get_error_list());
+					gen.clear_errors();
+					if (retval) {
+						this.insert_text(_("Aborting\n"),false);
+					} else {
+						this.insert_text(_("Updating CMake files\n"),false);
+						retval=gen.cmake();
+						this.show_errors(gen.get_error_list());
+						if (retval) {
+							this.insert_text(_("Aborting\n"),false);
+						} else {
+							this.insert_text(_("Done\n"),false);
+						}
+					}
+					panel.activate_item(this.output);
+					panel.show();
+				}
+			}
+			if (opened==false) {
+				this.insert_text(_("Failed to get access to the project file\n"),false);
+				panel.activate_item(this.output);
+				panel.show();
+			}
 		}
 
 		public void cmake_project(Gtk.Action action) {
@@ -92,6 +149,12 @@ namespace AutoVala_gedit {
 		}
 
 		public void activate () {
+			this.panel=this.window.get_bottom_panel();
+			this.last_filename=null;
+			this.t_buffer=new Gtk.TextBuffer(null);
+			this.output=new Gtk.TextView.with_buffer(this.t_buffer);
+			this.output.set_editable(false);
+			this.panel.add_item(this.output,"autovala_output","Autovala",null);
 			var manager=this.window.get_ui_manager();
 			var entry = Gtk.ActionEntry();
 			entry.name="Autovala";
@@ -120,7 +183,7 @@ namespace AutoVala_gedit {
 			var entry3 = Gtk.ActionEntry();
 			entry3.name="autovala_refresh";
 			entry3.stock_id="";
-			entry3.label=_("Refresh project");
+			entry3.label=_("Refresh project file");
 			entry3.accelerator="";
 			entry3.tooltip="Refreshes the .avprj project file";
 			entry3.callback=this.refresh_project;

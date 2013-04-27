@@ -49,6 +49,7 @@ set(VALA_PACKAGES
 	gee-1.0
 	glib-2.0
 	gedit
+	gtk+-3.0
 )
 
 set(APP_SOURCES
