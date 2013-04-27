@@ -2,3 +2,4 @@ src/autovala.vala
 src/autovala_lib/cmake.vala
 src/autovala_lib/configuration.vala
 src/autovala_lib/generate.vala
+src/gedit_plugin/plugin.vala

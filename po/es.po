@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-04-08 13:07+0200\n"
-"PO-Revision-Date: 2013-04-08 13:12+0200\n"
+"POT-Creation-Date: 2013-04-27 22:35+0200\n"
+"PO-Revision-Date: 2013-04-27 22:40+0200\n"
 "Last-Translator: \n"
 "Language-Team: American English <kde-i18n-doc@kde.org>\n"
 "Language: en_US\n"
@@ -29,6 +29,8 @@ msgid ""
 "adds them to the project file\n"
 "\tautovala cmake: creates the CMake files from the project file\n"
 "\tautovala update: the same than 'refresh'+'cmake'\n"
+"\tautovala clear: removes the automatic parts in the project file, leaving "
+"only the manual ones.\n"
 "\n"
 msgstr ""
 "Autovala: uso:\n"
@@ -41,16 +43,19 @@ msgstr ""
 "\tautovala cmake: crea los ficheros para CMake a partir del fichero de "
 "proyecto\n"
 "\tautovala update: mismo resultado que 'refresh'+'cmake'\n"
+"\tautovala clear: elimina las partes automáticas en el fichero de proyecto, "
+"dejando "
+"sólo las añadidas manualmente.\n"
 "\n"
 
 #: ../src/autovala.vala:60 ../src/autovala.vala:74 ../src/autovala.vala:89
-#: ../src/autovala.vala:96 ../src/autovala.vala:111
+#: ../src/autovala.vala:96 ../src/autovala.vala:111 ../src/autovala.vala:125
 #, c-format
 msgid "Aborting\n"
 msgstr "Abortando\n"
 
 #: ../src/autovala.vala:63 ../src/autovala.vala:77 ../src/autovala.vala:100
-#: ../src/autovala.vala:114
+#: ../src/autovala.vala:114 ../src/autovala.vala:131
 #, c-format
 msgid "Done\n"
 msgstr "Hecho\n"
@@ -65,79 +70,11 @@ msgstr "Actualizando el fichero de proyecto\n"
 msgid "Updating CMake files\n"
 msgstr "Actualizando los ficheros de CMake\n"
 
-#: ../src/autovala_lib/generate.vala:146
-#, c-format
-msgid "Warning: Unable to create the %s directory"
-msgstr "Aviso: No fue posible crear el directorio %s"
-
-#: ../src/autovala_lib/generate.vala:151
-#, c-format
-msgid "Warning: the %s directory already exists"
-msgstr "Aviso: el directorio %s ya existe"
-
-#: ../src/autovala_lib/generate.vala:175
-#, c-format
-msgid "There's already a project in folder %s"
-msgstr "Ya existe un proyecto en el directorio %s"
-
-#: ../src/autovala_lib/generate.vala:180
-#, c-format
-msgid "Failed to list path %s"
-msgstr "Incapaz de listar el directorio %s"
-
-#: ../src/autovala_lib/generate.vala:293
-#: ../src/autovala_lib/configuration.vala:452
-msgid ""
-"Can't get the version of the installed Vala binary. Asuming version 0.16"
-msgstr ""
-"Incapaz de obtener la versión del compilador de Vala instalado. Asumiendo "
-"versión 0.16"
-
-#: ../src/autovala_lib/generate.vala:381
-#, c-format
-msgid "Unknown file %s uses namespace GLib. Contact the author."
-msgstr ""
-"El fichero desconocido %s utiliza el namespace GLib. Contacte con el autor."
-
-#: ../src/autovala_lib/generate.vala:445
-msgid "Can't determine the version of the Vala compiler"
-msgstr "Incapaz de obtener la versión del compilador de Vala instalado."
-
-#: ../src/autovala_lib/generate.vala:565
-#, c-format
-msgid "Warning: failed to add files at folder %s"
-msgstr "Aviso: incapaz de añadir los ficheros del directorio %s"
-
-#: ../src/autovala_lib/generate.vala:607
-#, c-format
-msgid "Warning: couldn't get the namespace list for %s"
-msgstr "Aviso: incapaz de obtener los namespaces del fichero %s"
-
-#: ../src/autovala_lib/generate.vala:611
-#, c-format
-msgid "Warning: overwriting the version number for %s"
-msgstr "Aviso: sobreescribiendo el número de versión de %s"
-
-#: ../src/autovala_lib/generate.vala:696
-#, c-format
-msgid "Warning: couldn't process binary %s"
-msgstr "Aviso: no se pudo procesar el binario %s"
-
-#: ../src/autovala_lib/generate.vala:759
-#, c-format
-msgid "Warning: can't read the VAPIS folder for %s"
-msgstr "Aviso: no se pudo leer los VAPIs del directorio %s"
-
-#: ../src/autovala_lib/generate.vala:807
-#, c-format
-msgid "Warning: can't find namespace %s in file %s"
-msgstr "Aviso: el namespace %s en el fichero %s no se ha encontrado"
-
-#: ../src/autovala_lib/cmake.vala:164
+#: ../src/autovala_lib/cmake.vala:165
 msgid "The following local dependencies cannot be satisfied:"
 msgstr "No se han podido satisfacer las siguientes dependencias locales:"
 
-#: ../src/autovala_lib/cmake.vala:171
+#: ../src/autovala_lib/cmake.vala:172
 #, c-format
 msgid ""
 "\n"
@@ -146,7 +83,7 @@ msgstr ""
 "\n"
 "\tBiblioteca %s, paquetes:"
 
-#: ../src/autovala_lib/cmake.vala:173
+#: ../src/autovala_lib/cmake.vala:174
 #, c-format
 msgid ""
 "\n"
@@ -155,116 +92,122 @@ msgstr ""
 "\n"
 "\tBinario %s, paquetes:"
 
-#: ../src/autovala_lib/cmake.vala:191
+#: ../src/autovala_lib/cmake.vala:192
 msgid "Failed to create the main CMakeLists file"
 msgstr "Falló la creación del fichero CMakeLists principal"
 
-#: ../src/autovala_lib/cmake.vala:207
+#: ../src/autovala_lib/cmake.vala:208
 #, c-format
 msgid "Failed to delete the old CMakeLists file at %s"
 msgstr "Incapaz de borrar el viejo fichero CMakeLists en %s"
 
-#: ../src/autovala_lib/cmake.vala:220
+#: ../src/autovala_lib/cmake.vala:238
 #, c-format
 msgid "Failed to create file %s"
 msgstr "Incapaz de crear el fichero %s"
 
-#: ../src/autovala_lib/cmake.vala:232
+#: ../src/autovala_lib/cmake.vala:250
 #, c-format
 msgid "Warning: directory %s doesn't exists"
 msgstr "Aviso: el directorio %s no existe"
 
-#: ../src/autovala_lib/cmake.vala:253
+#: ../src/autovala_lib/cmake.vala:271
 #, c-format
 msgid "Warning: can't access folder %s"
 msgstr "Aviso: no ha sido posible acceder al directorio %s"
 
-#: ../src/autovala_lib/cmake.vala:263
+#: ../src/autovala_lib/cmake.vala:281
 #, c-format
 msgid "Warning: can't add subdirectory %s"
 msgstr "Aviso: no ha sido posible añadir el subdirectorio %s"
 
-#: ../src/autovala_lib/cmake.vala:291
+#: ../src/autovala_lib/cmake.vala:308
 #, c-format
 msgid "Warning: file %s doesn't exists"
 msgstr "Aviso: el fichero %s no existe "
 
-#: ../src/autovala_lib/cmake.vala:317
+#: ../src/autovala_lib/cmake.vala:337
 #, c-format
 msgid "Failed to add binary %s"
 msgstr "Incapaz de añadir el binario %s"
 
-#: ../src/autovala_lib/cmake.vala:330 ../src/autovala_lib/cmake.vala:342
-#: ../src/autovala_lib/cmake.vala:355
+#: ../src/autovala_lib/cmake.vala:350 ../src/autovala_lib/cmake.vala:362
+#: ../src/autovala_lib/cmake.vala:374
 #, c-format
 msgid "Failed to add file %s"
 msgstr "Incapaz de añadir el fichero %s"
 
-#: ../src/autovala_lib/cmake.vala:367
+#: ../src/autovala_lib/cmake.vala:386
 #, c-format
 msgid "Failed to add schema %s"
 msgstr "Incapaz de añadir el schema %s"
 
-#: ../src/autovala_lib/cmake.vala:387 ../src/autovala_lib/cmake.vala:422
-#: ../src/autovala_lib/cmake.vala:449
+#: ../src/autovala_lib/cmake.vala:406 ../src/autovala_lib/cmake.vala:459
 #, c-format
 msgid "Can't append data to CMakeLists file at %s"
 msgstr "Incapaz de añadir datos al fichero CMakeLists en %s"
 
-#: ../src/autovala_lib/cmake.vala:395
+#: ../src/autovala_lib/cmake.vala:414
 #, c-format
 msgid "Can't append INCLUDEs to CMakeLists file at %s"
 msgstr "Incapaz de añadir INCLUDEs al fichero CMakeLists en %s"
 
-#: ../src/autovala_lib/cmake.vala:430 ../src/autovala_lib/cmake.vala:459
+#: ../src/autovala_lib/cmake.vala:428 ../src/autovala_lib/cmake.vala:469
 #, c-format
 msgid "Failed to write the CMakeLists file for %s"
 msgstr "Incapaz de escribir el fichero CMakeLists de %s"
 
-#: ../src/autovala_lib/cmake.vala:490
+#: ../src/autovala_lib/cmake.vala:445
+#, c-format
+msgid "Failed to write the CMakeLists file for custom file %s"
+msgstr ""
+"Incapaz de escribir el fichero CMakeLists para el fichero personalizado "
+"(custom) %s"
+
+#: ../src/autovala_lib/cmake.vala:500
 #, c-format
 msgid "Can't get the size for icon %s"
 msgstr "Incapaz de obtener el tamaño del icono %s"
 
-#: ../src/autovala_lib/cmake.vala:496 ../src/autovala_lib/cmake.vala:514
+#: ../src/autovala_lib/cmake.vala:506 ../src/autovala_lib/cmake.vala:524
 #, c-format
 msgid "Failed to write the CMakeLists file for icon %s"
 msgstr "Incapaz de escribir el fichero CMakeLists para el icono %s"
 
-#: ../src/autovala_lib/cmake.vala:518
+#: ../src/autovala_lib/cmake.vala:528
 #, c-format
 msgid "Unknown icon type %s. Must be .png or .svg (in lowercase)"
 msgstr ""
 "Tipo de icono %s desconocido. Tiene que ser .png or .svg (en minúsculas)"
 
-#: ../src/autovala_lib/cmake.vala:554
+#: ../src/autovala_lib/cmake.vala:564
 #, c-format
 msgid "Failed to install local files at %s"
 msgstr "Incapaz de instalar los ficheros locales de %s"
 
-#: ../src/autovala_lib/cmake.vala:580
+#: ../src/autovala_lib/cmake.vala:590
 #, c-format
 msgid "Failed to install document files at %s"
 msgstr "Incapaz de instalar los ficheros de documentación de %s"
 
-#: ../src/autovala_lib/cmake.vala:593
+#: ../src/autovala_lib/cmake.vala:603
 msgid "Failed to delete the old POTFILES.in file"
 msgstr "Incapaz de borrar el viejo fichero POTFILES.in"
 
-#: ../src/autovala_lib/cmake.vala:665
+#: ../src/autovala_lib/cmake.vala:675
 msgid "Failed to create the PO files"
 msgstr "Falló la creación de los ficheros PO"
 
-#: ../src/autovala_lib/cmake.vala:699 ../src/autovala_lib/cmake.vala:746
+#: ../src/autovala_lib/cmake.vala:723 ../src/autovala_lib/cmake.vala:767
 msgid "Failed to create the Config.vala.cmake file"
 msgstr "Falló la creación del fichero Config.vala.cmake"
 
-#: ../src/autovala_lib/cmake.vala:766
+#: ../src/autovala_lib/cmake.vala:787
 #, c-format
 msgid "Warning: Can't set package %s for binary %s"
 msgstr "Aviso: no ha sido posible asignar el paquete %s para el binario %s"
 
-#: ../src/autovala_lib/cmake.vala:837
+#: ../src/autovala_lib/cmake.vala:858
 #, c-format
 msgid ""
 "Warning: no namespace specified in library %s; GIR file will not be generated"
@@ -272,12 +215,12 @@ msgstr ""
 "Aviso: no se ha especificado un namespace en la biblioteca %s; no se creará "
 "el fichero GIR"
 
-#: ../src/autovala_lib/cmake.vala:931
+#: ../src/autovala_lib/cmake.vala:976
 #, c-format
 msgid "Failed to write the CMakeLists file for binary %s"
 msgstr "Incapaz de escribir el fichero CMakeLists del binario %s"
 
-#: ../src/autovala_lib/configuration.vala:445
+#: ../src/autovala_lib/configuration.vala:548
 #, c-format
 msgid ""
 "Vala version string not valid. It must be in the form N.N or N.N.N (line %d)"
@@ -285,7 +228,15 @@ msgstr ""
 "La cadena de versión de Vala no es válida. Tiene que ser de la forma N.N o N."
 "N.N (línea %d)"
 
-#: ../src/autovala_lib/configuration.vala:464
+#: ../src/autovala_lib/configuration.vala:555
+#: ../src/autovala_lib/generate.vala:290
+msgid ""
+"Can't get the version of the installed Vala binary. Asuming version 0.16"
+msgstr ""
+"Incapaz de obtener la versión del compilador de Vala instalado. Asumiendo "
+"versión 0.16"
+
+#: ../src/autovala_lib/configuration.vala:567
 #, c-format
 msgid ""
 "This project needs Vala version %s or greater, but you have version %d.%d. "
@@ -294,23 +245,23 @@ msgstr ""
 "Este proyecto necesita la versión %s o superior de Vala, pero está instalada "
 "la versión %d.%d. No es posible abrirlo."
 
-#: ../src/autovala_lib/configuration.vala:579
+#: ../src/autovala_lib/configuration.vala:690
 msgid ""
 "This project was created with a newer version of Autovala. Can't open it."
 msgstr ""
 "Este proyecto se creó con una versión de Autovala más reciente. No es "
 "posible abrirlo."
 
-#: ../src/autovala_lib/configuration.vala:586
+#: ../src/autovala_lib/configuration.vala:697
 #, c-format
 msgid "Syntax error in line %d"
 msgstr "Error de sintaxis en la línea %d"
 
-#: ../src/autovala_lib/configuration.vala:591
+#: ../src/autovala_lib/configuration.vala:702
 msgid "Can't open configuration file"
 msgstr "No se ha podido abrir el fichero de configuración"
 
-#: ../src/autovala_lib/configuration.vala:601
+#: ../src/autovala_lib/configuration.vala:712
 #, c-format
 msgid ""
 "Found 'file_version' command after a non vala_binary, nor vala_library "
@@ -319,12 +270,12 @@ msgstr ""
 "Encontrado comando 'file_version' después de un comando que no es ni "
 "vala_binary ni vala_library (línea %d)"
 
-#: ../src/autovala_lib/configuration.vala:606
+#: ../src/autovala_lib/configuration.vala:717
 #, c-format
 msgid "Warning: overwriting version number (line %d)"
 msgstr "Aviso: sobreescribiendo el número de versión (línea %d)"
 
-#: ../src/autovala_lib/configuration.vala:612
+#: ../src/autovala_lib/configuration.vala:723
 #, c-format
 msgid ""
 "Version string %s not valid for a library. It must be in the form N.N or N.N."
@@ -333,7 +284,7 @@ msgstr ""
 "La cadena de versión %s no es válida para una biblioteca. Tiene que ser de "
 "la forma N.N o N.N.N (línea %d)"
 
-#: ../src/autovala_lib/configuration.vala:629
+#: ../src/autovala_lib/configuration.vala:740
 #, c-format
 msgid ""
 "Found 'compile_options' command after a non vala_binary, nor vala_library "
@@ -342,12 +293,12 @@ msgstr ""
 "Encontrado comando 'compile_options' después de un comando que no es ni "
 "vala_binary ni vala_library (línea %d)"
 
-#: ../src/autovala_lib/configuration.vala:634
+#: ../src/autovala_lib/configuration.vala:745
 #, c-format
 msgid "Warning: overwriting compile options (line %d)"
 msgstr "Aviso: sobreescribiendo las opciones de compilación (línea %d)"
 
-#: ../src/autovala_lib/configuration.vala:643
+#: ../src/autovala_lib/configuration.vala:754
 #, c-format
 msgid ""
 "Found 'namespace' command after a non vala_binary, nor vala_library command "
@@ -356,12 +307,12 @@ msgstr ""
 "Encontrado comando 'namespace' después de un comando que no es ni "
 "vala_binary ni vala_library (línea %d)"
 
-#: ../src/autovala_lib/configuration.vala:648
+#: ../src/autovala_lib/configuration.vala:759
 #, c-format
 msgid "Warning: overwriting namespace (line %d)"
 msgstr "Aviso: sobreescribiendo el namespace (línea %d)"
 
-#: ../src/autovala_lib/configuration.vala:663
+#: ../src/autovala_lib/configuration.vala:774
 #, c-format
 msgid ""
 "Found vala_source after a non vala_binary, nor vala_library command (line %d)"
@@ -369,7 +320,21 @@ msgstr ""
 "Encontrado comando 'vala_source' después de un comando que no es ni "
 "vala_binary ni vala_library (línea %d)"
 
-#: ../src/autovala_lib/configuration.vala:677
+#: ../src/autovala_lib/configuration.vala:788
+#, c-format
+msgid ""
+"Found vala_destination after a non vala_binary, nor vala_library command "
+"(line %d)"
+msgstr ""
+"Encontrado comando 'vala_destination' después de un comando que no es ni "
+"vala_binary ni vala_library (línea %d)"
+
+#: ../src/autovala_lib/configuration.vala:792
+#, c-format
+msgid "Warning: overwriting destination (line %d)"
+msgstr "Aviso: sobreescribiendo el destino (línea %d)"
+
+#: ../src/autovala_lib/configuration.vala:805
 #, c-format
 msgid ""
 "Found 'XXXXX_package' command after a non vala_binary, nor vala_library "
@@ -378,7 +343,7 @@ msgstr ""
 "Encontrado comando 'XXXXX_package' después de un comando que no es ni "
 "vala_binary ni vala_library (línea %d)"
 
-#: ../src/autovala_lib/configuration.vala:691
+#: ../src/autovala_lib/configuration.vala:819
 #, c-format
 msgid ""
 "Found 'vala_vapi' command after a non vala_binary, nor vala_library command "
@@ -387,54 +352,151 @@ msgstr ""
 "Encontrado comando 'vala_vapi' después de un comando que no es ni "
 "vala_binary ni vala_library (línea %d)"
 
-#: ../src/autovala_lib/configuration.vala:798
+#: ../src/autovala_lib/configuration.vala:960
 #, c-format
 msgid "Warning: library %s uses no namespace. Will not generate .GIR file"
 msgstr ""
-"Aviso: la biblioteca %s no tiene ningún namespace. No se creará el fichero "
-".GIR"
+"Aviso: la biblioteca %s no tiene ningún namespace. No se creará el fichero ."
+"GIR"
 
-#: ../src/autovala_lib/configuration.vala:800
+#: ../src/autovala_lib/configuration.vala:962
 #, c-format
 msgid ""
 "Warning: library %s contains several namespaces. Will not generate .GIR file"
 msgstr ""
-"Aviso: la biblioteca %s contiene varios namespaces. No se creará el fichero "
-".GIR"
+"Aviso: la biblioteca %s contiene varios namespaces. No se creará el fichero ."
+"GIR"
 
-#: ../src/autovala_lib/configuration.vala:811
+#: ../src/autovala_lib/configuration.vala:975
 msgid "Trying to add an entry with the class unconfigured"
 msgstr "Se ha intentado añadir una entrada con la clase desconfigurada"
 
+#: ../src/autovala_lib/configuration.vala:983
+msgid "custom command needs two parameters."
+msgstr "Comando custom necesita dos parámetros."
+
 #. a binary or a library is overwriting other
-#: ../src/autovala_lib/configuration.vala:850
+#: ../src/autovala_lib/configuration.vala:1025
 #, c-format
 msgid "A binary or library is trying to overwrite another at line %d %s %s"
 msgstr ""
 "Un binario o biblioteca intenta sobreescribir a otra en la línea %d %s %s"
 
-#: ../src/autovala_lib/configuration.vala:883
+#: ../src/autovala_lib/configuration.vala:1073
 msgid "Can't store the configuration. Project name not defined."
 msgstr ""
 "No se puede guardar la configuración. No se ha especificado un nombre de "
 "proyecto."
 
-#: ../src/autovala_lib/configuration.vala:888
+#: ../src/autovala_lib/configuration.vala:1078
 msgid "Can't store the configuration. Path not defined."
 msgstr "No se puede guardar la configuración. No se ha definido una ruta."
 
-#: ../src/autovala_lib/configuration.vala:904
+#: ../src/autovala_lib/configuration.vala:1094
 #, c-format
 msgid "Failed to delete the old config file %s"
 msgstr "No se ha podido borrar el viejo fichero de configuración %s"
 
-#: ../src/autovala_lib/configuration.vala:908
+#: ../src/autovala_lib/configuration.vala:1098
 #, c-format
 msgid "Storing configuration in file %s"
 msgstr "Almacenando la configuración en el fichero %s"
 
-#: ../src/autovala_lib/configuration.vala:933
+#: ../src/autovala_lib/configuration.vala:1124
 #, c-format
 msgid "Can't create the config file %s"
 msgstr "No se ha podido crear el fichero de configuración %s"
+
+#: ../src/autovala_lib/generate.vala:143
+#, c-format
+msgid "Warning: Unable to create the %s directory"
+msgstr "Aviso: No fue posible crear el directorio %s"
+
+#: ../src/autovala_lib/generate.vala:148
+#, c-format
+msgid "Warning: the %s directory already exists"
+msgstr "Aviso: el directorio %s ya existe"
+
+#: ../src/autovala_lib/generate.vala:172
+#, c-format
+msgid "There's already a project in folder %s"
+msgstr "Ya existe un proyecto en el directorio %s"
+
+#: ../src/autovala_lib/generate.vala:177
+#, c-format
+msgid "Failed to list path %s"
+msgstr "Incapaz de listar el directorio %s"
+
+#: ../src/autovala_lib/generate.vala:398
+#, c-format
+msgid "Unknown file %s uses namespace GLib. Contact the author."
+msgstr ""
+"El fichero desconocido %s utiliza el namespace GLib. Contacte con el autor."
+
+#: ../src/autovala_lib/generate.vala:462
+msgid "Can't determine the version of the Vala compiler"
+msgstr "Incapaz de obtener la versión del compilador de Vala instalado."
+
+#: ../src/autovala_lib/generate.vala:582
+#, c-format
+msgid "Warning: failed to add files at folder %s"
+msgstr "Aviso: incapaz de añadir los ficheros del directorio %s"
+
+#: ../src/autovala_lib/generate.vala:637
+#, c-format
+msgid "Warning: couldn't get the namespace list for %s"
+msgstr "Aviso: incapaz de obtener los namespaces del fichero %s"
+
+#: ../src/autovala_lib/generate.vala:641
+#, c-format
+msgid "Warning: overwriting the version number for %s"
+msgstr "Aviso: sobreescribiendo el número de versión de %s"
+
+#: ../src/autovala_lib/generate.vala:726
+#, c-format
+msgid "Warning: couldn't process binary %s"
+msgstr "Aviso: no se pudo procesar el binario %s"
+
+#: ../src/autovala_lib/generate.vala:789
+#, c-format
+msgid "Warning: can't read the VAPIS folder for %s"
+msgstr "Aviso: no se pudo leer los VAPIs del directorio %s"
+
+#. add the version (old, deprecated format)
+#: ../src/autovala_lib/generate.vala:826
+msgid ""
+"Warning: The contruction 'const string project_version=\"...\"' is "
+"deprecated. Replace it with '// project version=...'"
+msgstr ""
+"Aviso: la construcción 'const string project_version=\"...\" está obsoleta. "
+"Debe sustituirse por '// project version=...'"
+
+#: ../src/autovala_lib/generate.vala:840
+#, c-format
+msgid "Warning: can't find namespace %s in file %s"
+msgstr "Aviso: el namespace %s en el fichero %s no se ha encontrado"
+
+#: ../src/gedit_plugin/plugin.vala:74
+msgid "Autovala"
+msgstr "Autovala"
+
+#: ../src/gedit_plugin/plugin.vala:82
+msgid "New project"
+msgstr "Nuevo proyecto"
+
+#: ../src/gedit_plugin/plugin.vala:90
+msgid "Open project file"
+msgstr "Abrir fichero de proyecto"
+
+#: ../src/gedit_plugin/plugin.vala:98
+msgid "Refresh project"
+msgstr "Refrescar proyecto"
+
+#: ../src/gedit_plugin/plugin.vala:106
+msgid "Run CMake"
+msgstr "Ejecutar CMake"
+
+#: ../src/gedit_plugin/plugin.vala:114
+msgid "Build project"
+msgstr "Construir proyecto"
 

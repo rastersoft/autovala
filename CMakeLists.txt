@@ -26,9 +26,13 @@ pkg_check_modules(DEPS REQUIRED
 	gee-1.0
 	glib-2.0
 	gtk+-3.0
+	libpeas-1.0
+	gedit
 )
 
 add_subdirectory(doc)
 add_subdirectory(po)
+add_subdirectory(data)
 add_subdirectory(src/autovala_lib)
+add_subdirectory(src/gedit_plugin)
 add_subdirectory(src)
