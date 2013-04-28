@@ -22,34 +22,60 @@ using Peas;
 using Gee;
 using Gtk;
 
-// project version=0.15
+// project version=0.16
 
 namespace AutoVala_gedit {
 
 	public class window : Gedit.WindowActivatable, Peas.ExtensionBase {
 
+		private Gtk.Action action_menu_entry;
+		private Gtk.Action action_open_project;
+		private Gtk.Action action_update_project;
+		private Gtk.Action action_cmake_project;
+		private Gtk.Action action_build_project;
+		private Gtk.Action action_makeclean_project;
 		private Gtk.ActionGroup _action_group;
-		private Gtk.ActionGroup _action_group1;
-		private Gtk.ActionGroup _action_group2;
 		private uint ui_id;
-		private Gtk.ActionEntry[] entry_list;
-		private Gtk.ActionEntry[] entry_list1;
-		private Gtk.ActionEntry[] entry_list2;
 		private string ?last_filename;
 		private Gtk.TextView output;
 		private Gtk.TextBuffer t_buffer;
+		private Gtk.ScrolledWindow scrolled;
 		private Gedit.Panel panel;
 
 		public window () {
 			GLib.Object ();
 		}
 
-		public Gedit.Window window {
-			owned get; construct;
+		construct {
+
+			this.action_menu_entry=new Gtk.Action("Autovala",_("Autovala"),null,null);
+
+			this.action_open_project=new Gtk.Action("autovala_open",_("Open project file"),_("Opens the project file for the current source file"),null);
+			this.action_open_project.activate.connect(this.open_project);
+
+			this.action_update_project=new Gtk.Action("autovala_update",_("Update project"),_("Updates the .avprj project file and CMakeLists files"),null);
+			this.action_update_project.activate.connect(this.update_project);
+
+			this.action_cmake_project=new Gtk.Action("autovala_cmake",_("Run CMake"),_("Runs CMake to create the Makefile"),null);
+			this.action_cmake_project.activate.connect(this.cmake_project);
+
+			this.action_build_project=new Gtk.Action("autovala_build",_("Build project"),_("Builds the project running MAKE"),null);
+			this.action_build_project.activate.connect(this.build_project);
+
+			this.action_makeclean_project=new Gtk.Action("autovala_makeclean",_("Make clean"),_("Cleans the project folder with 'make clean'"),null);
+			this.action_makeclean_project.activate.connect(this.makeclean_project);
+
+			this._action_group=new Gtk.ActionGroup("AutoVala");
+			this._action_group.add_action(this.action_menu_entry);
+			this._action_group.add_action(this.action_open_project);
+			this._action_group.add_action(this.action_update_project);
+			this._action_group.add_action(this.action_cmake_project);
+			this._action_group.add_action(this.action_build_project);
+			this._action_group.add_action(this.action_makeclean_project);
 		}
 
-		public void new_project(Gtk.Action action) {
-			print("Nuevo proyecto\n");
+		public Gedit.Window window {
+			owned get; construct;
 		}
 
 		private void clear_text() {
@@ -61,18 +87,82 @@ namespace AutoVala_gedit {
 			time_t datetime;
 			time_t(out datetime);
 			var localtime=GLib.Time.local(datetime);
-			this.t_buffer.insert_at_cursor("[%d:%d:%d] ".printf(localtime.hour,localtime.minute,localtime.second),-1);
+			this.t_buffer.insert_at_cursor("[%02d:%02d:%02d] ".printf(localtime.hour,localtime.minute,localtime.second),-1);
 			if (add_cr) {
 				this.t_buffer.insert_at_cursor(text+"\n",-1);
 			} else {
 				this.t_buffer.insert_at_cursor(text,-1);
 			}
+			var vadj=this.scrolled.vadjustment;
+			vadj.value=vadj.upper;
 		}
 
 		private void show_errors(string[] error_list) {
 			foreach(var e in error_list) {
 				this.insert_text(e,true);
 			}
+		}
+
+		private bool process_line(IOChannel channel, IOCondition condition, string stream_name) {
+			if (condition == IOCondition.HUP) {
+					return false;
+				}
+				try {
+					string line;
+					channel.read_line (out line, null, null);
+					insert_text(line,false);
+				} catch (IOChannelError e) {
+					stdout.printf ("%s: IOChannelError: %s\n", stream_name, e.message);
+					return false;
+				} catch (ConvertError e) {
+					stdout.printf ("%s: ConvertError: %s\n", stream_name, e.message);
+					return false;
+				}
+				return true;
+		}
+
+		private void launch_child(string[] parameters,string working_path) {
+			string[] spawn_env = Environ.get ();
+			Pid child_pid;
+
+			int standard_input;
+			int standard_output;
+			int standard_error;
+
+			this.clear_text();
+			try {
+				Process.spawn_async_with_pipes (working_path,
+					parameters,
+					spawn_env,
+					SpawnFlags.SEARCH_PATH | SpawnFlags.DO_NOT_REAP_CHILD,
+					null,
+					out child_pid,
+					out standard_input,
+					out standard_output,
+					out standard_error);
+			} catch(SpawnError e) {
+				insert_text(_("Failed\n"),false);
+				return;
+			}
+
+			// stdout:
+			IOChannel output = new IOChannel.unix_new (standard_output);
+			output.add_watch (IOCondition.IN | IOCondition.HUP, (channel, condition) => {
+				return process_line (channel, condition, "stdout");
+			});
+
+			// stderr:
+			IOChannel error = new IOChannel.unix_new (standard_error);
+			error.add_watch (IOCondition.IN | IOCondition.HUP, (channel, condition) => {
+				return process_line (channel, condition, "stderr");
+			});
+
+			ChildWatch.add (child_pid, (pid, status) => {
+				// Triggered when the child indicated by child_pid exits
+				Process.close_pid (pid);
+				insert_text(_("Done\n"),false);
+				this.update_state2(true);
+			});
 		}
 
 		public void open_project(Gtk.Action action) {
@@ -103,7 +193,7 @@ namespace AutoVala_gedit {
 			}
 		}
 
-		public void refresh_project(Gtk.Action action) {
+		public void update_project(Gtk.Action action) {
 			bool opened=false;
 			var document=this.window.get_active_document();
 			if (document!=null) {
@@ -138,118 +228,139 @@ namespace AutoVala_gedit {
 				panel.activate_item(this.output);
 				panel.show();
 			}
+			this.update_state2(true);
+		}
+
+		private void launch_command(string[] parameters,string? final_path=null) {
+			bool opened=false;
+			var document=this.window.get_active_document();
+			if (document!=null) {
+				var openfile=document.get_location();
+				if (openfile!=null) {
+					opened=true;
+					var current_filename=openfile.get_path();
+					var config=new AutoVala.configuration();
+					var enable=config.read_configuration(current_filename) ? false : true;
+					if (enable) {
+						string final_path2;
+						if (final_path==null) {
+							final_path2=Path.build_filename(config.basepath,"install");
+						} else {
+							final_path2=final_path;
+						}
+						var final_filepath=File.new_for_path(final_path2);
+						if (final_filepath.query_exists()==false) {
+							try {
+								final_filepath.make_directory();
+							} catch (Error e) {
+							}
+						}
+						this.launch_child(parameters,final_path2);
+					}
+				}
+			}
 		}
 
 		public void cmake_project(Gtk.Action action) {
-			print("CMake proyecto\n");
+			string[] parameters={};
+			parameters+="cmake";
+			parameters+="..";
+			this.launch_command(parameters);
 		}
 
 		public void build_project(Gtk.Action action) {
-			print("Build proyecto\n");
+			string[] parameters={};
+			parameters+="make";
+			this.launch_command(parameters);
+		}
+
+		public void makeclean_project(Gtk.Action action) {
+			string[] parameters={};
+			parameters+="make";
+			parameters+="clean";
+			this.launch_command(parameters);
 		}
 
 		public void activate () {
-			this.panel=this.window.get_bottom_panel();
 			this.last_filename=null;
+			var manager=this.window.get_ui_manager();
+			manager.insert_action_group(this._action_group,-1);
+			this.ui_id=manager.add_ui_from_string("""<ui><menubar name="MenuBar"><menu name="AutovalaMenu" action="Autovala"><placeholder name="AutoValaToolsOps"><menuitem name="Open Project" action="autovala_open"/><menuitem name="update Project" action="autovala_update"/><menuitem name="CMake Project" action="autovala_cmake"/><menuitem name="Build Project" action="autovala_build"/><menuitem name="Clean Project" action="autovala_makeclean"/></placeholder></menu></menubar></ui>""",-1);
+			this._action_group.set_sensitive(true);
 			this.t_buffer=new Gtk.TextBuffer(null);
 			this.output=new Gtk.TextView.with_buffer(this.t_buffer);
+			this.output.hexpand=true;
+			this.output.vexpand=true;
+			this.output.show();
 			this.output.set_editable(false);
-			this.panel.add_item(this.output,"autovala_output","Autovala",null);
-			var manager=this.window.get_ui_manager();
-			var entry = Gtk.ActionEntry();
-			entry.name="Autovala";
-			entry.stock_id="";
-			entry.label=_("Autovala");
-			entry.accelerator="";
-			entry.tooltip="";
-			entry.callback=null;
-
-			var entry2 = Gtk.ActionEntry();
-			entry2.name="autovala_new";
-			entry2.stock_id="";
-			entry2.label=_("New project");
-			entry2.accelerator="";
-			entry2.tooltip="Creates a new Autovala project";
-			entry2.callback=this.new_project;
-
-			var entry6 = Gtk.ActionEntry();
-			entry6.name="autovala_open";
-			entry6.stock_id="";
-			entry6.label=_("Open project file");
-			entry6.accelerator="";
-			entry6.tooltip="Opens the project file for the current source file";
-			entry6.callback=this.open_project;
-
-			var entry3 = Gtk.ActionEntry();
-			entry3.name="autovala_refresh";
-			entry3.stock_id="";
-			entry3.label=_("Refresh project file");
-			entry3.accelerator="";
-			entry3.tooltip="Refreshes the .avprj project file";
-			entry3.callback=this.refresh_project;
-
-			var entry4 = Gtk.ActionEntry();
-			entry4.name="autovala_cmake";
-			entry4.stock_id="";
-			entry4.label=_("Run CMake");
-			entry4.accelerator="";
-			entry4.tooltip="Runs CMake to create the Makefile";
-			entry4.callback=this.cmake_project;
-
-			var entry5 = Gtk.ActionEntry();
-			entry5.name="autovala_build";
-			entry5.stock_id="";
-			entry5.label=_("Build project");
-			entry5.accelerator="";
-			entry5.tooltip="Builds the project running MAKE";
-			entry5.callback=this.build_project;
-
-			this.entry_list={};
-			this.entry_list+=entry;
-			this.entry_list1={};
-			this.entry_list1+=entry2;
-			this.entry_list2={};
-			this.entry_list2+=entry6;
-			this.entry_list2+=entry3;
-			this.entry_list2+=entry4;
-			this.entry_list2+=entry5;
-			this._action_group=new Gtk.ActionGroup("AutoVala");
-			this._action_group1=new Gtk.ActionGroup("AutoVala1");
-			this._action_group2=new Gtk.ActionGroup("AutoVala2");
-			this._action_group.add_actions(this.entry_list,this);
-			this._action_group1.add_actions(this.entry_list1,this);
-			this._action_group2.add_actions(this.entry_list2,this);
-			manager.insert_action_group(this._action_group,-1);
-			manager.insert_action_group(this._action_group1,-1);
-			manager.insert_action_group(this._action_group2,-1);
-			this.ui_id=manager.add_ui_from_string("""<ui><menubar name="MenuBar"><menu name="AutovalaMenu" action="Autovala"><placeholder name="AutoValaToolsOps"><menuitem name="New Project" action="autovala_new"/><menuitem name="Open Project" action="autovala_open"/><menuitem name="Refresh Project" action="autovala_refresh"/><menuitem name="CMake Project" action="autovala_cmake"/><menuitem name="Build Project" action="autovala_build"/></placeholder></menu></menubar></ui>""",-1);
-			this._action_group.set_sensitive(true);
-			this._action_group1.set_sensitive(true);
-			this._action_group2.set_sensitive(false);
+			this.scrolled=new Gtk.ScrolledWindow(null,null);
+			this.scrolled.vscrollbar_policy=PolicyType.ALWAYS;
+			this.scrolled.hscrollbar_policy=PolicyType.ALWAYS;
+			this.panel=this.window.get_bottom_panel();
+			this.scrolled.add(this.output);
+			this.panel.add_item(this.scrolled,"autovala_output","Autovala",null);
 		}
  
 		public void deactivate () {
 			var manager=this.window.get_ui_manager();
 			manager.remove_ui(this.ui_id);
-			manager.remove_action_group(this._action_group2);
-			manager.remove_action_group(this._action_group1);
 			manager.remove_action_group(this._action_group);
 			manager.ensure_update();
+			this.panel.remove_item(this.output);
 		}
-		public void update_state () {
-			bool enable=false;
+
+		public void update_state() {
+			this.update_state2(false);
+		}
+
+		public void update_state2(bool force) {
+			bool disable_all=false;
 			var document=this.window.get_active_document();
 			if (document!=null) {
 				var openfile=document.get_location();
 				if (openfile!=null) {
 					var current_filename=openfile.get_path();
-					if (current_filename!=this.last_filename) {
+					if ((current_filename!=this.last_filename)||(force==true)) {
 						this.last_filename=current_filename;
 						var config=new AutoVala.configuration();
-						enable=config.read_configuration(current_filename) ? false : true;
-						this._action_group2.set_sensitive(enable);
+						var enable=config.read_configuration(current_filename) ? false : true;
+						if (enable) {
+							this.action_open_project.set_sensitive(true);
+							this.action_update_project.set_sensitive(true);
+							var cmakelists=File.new_for_path(Path.build_filename(config.basepath,"CMakeLists.txt"));
+							if (cmakelists.query_exists()) {
+								this.action_cmake_project.set_sensitive(true);
+								var makefile=File.new_for_path(Path.build_filename(config.basepath,"install","Makefile"));
+								if (makefile.query_exists()) {
+									this.action_build_project.set_sensitive(true);
+									this.action_makeclean_project.set_sensitive(true);
+								} else {
+									this.action_build_project.set_sensitive(false);
+									this.action_makeclean_project.set_sensitive(false);
+								}
+							} else {
+								this.action_cmake_project.set_sensitive(false);
+								this.action_build_project.set_sensitive(false);
+								this.action_makeclean_project.set_sensitive(false);
+							}
+						} else {
+							disable_all=true;
+						}
 					}
+				} else {
+					disable_all=true;
+					this.last_filename=null;
 				}
+			} else {
+				disable_all=true;
+				this.last_filename=null;
+			}
+			if (disable_all) {
+				this.action_open_project.set_sensitive(false);
+				this.action_update_project.set_sensitive(false);
+				this.action_cmake_project.set_sensitive(false);
+				this.action_build_project.set_sensitive(false);
+				this.action_makeclean_project.set_sensitive(false);
 			}
 		}
 	}

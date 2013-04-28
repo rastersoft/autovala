@@ -70,3 +70,7 @@ If you want to remove all the automatically added lines in the project file, lea
 
 These commands can be called from any of the folders or subfolders of the project, because it will search for the first *.avprj* file located in the current folder or upstream.
 
+You can also use the Gedit plugin. With it, an *Autovala* entry will be added to the menu, with the following options:
+
+ * Open project file: this option will open the project file (*.avprj*) for the currently active source file.
+ * Update project: is the same than *autovala update*

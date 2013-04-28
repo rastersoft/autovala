@@ -12,7 +12,7 @@ vala_version: 0.20
 custom: data/AutoVala_gedit.plugin /usr/lib/gedit/plugins
 
 vala_binary: src/autovala
-*version: 0.15.0
+*version: 0.16.0
 vala_local_package: AutoVala
 *vala_package: posix
 *vala_check_package: gee-1.0
@@ -20,7 +20,7 @@ vala_local_package: AutoVala
 *vala_source: autovala.vala
 
 vala_library: src/autovala_lib/autovala_lib
-*version: 0.15
+*version: 0.16
 *namespace: AutoVala
 *vala_package: posix
 *vala_check_package: gee-1.0
@@ -31,7 +31,7 @@ vala_library: src/autovala_lib/autovala_lib
 *vala_source: generate.vala
 
 vala_library: src/gedit_plugin/autovala_pg
-*version: 0.15
+*version: 0.16
 *namespace: AutoVala_gedit
 vala_destination: /usr/lib/gedit/plugins/
 vala_local_package: AutoVala
