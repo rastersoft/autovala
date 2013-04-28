@@ -48,6 +48,14 @@
 <p>If you want to remove all the automatically added lines in the project file, leaving only the manually added ones, you can use:</p>
 <pre><code>    autovala clear</code></pre>
 <p>These commands can be called from any of the folders or subfolders of the project, because it will search for the first <em>.avprj</em> file located in the current folder or upstream.</p>
+<p>You can also use the Gedit plugin. With it, an <em>Autovala</em> entry will be added to the menu, with the following options:</p>
+<ul>
+<li>Open project file: this option will open the project file (<em>.avprj</em>) for the currently active source file.<br /></li>
+<li>Update project: is the same than <em>autovala update</em><br /></li>
+<li>Run CMake: runs <em>cmake</em> in the folder <em>install</em> of the current source file's project<br /></li>
+<li>Build project: runs <em>make</em> in the folder <em>install</em> of the current source file's project<br /></li>
+<li>Make clean: runs <em>make clean</em> in the folder <em>install</em> of the current source file's project</li>
+</ul>
 <p><a href="index.html">Home</a></p>
 </div>
 </body>
