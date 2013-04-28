@@ -31,6 +31,8 @@ and enjoy.
 
 ## History of versions ##
 
+* version 0.16.0 (2013-04-28)
+    * Added plugin for Gedit
 * version 0.15.0 (2013-04-26)
     * Allows to specify manually the destination directory for binaries and libraries (useful for plugins)
     * Allows to install files in a manually specified destination directory
