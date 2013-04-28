@@ -1,6 +1,6 @@
 HOW TO INSTALL
 
-You need CMake, Vala 0.16 or later, libgee and gtk+.
+You need CMake, Vala 0.20 or later, libgee and gtk+.
 The repository includes a version of CMake for Vala
 that includes some changes (not mine) to support
 Valadoc. These changes still aren't available at the
