@@ -6,6 +6,10 @@
 <div class="main_frame">
 <p><a href="index.html">Home</a></p>
 <ul>
+<li>version 0.17.0 (2013-04-28)
+<ul>
+<li>Fixed bug in plugin when updating the whole project<br /></li>
+</ul></li>
 <li>version 0.16.0 (2013-04-28)
 <ul>
 <li>Added plugin for Gedit<br /></li>

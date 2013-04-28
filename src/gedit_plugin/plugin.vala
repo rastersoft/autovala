@@ -22,7 +22,7 @@ using Peas;
 using Gee;
 using Gtk;
 
-// project version=0.16
+// project version=0.17
 
 namespace AutoVala_gedit {
 
@@ -211,7 +211,7 @@ namespace AutoVala_gedit {
 						this.insert_text(_("Aborting\n"),false);
 					} else {
 						this.insert_text(_("Updating CMake files\n"),false);
-						retval=gen.cmake();
+						retval=gen.cmake(current_filename);
 						this.show_errors(gen.get_error_list());
 						if (retval) {
 							this.insert_text(_("Aborting\n"),false);
@@ -285,7 +285,10 @@ namespace AutoVala_gedit {
 			this.last_filename=null;
 			var manager=this.window.get_ui_manager();
 			manager.insert_action_group(this._action_group,-1);
-			this.ui_id=manager.add_ui_from_string("""<ui><menubar name="MenuBar"><menu name="AutovalaMenu" action="Autovala"><placeholder name="AutoValaToolsOps"><menuitem name="Open Project" action="autovala_open"/><menuitem name="update Project" action="autovala_update"/><menuitem name="CMake Project" action="autovala_cmake"/><menuitem name="Build Project" action="autovala_build"/><menuitem name="Clean Project" action="autovala_makeclean"/></placeholder></menu></menubar></ui>""",-1);
+			try {
+				this.ui_id=manager.add_ui_from_string("""<ui><menubar name="MenuBar"><menu name="AutovalaMenu" action="Autovala"><placeholder name="AutoValaToolsOps"><menuitem name="Open Project" action="autovala_open"/><menuitem name="update Project" action="autovala_update"/><menuitem name="CMake Project" action="autovala_cmake"/><menuitem name="Build Project" action="autovala_build"/><menuitem name="Clean Project" action="autovala_makeclean"/></placeholder></menu></menubar></ui>""",-1);
+			} catch (Error e) {
+			}
 			this._action_group.set_sensitive(true);
 			this.t_buffer=new Gtk.TextBuffer(null);
 			this.output=new Gtk.TextView.with_buffer(this.t_buffer);

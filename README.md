@@ -30,7 +30,8 @@ and enjoy.
 
 
 ## History of versions ##
-
+* version 0.17.0 (2013-04-28)
+    * Fixed bug in plugin when updating the whole project
 * version 0.16.0 (2013-04-28)
     * Added plugin for Gedit
 * version 0.15.0 (2013-04-26)
