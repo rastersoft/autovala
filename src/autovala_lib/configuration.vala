@@ -20,7 +20,7 @@ using GLib;
 using Gee;
 using Posix;
 
-// project version=0.18
+// project version=0.19
 
 namespace AutoVala {
 

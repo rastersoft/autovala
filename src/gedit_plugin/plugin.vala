@@ -22,7 +22,7 @@ using Peas;
 using Gee;
 using Gtk;
 
-// project version=0.18
+// project version=0.19
 
 namespace AutoVala_gedit {
 
@@ -38,7 +38,7 @@ namespace AutoVala_gedit {
 			this.main_w = (Gtk.Dialog) builder.get_object("dialog1");
 			this.main_w.set_title(_("Delete 'install' folder"));
 			var label=(Gtk.Label)builder.get_object("text_inside");
-			label.set_text(_("The 'install' folder and its content will be deleted. Continue?"));
+			label.set_text(_("All the content of the 'install' folder will be deleted. Continue?"));
 		}
 
 		public bool run() {
@@ -342,7 +342,7 @@ namespace AutoVala_gedit {
 			this.launch_command(parameters);
 		}
 
-		private void delete_recursive(string path) {
+		private void delete_recursive(string path,bool delete_main) {
 			var filepath=File.new_for_path(path);
 			if (filepath.query_exists()==false) {
 				return;
@@ -352,10 +352,12 @@ namespace AutoVala_gedit {
 				var enumerator = filepath.enumerate_children(FileAttribute.STANDARD_NAME, FileQueryInfoFlags.NOFOLLOW_SYMLINKS,null);
 				while ((info_file = enumerator.next_file(null)) != null) {
 					var full_path=Path.build_filename(path,info_file.get_name());
-					this.delete_recursive(full_path);
+					this.delete_recursive(full_path,true);
 				}
 			}
-			filepath.delete();
+			if (delete_main) {
+				filepath.delete();
+			}
 		}
 
 		private void delete_install() {
@@ -368,7 +370,7 @@ namespace AutoVala_gedit {
 					var enable=config.read_configuration(current_filename);
 					if (enable==false) {
 						var final_path2=Path.build_filename(config.basepath,"install");
-						this.delete_recursive(final_path2);
+						this.delete_recursive(final_path2,false); // don't delete 'install', only its content
 					}
 				}
 			}

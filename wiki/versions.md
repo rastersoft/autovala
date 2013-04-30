@@ -1,6 +1,8 @@
+* version 0.19.0 (2013-04-30)
+    * Now the plugin deletes the content of the *install* folder, but not the folder itself
 * version 0.18.0 (2013-04-30)
-    * Allows to delete the INSTALL folder from Gedit
-    * Allows to delete the INSTALL folder, update the .avprj file, run cmake and launch make in a single step from Gedit
+    * Allows to delete the *install* folder from Gedit
+    * Allows to delete the *install* folder, update the .avprj file, run cmake and launch make in a single step from Gedit
 * version 0.17.0 (2013-04-28)
     * Fixed bug in plugin when updating the whole project
 * version 0.16.0 (2013-04-28)
