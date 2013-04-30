@@ -33,6 +33,7 @@ pkg_check_modules(DEPS REQUIRED
 add_subdirectory(doc)
 add_subdirectory(po)
 add_subdirectory(data)
+add_subdirectory(data/interface)
 add_subdirectory(src/autovala_lib)
 add_subdirectory(src/gedit_plugin)
 add_subdirectory(src)

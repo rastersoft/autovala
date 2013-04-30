@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-04-28 16:18+0200\n"
-"PO-Revision-Date: 2013-04-28 16:19+0200\n"
+"POT-Creation-Date: 2013-04-30 17:32+0200\n"
+"PO-Revision-Date: 2013-04-30 17:32+0200\n"
 "Last-Translator: \n"
 "Language-Team: American English <kde-i18n-doc@kde.org>\n"
 "Language: en_US\n"
@@ -49,14 +49,14 @@ msgstr ""
 
 #: ../src/autovala.vala:60 ../src/autovala.vala:74 ../src/autovala.vala:89
 #: ../src/autovala.vala:96 ../src/autovala.vala:111 ../src/autovala.vala:125
-#: ../src/gedit_plugin/plugin.vala:211 ../src/gedit_plugin/plugin.vala:217
+#: ../src/gedit_plugin/plugin.vala:264 ../src/gedit_plugin/plugin.vala:270
 #, c-format
 msgid "Aborting\n"
 msgstr "Abortando\n"
 
 #: ../src/autovala.vala:63 ../src/autovala.vala:77 ../src/autovala.vala:100
 #: ../src/autovala.vala:114 ../src/autovala.vala:131
-#: ../src/gedit_plugin/plugin.vala:163 ../src/gedit_plugin/plugin.vala:219
+#: ../src/gedit_plugin/plugin.vala:272
 #, c-format
 msgid "Done\n"
 msgstr "Hecho\n"
@@ -66,7 +66,7 @@ msgstr "Hecho\n"
 msgid "Updating project file\n"
 msgstr "Actualizando el fichero de proyecto\n"
 
-#: ../src/autovala.vala:92 ../src/gedit_plugin/plugin.vala:213
+#: ../src/autovala.vala:92 ../src/gedit_plugin/plugin.vala:266
 #, c-format
 msgid "Updating CMake files\n"
 msgstr "Actualizando los ficheros de CMake\n"
@@ -221,83 +221,6 @@ msgstr ""
 msgid "Failed to write the CMakeLists file for binary %s"
 msgstr "Incapaz de escribir el fichero CMakeLists del binario %s"
 
-#: ../src/autovala_lib/generate.vala:143
-#, c-format
-msgid "Warning: Unable to create the %s directory"
-msgstr "Aviso: No fue posible crear el directorio %s"
-
-#: ../src/autovala_lib/generate.vala:148
-#, c-format
-msgid "Warning: the %s directory already exists"
-msgstr "Aviso: el directorio %s ya existe"
-
-#: ../src/autovala_lib/generate.vala:172
-#, c-format
-msgid "There's already a project in folder %s"
-msgstr "Ya existe un proyecto en el directorio %s"
-
-#: ../src/autovala_lib/generate.vala:177
-#, c-format
-msgid "Failed to list path %s"
-msgstr "Incapaz de listar el directorio %s"
-
-#: ../src/autovala_lib/generate.vala:290
-#: ../src/autovala_lib/configuration.vala:555
-msgid ""
-"Can't get the version of the installed Vala binary. Asuming version 0.16"
-msgstr ""
-"Incapaz de obtener la versión del compilador de Vala instalado. Asumiendo "
-"versión 0.16"
-
-#: ../src/autovala_lib/generate.vala:398
-#, c-format
-msgid "Unknown file %s uses namespace GLib. Contact the author."
-msgstr ""
-"El fichero desconocido %s utiliza el namespace GLib. Contacte con el autor."
-
-#: ../src/autovala_lib/generate.vala:462
-msgid "Can't determine the version of the Vala compiler"
-msgstr "Incapaz de obtener la versión del compilador de Vala instalado."
-
-#: ../src/autovala_lib/generate.vala:582
-#, c-format
-msgid "Warning: failed to add files at folder %s"
-msgstr "Aviso: incapaz de añadir los ficheros del directorio %s"
-
-#: ../src/autovala_lib/generate.vala:637
-#, c-format
-msgid "Warning: couldn't get the namespace list for %s"
-msgstr "Aviso: incapaz de obtener los namespaces del fichero %s"
-
-#: ../src/autovala_lib/generate.vala:641
-#, c-format
-msgid "Warning: overwriting the version number for %s"
-msgstr "Aviso: sobreescribiendo el número de versión de %s"
-
-#: ../src/autovala_lib/generate.vala:726
-#, c-format
-msgid "Warning: couldn't process binary %s"
-msgstr "Aviso: no se pudo procesar el binario %s"
-
-#: ../src/autovala_lib/generate.vala:789
-#, c-format
-msgid "Warning: can't read the VAPIS folder for %s"
-msgstr "Aviso: no se pudo leer los VAPIs del directorio %s"
-
-#. add the version (old, deprecated format)
-#: ../src/autovala_lib/generate.vala:826
-msgid ""
-"Warning: The contruction 'const string project_version=\"...\"' is "
-"deprecated. Replace it with '// project version=...'"
-msgstr ""
-"Aviso: la construcción 'const string project_version=\"...\" está obsoleta. "
-"Debe sustituirse por '// project version=...'"
-
-#: ../src/autovala_lib/generate.vala:840
-#, c-format
-msgid "Warning: can't find namespace %s in file %s"
-msgstr "Aviso: el namespace %s en el fichero %s no se ha encontrado"
-
 #: ../src/autovala_lib/configuration.vala:548
 #, c-format
 msgid ""
@@ -305,6 +228,14 @@ msgid ""
 msgstr ""
 "La cadena de versión de Vala no es válida. Tiene que ser de la forma N.N o N."
 "N.N (línea %d)"
+
+#: ../src/autovala_lib/configuration.vala:555
+#: ../src/autovala_lib/generate.vala:290
+msgid ""
+"Can't get the version of the installed Vala binary. Asuming version 0.16"
+msgstr ""
+"Incapaz de obtener la versión del compilador de Vala instalado. Asumiendo "
+"versión 0.16"
 
 #: ../src/autovala_lib/configuration.vala:567
 #, c-format
@@ -477,61 +408,169 @@ msgstr "Almacenando la configuración en el fichero %s"
 msgid "Can't create the config file %s"
 msgstr "No se ha podido crear el fichero de configuración %s"
 
-#: ../src/gedit_plugin/plugin.vala:51
+#: ../src/autovala_lib/generate.vala:143
+#, c-format
+msgid "Warning: Unable to create the %s directory"
+msgstr "Aviso: No fue posible crear el directorio %s"
+
+#: ../src/autovala_lib/generate.vala:148
+#, c-format
+msgid "Warning: the %s directory already exists"
+msgstr "Aviso: el directorio %s ya existe"
+
+#: ../src/autovala_lib/generate.vala:172
+#, c-format
+msgid "There's already a project in folder %s"
+msgstr "Ya existe un proyecto en el directorio %s"
+
+#: ../src/autovala_lib/generate.vala:177
+#, c-format
+msgid "Failed to list path %s"
+msgstr "Incapaz de listar el directorio %s"
+
+#: ../src/autovala_lib/generate.vala:398
+#, c-format
+msgid "Unknown file %s uses namespace GLib. Contact the author."
+msgstr ""
+"El fichero desconocido %s utiliza el namespace GLib. Contacte con el autor."
+
+#: ../src/autovala_lib/generate.vala:462
+msgid "Can't determine the version of the Vala compiler"
+msgstr "Incapaz de obtener la versión del compilador de Vala instalado."
+
+#: ../src/autovala_lib/generate.vala:582
+#, c-format
+msgid "Warning: failed to add files at folder %s"
+msgstr "Aviso: incapaz de añadir los ficheros del directorio %s"
+
+#: ../src/autovala_lib/generate.vala:637
+#, c-format
+msgid "Warning: couldn't get the namespace list for %s"
+msgstr "Aviso: incapaz de obtener los namespaces del fichero %s"
+
+#: ../src/autovala_lib/generate.vala:641
+#, c-format
+msgid "Warning: overwriting the version number for %s"
+msgstr "Aviso: sobreescribiendo el número de versión de %s"
+
+#: ../src/autovala_lib/generate.vala:726
+#, c-format
+msgid "Warning: couldn't process binary %s"
+msgstr "Aviso: no se pudo procesar el binario %s"
+
+#: ../src/autovala_lib/generate.vala:789
+#, c-format
+msgid "Warning: can't read the VAPIS folder for %s"
+msgstr "Aviso: no se pudo leer los VAPIs del directorio %s"
+
+#. add the version (old, deprecated format)
+#: ../src/autovala_lib/generate.vala:826
+msgid ""
+"Warning: The contruction 'const string project_version=\"...\"' is "
+"deprecated. Replace it with '// project version=...'"
+msgstr ""
+"Aviso: la construcción 'const string project_version=\"...\" está obsoleta. "
+"Debe sustituirse por '// project version=...'"
+
+#: ../src/autovala_lib/generate.vala:840
+#, c-format
+msgid "Warning: can't find namespace %s in file %s"
+msgstr "Aviso: el namespace %s en el fichero %s no se ha encontrado"
+
+#: ../src/gedit_plugin/plugin.vala:76
 msgid "Autovala"
 msgstr "Autovala"
 
-#: ../src/gedit_plugin/plugin.vala:53
+#: ../src/gedit_plugin/plugin.vala:78
 msgid "Open project file"
 msgstr "Abrir fichero de proyecto"
 
-#: ../src/gedit_plugin/plugin.vala:53
+#: ../src/gedit_plugin/plugin.vala:78
 msgid "Opens the project file for the current source file"
 msgstr "Abre el fichero de proyecto asociado al fichero fuente actual"
 
-#: ../src/gedit_plugin/plugin.vala:56
+#: ../src/gedit_plugin/plugin.vala:81
 msgid "Update project"
 msgstr "Actualizar el proyecto"
 
-#: ../src/gedit_plugin/plugin.vala:56
+#: ../src/gedit_plugin/plugin.vala:81
 msgid "Updates the .avprj project file and CMakeLists files"
 msgstr "Actualiza el fichero de proyecto .avprj y los ficheros CMakeLists"
 
-#: ../src/gedit_plugin/plugin.vala:59
+#: ../src/gedit_plugin/plugin.vala:84
 msgid "Run CMake"
 msgstr "Ejecutar CMake"
 
-#: ../src/gedit_plugin/plugin.vala:59
+#: ../src/gedit_plugin/plugin.vala:84
 msgid "Runs CMake to create the Makefile"
 msgstr "Ejecuta CMake para crear los ficheros Makefile"
 
-#: ../src/gedit_plugin/plugin.vala:62
+#: ../src/gedit_plugin/plugin.vala:87
 msgid "Build project"
 msgstr "Construir proyecto"
 
-#: ../src/gedit_plugin/plugin.vala:62
+#: ../src/gedit_plugin/plugin.vala:87
 msgid "Builds the project running MAKE"
 msgstr "Construye el fichero con MAKE"
 
-#: ../src/gedit_plugin/plugin.vala:65
+#: ../src/gedit_plugin/plugin.vala:90
 msgid "Make clean"
 msgstr "Make clean"
 
-#: ../src/gedit_plugin/plugin.vala:65
+#: ../src/gedit_plugin/plugin.vala:90
 msgid "Cleans the project folder with 'make clean'"
 msgstr "Limpia la carpeta del proyecto con 'make clean'"
 
-#: ../src/gedit_plugin/plugin.vala:144
+#: ../src/gedit_plugin/plugin.vala:93
+msgid "Full clean"
+msgstr "Clean completo"
+
+#: ../src/gedit_plugin/plugin.vala:93
+msgid "Deletes the 'install' folder, to recreate the cmake system from scratch"
+msgstr ""
+"Borra el directorio 'install', para recrear el sistema cmake desde cero"
+
+#: ../src/gedit_plugin/plugin.vala:96
+msgid "Full build"
+msgstr "Construcción completa"
+
+#: ../src/gedit_plugin/plugin.vala:96
+msgid ""
+"Deletes the 'install' folder, updates the Autovala .avprj project file, runs "
+"cmake and launches make for a full build"
+msgstr ""
+"Borra el directorio 'install', actualiza el fichero .avprj, ejecuta cmake y "
+"lanza make para una compilación completa"
+
+#: ../src/gedit_plugin/plugin.vala:177
+#, c-format
+msgid "Launching '%s' at folder '%s'\n"
+msgstr "Lanzando '%s' desde el directorio '%s'\n"
+
+#: ../src/gedit_plugin/plugin.vala:189
 msgid "Failed\n"
 msgstr "Fallo\n"
 
-#: ../src/gedit_plugin/plugin.vala:206
+#: ../src/gedit_plugin/plugin.vala:208
+#, c-format
+msgid "Done (return value %d)\n"
+msgstr "Hecho (valor de retorno %d)\n"
+
+#: ../src/gedit_plugin/plugin.vala:259
 msgid "Updating project and cmake files\n"
 msgstr "Actualizando ficheros de proyecto y de CMake\n"
 
-#: ../src/gedit_plugin/plugin.vala:227
+#: ../src/gedit_plugin/plugin.vala:280
 msgid "Failed to get access to the project file\n"
 msgstr "No se ha podido acceder al fichero de proyecto\n"
+
+#: ../data/interface/ask_to_continue.ui.h:1
+msgid "Delete 'install' folder"
+msgstr "Borrar el directorio 'folder'"
+
+#: ../data/interface/ask_to_continue.ui.h:2
+msgid "The 'install' folder and its content will be deleted. Continue?"
+msgstr "Se borrará la carpeta 'install' y todo su contenido. ¿Continuar?"
 
 #~ msgid "Refresh project"
 #~ msgstr "Refrescar proyecto"

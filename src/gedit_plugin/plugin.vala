@@ -26,6 +26,34 @@ using Gtk;
 
 namespace AutoVala_gedit {
 
+	public class ask_to_continue: Object {
+
+		private Gtk.Dialog main_w;
+
+		public ask_to_continue() {
+			Intl.bindtextdomain(AutoVala_geditConstants.GETTEXT_PACKAGE, Path.build_filename(AutoVala_geditConstants.DATADIR,"locale"));
+			Intl.bind_textdomain_codeset(AutoVala_geditConstants.GETTEXT_PACKAGE, "utf-8" );
+			var builder = new Builder();
+			builder.add_from_file(GLib.Path.build_filename(AutoVala_geditConstants.PKGDATADIR,"ask_to_continue.ui"));
+			this.main_w = (Gtk.Dialog) builder.get_object("dialog1");
+			this.main_w.set_title(_("Delete 'install' folder"));
+			var label=(Gtk.Label)builder.get_object("text_inside");
+			label.set_text(_("The 'install' folder and its content will be deleted. Continue?"));
+		}
+
+		public bool run() {
+			this.main_w.show();
+			var retval=this.main_w.run();
+			this.main_w.hide();
+			this.main_w.destroy();
+			if (retval==2) {
+				return true;
+			} else {
+				return false;
+			}
+		}
+	}
+
 	public class window : Gedit.WindowActivatable, Peas.ExtensionBase {
 
 		private Gtk.Action action_menu_entry;
@@ -34,6 +62,8 @@ namespace AutoVala_gedit {
 		private Gtk.Action action_cmake_project;
 		private Gtk.Action action_build_project;
 		private Gtk.Action action_makeclean_project;
+		private Gtk.Action action_fullclean_project;
+		private Gtk.Action action_fullbuild_project;
 		private Gtk.ActionGroup _action_group;
 		private uint ui_id;
 		private string ?last_filename;
@@ -65,6 +95,12 @@ namespace AutoVala_gedit {
 			this.action_makeclean_project=new Gtk.Action("autovala_makeclean",_("Make clean"),_("Cleans the project folder with 'make clean'"),null);
 			this.action_makeclean_project.activate.connect(this.makeclean_project);
 
+			this.action_fullclean_project=new Gtk.Action("autovala_fullclean",_("Full clean"),_("Deletes the 'install' folder, to recreate the cmake system from scratch"),null);
+			this.action_fullclean_project.activate.connect(this.fullclean_project);
+
+			this.action_fullbuild_project=new Gtk.Action("autovala_fullbuild",_("Full build"),_("Deletes the 'install' folder, updates the Autovala .avprj project file, runs cmake and launches make for a full build"),null);
+			this.action_fullbuild_project.activate.connect(this.fullbuild_project);
+
 			this._action_group=new Gtk.ActionGroup("AutoVala");
 			this._action_group.add_action(this.action_menu_entry);
 			this._action_group.add_action(this.action_open_project);
@@ -72,6 +108,8 @@ namespace AutoVala_gedit {
 			this._action_group.add_action(this.action_cmake_project);
 			this._action_group.add_action(this.action_build_project);
 			this._action_group.add_action(this.action_makeclean_project);
+			this._action_group.add_action(this.action_fullclean_project);
+			this._action_group.add_action(this.action_fullbuild_project);
 		}
 
 		public Gedit.Window window {
@@ -83,11 +121,13 @@ namespace AutoVala_gedit {
 			this.output.set_buffer(this.t_buffer);
 		}
 
-		private void insert_text(string text,bool add_cr) {
+		private void insert_text(string text,bool add_cr,bool add_date=true) {
 			time_t datetime;
 			time_t(out datetime);
-			var localtime=GLib.Time.local(datetime);
-			this.t_buffer.insert_at_cursor("[%02d:%02d:%02d] ".printf(localtime.hour,localtime.minute,localtime.second),-1);
+			if (add_date) {
+				var localtime=GLib.Time.local(datetime);
+				this.t_buffer.insert_at_cursor("[%02d:%02d:%02d] ".printf(localtime.hour,localtime.minute,localtime.second),-1);
+			}
 			if (add_cr) {
 				this.t_buffer.insert_at_cursor(text+"\n",-1);
 			} else {
@@ -121,15 +161,25 @@ namespace AutoVala_gedit {
 				return true;
 		}
 
-		private void launch_child(string[] parameters,string working_path) {
+		public delegate void plugin_callback_func ();
+
+		private void launch_child(string[] parameters,string working_path,plugin_callback_func callback=null) {
 			string[] spawn_env = Environ.get ();
 			Pid child_pid;
 
 			int standard_input;
 			int standard_output;
 			int standard_error;
-
-			this.clear_text();
+			string params2="";
+			bool other=false;
+			foreach(var l in parameters) {
+				if (other) {
+					params2+=" ";
+				}
+				other=true;
+				params2+=l;
+			}
+			insert_text(_("Launching '%s' at folder '%s'\n").printf(params2,working_path),false,false);
 			try {
 				Process.spawn_async_with_pipes (working_path,
 					parameters,
@@ -160,8 +210,11 @@ namespace AutoVala_gedit {
 			ChildWatch.add (child_pid, (pid, status) => {
 				// Triggered when the child indicated by child_pid exits
 				Process.close_pid (pid);
-				insert_text(_("Done\n"),false);
+				insert_text(_("Done (return value %d)\n".printf(status)),false);
 				this.update_state2(true);
+				if (callback!=null) {
+					callback();
+				}
 			});
 		}
 
@@ -194,6 +247,11 @@ namespace AutoVala_gedit {
 		}
 
 		public void update_project(Gtk.Action action) {
+			this.clear_text();
+			this.update_project2();
+		}
+
+		private void update_project2() {
 			bool opened=false;
 			var document=this.window.get_active_document();
 			if (document!=null) {
@@ -231,7 +289,7 @@ namespace AutoVala_gedit {
 			this.update_state2(true);
 		}
 
-		private void launch_command(string[] parameters,string? final_path=null) {
+		private void launch_command(string[] parameters,string? final_path=null,plugin_callback_func callback=null) {
 			bool opened=false;
 			var document=this.window.get_active_document();
 			if (document!=null) {
@@ -255,13 +313,14 @@ namespace AutoVala_gedit {
 							} catch (Error e) {
 							}
 						}
-						this.launch_child(parameters,final_path2);
+						this.launch_child(parameters,final_path2,callback);
 					}
 				}
 			}
 		}
 
 		public void cmake_project(Gtk.Action action) {
+			this.clear_text();
 			string[] parameters={};
 			parameters+="cmake";
 			parameters+="..";
@@ -269,24 +328,87 @@ namespace AutoVala_gedit {
 		}
 
 		public void build_project(Gtk.Action action) {
+			this.clear_text();
 			string[] parameters={};
 			parameters+="make";
 			this.launch_command(parameters);
 		}
 
 		public void makeclean_project(Gtk.Action action) {
+			this.clear_text();
 			string[] parameters={};
 			parameters+="make";
 			parameters+="clean";
 			this.launch_command(parameters);
 		}
 
+		private void delete_recursive(string path) {
+			var filepath=File.new_for_path(path);
+			if (filepath.query_exists()==false) {
+				return;
+			}
+			FileInfo info_file;
+			if (filepath.query_file_type(FileQueryInfoFlags.NOFOLLOW_SYMLINKS)==FileType.DIRECTORY) {
+				var enumerator = filepath.enumerate_children(FileAttribute.STANDARD_NAME, FileQueryInfoFlags.NOFOLLOW_SYMLINKS,null);
+				while ((info_file = enumerator.next_file(null)) != null) {
+					var full_path=Path.build_filename(path,info_file.get_name());
+					this.delete_recursive(full_path);
+				}
+			}
+			filepath.delete();
+		}
+
+		private void delete_install() {
+			var document=this.window.get_active_document();
+			if (document!=null) {
+				var openfile=document.get_location();
+				if (openfile!=null) {
+					var current_filename=openfile.get_path();
+					var config=new AutoVala.configuration();
+					var enable=config.read_configuration(current_filename);
+					if (enable==false) {
+						var final_path2=Path.build_filename(config.basepath,"install");
+						this.delete_recursive(final_path2);
+					}
+				}
+			}
+			this.update_state2(true);
+		}
+
+		public void fullclean_project(Gtk.Action action) {
+			var window=new ask_to_continue();
+			if (window.run()) {
+				this.clear_text();
+				this.delete_install();
+			}
+		}
+
+		public void fullbuild_project(Gtk.Action action) {
+			var window=new ask_to_continue();
+			if (window.run()) {
+				this.clear_text();
+				this.delete_install();
+				this.update_project2();
+				string[] parameters={};
+				parameters+="cmake";
+				parameters+="..";
+				this.launch_command(parameters,null,this.continue_fullbuild);
+			}
+		}
+
+		public void continue_fullbuild() {
+			string[] parameters={};
+			parameters+="make";
+			this.launch_command(parameters);
+		}
+
+
 		public void activate () {
 			this.last_filename=null;
 			var manager=this.window.get_ui_manager();
 			manager.insert_action_group(this._action_group,-1);
 			try {
-				this.ui_id=manager.add_ui_from_string("""<ui><menubar name="MenuBar"><menu name="AutovalaMenu" action="Autovala"><placeholder name="AutoValaToolsOps"><menuitem name="Open Project" action="autovala_open"/><menuitem name="update Project" action="autovala_update"/><menuitem name="CMake Project" action="autovala_cmake"/><menuitem name="Build Project" action="autovala_build"/><menuitem name="Clean Project" action="autovala_makeclean"/></placeholder></menu></menubar></ui>""",-1);
+				this.ui_id=manager.add_ui_from_string("""<ui><menubar name="MenuBar"><menu name="AutovalaMenu" action="Autovala"><placeholder name="AutoValaToolsOps"><menuitem name="Open Project" action="autovala_open"/><menuitem name="update Project" action="autovala_update"/><menuitem name="CMake Project" action="autovala_cmake"/><menuitem name="Build Project" action="autovala_build"/><menuitem name="Clean Project" action="autovala_makeclean"/><menuitem name="Clear directory" action="autovala_fullclean"/><menuitem name="Full build" action="autovala_fullbuild"/></placeholder></menu></menubar></ui>""",-1);
 			} catch (Error e) {
 			}
 			this._action_group.set_sensitive(true);
@@ -330,6 +452,8 @@ namespace AutoVala_gedit {
 						if (enable) {
 							this.action_open_project.set_sensitive(true);
 							this.action_update_project.set_sensitive(true);
+							this.action_fullclean_project.set_sensitive(true);
+							this.action_fullbuild_project.set_sensitive(true);
 							var cmakelists=File.new_for_path(Path.build_filename(config.basepath,"CMakeLists.txt"));
 							if (cmakelists.query_exists()) {
 								this.action_cmake_project.set_sensitive(true);
@@ -364,6 +488,8 @@ namespace AutoVala_gedit {
 				this.action_cmake_project.set_sensitive(false);
 				this.action_build_project.set_sensitive(false);
 				this.action_makeclean_project.set_sensitive(false);
+				this.action_fullclean_project.set_sensitive(false);
+				this.action_fullbuild_project.set_sensitive(false);
 			}
 		}
 	}
@@ -373,6 +499,7 @@ namespace AutoVala_gedit {
 public void peas_register_types (TypeModule module) {
 
 	Intl.bindtextdomain(AutoVala_geditConstants.GETTEXT_PACKAGE, Path.build_filename(AutoVala_geditConstants.DATADIR,"locale"));
+	Intl.bind_textdomain_codeset(AutoVala_geditConstants.GETTEXT_PACKAGE, "utf-8" );
 	var objmodule = module as Peas.ObjectModule;
 
 	// Register my plugin extension

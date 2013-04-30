@@ -43,3 +43,5 @@ vala_package: PeasGtk-1.0
 *vala_check_package: gtk+-3.0
 *vala_source: plugin.vala
 
+*glade: data/interface/ask_to_continue.ui
+
