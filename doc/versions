@@ -6,6 +6,11 @@
 <div class="main_frame">
 <p><a href="index.html">Home</a></p>
 <ul>
+<li>version 0.18.0 (2013-04-30)
+<ul>
+<li>Allows to delete the INSTALL folder from Gedit<br /></li>
+<li>Allows to delete the INSTALL folder, update the .avprj file, run cmake and launch make in a single step from Gedit<br /></li>
+</ul></li>
 <li>version 0.17.0 (2013-04-28)
 <ul>
 <li>Fixed bug in plugin when updating the whole project<br /></li>

@@ -52,10 +52,13 @@
 <ul>
 <li>Open project file: this option will open the project file (<em>.avprj</em>) for the currently active source file.<br /></li>
 <li>Update project: is the same than <em>autovala update</em><br /></li>
-<li>Run CMake: runs <em>cmake</em> in the folder <em>install</em> of the current source file's project<br /></li>
+<li>Run CMake: runs <em>cmake ..</em> in the folder <em>install</em> of the current source file's project<br /></li>
 <li>Build project: runs <em>make</em> in the folder <em>install</em> of the current source file's project<br /></li>
-<li>Make clean: runs <em>make clean</em> in the folder <em>install</em> of the current source file's project</li>
+<li>Make clean: runs <em>make clean</em> in the folder <em>install</em> of the current source file's project<br /></li>
+<li>Full clean: deletes the <em>install</em> folder. Needed when the number of files in the project, or the <em>.avprj</em> file is modified<br /></li>
+<li>Full build: deletes the <em>install</em> folder, updates the <em>.avprj</em> and <em>CMakeList.txt</em> files, and runs <em>cmake ..</em> and <em>make</em> in the folder <em>install</em>, all in one step</li>
 </ul>
+<p>Usually you should use <em>Build project</em> each time you modify the code, or <em>Full build</em> each time you add, remove or rename a file to the project, or modify the <em>.avprj</em> file.</p>
 <p><a href="index.html">Home</a></p>
 </div>
 </body>
