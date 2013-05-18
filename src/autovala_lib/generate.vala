@@ -148,6 +148,26 @@ namespace AutoVala {
 			error_list+=_("Warning: the %s directory already exists").printf(folder);
 		}
 
+		public bool copy_recursive (string src_s, string dest_s) {
+			var src=File.new_for_path(src_s);
+			var dest=File.new_for_path(dest_s);
+			GLib.FileType src_type = src.query_file_type (GLib.FileQueryInfoFlags.NONE, null);
+			if ( src_type == GLib.FileType.DIRECTORY ) {
+				dest.make_directory (null);
+				src.copy_attributes (dest, GLib.FileCopyFlags.NONE, null);
+
+				string src_path = src.get_path ();
+				string dest_path = dest.get_path ();
+				GLib.FileEnumerator enumerator = src.enumerate_children (GLib.FileAttribute.STANDARD_NAME, GLib.FileQueryInfoFlags.NONE, null);
+				for ( GLib.FileInfo? info = enumerator.next_file (null) ; info != null ; info = enumerator.next_file (null) ) {
+					copy_recursive (GLib.Path.build_filename (src_path, info.get_name ()),GLib.Path.build_filename (dest_path, info.get_name ()));
+				}
+			} else if ( src_type == GLib.FileType.REGULAR ) {
+				src.copy (dest, GLib.FileCopyFlags.NONE, null);
+			}
+			return true;
+		}
+
 		/**
 		 * Creates a new project from scratch in the specified folder.
 		 * If config_path is an empty string, will use the current folder.
@@ -179,6 +199,17 @@ namespace AutoVala {
 			}
 
 			try {
+				var folder=File.new_for_path(Path.build_filename(config_path,"cmake"));
+				if (folder.query_exists()) {
+					this.folder_exists("CMAKE");
+				} else {
+					this.copy_recursive(Path.build_filename(AutoValaConstants.PKGDATADIR,"cmake"),Path.build_filename(config_path,"cmake"));
+				}
+			} catch (Error e) {
+				this.cant_create("CMAKE");
+			}
+
+			try {
 				var folder=File.new_for_path(Path.build_filename(config_path,"src"));
 				if (folder.query_exists()) {
 					this.folder_exists("SRC");
@@ -197,6 +228,14 @@ namespace AutoVala {
 				}
 			} catch (Error e) {
 				this.cant_create("SRC/VAPIS");
+			}
+			try {
+				var src_file=File.new_for_path(Path.build_filename(config_path,"src",project_name+".vala"));
+				if (false==src_file.query_exists()) {
+					src_file.create(FileCreateFlags.NONE);
+				}
+			} catch (Error e) {
+				error_list+="Can't create initial source file";
 			}
 			try {
 				var folder=File.new_for_path(Path.build_filename(config_path,"po"));

@@ -10,6 +10,7 @@ vala_version: 0.20
 *doc: doc
 
 custom: data/AutoVala_gedit.plugin /usr/lib/gedit/plugins
+custom: data/cmake share/autovala
 
 vala_binary: src/autovala
 *version: 0.19.0

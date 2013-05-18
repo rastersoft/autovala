@@ -440,7 +440,19 @@ namespace AutoVala {
 				destination="${FINAL_AUTOVALA_PATH}%s".printf(element.destination);
 			}
 			try {
-				data_stream.put_string("install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/%s DESTINATION %s/)\n".printf(element.file,destination));
+				data_stream.put_string("IF(IS_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/%s)\n".printf(element.file));
+				data_stream.put_string("\tinstall(DIRECTORY\n");
+				data_stream.put_string("\t\t${CMAKE_CURRENT_SOURCE_DIR}/%s\n".printf(element.file));
+				data_stream.put_string("\tDESTINATION\n");
+				data_stream.put_string("\t\t"+destination+"\n");
+				data_stream.put_string("\t)\n");
+				data_stream.put_string("ELSE()\n");
+				data_stream.put_string("\tinstall(FILES\n");
+				data_stream.put_string("\t\t${CMAKE_CURRENT_SOURCE_DIR}/%s\n".printf(element.file));
+				data_stream.put_string("\tDESTINATION\n");
+				data_stream.put_string("\t\t"+destination+"\n");
+				data_stream.put_string("\t)\n");
+				data_stream.put_string("ENDIF()\n\n");
 			} catch (Error e) {
 				this.error_list+=_("Failed to write the CMakeLists file for custom file %s").printf(element.file);
 				return true;
