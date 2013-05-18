@@ -34,6 +34,7 @@ ELSE()
 		${FINAL_AUTOVALA_PATH}/usr/lib/gedit/plugins
 	)
 ENDIF()
+
 IF(IS_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 	install(DIRECTORY
 		${CMAKE_CURRENT_SOURCE_DIR}/cmake
@@ -47,3 +48,4 @@ ELSE()
 		share/autovala
 	)
 ENDIF()
+

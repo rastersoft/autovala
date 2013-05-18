@@ -56,9 +56,6 @@ set(APP_SOURCES
 	generate.vala
 )
 
-set(CUSTOM_VAPIS_LIST
-)
-
 vala_precompile(VALA_C AutoVala
 	${APP_SOURCES}
 PACKAGES

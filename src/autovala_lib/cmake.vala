@@ -840,7 +840,15 @@ namespace AutoVala {
 				}
 				data_stream.put_string(")\n\n");
 
-				if (element.vapis.size!=0) {
+				bool found_local=false;
+				foreach(var module in element.packages) {
+					if (module.type==package_type.local) {
+						found_local=true;
+					}
+				}
+
+
+				if ((element.vapis.size!=0)||(found_local==true)) {
 					data_stream.put_string("set(CUSTOM_VAPIS_LIST\n");
 					foreach (var filename in element.vapis) {
 						data_stream.put_string("\t${CMAKE_SOURCE_DIR}/"+Path.build_filename(dir,filename.vapi)+"\n");
