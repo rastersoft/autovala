@@ -840,18 +840,20 @@ namespace AutoVala {
 				}
 				data_stream.put_string(")\n\n");
 
-				data_stream.put_string("set(CUSTOM_VAPIS_LIST\n");
-				foreach (var filename in element.vapis) {
-					data_stream.put_string("\t${CMAKE_SOURCE_DIR}/"+Path.build_filename(dir,filename.vapi)+"\n");
-				}
-				foreach(var module in element.packages) {
-					if (module.type==package_type.local) {
-						if (this.local_modules.has_key(module.package)) {
-							data_stream.put_string("\t${CMAKE_BINARY_DIR}/"+Path.build_filename(local_modules.get(module.package),module.package+".vapi")+"\n");
+				if (element.vapis.size!=0) {
+					data_stream.put_string("set(CUSTOM_VAPIS_LIST\n");
+					foreach (var filename in element.vapis) {
+						data_stream.put_string("\t${CMAKE_SOURCE_DIR}/"+Path.build_filename(dir,filename.vapi)+"\n");
+					}
+					foreach(var module in element.packages) {
+						if (module.type==package_type.local) {
+							if (this.local_modules.has_key(module.package)) {
+								data_stream.put_string("\t${CMAKE_BINARY_DIR}/"+Path.build_filename(local_modules.get(module.package),module.package+".vapi")+"\n");
+							}
 						}
 					}
+					data_stream.put_string(")\n\n");
 				}
-				data_stream.put_string(")\n\n");
 
 				data_stream.put_string("vala_precompile(VALA_C "+lib_filename+"\n");
 				data_stream.put_string("\t${APP_SOURCES}\n");

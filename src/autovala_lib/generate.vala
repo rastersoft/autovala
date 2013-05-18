@@ -897,6 +897,9 @@ namespace AutoVala {
 			} catch (Error e) {
 				return true;
 			}
+			if (false==namespaces_list.contains("GLib")) {
+				namespaces_list.add("GLib");
+			}
 			return false;
 		}
 	}
