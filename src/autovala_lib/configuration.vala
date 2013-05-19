@@ -20,7 +20,7 @@ using GLib;
 using Gee;
 using Posix;
 
-// project version=0.19
+// project version=0.20
 
 namespace AutoVala {
 
@@ -1014,6 +1014,10 @@ namespace AutoVala {
 					file=filename;
 				}
 				path=file;
+			}
+			if (path==".") {
+				this.error_list+=_("Files in main directory are not allowed. Move '%s' inside a folder (line %d)").printf(file,this.line_number);
+				return true;
 			}
 			foreach(var e in this.configuration_data) {
 				bool overwriting;

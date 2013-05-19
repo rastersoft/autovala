@@ -235,7 +235,7 @@ namespace AutoVala {
 					src_file.create(FileCreateFlags.NONE);
 				}
 			} catch (Error e) {
-				error_list+="Can't create initial source file";
+				error_list+=_("Can't create initial source file");
 			}
 			try {
 				var folder=File.new_for_path(Path.build_filename(config_path,"po"));
