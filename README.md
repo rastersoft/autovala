@@ -30,6 +30,11 @@ and enjoy.
 
 
 ## History of versions ##
+* version 0.20.0 (2013-05-19)
+    * When initializating a new project, it will copy the needed CMAKE scripts for Vala and create an empty source file
+    * Now the CUSTOM command accepts both files and folders
+    * Now only adds CUSTOM_VAPIS_LIST command when there are a custom VAPI list
+    * Now forbides to set files in the main directory (all files/folders must be inside a folder in the main directory). This is a must to avoid failures.
 * version 0.19.0 (2013-04-30)
     * Now the plugin deletes the content of the *install* folder, but not the folder itself
 * version 0.18.0 (2013-04-30)
