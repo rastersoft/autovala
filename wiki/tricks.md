@@ -153,3 +153,7 @@ In this file, the *com.rastersoft.cronopete* service is provided by the binary *
 Several variables are defined in CMake files that can be useful. The first one is *AUTOVALA_INSTALL_PREFIX*. This variable can contain */usr* or */usr/local*, based on the PREFIX passed to CMake. The advantage is that it will detect the *final* installation path, not the current one, which is useful when creating *.deb* or *.rpm* packages, because those are first built in a different path.
 
 Also is available the variable *FINAL_AUTOVALA_PATH*. This variable allows to append an absolute path, and will convert it to a relative path. An example: if the *CMAKE_INSTALL_PREFIX* is *../debian/tmp/usr*, then *FINAL_AUTOVALA_PATH* will be *../debian/tmp/usr/..*, which allows to install files in the *root* of the package.
+
+##Using GIO, GIO-unix, GObject or GModule packages
+
+There are some exceptions for **using** package autodetection. Since the packages *GIO*, *GIO-unix*, *GObject* and *GModule* are included inside the *GLib* namespace, Autovala requires to be manually marked by adding **//using [package name]**. Since it is a comment, it won't be processed by Valac, but will be understood by Autovala and add the required **-pkg** command.
