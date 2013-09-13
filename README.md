@@ -30,6 +30,8 @@ and enjoy.
 
 
 ## History of versions ##
+* version 0.21.0 (2013-09-14)
+    * Allows to specify GIO, GIO-unix, GObject and GModule packages for compilation
 * version 0.20.0 (2013-05-19)
     * When initializating a new project, it will copy the needed CMAKE scripts for Vala and create an empty source file
     * Now the CUSTOM command accepts both files and folders

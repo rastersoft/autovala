@@ -428,7 +428,7 @@ namespace AutoVala {
 							} else if (file_s.has_prefix("gio-unix-")) {
 								namespace_s="GIO-unix";
 							} else if (file_s.has_prefix("gio")) {
-								namespace_s="GIO-unix";
+								namespace_s="GIO";
 							} else if (file_s.has_prefix("gmodule-")) {
 								namespace_s="GModule";
 							} else if (file_s.has_prefix("gobject-")) {
@@ -869,12 +869,17 @@ namespace AutoVala {
 						}
 					} else if (line.strip().has_prefix("// project version=")) { // add the version
 						version=line.strip().substring(19);
-					} else if (line.has_prefix("using ")) { // add the packages used by this source file
+					} else if ((line.has_prefix("using "))||(line.has_prefix("//using "))) { // add the packages used by this source file
 						var pos=line.index_of(";");
+						var pos2=line.index_of(" ");
 						if (pos==-1) {
-							continue;
+							if (line.has_prefix("//using ")) {
+								pos=line.length; // allow to put //using without a ; at the end, but also accept with it
+							} else {
+								continue;
+							}
 						}
-						var namespace_found=line.substring(6,pos-6).strip();
+						var namespace_found=line.substring(pos2,pos-pos2).strip();
 						if ((this.namespaces.has_key(namespace_found)==false)&&(this.local_namespaces.has_key(namespace_found)==false)) {
 							this.error_list+=_("Warning: can't find namespace %s in file %s").printf(namespace_found,relative_path);
 							continue;

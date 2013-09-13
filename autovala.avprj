@@ -13,7 +13,7 @@ custom: data/AutoVala_gedit.plugin /usr/lib/gedit/plugins
 custom: data/cmake share/autovala
 
 vala_binary: src/autovala
-*version: 0.20.0
+*version: 0.21.0
 vala_local_package: AutoVala
 *vala_package: posix
 *vala_check_package: gee-1.0
