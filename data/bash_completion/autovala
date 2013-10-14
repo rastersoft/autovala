@@ -1,0 +1,15 @@
+# bash completion for autovala
+
+_autovala()
+{
+	local cur prev opts job
+	job="${COMP_WORDS[0]}"
+	cur="${COMP_WORDS[COMP_CWORD]}"
+	prev="${COMP_WORDS[COMP_CWORD-1]}"
+	if [[ ${COMP_CWORD} = 1 ]] ; then
+		COMPREPLY=( $(compgen -W "help version init refresh cmake update clear" -- ${cur}) )
+		return 0
+	fi
+}
+
+complete -F _autovala autovala

@@ -30,6 +30,8 @@ and enjoy.
 
 
 ## History of versions ##
+* version 0.23.0 (2013-10-14)
+	* Added bash_completion support
 * version 0.22.0 (2013-10-14)
 	* Autovala and gedit plugin are now different projects, allowing to compile only the former
 	* Now supports several namespaces in the same .vapi file
