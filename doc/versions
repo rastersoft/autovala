@@ -6,6 +6,15 @@
 <div class="main_frame">
 <p><a href="index.html">Home</a></p>
 <ul>
+<li>version 0.22.0 (2013-10-14)
+<ul>
+<li>Autovala and gedit plugin are now different projects, allowing to compile only the former<br /></li>
+<li>Now supports several namespaces in the same .vapi file<br /></li>
+</ul></li>
+<li>version 0.21.0 (2013-09-14)
+<ul>
+<li>Allows to specify GIO, GIO-unix, GObject and GModule packages for compilation<br /></li>
+</ul></li>
 <li>version 0.20.0 (2013-05-19)
 <ul>
 <li>When initializating a new project, it will copy the needed CMAKE scripts for Vala and create an empty source file<br /></li>
