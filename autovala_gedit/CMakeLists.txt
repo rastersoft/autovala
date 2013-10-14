@@ -23,13 +23,15 @@ endif()
 find_package(PkgConfig)
 
 pkg_check_modules(DEPS REQUIRED
+	libpeas-1.0
 	gee-1.0
+	AutoVala
 	glib-2.0
+	gedit
 	gtk+-3.0
 )
 
-add_subdirectory(doc)
+add_subdirectory(src)
 add_subdirectory(po)
 add_subdirectory(data)
-add_subdirectory(src/autovala_lib)
-add_subdirectory(src)
+add_subdirectory(data/interface)

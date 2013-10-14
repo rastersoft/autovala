@@ -30,6 +30,9 @@ and enjoy.
 
 
 ## History of versions ##
+* version 0.22.0 (2013-10-14)
+	* Autovala and gedit plugin are now different projects, allowing to compile only the former
+	* Now supports several namespaces in the same .vapi file
 * version 0.21.0 (2013-09-14)
     * Allows to specify GIO, GIO-unix, GObject and GModule packages for compilation
 * version 0.20.0 (2013-05-19)

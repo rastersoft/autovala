@@ -21,6 +21,17 @@ FOREACH(element ${AUTOVALA_PATH_LIST})
 	ENDIF()
 ENDFOREACH()
 
-include (Translations)
-add_translations_directory("autovala")
-add_translations_catalog("autovala" ../src )
+IF(IS_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/AutoVala_gedit.plugin)
+	install(DIRECTORY
+		${CMAKE_CURRENT_SOURCE_DIR}/AutoVala_gedit.plugin
+	DESTINATION
+		${FINAL_AUTOVALA_PATH}/usr/lib/gedit/plugins
+	)
+ELSE()
+	install(FILES
+		${CMAKE_CURRENT_SOURCE_DIR}/AutoVala_gedit.plugin
+	DESTINATION
+		${FINAL_AUTOVALA_PATH}/usr/lib/gedit/plugins
+	)
+ENDIF()
+

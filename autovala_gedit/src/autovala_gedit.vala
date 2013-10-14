@@ -21,8 +21,9 @@ using Gedit;
 using Peas;
 using Gee;
 using Gtk;
+using AutoVala;
 
-// project version=0.19
+// project version=0.22
 
 namespace AutoVala_gedit {
 

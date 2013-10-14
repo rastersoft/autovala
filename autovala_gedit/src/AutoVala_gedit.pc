@@ -6,6 +6,6 @@ includedir=@DOLLAR@{exec_prefix}/include
 
 Name: AutoVala_gedit
 Description: AutoVala_gedit
-Version: 0.19
+Version: 0.22
 Libs: -L@DOLLAR@{libdir} -lAutoVala_gedit
 Cflags: -I@DOLLAR@{includedir}

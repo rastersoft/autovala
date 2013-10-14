@@ -24,4 +24,14 @@ and type:
     cmake ..
     make
     sudo make install
-    
+
+The Gedit plugin is compiled and installed separately.
+Just do:
+
+    cd autovala_gedit
+    mkdir install
+    cd install
+    cmake ..
+    make
+    sudo make install
+

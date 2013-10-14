@@ -1,0 +1,28 @@
+### AutoVala Project ###
+autovala_version: 5
+project_name: autovala
+vala_version: 0.20
+
+*po: po
+
+*data: data/local
+
+*doc: doc
+
+custom: data/AutoVala_gedit.plugin /usr/lib/gedit/plugins
+
+vala_library: src/autovala_pg
+*version: 0.22
+*namespace: AutoVala_gedit
+vala_destination: /usr/lib/gedit/plugins/
+vala_package: PeasGtk-1.0
+*vala_check_package: libpeas-1.0
+*vala_check_package: gee-1.0
+*vala_check_package: AutoVala
+*vala_check_package: glib-2.0
+*vala_check_package: gedit
+*vala_check_package: gtk+-3.0
+*vala_source: autovala_gedit.vala
+
+*glade: data/interface/ask_to_continue.ui
+

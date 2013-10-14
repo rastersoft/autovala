@@ -390,6 +390,7 @@ namespace AutoVala {
 			/*
 			 * This method checks the namespace provided by a .vapi file
 			 */
+
 			string file=file_s;
 			if (file.has_suffix(".vapi")==false) {
 				return;
@@ -448,7 +449,6 @@ namespace AutoVala {
 							}
 							element.add_file(file_s,this.pkgconfigs,gir_major,gir_minor);
 						}
-						break;
 					}
 				}
 			} catch (Error e) {

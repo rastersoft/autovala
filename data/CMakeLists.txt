@@ -21,20 +21,6 @@ FOREACH(element ${AUTOVALA_PATH_LIST})
 	ENDIF()
 ENDFOREACH()
 
-IF(IS_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/AutoVala_gedit.plugin)
-	install(DIRECTORY
-		${CMAKE_CURRENT_SOURCE_DIR}/AutoVala_gedit.plugin
-	DESTINATION
-		${FINAL_AUTOVALA_PATH}/usr/lib/gedit/plugins
-	)
-ELSE()
-	install(FILES
-		${CMAKE_CURRENT_SOURCE_DIR}/AutoVala_gedit.plugin
-	DESTINATION
-		${FINAL_AUTOVALA_PATH}/usr/lib/gedit/plugins
-	)
-ENDIF()
-
 IF(IS_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 	install(DIRECTORY
 		${CMAKE_CURRENT_SOURCE_DIR}/cmake

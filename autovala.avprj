@@ -9,11 +9,10 @@ vala_version: 0.20
 
 *doc: doc
 
-custom: data/AutoVala_gedit.plugin /usr/lib/gedit/plugins
 custom: data/cmake share/autovala
 
 vala_binary: src/autovala
-*version: 0.21.0
+*version: 0.22.0
 vala_local_package: AutoVala
 *vala_package: posix
 *vala_check_package: gee-1.0
@@ -21,7 +20,7 @@ vala_local_package: AutoVala
 *vala_source: autovala.vala
 
 vala_library: src/autovala_lib/autovala_lib
-*version: 0.20
+*version: 0.22
 *namespace: AutoVala
 *vala_package: posix
 *vala_check_package: gee-1.0
@@ -30,19 +29,4 @@ vala_library: src/autovala_lib/autovala_lib
 *vala_source: configuration.vala
 *vala_source: cmake.vala
 *vala_source: generate.vala
-
-vala_library: src/gedit_plugin/autovala_pg
-*version: 0.19
-*namespace: AutoVala_gedit
-vala_destination: /usr/lib/gedit/plugins/
-vala_local_package: AutoVala
-vala_package: PeasGtk-1.0
-*vala_check_package: libpeas-1.0
-*vala_check_package: gee-1.0
-*vala_check_package: glib-2.0
-*vala_check_package: gedit
-*vala_check_package: gtk+-3.0
-*vala_source: plugin.vala
-
-*glade: data/interface/ask_to_continue.ui
 

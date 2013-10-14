@@ -21,6 +21,4 @@ FOREACH(element ${AUTOVALA_PATH_LIST})
 	ENDIF()
 ENDFOREACH()
 
-include (Translations)
-add_translations_directory("autovala")
-add_translations_catalog("autovala" ../src )
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/ask_to_continue.ui DESTINATION share/autovala/ )
