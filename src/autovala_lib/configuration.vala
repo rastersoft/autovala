@@ -25,7 +25,7 @@ using Posix;
 namespace AutoVala {
 
 	public enum Config_Type {VALA_BINARY, VALA_LIBRARY, BINARY, ICON, PIXMAP, PO, GLADE, DBUS_SERVICE, DESKTOP, AUTOSTART,
-							 EOS_PLUG, SCHEME, DATA, DOC, INCLUDE, IGNORE, CUSTOM}
+							 EOS_PLUG, SCHEME, DATA, DOC, INCLUDE, IGNORE, CUSTOM, DEFINE}
 
 	public enum package_type {no_check, do_check, local}
 
@@ -70,6 +70,7 @@ namespace AutoVala {
 		public string icon_path;
 		public string version;
 		public string? destination;
+		public string define;
 		public bool version_set;
 		public bool version_manually_set;
 		public bool automatic;
@@ -283,7 +284,7 @@ namespace AutoVala {
 			if (init_gettext) {
 				Intl.bindtextdomain(AutoValaConstants.GETTEXT_PACKAGE, Path.build_filename(AutoValaConstants.DATADIR,"locale"));
 			}
-			this.current_version=5; // currently we support version 5 of the syntax
+			this.current_version=6; // currently we support version 6 of the syntax
 			this.config_path="";
 			this.configuration_data=new Gee.ArrayList<config_element ?>();
 			this.last_element=null;
@@ -682,6 +683,10 @@ namespace AutoVala {
 						this.project_name=line.substring(14).strip();
 						continue;
 					}
+					if (line.has_prefix("define: ")) {
+						error|=this.add_entry(line.substring(8).strip(),Config_Type.DEFINE,automatic);
+						continue;
+					}
 					if (line.has_prefix("autovala_version: ")) {
 						this.version=int.parse(line.substring(18).strip());
 						if (this.version>this.current_version) {
@@ -843,6 +848,7 @@ namespace AutoVala {
 				return true;
 			}
 		}
+		
 
 		/**
 		 * Adds a new entry of the type //binary// or //library// to the current configuration
@@ -1005,8 +1011,13 @@ namespace AutoVala {
 			string file;
 			string path;
 			if (type!=Config_Type.IGNORE) {
-				file=Path.get_basename(filename);
-				path=Path.get_dirname(filename);
+				if (type!=Config_Type.DEFINE) {
+					file=Path.get_basename(filename);
+					path=Path.get_dirname(filename);
+				} else {
+					file=filename;
+					path=filename;
+				}
 			} else {
 				if((filename.length>1)&&(filename.has_suffix(Path.DIR_SEPARATOR_S))) {
 					file=filename.substring(0,filename.length-1);
@@ -1120,6 +1131,7 @@ namespace AutoVala {
 				this.store_data(Config_Type.DBUS_SERVICE,data_stream);
 				this.store_data(Config_Type.EOS_PLUG,data_stream);
 				this.store_data(Config_Type.SCHEME,data_stream);
+				this.store_data(Config_Type.DEFINE,data_stream);
 				this.store_data(Config_Type.GLADE,data_stream);
 				this.store_data(Config_Type.ICON,data_stream);
 				this.store_data(Config_Type.PIXMAP,data_stream);
@@ -1202,6 +1214,9 @@ namespace AutoVala {
 						}
 						data_stream.put_string("\n"); // add a separator after each new binary or library to simplify manual edition
 						found=false; // avoid to put more than one separator
+						break;
+					case Config_Type.DEFINE:
+						data_stream.put_string("define: "+element.path+"\n");
 						break;
 					case Config_Type.BINARY:
 						data_stream.put_string("binary: "+fullpathname+"\n");

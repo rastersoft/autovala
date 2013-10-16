@@ -1,5 +1,5 @@
 ### AutoVala Project ###
-autovala_version: 5
+autovala_version: 6
 project_name: autovala
 vala_version: 0.20
 
@@ -30,4 +30,9 @@ vala_library: src/autovala_lib/autovala_lib
 *vala_source: configuration.vala
 *vala_source: cmake.vala
 *vala_source: generate.vala
+
+*define: adio3s
+*define: hola
+*define: adios
+*define: hola2
 

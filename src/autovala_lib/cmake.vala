@@ -134,6 +134,9 @@ namespace AutoVala {
 					all_processed=true;
 					foreach(var path in paths.keys) {
 						var element=paths.get(path);
+						if (element.type==Config_Type.DEFINE) {
+							continue;
+						}
 						if (element.processed) {
 							continue;
 						}
@@ -154,6 +157,7 @@ namespace AutoVala {
 						if (valid==false) { // has dependencies still not satisfied
 							continue;
 						}
+						
 						add_folder_to_main_cmakelists(path,data_stream);
 						added_one=true;
 						element.processed=true;
@@ -292,8 +296,16 @@ namespace AutoVala {
 			bool added_icon_suffix=false;
 			bool added_dbus_prefix=false;
 			bool added_scheme_prefix=false;
+			Gee.Set<string> defines=new Gee.HashSet<string>();
 
 			bool error=false;
+			
+			foreach(var element in this.config.configuration_data) {
+				if (element.type==Config_Type.DEFINE) {
+					defines.add(element.path);
+				}
+			}
+			
 			foreach(var element in this.config.configuration_data) {
 				if (element.path!=dir) {
 					continue;
@@ -323,11 +335,11 @@ namespace AutoVala {
 					error=this.create_po(dir,data_stream);
 					break;
 				case Config_Type.VALA_BINARY:
-					error=this.create_vala_binary(dir,data_stream,element,false,added_vala_binaries,ignore_list);
+					error=this.create_vala_binary(dir,data_stream,element,false,added_vala_binaries,ignore_list,defines);
 					added_vala_binaries=true;
 					break;
 				case Config_Type.VALA_LIBRARY:
-					error=this.create_vala_binary(dir,data_stream,element,true,added_vala_binaries,ignore_list);
+					error=this.create_vala_binary(dir,data_stream,element,true,added_vala_binaries,ignore_list,defines);
 					added_vala_binaries=true;
 					break;
 				case Config_Type.BINARY:
@@ -391,7 +403,6 @@ namespace AutoVala {
 					includes+="include(${CMAKE_CURRENT_SOURCE_DIR}/"+element.file+")\n";
 					break;
 				default:
-					error=false;
 					break;
 				}
 
@@ -691,7 +702,7 @@ namespace AutoVala {
 		}
 
 		private bool create_vala_binary(string dir,DataOutputStream data_stream, config_element element, bool is_library,
-				bool added_vala_binaries, Gee.Set<string> ignore_list) {
+				bool added_vala_binaries, Gee.Set<string> ignore_list, Gee.Set<string> defines) {
 
 			string gir_filename="";
 			string lib_filename=element.file;
@@ -869,6 +880,17 @@ namespace AutoVala {
 				data_stream.put_string("\t${VALA_PACKAGES}\n");
 				data_stream.put_string("CUSTOM_VAPIS\n");
 				data_stream.put_string("\t${CUSTOM_VAPIS_LIST}\n");
+
+				bool added_defines=false;
+				foreach(var l in defines) {
+					if (added_defines==false) {
+						added_defines=true;
+						element.compile_options+=" ${OPTION_DEFINES}";
+					}
+					data_stream.put_string("IF (%s)\n".printf(l));
+					data_stream.put_string("\tSET(OPTION_DEFINES ${OPTION_DEFINES} -D %s)\n".printf(l));
+					data_stream.put_string("ENDIF");
+				}
 
 				var final_options=element.compile_options;
 				if (is_library) {

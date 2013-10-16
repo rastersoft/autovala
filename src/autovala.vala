@@ -27,6 +27,8 @@ void help() {
 	GLib.stdout.printf(_("Autovala. Usage:\n\tautovala help: shows this help\n\tautovala version: shows the current version\n\tautovala init project_name: initializates a new Vala CMake project and creates an initial project file\n\tautovala refresh: tries to guess the type for each file in the folders and adds them to the project file\n\tautovala cmake: creates the CMake files from the project file\n\tautovala update: the same than 'refresh'+'cmake'\n\tautovala clear: removes the automatic parts in the project file, leaving only the manual ones.\n\n"));
 }
 
+#if hola && adios || (hola2 && !adio3s)
+#endif
 
 int main(string[] argv) {
 

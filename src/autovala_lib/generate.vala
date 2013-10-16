@@ -104,6 +104,7 @@ namespace AutoVala {
 		private Gee.Map<string,namespaces_element> ?namespaces;
 		private Gee.Map<string,config_element> ?local_namespaces;
 		private Gee.Set<string> ?pkgconfigs;
+		private Gee.Set<string> ?defines;
 		private string current_namespace;
 		private bool several_namespaces;
 
@@ -113,6 +114,7 @@ namespace AutoVala {
 			this.namespaces=null;
 			this.local_namespaces=null;
 			this.pkgconfigs=null;
+			this.defines=null;
 		}
 
 		public void clear_errors() {
@@ -494,6 +496,7 @@ namespace AutoVala {
 			this.namespaces=new Gee.HashMap<string,namespaces_element>();
 			this.local_namespaces=new Gee.HashMap<string,config_element>();
 			this.pkgconfigs=new Gee.HashSet<string>();
+			this.defines=new Gee.HashSet<string>();
 			this.current_namespace="";
 
 			this.config=new AutoVala.configuration("",false);
@@ -550,6 +553,12 @@ namespace AutoVala {
 					}
 					continue;
 				}
+				if (element.type==Config_Type.DEFINE) {
+					if (false==this.defines.contains(element.path)) {
+						this.defines.add(element.path);
+					}
+					continue;
+				}
 				if ((element.type==Config_Type.IGNORE)||(element.type==Config_Type.PO)||(element.type==Config_Type.DATA)||(element.type==Config_Type.DOC)) {
 					path_s=Path.build_filename(this.config.basepath,element.path);
 				} else {
@@ -585,6 +594,9 @@ namespace AutoVala {
 			}
 			foreach(var binary_path in binaries.keys) {
 				this.process_binary(files_set,binary_path,binaries,libraries,Config_Type.VALA_BINARY);
+			}
+			foreach(var l in this.defines) {
+				this.config.add_new_entry(l,Config_Type.DEFINE,true);
 			}
 			this.config.save_configuration();
 			this.add_errors(this.config.get_error_list()); // there can be warnings
@@ -869,6 +881,8 @@ namespace AutoVala {
 						}
 					} else if (line.strip().has_prefix("// project version=")) { // add the version
 						version=line.strip().substring(19);
+					} else if (line.strip().has_prefix("//project version=")) { // add the version
+						version=line.strip().substring(18);
 					} else if ((line.has_prefix("using "))||(line.has_prefix("//using "))) { // add the packages used by this source file
 						var pos=line.index_of(";");
 						var pos2=line.index_of(" ");
@@ -897,6 +911,16 @@ namespace AutoVala {
 							this.several_namespaces=true;
 						}
 						this.current_namespace=namespace_found;
+					} else if ((line.has_prefix("#if ")) || (line.has_prefix("#elif "))) {
+						var pos=line.index_of(" ");
+						string element=line.substring(pos).strip();
+						// remove all logical elements to get a set of DEFINEs
+						string[] elements=element.replace("&&"," ").replace("||"," ").replace("=="," ").replace("!="," ").replace("!"," ").replace("("," ").replace(")"," ").split(" ");
+						foreach(var l in elements) {
+							if ((l!="")&&(this.defines.contains(l)==false)) {
+								this.defines.add(l);
+							}
+						}
 					}
 				}
 			} catch (Error e) {
