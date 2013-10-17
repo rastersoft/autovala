@@ -27,12 +27,12 @@ set (GETTEXT_PACKAGE "autovala")
 set (RELEASE_NAME "autovala")
 set (CMAKE_C_FLAGS "")
 set (PREFIX ${CMAKE_INSTALL_PREFIX})
-set (VERSION "0.23.0")
+set (VERSION "0.24.0")
 set (DOLLAR "$")
 
 configure_file (${CMAKE_SOURCE_DIR}/src/Config.vala.cmake ${CMAKE_BINARY_DIR}/src/Config.vala)
 add_definitions(-DGETTEXT_PACKAGE=\"${GETTEXT_PACKAGE}\")
-set (VERSION "0.23.0")
+set (VERSION "0.24.0")
 add_definitions(${DEPS_CFLAGS})
 include_directories( ${CMAKE_BINARY_DIR}/src/autovala_lib )
 link_libraries( ${DEPS_LIBRARIES} -lAutoVala )
@@ -63,16 +63,6 @@ PACKAGES
 	${VALA_PACKAGES}
 CUSTOM_VAPIS
 	${CUSTOM_VAPIS_LIST}
-IF (adio3s)
-	SET(OPTION_DEFINES ${OPTION_DEFINES} -D adio3s)
-ENDIFIF (hola)
-	SET(OPTION_DEFINES ${OPTION_DEFINES} -D hola)
-ENDIFIF (adios)
-	SET(OPTION_DEFINES ${OPTION_DEFINES} -D adios)
-ENDIFIF (hola2)
-	SET(OPTION_DEFINES ${OPTION_DEFINES} -D hola2)
-ENDIFOPTIONS
-	 ${OPTION_DEFINES}
 )
 
 add_executable(autovala ${VALA_C})

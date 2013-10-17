@@ -20,7 +20,7 @@ using GLib;
 using Gee;
 using Posix;
 
-// project version=0.23
+// project version=0.24
 
 namespace AutoVala {
 
@@ -848,7 +848,7 @@ namespace AutoVala {
 				return true;
 			}
 		}
-		
+
 
 		/**
 		 * Adds a new entry of the type //binary// or //library// to the current configuration

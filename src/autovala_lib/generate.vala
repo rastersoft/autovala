@@ -911,13 +911,13 @@ namespace AutoVala {
 							this.several_namespaces=true;
 						}
 						this.current_namespace=namespace_found;
-					} else if ((line.has_prefix("#if ")) || (line.has_prefix("#elif "))) {
+					} else if ((line.has_prefix("#if ")) || (line.has_prefix("#elif "))) { // Add #defines
 						var pos=line.index_of(" ");
 						string element=line.substring(pos).strip();
 						// remove all logical elements to get a set of DEFINEs
 						string[] elements=element.replace("&&"," ").replace("||"," ").replace("=="," ").replace("!="," ").replace("!"," ").replace("("," ").replace(")"," ").split(" ");
 						foreach(var l in elements) {
-							if ((l!="")&&(this.defines.contains(l)==false)) {
+							if ((l!="")&&(l.ascii_casecmp("true")!=0)&&(l.ascii_casecmp("false")!=0)&&(this.defines.contains(l)==false)) {
 								this.defines.add(l);
 							}
 						}
