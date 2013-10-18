@@ -200,15 +200,11 @@ namespace AutoVala {
 				return true;
 			}
 
-			try {
-				var folder=File.new_for_path(Path.build_filename(config_path,"cmake"));
-				if (folder.query_exists()) {
-					this.folder_exists("CMAKE");
-				} else {
-					this.copy_recursive(Path.build_filename(AutoValaConstants.PKGDATADIR,"cmake"),Path.build_filename(config_path,"cmake"));
-				}
-			} catch (Error e) {
-				this.cant_create("CMAKE");
+			var folder2=File.new_for_path(Path.build_filename(config_path,"cmake"));
+			if (folder2.query_exists()) {
+				this.folder_exists("CMAKE");
+			} else {
+				this.copy_recursive(Path.build_filename(AutoValaConstants.PKGDATADIR,"cmake"),Path.build_filename(config_path,"cmake"));
 			}
 
 			try {

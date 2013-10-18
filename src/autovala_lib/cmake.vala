@@ -108,7 +108,8 @@ namespace AutoVala {
 				data_stream.put_string("endif()\n\n");
 
 				data_stream.put_string("find_package(PkgConfig)\n\n");
-				data_stream.put_string("pkg_check_modules(DEPS REQUIRED\n");
+
+				data_stream.put_string("set(MODULES_TO_CHECK\n");
 				Gee.Set<string> tocheck=new Gee.HashSet<string>();
 				foreach(var element in config.configuration_data) {
 					if ((element.type!=Config_Type.VALA_BINARY)&&(element.type!=Config_Type.VALA_LIBRARY)) {
@@ -119,12 +120,60 @@ namespace AutoVala {
 							if (tocheck.contains(module.package)) {
 								continue;
 							}
+							if (module.condition!=null) {
+								continue;
+							}
 							data_stream.put_string("\t"+module.package+"\n");
 							tocheck.add(module.package);
 						}
 					}
 				}
 				data_stream.put_string(")\n\n");
+				string current_condition=null;
+				bool inverted_condition=false;
+				foreach(var element in config.configuration_data) {
+					if ((element.type!=Config_Type.VALA_BINARY)&&(element.type!=Config_Type.VALA_LIBRARY)) {
+						continue;
+					}
+					foreach(var module in element.packages) {
+						if (module.type==package_type.do_check) {
+							if (tocheck.contains(module.package)) {
+								continue;
+							}
+							if (module.condition==null) {
+								continue;
+							}
+							if (module.condition==current_condition) {
+								if ((module.condition!=null) && (module.invert_condition!=inverted_condition)) {
+									data_stream.put_string("ELSE()\n");
+									inverted_condition=module.invert_condition;
+								}
+							} else {
+								inverted_condition=false;
+								if(current_condition!=null) {
+									data_stream.put_string("ENDIF()\n");
+								}
+								if(module.condition!=null) {
+									data_stream.put_string("IF (%s)\n".printf(module.condition));
+									if (module.invert_condition==true) {
+										data_stream.put_string("ELSE()\n");
+										inverted_condition=module.invert_condition;
+									}
+								}
+								current_condition=module.condition;
+							}
+							data_stream.put_string("\tset (MODULES_TO_CHECK ${MODULES_TO_CHECK} "+module.package+")\n");
+							tocheck.add(module.package);
+						}
+					}
+					if (current_condition!=null) {
+						data_stream.put_string("ENDIF()\n\n");
+					}
+				}
+
+
+
+				data_stream.put_string("pkg_check_modules(DEPS REQUIRED ${MODULES_TO_CHECK})\n\n");
 
 				// now, put all the binary and library folders, in order of satisfied dependencies
 				Gee.Set<string> packages_found=new Gee.HashSet<string>();
@@ -837,10 +886,44 @@ namespace AutoVala {
 				data_stream.put_string("set(VALA_PACKAGES\n");
 				foreach(var module in element.packages) {
 					if(module.type!=package_type.local) {
+						if (module.condition!=null) {
+							continue;
+						}
 						data_stream.put_string("\t"+module.package+"\n");
 					}
 				}
 				data_stream.put_string(")\n\n");
+
+				string current_condition=null;
+				bool inverted_condition=false;
+				foreach(var module in element.packages) {
+					if (module.condition==null) {
+						continue;
+					}
+					if (module.condition==current_condition) {
+						if ((module.condition!=null) && (module.invert_condition!=inverted_condition)) {
+							data_stream.put_string("ELSE()\n");
+							inverted_condition=module.invert_condition;
+						}
+					} else {
+						inverted_condition=false;
+						if(current_condition!=null) {
+							data_stream.put_string("ENDIF()\n");
+						}
+						if(module.condition!=null) {
+							data_stream.put_string("IF (%s)\n".printf(module.condition));
+							if (module.invert_condition==true) {
+								data_stream.put_string("ELSE()\n");
+								inverted_condition=module.invert_condition;
+							}
+						}
+						current_condition=module.condition;
+					}
+					data_stream.put_string("\tset (VALA_PACKAGES ${VALA_PACKAGES} "+module.package+")\n");
+				}
+				if (current_condition!=null) {
+					data_stream.put_string("ENDIF()\n\n");
+				}
 
 				data_stream.put_string("set(APP_SOURCES\n");
 				if ((is_library==false)||(element.current_namespace!="")) {

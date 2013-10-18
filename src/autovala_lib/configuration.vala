@@ -33,11 +33,15 @@ namespace AutoVala {
 		public string package;
 		public package_type type;
 		public bool automatic;
+		public string? condition;
+		public bool invert_condition;
 
-		public package_element(string package, package_type type, bool automatic) {
+		public package_element(string package, package_type type, bool automatic, string? condition, bool inverted) {
 			this.package=package;
 			this.type=type;
 			this.automatic=automatic;
+			this.condition=condition;
+			this.invert_condition=inverted;
 		}
 	}
 
@@ -81,6 +85,23 @@ namespace AutoVala {
 		public bool namespace_manually_set;
 		public bool processed;
 
+		public static int ComparePackages (package_element? a, package_element? b) {
+			if (a.condition=="") {
+				return -1;
+			}
+			if (b.condition=="") {
+				return 1;
+			}
+			if (a.condition==b.condition) {
+				if (a.invert_condition==b.invert_condition) {
+					return 0; // both are equal
+				} else {
+					return a.invert_condition ? 1 : -1; // the one with the condition not inverted goes first
+				}
+			}
+			return (a.condition>b.condition ? 1 : -1);
+		}
+
 		public config_element(string file, string path, Config_Type type,bool automatic,string icon_path) {
 			this.automatic=automatic;
 			this.type=type;
@@ -97,6 +118,10 @@ namespace AutoVala {
 			this.current_namespace="";
 			this.namespace_manually_set=false;
 			this.destination=null;
+		}
+
+		public void sort_packages() {
+			this.packages.sort(config_element.ComparePackages);
 		}
 
 		public void set_destination(string ?destination) {
@@ -192,10 +217,13 @@ namespace AutoVala {
 			this.vapis.add(element);
 		}
 
-		public void add_package(string pkg,package_type type,bool automatic) {
+		public void add_package(string pkg,package_type type,bool automatic,string ?condition, bool inverted) {
 
+			if (condition!=null) {
+				automatic=false; // if a package is conditional, it MUST be manual, because conditions are not added automatically
+			}
 			// adding a non-automatic package to an automatic binary transforms this binary to non-automatic
-			if ((automatic==false)&& (this.automatic==true)) {
+			if ((automatic==false)&&(this.automatic==true)) {
 				this.transform_to_non_automatic();
 			}
 
@@ -204,7 +232,7 @@ namespace AutoVala {
 					return;
 				}
 			}
-			var element=new package_element(pkg,type,automatic);
+			var element=new package_element(pkg,type,automatic,condition,inverted);
 			this.packages.add(element);
 		}
 
@@ -275,6 +303,9 @@ namespace AutoVala {
 		private int version;
 		private int line_number;
 
+		private string current_condition;
+		private bool condition_inverted;
+
 		/**
 		 * @param project_name The name for this project. Left blank if opening an existing project.
 		 * @param init_gettext When called from an internal function, get it to false to avoid initializating gettext twice
@@ -292,6 +323,7 @@ namespace AutoVala {
 			this.project_name=project_name;
 			this.error_list={};
 			this.vala_version="0.16";
+			this.reset_condition();
 		}
 
 		/**
@@ -446,6 +478,57 @@ namespace AutoVala {
 		}
 
 
+		private void reset_condition() {
+			this.current_condition="";
+			this.condition_inverted=false;
+		}
+
+		private void get_current_condition(out string? condition, out bool inverted) {
+			if (this.current_condition=="") {
+				condition=null;
+				inverted=false;
+			} else {
+				condition=this.current_condition;
+				inverted=this.condition_inverted;
+			}
+		}
+
+		private bool add_condition(string condition) {
+			if (this.current_condition!="") {
+				this.error_list+=_("Nested IFs not allowed (line %d)").printf(this.line_number);
+				return true;
+			} else {
+				this.current_condition=condition;
+				this.condition_inverted=false;
+				return false;
+			}
+		}
+
+		private bool remove_condition() {
+			if (this.current_condition=="") {
+				this.error_list+=_("Mismatched ENDIF (line %d)").printf(this.line_number);
+				return true;
+			} else {
+				this.reset_condition();
+				return false;
+			}
+		}
+
+		private bool invert_condition() {
+			if (this.current_condition=="") {
+				this.error_list+=_("Mismatched ELSE (line %d)").printf(this.line_number);
+				return true;
+			} else {
+				if (this.condition_inverted) {
+					this.error_list+=_("Mismatched ELSE (line %d)").printf(this.line_number);
+					return true;
+				} else {
+					this.condition_inverted=true;
+					return false;
+				}
+			}
+		}
+
 		/**
 		 * Reads the configuration file for a project.
 		 *
@@ -467,6 +550,7 @@ namespace AutoVala {
 		public bool read_configuration(string open_file="") {
 
 			this.configuration_data=new Gee.ArrayList<config_element ?>();
+			this.reset_condition();
 
 			this.config_path="";
 			if (false==open_file.has_suffix(".avprj")) {
@@ -543,6 +627,42 @@ namespace AutoVala {
 						automatic=true;
 						line=line.substring(1).strip();
 					}
+
+					if (line.has_prefix("vala_package: ")) {
+						error|=this.add_package(line.substring(14).strip(),package_type.no_check,automatic);
+						continue;
+					}
+					if (line.has_prefix("vala_check_package: ")) {
+						error|=this.add_package(line.substring(20).strip(),package_type.do_check,automatic);
+						continue;
+					}
+					if (line.has_prefix("vala_local_package: ")) {
+						error|=this.add_package(line.substring(20).strip(),package_type.local,automatic);
+						continue;
+					}
+
+					if (line.has_prefix("if ")) {
+						error|=this.add_condition(line.substring(3).strip());
+						continue;
+					}
+					if (line.strip()=="else") {
+						error|=this.invert_condition();
+						continue;
+					}
+					if (line.strip()=="endif") {
+						error|=this.remove_condition();
+						continue;
+					}
+
+					string ?cond;
+					bool invert;
+					this.get_current_condition(out cond,out invert);
+					if (cond!=null) {
+						error=true;
+						this.error_list+=_("Conditionals are supported only in VALA_PACKAGE, VALA_CHECK_PACKAGE and VALA_LOCAL_PACKAGE statements (line %d)").printf(this.line_number);
+						this.reset_condition();
+					}
+
 					if (line.has_prefix("vala_version: ")) {
 						var version=line.substring(14).strip();
 						if (false==this.check_version(version)) {
@@ -565,6 +685,7 @@ namespace AutoVala {
 							if ((f_major>major)||((f_major==major)&&(f_minor>minor))) {
 								this.config_path="";
 								this.configuration_data=new Gee.ArrayList<config_element ?>();
+								this.reset_condition();
 								this.error_list+=_("This project needs Vala version %s or greater, but you have version %d.%d. Can't open it.").printf(version,major,minor);
 								error=true;
 								break;
@@ -581,20 +702,8 @@ namespace AutoVala {
 						error|=this.add_entry(line.substring(14).strip(),Config_Type.VALA_LIBRARY,automatic);
 						continue;
 					}
-					if (line.has_prefix("vala_package: ")) {
-						error|=this.add_package(line.substring(14).strip(),package_type.no_check,automatic);
-						continue;
-					}
 					if (line.has_prefix("vala_vapi: ")) {
 						error|=this.add_vapi(line.substring(11).strip(),automatic);
-						continue;
-					}
-					if (line.has_prefix("vala_check_package: ")) {
-						error|=this.add_package(line.substring(20).strip(),package_type.do_check,automatic);
-						continue;
-					}
-					if (line.has_prefix("vala_local_package: ")) {
-						error|=this.add_package(line.substring(20).strip(),package_type.local,automatic);
 						continue;
 					}
 					if (line.has_prefix("vala_source: ")) {
@@ -692,6 +801,7 @@ namespace AutoVala {
 						if (this.version>this.current_version) {
 							this.config_path="";
 							this.configuration_data=new Gee.ArrayList<config_element ?>();
+							this.reset_condition();
 							this.error_list+=_("This project was created with a newer version of Autovala. Can't open it.");
 							error=true;
 							break;
@@ -704,6 +814,7 @@ namespace AutoVala {
 			} catch (Error e) {
 				this.config_path="";
 				this.configuration_data=new Gee.ArrayList<config_element ?>();
+				this.reset_condition();
 				this.error_list+=_("Can't open configuration file");
 				error=true;
 			}
@@ -803,6 +914,7 @@ namespace AutoVala {
 		private bool add_package(string pkg,package_type type,bool automatic) {
 
 			if (this.config_path=="") {
+				this.error_list+=_("Found 'XXXXX_package' command without package name (line %d)").printf(this.line_number);
 				return true;
 			}
 
@@ -810,7 +922,10 @@ namespace AutoVala {
 				this.error_list+=_("Found 'XXXXX_package' command after a non vala_binary, nor vala_library command (line %d)").printf(this.line_number);
 				return true;
 			}
-			this.last_element.add_package(pkg,type,automatic);
+			bool inverted;
+			string ?condition;
+			this.get_current_condition(out condition, out inverted);
+			this.last_element.add_package(pkg,type,automatic,condition,inverted);
 			return false;
 		}
 
@@ -1183,7 +1298,29 @@ namespace AutoVala {
 						if (element.destination!=null) {
 							data_stream.put_string("vala_destination: "+element.destination+"\n");
 						}
+						element.sort_packages();
+						string? current_condition=null;
+						bool inverted_condition=false;
 						foreach(var l in element.packages) {
+							if (l.condition==current_condition) {
+								if ((l.condition!=null) && (l.invert_condition!=inverted_condition)) {
+									data_stream.put_string("else\n");
+									inverted_condition=l.invert_condition;
+								}
+							} else {
+								inverted_condition=false;
+								if(current_condition!=null) {
+									data_stream.put_string("endif\n");
+								}
+								if(l.condition!=null) {
+									data_stream.put_string("if %s\n".printf(l.condition));
+									if (l.invert_condition==true) {
+										data_stream.put_string("else\n");
+										inverted_condition=l.invert_condition;
+									}
+								}
+								current_condition=l.condition;
+							}
 							if (l.automatic) {
 								data_stream.put_string("*");
 							}
@@ -1200,6 +1337,10 @@ namespace AutoVala {
 							}
 							data_stream.put_string(l.package+"\n");
 						}
+						if (current_condition!=null) {
+							data_stream.put_string("endif\n");
+						}
+
 						foreach(var s in element.sources) {
 							if (s.automatic) {
 								data_stream.put_string("*");
