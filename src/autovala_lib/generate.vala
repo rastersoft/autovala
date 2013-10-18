@@ -701,8 +701,8 @@ namespace AutoVala {
 				if ((element.path==path)&&((element.type==Config_Type.VALA_BINARY)||(element.type==Config_Type.VALA_LIBRARY))) {
 					foreach(var package in element.packages) {
 						if(package.type==package_type.local) {
-							if (this.local_namespaces.has_key(package.package)==false) {
-								this.local_namespaces.set(package.package,element);
+							if (this.local_namespaces.has_key(package.element_name)==false) {
+								this.local_namespaces.set(package.element_name,element);
 							}
 						}
 					}
@@ -781,7 +781,7 @@ namespace AutoVala {
 				if ((element.path==path)&&((element.type==Config_Type.VALA_BINARY)||(element.type==Config_Type.VALA_LIBRARY))) {
 					foreach(var checkfile in element.sources) {
 						if (checkfile.automatic==false) {
-							this.check_files(checkfile.source,path,path_s,files_set,filelist,filelist_path,namespaces_list, ref version, ref current_version);
+							this.check_files(checkfile.element_name,path,path_s,files_set,filelist,filelist_path,namespaces_list, ref version, ref current_version);
 						}
 					}
 				}
@@ -803,7 +803,7 @@ namespace AutoVala {
 				foreach (var element2 in element.packages) {
 					foreach (var key in this.namespaces.keys) {
 						foreach (var filenames in this.namespaces.get(key).filenames) {
-							if (element2.package==filenames) {
+							if (element2.element_name==filenames) {
 								if (provided_packages.contains(key)==false) {
 									provided_packages.add(key);
 								}

@@ -42,26 +42,21 @@ include(ValaVersion)
 ensure_vala_version("0.20" MINIMUM)
 include(ValaPrecompile)
 
-set(VALA_PACKAGES
-	posix
-	gee-1.0
-	glib-2.0
-	gtk+-3.0
-)
+set (VALA_PACKAGES ${VALA_PACKAGES} posix)
+set (VALA_PACKAGES ${VALA_PACKAGES} gee-1.0)
+set (VALA_PACKAGES ${VALA_PACKAGES} glib-2.0)
+set (VALA_PACKAGES ${VALA_PACKAGES} gtk+-3.0)
 
-set(APP_SOURCES
-	${CMAKE_CURRENT_BINARY_DIR}/Config.vala
-	configuration.vala
-	cmake.vala
-	generate.vala
-)
+set (APP_SOURCES ${APP_SOURCES} ${CMAKE_CURRENT_BINARY_DIR}/Config.vala)
+set (APP_SOURCES ${APP_SOURCES} configuration.vala)
+set (APP_SOURCES ${APP_SOURCES} conditional_text.vala)
+set (APP_SOURCES ${APP_SOURCES} cmake.vala)
+set (APP_SOURCES ${APP_SOURCES} generate.vala)
 
 vala_precompile(VALA_C AutoVala
 	${APP_SOURCES}
 PACKAGES
 	${VALA_PACKAGES}
-CUSTOM_VAPIS
-	${CUSTOM_VAPIS_LIST}
 OPTIONS
 	--library=AutoVala --gir AutoVala-0.0.gir 
 GENERATE_VAPI

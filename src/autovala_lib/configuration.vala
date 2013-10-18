@@ -29,15 +29,18 @@ namespace AutoVala {
 
 	public enum package_type {no_check, do_check, local}
 
-	public class package_element:GLib.Object {
-		public string package;
-		public package_type type;
-		public bool automatic;
+	public class generic_element:GLib.Object {
+		public string element_name;
 		public string? condition;
 		public bool invert_condition;
+		public bool automatic;
+	}
+
+	public class package_element:generic_element {
+		public package_type type;
 
 		public package_element(string package, package_type type, bool automatic, string? condition, bool inverted) {
-			this.package=package;
+			this.element_name=package;
 			this.type=type;
 			this.automatic=automatic;
 			this.condition=condition;
@@ -45,23 +48,23 @@ namespace AutoVala {
 		}
 	}
 
-	public class source_element:GLib.Object {
-		public string source;
-		public bool automatic;
+	public class source_element:generic_element {
 
-		public source_element(string source, bool automatic) {
-			this.source=source;
+		public source_element(string source, bool automatic, string? condition, bool inverted) {
+			this.element_name=source;
 			this.automatic=automatic;
+			this.condition=condition;
+			this.invert_condition=inverted;
 		}
 	}
 
-	public class vapi_element:GLib.Object {
-		public string vapi;
-		public bool automatic;
+	public class vapi_element:generic_element {
 
-		public vapi_element(string vapi, bool automatic) {
-			this.vapi=vapi;
+		public vapi_element(string vapi, bool automatic, string? condition, bool inverted) {
+			this.element_name=vapi;
 			this.automatic=automatic;
+			this.condition=condition;
+			this.invert_condition=inverted;
 		}
 	}
 
@@ -85,7 +88,7 @@ namespace AutoVala {
 		public bool namespace_manually_set;
 		public bool processed;
 
-		public static int ComparePackages (package_element? a, package_element? b) {
+		public static int ComparePackages (generic_element? a, generic_element? b) {
 			if (a.condition=="") {
 				return -1;
 			}
@@ -122,6 +125,8 @@ namespace AutoVala {
 
 		public void sort_packages() {
 			this.packages.sort(config_element.ComparePackages);
+			this.sources.sort(config_element.ComparePackages);
+			this.vapis.sort(config_element.ComparePackages);
 		}
 
 		public void set_destination(string ?destination) {
@@ -185,35 +190,41 @@ namespace AutoVala {
 			}*/
 		}
 
-		public void add_source(string source,bool automatic) {
+		public void add_source(string source,bool automatic, string? condition, bool invert_condition) {
 
+			if (condition!=null) {
+				automatic=false; // if a source file is conditional, it MUST be manual, because conditions are not added automatically
+			}
 			// adding a non-automatic source to an automatic binary transforms this binary to non-automatic
 			if ((automatic==false)&&(this.automatic==true)) {
 				this.transform_to_non_automatic();
 			}
 
 			foreach(var s in this.sources) {
-				if (s.source==source) {
+				if (s.element_name==source) {
 					return;
 				}
 			}
-			var element=new source_element(source,automatic);
+			var element=new source_element(source,automatic,condition, invert_condition);
 			this.sources.add(element);
 		}
 
-		public void add_vapi(string vapi,bool automatic) {
+		public void add_vapi(string vapi,bool automatic, string? condition, bool invert_condition) {
 
+			if (condition!=null) {
+				automatic=false; // if a VAPI is conditional, it MUST be manual, because conditions are not added automatically
+			}
 			// adding a non-automatic source to an automatic binary transforms this binary to non-automatic
 			if ((automatic==false)&&(this.automatic==true)) {
 				this.transform_to_non_automatic();
 			}
 
 			foreach(var s in this.vapis) {
-				if (s.vapi==vapi) {
+				if (s.element_name==vapi) {
 					return;
 				}
 			}
-			var element=new vapi_element(vapi,automatic);
+			var element=new vapi_element(vapi,automatic,condition, invert_condition);
 			this.vapis.add(element);
 		}
 
@@ -228,7 +239,7 @@ namespace AutoVala {
 			}
 
 			foreach(var p in this.packages) {
-				if (p.package==pkg) {
+				if (p.element_name==pkg) {
 					return;
 				}
 			}
@@ -265,7 +276,7 @@ namespace AutoVala {
 				GLib.stdout.printf("\tDestination: %s\n",this.destination);
 			}
 			foreach(var l in this.packages) {
-				GLib.stdout.printf("\tPackage: %s",l.package);
+				GLib.stdout.printf("\tPackage: %s",l.element_name);
 				switch (l.type) {
 				case package_type.no_check:
 					GLib.stdout.printf(" (don't check it)");
@@ -640,6 +651,14 @@ namespace AutoVala {
 						error|=this.add_package(line.substring(20).strip(),package_type.local,automatic);
 						continue;
 					}
+					if (line.has_prefix("vala_vapi: ")) {
+						error|=this.add_vapi(line.substring(11).strip(),automatic);
+						continue;
+					}
+					if (line.has_prefix("vala_source: ")) {
+						error|=this.add_source(line.substring(13).strip(),automatic);
+						continue;
+					}
 
 					if (line.has_prefix("if ")) {
 						error|=this.add_condition(line.substring(3).strip());
@@ -700,14 +719,6 @@ namespace AutoVala {
 					}
 					if (line.has_prefix("vala_library: ")) {
 						error|=this.add_entry(line.substring(14).strip(),Config_Type.VALA_LIBRARY,automatic);
-						continue;
-					}
-					if (line.has_prefix("vala_vapi: ")) {
-						error|=this.add_vapi(line.substring(11).strip(),automatic);
-						continue;
-					}
-					if (line.has_prefix("vala_source: ")) {
-						error|=this.add_source(line.substring(13).strip(),automatic);
 						continue;
 					}
 					if (line.has_prefix("vala_destination: ")) {
@@ -890,7 +901,11 @@ namespace AutoVala {
 				this.error_list+=_("Found vala_source after a non vala_binary, nor vala_library command (line %d)").printf(this.line_number);
 				return true;
 			}
-			this.last_element.add_source(source,automatic);
+			bool inverted;
+			string ?condition;
+			this.get_current_condition(out condition, out inverted);
+			GLib.stdout.printf("Elemento %s Condicion %s\n",source,condition);
+			this.last_element.add_source(source,automatic,condition,inverted);
 			return false;
 		}
 
@@ -939,7 +954,10 @@ namespace AutoVala {
 				this.error_list+=_("Found 'vala_vapi' command after a non vala_binary, nor vala_library command (line %d)").printf(this.line_number);
 				return true;
 			}
-			this.last_element.add_vapi(vapi,automatic);
+			bool inverted;
+			string ?condition;
+			this.get_current_condition(out condition, out inverted);
+			this.last_element.add_vapi(vapi,automatic,condition, inverted);
 			return false;
 		}
 
@@ -1262,6 +1280,8 @@ namespace AutoVala {
 
 			bool found=false;
 
+			var print_conditions=new conditional_text(data_stream,false);
+
 			try {
 				foreach(var element in this.configuration_data) {
 					if (element.type!=type) {
@@ -1299,28 +1319,8 @@ namespace AutoVala {
 							data_stream.put_string("vala_destination: "+element.destination+"\n");
 						}
 						element.sort_packages();
-						string? current_condition=null;
-						bool inverted_condition=false;
 						foreach(var l in element.packages) {
-							if (l.condition==current_condition) {
-								if ((l.condition!=null) && (l.invert_condition!=inverted_condition)) {
-									data_stream.put_string("else\n");
-									inverted_condition=l.invert_condition;
-								}
-							} else {
-								inverted_condition=false;
-								if(current_condition!=null) {
-									data_stream.put_string("endif\n");
-								}
-								if(l.condition!=null) {
-									data_stream.put_string("if %s\n".printf(l.condition));
-									if (l.invert_condition==true) {
-										data_stream.put_string("else\n");
-										inverted_condition=l.invert_condition;
-									}
-								}
-								current_condition=l.condition;
-							}
+							print_conditions.print_condition(l.condition,l.invert_condition);
 							if (l.automatic) {
 								data_stream.put_string("*");
 							}
@@ -1335,24 +1335,27 @@ namespace AutoVala {
 								data_stream.put_string("vala_local_package: ");
 								break;
 							}
-							data_stream.put_string(l.package+"\n");
+							data_stream.put_string(l.element_name+"\n");
 						}
-						if (current_condition!=null) {
-							data_stream.put_string("endif\n");
-						}
+						print_conditions.print_tail();
 
 						foreach(var s in element.sources) {
+							print_conditions.print_condition(s.condition,s.invert_condition);
 							if (s.automatic) {
 								data_stream.put_string("*");
 							}
-							data_stream.put_string("vala_source: "+s.source+"\n");
+							data_stream.put_string("vala_source: "+s.element_name+"\n");
 						}
+						print_conditions.print_tail();
+
 						foreach(var v in element.vapis) {
+							print_conditions.print_condition(v.condition,v.invert_condition);
 							if (v.automatic) {
 								data_stream.put_string("*");
 							}
-							data_stream.put_string("vala_vapi: "+v.vapi+"\n");
+							data_stream.put_string("vala_vapi: "+v.element_name+"\n");
 						}
+						print_conditions.print_tail();
 						data_stream.put_string("\n"); // add a separator after each new binary or library to simplify manual edition
 						found=false; // avoid to put more than one separator
 						break;

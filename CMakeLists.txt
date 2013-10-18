@@ -22,15 +22,15 @@ endif()
 
 find_package(PkgConfig)
 
-pkg_check_modules(DEPS REQUIRED
-	gee-1.0
-	glib-2.0
-	gtk+-3.0
-)
+set(MODULES_TO_CHECK ${MODULES_TO_CHECK} gee-1.0)
+set(MODULES_TO_CHECK ${MODULES_TO_CHECK} glib-2.0)
+set(MODULES_TO_CHECK ${MODULES_TO_CHECK} gtk+-3.0)
+
+pkg_check_modules(DEPS REQUIRED ${MODULES_TO_CHECK})
 
 add_subdirectory(doc)
+add_subdirectory(src)
 add_subdirectory(po)
 add_subdirectory(data)
 add_subdirectory(data/bash_completion)
 add_subdirectory(src/autovala_lib)
-add_subdirectory(src)

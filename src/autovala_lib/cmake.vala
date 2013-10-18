@@ -109,69 +109,50 @@ namespace AutoVala {
 
 				data_stream.put_string("find_package(PkgConfig)\n\n");
 
-				data_stream.put_string("set(MODULES_TO_CHECK\n");
 				Gee.Set<string> tocheck=new Gee.HashSet<string>();
+				Gee.List<generic_element> elements=new Gee.ArrayList<generic_element>();
+
+				// First add the ones without conditions
 				foreach(var element in config.configuration_data) {
 					if ((element.type!=Config_Type.VALA_BINARY)&&(element.type!=Config_Type.VALA_LIBRARY)) {
 						continue;
 					}
 					foreach(var module in element.packages) {
-						if (module.type==package_type.do_check) {
-							if (tocheck.contains(module.package)) {
+						if ((module.type==package_type.do_check)&&(module.condition==null)) {
+							if (tocheck.contains(module.element_name)) {
 								continue;
 							}
-							if (module.condition!=null) {
-								continue;
-							}
-							data_stream.put_string("\t"+module.package+"\n");
-							tocheck.add(module.package);
+							elements.add(module);
+							tocheck.add(module.element_name);
 						}
 					}
 				}
-				data_stream.put_string(")\n\n");
-				string current_condition=null;
-				bool inverted_condition=false;
+
+				// And now add the ones with conditions, so those present with and without conditions will be checked unconditionally
 				foreach(var element in config.configuration_data) {
 					if ((element.type!=Config_Type.VALA_BINARY)&&(element.type!=Config_Type.VALA_LIBRARY)) {
 						continue;
 					}
 					foreach(var module in element.packages) {
-						if (module.type==package_type.do_check) {
-							if (tocheck.contains(module.package)) {
+						if ((module.type==package_type.do_check)&&(module.condition!=null)) {
+							if (tocheck.contains(module.element_name)) {
 								continue;
 							}
-							if (module.condition==null) {
-								continue;
-							}
-							if (module.condition==current_condition) {
-								if ((module.condition!=null) && (module.invert_condition!=inverted_condition)) {
-									data_stream.put_string("ELSE()\n");
-									inverted_condition=module.invert_condition;
-								}
-							} else {
-								inverted_condition=false;
-								if(current_condition!=null) {
-									data_stream.put_string("ENDIF()\n");
-								}
-								if(module.condition!=null) {
-									data_stream.put_string("IF (%s)\n".printf(module.condition));
-									if (module.invert_condition==true) {
-										data_stream.put_string("ELSE()\n");
-										inverted_condition=module.invert_condition;
-									}
-								}
-								current_condition=module.condition;
-							}
-							data_stream.put_string("\tset (MODULES_TO_CHECK ${MODULES_TO_CHECK} "+module.package+")\n");
-							tocheck.add(module.package);
+							elements.add(module);
+							tocheck.add(module.element_name);
 						}
-					}
-					if (current_condition!=null) {
-						data_stream.put_string("ENDIF()\n\n");
 					}
 				}
 
+				elements.sort(config_element.ComparePackages);
+				var print_conditions=new conditional_text(data_stream,true);
+				foreach(var module in elements) {
+					print_conditions.print_condition(module.condition,module.invert_condition);
+					data_stream.put_string("set(MODULES_TO_CHECK ${MODULES_TO_CHECK} %s)\n".printf(module.element_name));
+				}
+				print_conditions.print_tail();
 
+				data_stream.put_string("\n");
 
 				data_stream.put_string("pkg_check_modules(DEPS REQUIRED ${MODULES_TO_CHECK})\n\n");
 
@@ -198,7 +179,7 @@ namespace AutoVala {
 						all_processed=false;
 						bool valid=true;
 						foreach(var package in element.packages) {
-							if((package.type==package_type.local)&&(false==packages_found.contains(package.package))) {
+							if((package.type==package_type.local)&&(false==packages_found.contains(package.element_name))) {
 								valid=false;
 								break;
 							}
@@ -227,8 +208,8 @@ namespace AutoVala {
 								error+=_("\n\tBinary %s, packages:").printf(Path.build_filename(element.path,element.file));
 							}
 							foreach(var package in element.packages) {
-								if((package.type==package_type.local)&&(false==packages_found.contains(package.package))) {
-									error+=" "+package.package;
+								if((package.type==package_type.local)&&(false==packages_found.contains(package.element_name))) {
+									error+=" "+package.element_name;
 								}
 							}
 						}
@@ -849,14 +830,14 @@ namespace AutoVala {
 				bool added_prefix=false;
 				foreach(var module in element.packages) {
 					if (module.type==package_type.local) {
-						if (this.local_modules.has_key(module.package)) {
+						if (this.local_modules.has_key(module.element_name)) {
 							if (added_prefix==false) {
 								data_stream.put_string("include_directories( ");
 								added_prefix=true;
 							}
-							data_stream.put_string("${CMAKE_BINARY_DIR}/"+local_modules.get(module.package)+" ");
+							data_stream.put_string("${CMAKE_BINARY_DIR}/"+local_modules.get(module.element_name)+" ");
 						} else {
-							this.error_list+=_("Warning: Can't set package %s for binary %s").printf(module.package,element.file);
+							this.error_list+=_("Warning: Can't set package %s for binary %s").printf(module.element_name,element.file);
 						}
 					}
 				}
@@ -866,15 +847,15 @@ namespace AutoVala {
 
 				data_stream.put_string("link_libraries( ${DEPS_LIBRARIES} ");
 				foreach(var module in element.packages) {
-					if ((module.type==package_type.local)&&(this.local_modules.has_key(module.package))) {
-						data_stream.put_string("-l"+module.package+" ");
+					if ((module.type==package_type.local)&&(this.local_modules.has_key(module.element_name))) {
+						data_stream.put_string("-l"+module.element_name+" ");
 					}
 				}
 				data_stream.put_string(")\n");
 				data_stream.put_string("link_directories( ${DEPS_LIBRARY_DIRS} ");
 				foreach(var module in element.packages) {
-					if ((module.type==package_type.local)&&(this.local_modules.has_key(module.package))) {
-						data_stream.put_string("${CMAKE_BINARY_DIR}/"+local_modules.get(module.package)+" ");
+					if ((module.type==package_type.local)&&(this.local_modules.has_key(module.element_name))) {
+						data_stream.put_string("${CMAKE_BINARY_DIR}/"+local_modules.get(module.element_name)+" ");
 					}
 				}
 				data_stream.put_string(")\n");
@@ -883,78 +864,49 @@ namespace AutoVala {
 				data_stream.put_string("ensure_vala_version(\""+this.config.vala_version+"\" MINIMUM)\n");
 				data_stream.put_string("include(ValaPrecompile)\n\n");
 
-				data_stream.put_string("set(VALA_PACKAGES\n");
-				foreach(var module in element.packages) {
-					if(module.type!=package_type.local) {
-						if (module.condition!=null) {
-							continue;
-						}
-						data_stream.put_string("\t"+module.package+"\n");
-					}
-				}
-				data_stream.put_string(")\n\n");
-
-				string current_condition=null;
-				bool inverted_condition=false;
-				foreach(var module in element.packages) {
-					if (module.condition==null) {
-						continue;
-					}
-					if (module.condition==current_condition) {
-						if ((module.condition!=null) && (module.invert_condition!=inverted_condition)) {
-							data_stream.put_string("ELSE()\n");
-							inverted_condition=module.invert_condition;
-						}
-					} else {
-						inverted_condition=false;
-						if(current_condition!=null) {
-							data_stream.put_string("ENDIF()\n");
-						}
-						if(module.condition!=null) {
-							data_stream.put_string("IF (%s)\n".printf(module.condition));
-							if (module.invert_condition==true) {
-								data_stream.put_string("ELSE()\n");
-								inverted_condition=module.invert_condition;
-							}
-						}
-						current_condition=module.condition;
-					}
-					data_stream.put_string("\tset (VALA_PACKAGES ${VALA_PACKAGES} "+module.package+")\n");
-				}
-				if (current_condition!=null) {
-					data_stream.put_string("ENDIF()\n\n");
-				}
-
-				data_stream.put_string("set(APP_SOURCES\n");
-				if ((is_library==false)||(element.current_namespace!="")) {
-					data_stream.put_string("\t${CMAKE_CURRENT_BINARY_DIR}/Config.vala\n");
-				}
-				foreach (var filename in element.sources) {
-					data_stream.put_string("\t"+filename.source+"\n");
-				}
-				data_stream.put_string(")\n\n");
+				var print_conditions=new conditional_text(data_stream,true);
 
 				bool found_local=false;
 				foreach(var module in element.packages) {
 					if (module.type==package_type.local) {
 						found_local=true;
+						continue;
 					}
+					print_conditions.print_condition(module.condition,module.invert_condition);
+					data_stream.put_string("set (VALA_PACKAGES ${VALA_PACKAGES} %s)\n".printf(module.element_name));
 				}
+				print_conditions.print_tail();
+				data_stream.put_string("\n");
 
+				if ((is_library==false)||(element.current_namespace!="")) {
+					data_stream.put_string("set (APP_SOURCES ${APP_SOURCES} ${CMAKE_CURRENT_BINARY_DIR}/Config.vala)\n");
+				}
+				foreach(var module in element.sources) {
+					print_conditions.print_condition(module.condition,module.invert_condition);
+					data_stream.put_string("set (APP_SOURCES ${APP_SOURCES} %s)\n".printf(module.element_name));
+				}
+				print_conditions.print_tail();
+				data_stream.put_string("\n");
 
+				bool has_custom_VAPIs=false;
 				if ((element.vapis.size!=0)||(found_local==true)) {
-					data_stream.put_string("set(CUSTOM_VAPIS_LIST\n");
 					foreach (var filename in element.vapis) {
-						data_stream.put_string("\t${CMAKE_SOURCE_DIR}/"+Path.build_filename(dir,filename.vapi)+"\n");
+						print_conditions.print_condition(filename.condition,filename.invert_condition);
+						data_stream.put_string("set(CUSTOM_VAPIS_LIST ${CUSTOM_VAPIS_LIST} ${CMAKE_SOURCE_DIR}/%s)\n".printf(Path.build_filename(dir,filename.element_name)));
+						has_custom_VAPIs=true;
 					}
+					print_conditions.print_tail();
 					foreach(var module in element.packages) {
 						if (module.type==package_type.local) {
-							if (this.local_modules.has_key(module.package)) {
-								data_stream.put_string("\t${CMAKE_BINARY_DIR}/"+Path.build_filename(local_modules.get(module.package),module.package+".vapi")+"\n");
+							if (this.local_modules.has_key(module.element_name)) {
+								print_conditions.print_condition(module.condition,module.invert_condition);
+								data_stream.put_string("set(CUSTOM_VAPIS_LIST ${CUSTOM_VAPIS_LIST} ${CMAKE_BINARY_DIR}/%s)\n".printf(Path.build_filename(local_modules.get(module.element_name), module.element_name +".vapi")));
+								has_custom_VAPIs=true;
 							}
 						}
 					}
-					data_stream.put_string(")\n\n");
+					print_conditions.print_tail();
+					data_stream.put_string("\n");
 				}
 
 				bool added_defines=false;
@@ -975,8 +927,10 @@ namespace AutoVala {
 				data_stream.put_string("\t${APP_SOURCES}\n");
 				data_stream.put_string("PACKAGES\n");
 				data_stream.put_string("\t${VALA_PACKAGES}\n");
-				data_stream.put_string("CUSTOM_VAPIS\n");
-				data_stream.put_string("\t${CUSTOM_VAPIS_LIST}\n");
+				if (has_custom_VAPIs) {
+					data_stream.put_string("CUSTOM_VAPIS\n");
+					data_stream.put_string("\t${CUSTOM_VAPIS_LIST}\n");
+				}
 
 				var final_options=element.compile_options;
 				if (is_library) {
