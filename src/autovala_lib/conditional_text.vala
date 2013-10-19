@@ -58,7 +58,7 @@ namespace AutoVala {
 					if (this.cmake_format) {
 						this.data_stream.put_string("ENDIF()\n");
 					} else {
-						this.data_stream.put_string("endif\n");
+						this.data_stream.put_string("end\n");
 					}
 				}
 				if(condition!=null) {
@@ -86,7 +86,7 @@ namespace AutoVala {
 				if (this.cmake_format) {
 					this.data_stream.put_string("ENDIF()\n\n");
 				} else {
-					this.data_stream.put_string("endif\n");
+					this.data_stream.put_string("end\n");
 				}
 			}
 			this.reset();

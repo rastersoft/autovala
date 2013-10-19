@@ -34,8 +34,9 @@ configure_file (${CMAKE_SOURCE_DIR}/src/Config.vala.cmake ${CMAKE_BINARY_DIR}/sr
 add_definitions(-DGETTEXT_PACKAGE=\"${GETTEXT_PACKAGE}\")
 set (VERSION "0.24.0")
 add_definitions(${DEPS_CFLAGS})
-link_libraries( ${DEPS_LIBRARIES} )
-link_directories( ${DEPS_LIBRARY_DIRS} )
+include_directories( ${CMAKE_BINARY_DIR}/src/autovala_lib )
+link_libraries( ${DEPS_LIBRARIES} -lAutoVala )
+link_directories( ${DEPS_LIBRARY_DIRS} ${CMAKE_BINARY_DIR}/src/autovala_lib )
 find_package(Vala REQUIRED)
 include(ValaVersion)
 ensure_vala_version("0.20" MINIMUM)
@@ -48,10 +49,14 @@ set (VALA_PACKAGES ${VALA_PACKAGES} glib-2.0)
 set (APP_SOURCES ${APP_SOURCES} ${CMAKE_CURRENT_BINARY_DIR}/Config.vala)
 set (APP_SOURCES ${APP_SOURCES} autovala.vala)
 
+set(CUSTOM_VAPIS_LIST ${CUSTOM_VAPIS_LIST} ${CMAKE_BINARY_DIR}/src/autovala_lib/AutoVala.vapi)
+
 vala_precompile(VALA_C autovala
 	${APP_SOURCES}
 PACKAGES
 	${VALA_PACKAGES}
+CUSTOM_VAPIS
+	${CUSTOM_VAPIS_LIST}
 )
 
 add_executable(autovala ${VALA_C})

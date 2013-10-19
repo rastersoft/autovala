@@ -88,6 +88,9 @@ namespace AutoVala {
 		public bool namespace_manually_set;
 		public bool processed;
 
+		public string? condition;
+		public bool invert_condition;
+
 		public static int ComparePackages (generic_element? a, generic_element? b) {
 			if (a.condition=="") {
 				return -1;
@@ -105,8 +108,14 @@ namespace AutoVala {
 			return (a.condition>b.condition ? 1 : -1);
 		}
 
-		public config_element(string file, string path, Config_Type type,bool automatic,string icon_path) {
-			this.automatic=automatic;
+		public config_element(string file, string path, Config_Type type,bool automatic,string icon_path,string? condition, bool inverted) {
+			this.condition=condition;
+			this.invert_condition=inverted;
+			if (condition==null) {
+				this.automatic=automatic;
+			} else {
+				this.automatic=false;
+			}
 			this.type=type;
 			this.file=file;
 			this.path=path;
@@ -317,6 +326,27 @@ namespace AutoVala {
 		private string current_condition;
 		private bool condition_inverted;
 
+		public static int ComparePackages (config_element? a, config_element? b) {
+			if (a.condition=="") {
+				return -1;
+			}
+			if (b.condition=="") {
+				return 1;
+			}
+			if (a.condition==b.condition) {
+				if (a.invert_condition==b.invert_condition) {
+					return 0; // both are equal
+				} else {
+					return a.invert_condition ? 1 : -1; // the one with the condition not inverted goes first
+				}
+			}
+			return (a.condition>b.condition ? 1 : -1);
+		}
+
+		private void sort_configuration() {
+			this.configuration_data.sort(configuration.ComparePackages);
+		}
+
 		/**
 		 * @param project_name The name for this project. Left blank if opening an existing project.
 		 * @param init_gettext When called from an internal function, get it to false to avoid initializating gettext twice
@@ -517,7 +547,7 @@ namespace AutoVala {
 
 		private bool remove_condition() {
 			if (this.current_condition=="") {
-				this.error_list+=_("Mismatched ENDIF (line %d)").printf(this.line_number);
+				this.error_list+=_("Mismatched END (line %d)").printf(this.line_number);
 				return true;
 			} else {
 				this.reset_condition();
@@ -659,82 +689,8 @@ namespace AutoVala {
 						error|=this.add_source(line.substring(13).strip(),automatic);
 						continue;
 					}
-
-					if (line.has_prefix("if ")) {
-						error|=this.add_condition(line.substring(3).strip());
-						continue;
-					}
-					if (line.strip()=="else") {
-						error|=this.invert_condition();
-						continue;
-					}
-					if (line.strip()=="endif") {
-						error|=this.remove_condition();
-						continue;
-					}
-
-					string ?cond;
-					bool invert;
-					this.get_current_condition(out cond,out invert);
-					if (cond!=null) {
-						error=true;
-						this.error_list+=_("Conditionals are supported only in VALA_PACKAGE, VALA_CHECK_PACKAGE and VALA_LOCAL_PACKAGE statements (line %d)").printf(this.line_number);
-						this.reset_condition();
-					}
-
-					if (line.has_prefix("vala_version: ")) {
-						var version=line.substring(14).strip();
-						if (false==this.check_version(version)) {
-							this.error_list+=_("Vala version string not valid. It must be in the form N.N or N.N.N (line %d)").printf(this.line_number);
-							error=true;
-						} else {
-							var version_elements=version.split(".");
-							int major;
-							int minor;
-							if (this.get_vala_version(out major, out minor)) {
-								this.error_list+=_("Can't get the version of the installed Vala binary. Asuming version 0.16");
-								major=0;
-								minor=16;
-							}
-							int f_major;
-							int f_minor;
-
-							f_major=int.parse(version_elements[0]);
-							f_minor=int.parse(version_elements[1]);
-							if ((f_major>major)||((f_major==major)&&(f_minor>minor))) {
-								this.config_path="";
-								this.configuration_data=new Gee.ArrayList<config_element ?>();
-								this.reset_condition();
-								this.error_list+=_("This project needs Vala version %s or greater, but you have version %d.%d. Can't open it.").printf(version,major,minor);
-								error=true;
-								break;
-							}
-							this.vala_version=version;
-						}
-						continue;
-					}
-					if (line.has_prefix("vala_binary: ")) {
-						error|=this.add_entry(line.substring(13).strip(),Config_Type.VALA_BINARY,automatic);
-						continue;
-					}
-					if (line.has_prefix("vala_library: ")) {
-						error|=this.add_entry(line.substring(14).strip(),Config_Type.VALA_LIBRARY,automatic);
-						continue;
-					}
-					if (line.has_prefix("vala_destination: ")) {
-						error|=this.add_destination(line.substring(18).strip());
-						continue;
-					}
 					if (line.has_prefix("custom: ")) {
 						error|=this.add_entry(line.substring(8).strip(),Config_Type.CUSTOM,automatic);
-						continue;
-					}
-					if (line.has_prefix("version: ")) {
-						error|=this.set_version(line.substring(9).strip(),automatic);
-						continue;
-					}
-					if (line.has_prefix("namespace: ")) {
-						error|=this.set_namespace(line.substring(11).strip(),automatic);
 						continue;
 					}
 					if (line.has_prefix("binary: ")) {
@@ -787,12 +743,81 @@ namespace AutoVala {
 						error|=this.add_entry(line.substring(6).strip(),Config_Type.DATA,automatic);
 						continue;
 					}
-					if (line.has_prefix("include: ")) {
-						error|=this.add_entry(line.substring(9).strip(),Config_Type.INCLUDE,automatic);
-						continue;
-					}
 					if (line.has_prefix("ignore: ")) {
 						error|=this.add_entry(line.substring(8).strip(),Config_Type.IGNORE,automatic);
+						continue;
+					}
+					if (line.has_prefix("if ")) {
+						error|=this.add_condition(line.substring(3).strip());
+						continue;
+					}
+					if (line.strip()=="else") {
+						error|=this.invert_condition();
+						continue;
+					}
+					if (line.strip()=="end") {
+						error|=this.remove_condition();
+						continue;
+					}
+
+					string ?cond;
+					bool invert;
+					this.get_current_condition(out cond,out invert);
+					if (cond!=null) {
+						error=true;
+						this.error_list+=_("Conditionals are supported only in VALA_PACKAGE, VALA_CHECK_PACKAGE and VALA_LOCAL_PACKAGE statements (line %d)").printf(this.line_number);
+						this.reset_condition();
+					}
+
+					if (line.has_prefix("vala_version: ")) {
+						var version=line.substring(14).strip();
+						if (false==this.check_version(version)) {
+							this.error_list+=_("Vala version string not valid. It must be in the form N.N or N.N.N (line %d)").printf(this.line_number);
+							error=true;
+						} else {
+							var version_elements=version.split(".");
+							int major;
+							int minor;
+							if (this.get_vala_version(out major, out minor)) {
+								this.error_list+=_("Can't get the version of the installed Vala binary. Asuming version 0.16");
+								major=0;
+								minor=16;
+							}
+							int f_major;
+							int f_minor;
+
+							f_major=int.parse(version_elements[0]);
+							f_minor=int.parse(version_elements[1]);
+							if ((f_major>major)||((f_major==major)&&(f_minor>minor))) {
+								this.config_path="";
+								this.configuration_data=new Gee.ArrayList<config_element ?>();
+								this.reset_condition();
+								this.error_list+=_("This project needs Vala version %s or greater, but you have version %d.%d. Can't open it.").printf(version,major,minor);
+								error=true;
+								break;
+							}
+							this.vala_version=version;
+						}
+						continue;
+					}
+					if (line.has_prefix("vala_binary: ")) {
+						error|=this.add_entry(line.substring(13).strip(),Config_Type.VALA_BINARY,automatic);
+						continue;
+					}
+					if (line.has_prefix("vala_library: ")) {
+						error|=this.add_entry(line.substring(14).strip(),Config_Type.VALA_LIBRARY,automatic);
+						continue;
+					}
+					if (line.has_prefix("version: ")) {
+						error|=this.set_version(line.substring(9).strip(),automatic);
+						continue;
+					}
+					if (line.has_prefix("namespace: ")) {
+						error|=this.set_namespace(line.substring(11).strip(),automatic);
+						continue;
+					}
+					if (line.has_prefix("include: ")) {
+						error|=this.add_entry(line.substring(9).strip(),Config_Type.INCLUDE,automatic);
 						continue;
 					}
 					if (line.has_prefix("compile_options: ")) {
@@ -801,6 +826,10 @@ namespace AutoVala {
 					}
 					if (line.has_prefix("project_name: ")) {
 						this.project_name=line.substring(14).strip();
+						continue;
+					}
+					if (line.has_prefix("vala_destination: ")) {
+						error|=this.add_destination(line.substring(18).strip());
 						continue;
 					}
 					if (line.has_prefix("define: ")) {
@@ -904,7 +933,6 @@ namespace AutoVala {
 			bool inverted;
 			string ?condition;
 			this.get_current_condition(out condition, out inverted);
-			GLib.stdout.printf("Elemento %s Condicion %s\n",source,condition);
 			this.last_element.add_source(source,automatic,condition,inverted);
 			return false;
 		}
@@ -1183,7 +1211,10 @@ namespace AutoVala {
 				}
 			}
 
-			var element=new config_element(file,path,type,automatic,icon_path);
+			bool inverted;
+			string ?condition;
+			this.get_current_condition(out condition, out inverted);
+			var element=new config_element(file,path,type,automatic,icon_path,condition,inverted);
 			if (type==Config_Type.CUSTOM) {
 				element.set_destination(destination);
 			}
@@ -1244,6 +1275,7 @@ namespace AutoVala {
 				}
 			}
 			this.error_list+=_("Storing configuration in file %s").printf(this.config_path);
+			this.sort_configuration();
 			try {
 				var dis = file.create(FileCreateFlags.NONE);
 				var data_stream = new DataOutputStream(dis);
@@ -1287,6 +1319,7 @@ namespace AutoVala {
 					if (element.type!=type) {
 						continue;
 					}
+					print_conditions.print_condition(element.condition,element.invert_condition);
 					found=true;
 					if (element.automatic) {
 						data_stream.put_string("*");
@@ -1409,6 +1442,7 @@ namespace AutoVala {
 						break;
 					}
 				}
+				print_conditions.print_tail();
 				if (found) {
 					data_stream.put_string("\n"); // add a separator after each new category to simplify manual edition
 				}

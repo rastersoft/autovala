@@ -95,6 +95,7 @@ namespace AutoVala {
 				data_stream.put_string("cmake_policy (VERSION 2.8)\n");
 				data_stream.put_string("list (APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)\n");
 				data_stream.put_string("enable_testing ()\n\n");
+				data_stream.put_string("option(ICON_UPDATE \"Update the icon cache after installing\" ON)\n\n");
 				data_stream.put_string("option(BUILD_VALADOC \"Build API documentation if Valadoc is available\" OFF)\n\n");
 				data_stream.put_string("set(HAVE_VALADOC OFF)\n");
 				data_stream.put_string("if(BUILD_VALADOC)\n");
@@ -336,6 +337,7 @@ namespace AutoVala {
 				}
 			}
 
+			var print_conditions=new conditional_text(data_stream,true);
 			foreach(var element in this.config.configuration_data) {
 				if (element.path!=dir) {
 					continue;
@@ -351,6 +353,7 @@ namespace AutoVala {
 						continue;
 					}
 				}
+				print_conditions.print_condition(element.condition,element.invert_condition);
 				switch(element.type) {
 				case Config_Type.CUSTOM:
 					error=this.create_custom(dir,element,data_stream);
@@ -435,11 +438,11 @@ namespace AutoVala {
 				default:
 					break;
 				}
-
 				if (error) {
 					break;
 				}
 			}
+			print_conditions.print_tail();
 			if ((error==false)&&(this.append_text!="")) {
 				try {
 					data_stream.put_string(this.append_text);
@@ -584,9 +587,6 @@ namespace AutoVala {
 
 			// Refresh the icon cache (but only if ICON_UPDATE is not OFF; that means we are building a package)
 			if (added_suffix==false) {
-				this.append_text+="\nIF(NOT (DEFINED ICON_UPDATE))\n";
-				this.append_text+="\tSET (ICON_UPDATE \"ON\")\n";
-				this.append_text+="ENDIF()\n";
 				this.append_text+="IF( NOT (${ICON_UPDATE} STREQUAL \"OFF\" ))\n";
 				this.append_text+="\tinstall (CODE \"execute_process ( COMMAND /usr/bin/gtk-update-icon-cache-3.0 -t ${CMAKE_INSTALL_PREFIX}/share/icons/hicolor )\" )\n";
 				this.append_text+="ENDIF()\n";
