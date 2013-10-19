@@ -95,9 +95,21 @@ namespace AutoVala {
 				data_stream.put_string("cmake_policy (VERSION 2.8)\n");
 				data_stream.put_string("list (APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)\n");
 				data_stream.put_string("enable_testing ()\n\n");
-				data_stream.put_string("option(ICON_UPDATE \"Update the icon cache after installing\" ON)\n\n");
-				data_stream.put_string("option(BUILD_VALADOC \"Build API documentation if Valadoc is available\" OFF)\n\n");
-				data_stream.put_string("set(HAVE_VALADOC OFF)\n");
+				data_stream.put_string("option(ICON_UPDATE \"Update the icon cache after installing\" ON)\n");
+				data_stream.put_string("option(BUILD_VALADOC \"Build API documentation if Valadoc is available\" OFF)\n");
+				foreach(var l in config.conditional_elements) {
+					data_stream.put_string("option(%s \"%s\" OFF)\n".printf(l,l));
+				}
+				foreach(var l in config.configuration_data) {
+					if(l.type!=Config_Type.DEFINE) {
+						continue;
+					}
+					if(config.conditional_elements.contains(l.file)) {
+						continue;
+					}
+					data_stream.put_string("option(%s \"%s\" OFF)\n".printf(l.file,l.file));
+				}
+				data_stream.put_string("\nset(HAVE_VALADOC OFF)\n");
 				data_stream.put_string("if(BUILD_VALADOC)\n");
 				data_stream.put_string("\tfind_package(Valadoc)\n");
 				data_stream.put_string("\tif(VALADOC_FOUND)\n");

@@ -316,7 +316,9 @@ namespace AutoVala {
 		public Gee.List<config_element ?> configuration_data; // Contains all the configuration read
 		public string vala_version; // Minimun Vala version needed to compile this
 
-		private int current_version; // Contains the version of the currently supported syntax
+		public int current_version; // Contains the version of the currently supported syntax
+		public Gee.List<string> conditional_elements;
+
 		private string[] error_list;
 
 		private weak config_element ? last_element;
@@ -359,6 +361,7 @@ namespace AutoVala {
 			this.current_version=6; // currently we support version 6 of the syntax
 			this.config_path="";
 			this.configuration_data=new Gee.ArrayList<config_element ?>();
+			this.conditional_elements=new Gee.ArrayList<string>();
 			this.last_element=null;
 			this.version=0;
 			this.project_name=project_name;
@@ -541,6 +544,17 @@ namespace AutoVala {
 			} else {
 				this.current_condition=condition;
 				this.condition_inverted=false;
+				var new_condition=" "+(condition.replace("("," ").replace(")"," "))+" ";
+				var list_conditions=new_condition.replace(" AND "," ").replace(" and "," ").replace(" And "," ").replace(" OR "," ").replace(" or "," ").replace(" Or "," ").replace(" NOT "," ").replace(" not "," ").replace(" Not "," ").split(" ");
+				foreach(var l in list_conditions) {
+					if (l=="") {
+						continue;
+					}
+					if (this.conditional_elements.contains(l)) {
+						continue;
+					}
+					this.conditional_elements.add(l);
+				}
 				return false;
 			}
 		}
@@ -647,6 +661,7 @@ namespace AutoVala {
 
 			var file=File.new_for_path(this.config_path);
 			bool error=false;
+			int if_line_number=0;
 			try {
 				var dis = new DataInputStream(file.read());
 
@@ -749,6 +764,7 @@ namespace AutoVala {
 					}
 					if (line.has_prefix("if ")) {
 						error|=this.add_condition(line.substring(3).strip());
+						if_line_number=this.line_number;
 						continue;
 					}
 					if (line.strip()=="else") {
@@ -858,7 +874,13 @@ namespace AutoVala {
 				this.error_list+=_("Can't open configuration file");
 				error=true;
 			}
-
+			string ?condition;
+			bool invert;
+			this.get_current_condition(out condition,out invert);
+			if (condition!=null) {
+				this.error_list+=_("IF without END in line %d").printf(if_line_number);
+				error=true;
+			}
 			return error;
 		}
 
@@ -1284,6 +1306,7 @@ namespace AutoVala {
 				data_stream.put_string("project_name: "+this.project_name+"\n");
 				data_stream.put_string("vala_version: "+this.vala_version+"\n\n");
 				this.store_data(Config_Type.PO,data_stream);
+				this.store_data(Config_Type.DEFINE,data_stream);
 				this.store_data(Config_Type.DATA,data_stream);
 				this.store_data(Config_Type.DOC,data_stream);
 				this.store_data(Config_Type.IGNORE,data_stream);
@@ -1296,7 +1319,6 @@ namespace AutoVala {
 				this.store_data(Config_Type.DBUS_SERVICE,data_stream);
 				this.store_data(Config_Type.EOS_PLUG,data_stream);
 				this.store_data(Config_Type.SCHEME,data_stream);
-				this.store_data(Config_Type.DEFINE,data_stream);
 				this.store_data(Config_Type.GLADE,data_stream);
 				this.store_data(Config_Type.ICON,data_stream);
 				this.store_data(Config_Type.PIXMAP,data_stream);
