@@ -12,7 +12,9 @@
 <li><a href="tricks#creating-libraries">Creating libraries</a><br /></li>
 <li><a href="tricks#linking-an-executable-against-a-library-from-the-same-project">Linking an executable against a library from the same project</a><br /></li>
 <li><a href="tricks#compiling-valadoc-in-ubuntu">Compiling Valadoc in Ubuntu</a><br /></li>
-<li><a href="tricks#using-d-bus-service-files">Using D-Bus service files</a></li>
+<li><a href="tricks#using-d-bus-service-files">Using D-Bus service files</a><br /></li>
+<li><a href="tricks#special-variables-in-cmake">Special-Variables in CMake</a><br /></li>
+<li><a href="tricks#using-gio-gio-unix-gobject-or-gmodule-packages">Using GIO, GIO-unix, GObject or GModule packages</a></li>
 </ul>
 <h2>Setting the version number</h2>
 <p>To simplify the maintenance of the code, Autovala allows to set the version number in an easy way inside the source code of your binary or library. That way you will always be sure to use the right number both for the <em>About</em> and <em>--version</em> commands, and for the library major and minor values.</p>
@@ -110,7 +112,7 @@
 <p>Several variables are defined in CMake files that can be useful. The first one is <em>AUTOVALA_INSTALL_PREFIX</em>. This variable can contain <em>/usr</em> or <em>/usr/local</em>, based on the PREFIX passed to CMake. The advantage is that it will detect the <em>final</em> installation path, not the current one, which is useful when creating <em>.deb</em> or <em>.rpm</em> packages, because those are first built in a different path.</p>
 <p>Also is available the variable <em>FINAL_AUTOVALA_PATH</em>. This variable allows to append an absolute path, and will convert it to a relative path. An example: if the <em>CMAKE_INSTALL_PREFIX</em> is <em>../debian/tmp/usr</em>, then <em>FINAL_AUTOVALA_PATH</em> will be <em>../debian/tmp/usr/..</em>, which allows to install files in the <em>root</em> of the package.</p>
 <h2>Using GIO, GIO-unix, GObject or GModule packages</h2>
-<p>There are some exceptions for <strong>using</strong> package autodetection. Since the packages <em>GIO</em>, <em>GIO-unix</em>, <em>GObject</em> and <em>GModule</em> are included inside the <em>GLib</em> namespace, Autovala requires to be manually marked by adding <strong>//using [package name]</strong>. Since it is a comment, it won't be processed by Valac, but will be understood by Autovala and add the required <strong>-pkg</strong> command.</p>
+<p>There are some exceptions for <strong>using</strong> and package autodetection. Since the packages <em>GIO</em>, <em>GIO-unix</em>, <em>GObject</em> and <em>GModule</em> are included inside the <em>GLib</em> namespace, Autovala requires them to be manually marked by adding <strong>//using [package name]</strong>. Since it is a comment, it won't be processed by Valac, but will be understood by Autovala and add the required <strong>-pkg</strong> command.</p>
 <h2>Using conditional compilation to allow to use GTK2 and GTK3</h2>
 <p>An special case is when supporting both GTK2 and GTK3 with the same source code is desirable. It is possible to do it by using conditional compilation.</p>
 <p>First, decide a statement to choose between both libraries. Let's say USE_GTK2.</p>

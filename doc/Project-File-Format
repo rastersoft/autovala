@@ -98,6 +98,7 @@
     *vala_source: switch_widget.vala</code></pre>
 <p>By default, all the statements will be OFF, and the user must turn them on by adding <em>-Dstatement=ON</em> when calling CMake. So, in this example, to compile with GTK2, use:</p>
 <pre><code>cmake .. -DUSE_GTK2=ON</code></pre>
+<p>All the statements inside an <em>if else end</em> block are marked as manual to ensure that AutoVala doesn't modify them.</p>
 <p><a href="index.html">Home</a></p>
 </div>
 </body>
