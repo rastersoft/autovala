@@ -111,6 +111,29 @@
 <p>Also is available the variable <em>FINAL_AUTOVALA_PATH</em>. This variable allows to append an absolute path, and will convert it to a relative path. An example: if the <em>CMAKE_INSTALL_PREFIX</em> is <em>../debian/tmp/usr</em>, then <em>FINAL_AUTOVALA_PATH</em> will be <em>../debian/tmp/usr/..</em>, which allows to install files in the <em>root</em> of the package.</p>
 <h2>Using GIO, GIO-unix, GObject or GModule packages</h2>
 <p>There are some exceptions for <strong>using</strong> package autodetection. Since the packages <em>GIO</em>, <em>GIO-unix</em>, <em>GObject</em> and <em>GModule</em> are included inside the <em>GLib</em> namespace, Autovala requires to be manually marked by adding <strong>//using [package name]</strong>. Since it is a comment, it won't be processed by Valac, but will be understood by Autovala and add the required <strong>-pkg</strong> command.</p>
+<h2>Using conditional compilation to allow to use GTK2 and GTK3</h2>
+<p>An special case is when supporting both GTK2 and GTK3 with the same source code is desirable. It is possible to do it by using conditional compilation.</p>
+<p>First, decide a statement to choose between both libraries. Let's say USE_GTK2.</p>
+<p>In your source code use #if USE_GTK2, #else and #endif for keeping sepearated the code parts where GTK2 and GTK3 differs.</p>
+<p>In your <em>.avprj</em> file use conditional compilation for choosing the libraries with these lines:</p>
+<pre><code>    if USE_GTK2
+    vala_check_package: gtk+-2.0
+    vala_check_package: gdk-2.0
+    else
+    vala_check_package: gtk+-3.0
+    vala_check_package: gdk-3.0
+    vala_check_package: glib-2.0
+    end</code></pre>
+<p>Finally, if you have different <em>glade</em> files for each library version, use also conditional compilation in your <em>.avprj</em> file:</p>
+<pre><code>    if USE_GTK2
+    glade: data/interface2/file1.ui
+    glade: data/interface2/file2.ui
+    glade: data/interface2/file3.ui
+    else
+    glade: data/interface/file1.ui
+    glade: data/interface/file2.ui
+    glade: data/interface/file3.ui
+    end</code></pre>
 <p><a href="index.html">Home</a></p>
 </div>
 </body>

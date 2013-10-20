@@ -3,5 +3,3 @@ While Autovala is fully usable, there are still a lot of things that I want to a
  * Support localization of desktop files
 
  * Allow to mix .vala and .c files
- 
- * Support for conditional compilation

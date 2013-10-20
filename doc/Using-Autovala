@@ -33,11 +33,12 @@
     public const string VERSION         Binary version</code></pre>
 <p><strong>VAPIS</strong> is where you can put your custom VAPI files, when you need some for compiling your project.</p>
 <p><strong>INSTALL</strong> is the folder where to build everything. More about it later.</p>
-<p>As can be supposed, <strong>DOC</strong> has to contain the documentation, and <strong>PO</strong> will contain the files with translatable strings. These strings are extracted from the <em>.vala</em> files and the <em>.ui</em> ones (from glade).</p>
+<p>As can be supposed, <strong>DOC</strong> has to contain the documentation, and <strong>PO</strong> will contain the files with translatable strings. These strings are extracted from the <em>.vala</em> and <em>.ui</em> files (the later from glade).</p>
 <p><strong>DATA</strong> is where you must put things like D-Bus activation files, <em>.desktop</em> files, scripts, and so on. <strong>ICONS</strong> folder and subfolders should contain the icons (in png or svg format), and Autovala will automagically take into account its size to put them in the right place.</p>
 <p><strong>INTERFACE</strong> should contain the <em>.ui</em> files from Glade.</p>
 <p>Finally, <strong>LOCAL</strong> is a place where to put everything you want to get copied &quot;as-is&quot; into</p>
 <pre><code>    usr/share/PROJECT_NAME/</code></pre>
+<p>To know the precise rules used by AutoVala, check the <a href="Rules">rules section</a>.</p>
 <p>When you are OK for the first compilation, just use Autovala to check the folders and automatically update the <em>.avprj</em> file with:</p>
 <pre><code>    autovala refresh</code></pre>
 <p>When using this command, Autovala will guess all the info about your project and put it in the <em>.avprj</em> file, so you can check and modify it if you want (more on that later). If everything is OK, just create the CMakeLists files from that data using:</p>

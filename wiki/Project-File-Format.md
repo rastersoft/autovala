@@ -2,7 +2,7 @@
 
 The project file has a very simple format. Usually you don't need to manually edit it, but when the guesses of autovala are incorrect, you can do it, and your changes will be remembered each time you refresh the file.
 
-The current version for the project file format is **4**.
+The current version for the project file format is **6**.
 
 The file is based on commands in the format:
 
@@ -23,6 +23,8 @@ Then, the next line contains "vala_version", which specifies the minimum Vala ve
 After that, it comes several commands, some of them repeated several times, to specify what to do with each file in your project. These commands are:
 
  * po: specifies the folder where to store the translations. By default it's "po". The program identifier for Gettext is the project name.
+
+ * define: specifies a condition parameter set in a #define statement in the source code, for conditional compilation. These parameters can be set during Makefile creatin with _-Dparameter=ON_, and will be passed to _valac_ during compilation.
 
  * data: specifies a folder with local data that must be installed in share/project_name. By default it's "data/local".
 
@@ -107,3 +109,34 @@ After that, it comes several commands, some of them repeated several times, to s
             custom: data/config_system.txt share/ will install the file *config_system.txt* in */usr/share* or */usr/local/share*
 
             custom: data/config_system.txt /etc/myfolder will install the file *config_system.txt* in */etc/myfolder*
+
+It is also possible to add conditions to nearly all of these commands (more specifically, all can be conditional with the exception of _vala\_version_, _vala\_binary_, _vala\_library_, _version_, _namespace_, _include_, _compile\_options_, _project\_name_, _vala\_destination_, _define_ and _autovala\_version_). To do so, you can use the commands _if CONDITION_, _else_ and _end_. The format for the CONDITION string is the CMake format (statements that can be true or false, parenteses, and AND, OR and NOT operators).
+
+An example taken from Cronopete:
+
+		vala_binary: src/cronopete
+		*vala_package: posix
+		*vala_check_package: gee-1.0
+		*vala_check_package: cairo
+		*vala_check_package: gsl
+		if (NOT NO_APPINDICATOR) AND (NOT USE_GTK2)
+		vala_check_package: appindicator3-0.1
+		end
+		if (NOT NO_APPINDICATOR) AND (USE_GTK2)
+		vala_check_package: appindicator-0.1
+		end
+		if USE_GTK2
+		vala_check_package: gtk+-2.0
+		vala_check_package: gdk-2.0
+		else
+		vala_check_package: gtk+-3.0
+		vala_check_package: gdk-3.0
+		vala_check_package: glib-2.0
+		end
+		*vala_source: switch_widget.vala
+
+By default, all the statements will be OFF, and the user must turn them on by adding _-Dstatement=ON_ when calling CMake. So, in this example, to compile with GTK2, use:
+
+    cmake .. -DUSE_GTK2=ON
+
+All the statements inside an _if else end_ block are marked as manual to ensure that AutoVala doesn't modify them.

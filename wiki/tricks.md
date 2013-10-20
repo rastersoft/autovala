@@ -157,3 +157,35 @@ Also is available the variable *FINAL_AUTOVALA_PATH*. This variable allows to ap
 ##Using GIO, GIO-unix, GObject or GModule packages
 
 There are some exceptions for **using** package autodetection. Since the packages *GIO*, *GIO-unix*, *GObject* and *GModule* are included inside the *GLib* namespace, Autovala requires to be manually marked by adding **//using [package name]**. Since it is a comment, it won't be processed by Valac, but will be understood by Autovala and add the required **-pkg** command.
+
+##Using conditional compilation to allow to use GTK2 and GTK3
+
+An special case is when supporting both GTK2 and GTK3 with the same source code is desirable. It is possible to do it by using conditional compilation.
+
+First, decide a statement to choose between both libraries. Let's say USE_GTK2.
+
+In your source code use #if USE_GTK2, #else and #endif for keeping sepearated the code parts where GTK2 and GTK3 differs.
+
+In your _.avprj_ file use conditional compilation for choosing the libraries with these lines:
+
+		if USE_GTK2
+		vala_check_package: gtk+-2.0
+		vala_check_package: gdk-2.0
+		else
+		vala_check_package: gtk+-3.0
+		vala_check_package: gdk-3.0
+		vala_check_package: glib-2.0
+		end
+
+Finally, if you have different _glade_ files for each library version, use also conditional compilation in your _.avprj_ file:
+
+		if USE_GTK2
+		glade: data/interface2/file1.ui
+		glade: data/interface2/file2.ui
+		glade: data/interface2/file3.ui
+		else
+		glade: data/interface/file1.ui
+		glade: data/interface/file2.ui
+		glade: data/interface/file3.ui
+		end
+

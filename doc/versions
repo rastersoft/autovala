@@ -6,6 +6,10 @@
 <div class="main_frame">
 <p><a href="index.html">Home</a></p>
 <ul>
+<li>version 0.24.0 (2013-10-20)
+<ul>
+<li>Added conditional compilation and conditional installation support<br /></li>
+</ul></li>
 <li>version 0.23.0 (2013-10-14)
 <ul>
 <li>Added bash_completion support<br /></li>

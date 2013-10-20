@@ -39,7 +39,7 @@ By default, Autovala will compile all the *.vala* source files located inside *s
 
 **INSTALL** is the folder where to build everything. More about it later.
 
-As can be supposed, **DOC** has to contain the documentation, and **PO** will contain the files with translatable strings. These strings are extracted from the *.vala* files and the *.ui* ones (from glade).
+As can be supposed, **DOC** has to contain the documentation, and **PO** will contain the files with translatable strings. These strings are extracted from the *.vala* and *.ui* files (the later from glade).
 
 **DATA** is where you must put things like D-Bus activation files, *.desktop* files, scripts, and so on. **ICONS** folder and subfolders should contain the icons (in png or svg format), and Autovala will automagically take into account its size to put them in the right place.
 
@@ -48,6 +48,8 @@ As can be supposed, **DOC** has to contain the documentation, and **PO** will co
 Finally, **LOCAL** is a place where to put everything you want to get copied "as-is" into
 
         usr/share/PROJECT_NAME/
+
+To know the precise rules used by AutoVala, check the [rules section](Rules).
 
 When you are OK for the first compilation, just use Autovala to check the folders and automatically update the *.avprj* file with:
 
