@@ -30,6 +30,8 @@ and enjoy.
 
 
 ## History of versions ##
+* version 0.24.0 (2013-10-20)
+	* Added conditional compilation and conditional installation support
 * version 0.23.0 (2013-10-14)
 	* Added bash_completion support
 * version 0.22.0 (2013-10-14)
