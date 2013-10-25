@@ -40,7 +40,7 @@ After that, it comes several commands, some of them repeated several times, to s
 
    * version: contains the version of this binary file. It is more useful when creating libraries. If it is not set manually in the project file, Autovala will check the source files for a global variable with the format:
 
-                const string project_version="X.Y.Z";
+                // project version=XX.YY.ZZ
 
    and will use that number as version. If it is unable to find it in none of the source files, then it will use 1.0.0 by default.
 

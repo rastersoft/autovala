@@ -29,7 +29,7 @@
 <p>After this command will come several subcommands that specifies details about this binary. Those are:</p>
 <ul>
 <li><p>version: contains the version of this binary file. It is more useful when creating libraries. If it is not set manually in the project file, Autovala will check the source files for a global variable with the format:</p>
-<pre><code>        const string project_version=&quot;X.Y.Z&quot;;</code></pre></li>
+<pre><code>        // project version=XX.YY.ZZ</code></pre></li>
 </ul>
 <p>and will use that number as version. If it is unable to find it in none of the source files, then it will use 1.0.0 by default.</p>
 <ul>
