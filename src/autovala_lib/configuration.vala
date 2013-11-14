@@ -25,7 +25,7 @@ using Posix;
 namespace AutoVala {
 
 	public enum Config_Type {VALA_BINARY, VALA_LIBRARY, BINARY, ICON, PIXMAP, PO, GLADE, DBUS_SERVICE, DESKTOP, AUTOSTART,
-							 EOS_PLUG, SCHEME, DATA, DOC, INCLUDE, IGNORE, CUSTOM, DEFINE}
+							 EOS_PLUG, SCHEME, DATA, DOC, INCLUDE, IGNORE, CUSTOM, DEFINE, MANPAGE}
 
 	public enum package_type {no_check, do_check, local}
 
@@ -78,6 +78,8 @@ namespace AutoVala {
 		public string version;
 		public string? destination;
 		public string define;
+		public string? language;
+		public int section;
 		public bool version_set;
 		public bool version_manually_set;
 		public bool automatic;
@@ -116,6 +118,8 @@ namespace AutoVala {
 			} else {
 				this.automatic=false;
 			}
+			this.language=null;
+			this.section=1;
 			this.type=type;
 			this.file=file;
 			this.path=path;
@@ -136,6 +140,14 @@ namespace AutoVala {
 			this.packages.sort(config_element.ComparePackages);
 			this.sources.sort(config_element.ComparePackages);
 			this.vapis.sort(config_element.ComparePackages);
+		}
+
+		public void set_language(string? language) {
+			this.language=language;
+		}
+
+		public void set_section(int section) {
+			this.section=section;
 		}
 
 		public void set_destination(string ?destination) {
@@ -716,6 +728,10 @@ namespace AutoVala {
 						error|=this.add_entry(line.substring(6).strip(),Config_Type.ICON,automatic);
 						continue;
 					}
+					if (line.has_prefix("manpage: ")) {
+						error|=this.add_entry(line.substring(9).strip(),Config_Type.MANPAGE,automatic);
+						continue;
+					}
 					if (line.has_prefix("pixmap: ")) {
 						error|=this.add_entry(line.substring(8).strip(),Config_Type.PIXMAP,automatic);
 						continue;
@@ -1158,41 +1174,71 @@ namespace AutoVala {
 
 		private bool add_entry(string l_filename, Config_Type type,bool automatic) {
 
+			string filename="";
 			string destination="";
+			string icon_path="";
+			string file;
+			string path;
+			string? language=null;
+			int page_section=1;
+			bool inverted;
+			string ?condition;
 
 			if (this.config_path=="") {
-				this.error_list+=_("Trying to add an entry with the class unconfigured");
+				this.error_list+=_("Trying to add an entry with the class unconfigured (line %d)").printf(this.line_number);
 				return true;
 			}
 
-			var filename=l_filename;
+			filename=l_filename;
 			if (type==Config_Type.CUSTOM) {
 				var pos=l_filename.index_of_char(' ');
 				if (pos==-1) {
-					this.error_list+=_("custom command needs two parameters.");
+					this.error_list+=_("custom command needs two parameters (line %d)").printf(this.line_number);
 					return true;
 				} else {
 					filename=l_filename.substring(0,pos).strip();
 					destination=l_filename.substring(pos+1).strip();
 				}
-			}
-
-			if ((type==Config_Type.PO)||(type==Config_Type.DATA)||(type==Config_Type.DOC)) {
+			} else if ((type==Config_Type.PO)||(type==Config_Type.DATA)||(type==Config_Type.DOC)) {
 				if (false==filename.has_suffix(Path.DIR_SEPARATOR_S)) {
 					filename+=Path.DIR_SEPARATOR_S;
 				}
-			}
-			string icon_path="";
-			if (type==Config_Type.ICON) {
+			} else if (type==Config_Type.ICON) {
 				var pos=l_filename.index_of(" ");
 				if (pos!=-1) { // there is a path for the icon; use it instead the default one
 					icon_path=l_filename.substring(0,pos);
 					filename=l_filename.substring(pos+1).strip();
 				}
+			} else if (type==Config_Type.MANPAGE) {
+				var elements=l_filename.split(" ");
+				switch (elements.length) {
+				default:
+					this.error_list+=_("manpage command needs one, two or three parameters (line %d)").printf(this.line_number);
+					return true;
+				break;
+				case 1: // manpage in default language, section 1
+					filename=elements[0];
+				break;
+				case 2: // manpage in specific language, section 1
+					filename=elements[0];
+					if (elements[1]!="default") {
+						language=elements[1];
+					}
+				break;
+				case 3: // manpage in specific language and custom section
+					filename=elements[0];
+					if (elements[1]!="default") {
+						language=elements[1];
+					}
+					page_section=int.parse(elements[2]);
+					if ((page_section<1)||(page_section>9)) {
+						this.error_list+=_("Man page section must be a number between 1 and 9 (line %d)").printf(this.line_number);
+						return true;
+					}
+				break;
+				}
 			}
 
-			string file;
-			string path;
 			if (type!=Config_Type.IGNORE) {
 				if (type!=Config_Type.DEFINE) {
 					file=Path.get_basename(filename);
@@ -1233,12 +1279,14 @@ namespace AutoVala {
 				}
 			}
 
-			bool inverted;
-			string ?condition;
 			this.get_current_condition(out condition, out inverted);
 			var element=new config_element(file,path,type,automatic,icon_path,condition,inverted);
 			if (type==Config_Type.CUSTOM) {
 				element.set_destination(destination);
+			}
+			if (type==Config_Type.MANPAGE) {
+				element.set_language(language);
+				element.set_section(page_section);
 			}
 			this.configuration_data.add(element);
 			if ((type==Config_Type.VALA_BINARY)||(type==Config_Type.VALA_LIBRARY)) {
@@ -1323,6 +1371,7 @@ namespace AutoVala {
 				this.store_data(Config_Type.ICON,data_stream);
 				this.store_data(Config_Type.PIXMAP,data_stream);
 				this.store_data(Config_Type.INCLUDE,data_stream);
+				this.store_data(Config_Type.MANPAGE,data_stream);
 			} catch (Error e) {
 				this.error_list+=_("Can't create the config file %s").printf(this.config_path);
 				return true;
@@ -1413,6 +1462,20 @@ namespace AutoVala {
 						print_conditions.print_tail();
 						data_stream.put_string("\n"); // add a separator after each new binary or library to simplify manual edition
 						found=false; // avoid to put more than one separator
+						break;
+					case Config_Type.MANPAGE:
+						data_stream.put_string("manpage: "+fullpathname);
+						if ((element.language!=null) || (element.section!=1)) {
+							if (element.language!=null) {
+								data_stream.put_string(" "+element.language);
+							} else {
+								data_stream.put_string(" default");
+							}
+						}
+						if (element.section!=1) {
+							data_stream.put_string(" %d".printf(element.section));
+						}
+						data_stream.put_string("\n");
 						break;
 					case Config_Type.DEFINE:
 						data_stream.put_string("define: "+element.path+"\n");

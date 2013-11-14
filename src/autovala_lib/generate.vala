@@ -315,6 +315,16 @@ namespace AutoVala {
 			} catch (Error e) {
 				this.cant_create("DATA/LOCAL");
 			}
+			try {
+				var folder=File.new_for_path(Path.build_filename(config_path,"data","man"));
+				if (folder.query_exists()) {
+					this.folder_exists("DATA/MAN");
+				} else {
+					folder.make_directory_with_parents();
+				}
+			} catch (Error e) {
+				this.cant_create("DATA/MAN");
+			}
 			if (error) {
 				return true;
 			}
