@@ -1,3 +1,6 @@
+* version 0.25.0 (2013-11-16)
+    * Added support for creating and installing man pages
+    * Added manpages for Autovala
 * version 0.24.0 (2013-10-20)
 	* Added conditional compilation and conditional installation support
 * version 0.23.0 (2013-10-14)
