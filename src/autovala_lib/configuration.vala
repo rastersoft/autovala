@@ -797,7 +797,7 @@ namespace AutoVala {
 					this.get_current_condition(out cond,out invert);
 					if (cond!=null) {
 						error=true;
-						this.error_list+=_("Conditionals are supported only in VALA_PACKAGE, VALA_CHECK_PACKAGE and VALA_LOCAL_PACKAGE statements (line %d)").printf(this.line_number);
+						this.error_list+=_("Conditionals are not supported in this statement (line %d)").printf(this.line_number);
 						this.reset_condition();
 					}
 
