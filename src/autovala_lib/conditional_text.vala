@@ -20,8 +20,6 @@ using GLib;
 using Gee;
 using Posix;
 
-// project version=0.24
-
 namespace AutoVala {
 
 	class conditional_text: GLib.Object {

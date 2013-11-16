@@ -1,0 +1,46 @@
+<html>
+<head>
+<link rel="stylesheet" type="text/css" href="view.css" />
+</head>
+<body>
+<div class="main_frame">
+<p><a href="index.html">Home</a></p>
+<p>%Autovala-rules(7)</p>
+<h1>NAME</h1>
+<p>Autovala rules - Rules followed by autovala to guess what kind of file is each one in the folder tree</p>
+<h1>DESCRIPTION</h1>
+<p>The rules followed by Autovala are the following:</p>
+<ul>
+<li><p>All <strong>.vala</strong> files in the <strong>src/</strong> folder belong to a binary called like the project name, and will be scanned to determine the packages needed to compile them. The <strong>.vala</strong> files in the subfolders are also added, unless there is another binary or library that already posesses that folder</p></li>
+<li><p>All <strong>.vala</strong> files in a folder posessed by a binary or library belong to it, and will be scanned to determine the packages needed to compile them. The <strong>.vala</strong> files in the subfolders are also added, unless there is another binary or library that already posesses that folder</p></li>
+<li><p>The sources will be scanned to find the version number in a specific format, allowing to keep it inside the sources and avoiding the need of editing the project file manually</p></li>
+<li><p>All <strong>.png</strong> or <strong>.svg</strong> in the folder <strong>data/icons/</strong> (and subfolders) are considered icons, so Autovala will determine automatically the best-fitting standard icon size (in the case of <strong>.png</strong>; for <strong>.svg</strong> it will put them always in <strong>scalable</strong>) and install them in the corresponding folder: <strong>apps</strong> by default, unless it is a <strong>.svg</strong> file with a filename ended in <strong>-symbolic.svg</strong>; in that case it will go to <strong>status</strong>. The user can modify the final folder manually for the icons (s)he wishes.</p></li>
+<li><p>All <strong>.png</strong>, <strong>.jpg</strong> or <strong>.svg</strong> files in the folder <strong>data/pixmaps/</strong> (and subfolders) are considered pixmaps, and will be installed in <strong>share/pixmaps/</strong>.</p></li>
+<li><p>All <strong>.po</strong> files in <strong>po/</strong> folder will be considered as po files, and will be installed in the right locale. Also, will find the <strong>.vala</strong> and <strong>.ui</strong> files and add them as sources for internationalization process.</p></li>
+<li><p>Each <strong>.desktop</strong> file in <strong>data/</strong> will be copied to <strong>share/desktop/</strong>, unless it contains the line <strong>X-GNOME-Autostart-enabled=</strong>, in which case it will be copied to <strong>/etc/xdg/autostart</strong>.</p></li>
+<li><p>Each <strong>.service</strong> file in <strong>data/</strong> will be presumed to be a D-Bus service, and will be preprocessed to put the right binary folder ( <strong>bin/</strong> or <strong>local/bin/</strong> )</p></li>
+<li><p>Each <strong>.plug</strong> file in <strong>data/</strong> will be presumed to be an ElementaryOS PLUG file</p></li>
+<li><p>Each <strong>.gschema.xml</strong> file in <strong>data/</strong> will be presumed to be a GTK schema, so will be copied in the right place and force a recompile of the schemas (if needed)</p></li>
+<li><p>Each <strong>.ui</strong> file in <strong>data/interface/</strong> will be presumed to be a Glade file, so will be copied to <strong>share/project_name/</strong> and taken into account when generating the <strong>.po</strong> and <strong>.mo</strong> files for internationalization</p></li>
+<li><p>Each <strong>.sh</strong> file in <strong>data/</strong> will be presumed to be a binary script, so will be copied to <strong>bin/</strong></p></li>
+<li><p>All files and folders in <strong>data/local/</strong> will be copied to <strong>share/project_name/</strong>. This is useful for application-specific data</p></li>
+<li><p>All files and folders in <strong>doc/</strong> will be copied to <strong>share/doc/project_name/</strong>. This is useful for documentation</p></li>
+<li><p>All files ended in <strong>.X</strong> (being X a number between 1 and 9) in the folder <strong>data/man</strong> will be considered man pages in groff format, and will be compressed with gzip and installed in <strong>share/man/manX</strong> (being X the same number).</p></li>
+<li><p>All files ended in <strong>.X.md</strong> (being X a number between 1 and 9) in the folder <strong>data/man</strong> will be considered man pages in markdown format, and will be converted to groff using pandoc, compressed with gzip and installed in <strong>share/man/manX</strong> (being X the same number).</p></li>
+<li><p>All files ended in <strong>.X</strong> or <strong>.X.md</strong> (being X a number between 1 and 9) in the folder <strong>data/man/YYYY</strong> will be considered man pages in groff or markdown format respectively, and will be converted to groff using pandoc, compressed with gzip and installed in <strong>share/man/YYYY/manX</strong> (being X the same number). This means that <strong>YYYY</strong> will be considered a language (examples for YYYY: <strong>es</strong>, <strong>en_US</strong>, <strong>es_AR.UTF-8</strong>).</p></li>
+</ul>
+<p>When Autovala searchs the packages, it uses only the versions available for the currently active version. Also, by default, it uses the most recent version. But if another version is selected manually, it will use that one instead.</p>
+<p><strong>Example:</strong> if you put &quot;using Gtk;&quot; in your code, by default Autovala will use the package gtk+-3.0 to compile it; but if you manually add the package gtk+-2.0 to that binary, Autovala will use Gtk2 instead of Gtk3.</p>
+<h1>SEE ALSO</h1>
+<p><a href="autovala.1">autovala(1)</a> <a href="autovala-fileformat.5">autovala-fileformat(5)</a> <a href="autovala-keep-changes.7">autovala-keep-changes(7)</a> <a href="autovala-tricks.7">autovala-tricks(7)</a></p>
+<h1>AUTHOR</h1>
+<p>Sergio Costas Rodriguez<br /><script type="text/javascript">
+<!--
+h='&#114;&#x61;&#x73;&#116;&#x65;&#114;&#x73;&#x6f;&#102;&#116;&#46;&#x63;&#x6f;&#x6d;';a='&#64;';n='&#114;&#x61;&#x73;&#116;&#x65;&#114;';e=n+a+h;
+document.write('<a h'+'ref'+'="ma'+'ilto'+':'+e+'">'+e+'<\/'+'a'+'>');
+// -->
+</script><noscript>&#114;&#x61;&#x73;&#116;&#x65;&#114;&#32;&#x61;&#116;&#32;&#114;&#x61;&#x73;&#116;&#x65;&#114;&#x73;&#x6f;&#102;&#116;&#32;&#100;&#x6f;&#116;&#32;&#x63;&#x6f;&#x6d;</noscript><br /><a href="http://www.rastersoft.com">http://www.rastersoft.com</a><br /><a href="http://github.com/rastersoft">http://github.com/rastersoft</a></p>
+<p><a href="index.html">Home</a></p>
+</div>
+</body>
+</html>

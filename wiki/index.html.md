@@ -10,11 +10,11 @@ This is what Autovala does. This process is done in three steps:
 * It also peeks the source files to determine which Vala packages they need, and generate automagically that list
 * After that (and after allowing the user to check, if (s)he wishes, the project file), it uses that project file to generate the needed CMakeLists files
 
-Autovala uses simple rules, like: "png files go to usr/share/pixmaps", and so on. It even takes into account things like the size and type of picture. For a detailed (and, maybe, boring) explanation of the rules followed by Autovala, check [rules page](Rules).
+Autovala uses simple rules, like: "png files go to usr/share/pixmaps", and so on. It even takes into account things like the size and type of picture. For a detailed (and, maybe, boring) explanation of the rules followed by Autovala, check [rules page](autovala-rules.7).
 
-[Using autovala](Using-Autovala)  
-[Project file format](Project-File-Format): needed for manual editing  
-[Keeping your changes](Keeping-your-changes): needed when you manually edit the .avprj file  
-[Autovala tricks](tricks)  
+[Using autovala](autovala.1)  
+[Project file format](autovala-fileformat.5): needed for manual editing  
+[Keeping your changes](autovala-keep-changes.7): needed when you manually edit the .avprj file  
+[Autovala tricks](autovala-tricks.7)  
 [Things TO DO](To-Do)  
 [History of versions](versions)  

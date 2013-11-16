@@ -6,6 +6,11 @@
 <div class="main_frame">
 <p><a href="index.html">Home</a></p>
 <ul>
+<li>version 0.25.0 (2013-11-16)
+<ul>
+<li>Added support for creating and installing man pages<br /></li>
+<li>Added manpages for Autovala<br /></li>
+</ul></li>
 <li>version 0.24.0 (2013-10-20)
 <ul>
 <li>Added conditional compilation and conditional installation support<br /></li>

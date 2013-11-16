@@ -1,19 +1,13 @@
 ### AutoVala Project ###
-autovala_version: 6
+autovala_version: 7
 project_name: autovala
 vala_version: 0.20
-
-*po: po
-
-*data: data/local
-
-*doc: doc
 
 custom: data/cmake share/autovala
 custom: data/bash_completion/autovala /etc/bash_completion.d
 
 vala_binary: src/autovala
-*version: 0.24.0
+*version: 0.25.0
 vala_local_package: AutoVala
 *vala_package: posix
 *vala_check_package: gee-1.0
@@ -21,7 +15,7 @@ vala_local_package: AutoVala
 *vala_source: autovala.vala
 
 vala_library: src/autovala_lib/autovala_lib
-*version: 0.24
+*version: 0.25
 *namespace: AutoVala
 *vala_package: posix
 *vala_check_package: gee-1.0
@@ -31,4 +25,16 @@ vala_library: src/autovala_lib/autovala_lib
 *vala_source: conditional_text.vala
 *vala_source: cmake.vala
 *vala_source: generate.vala
+
+*po: po
+
+*data: data/local
+
+*doc: doc
+
+manpage: wiki/autovala.1.md
+manpage: wiki/autovala-rules.7.md default 7
+manpage: wiki/autovala-fileformat.5.md default 5
+manpage: wiki/autovala-tricks.7.md default 7
+manpage: wiki/autovala-keep-changes.7.md default 7
 

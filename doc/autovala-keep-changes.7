@@ -1,0 +1,81 @@
+<html>
+<head>
+<link rel="stylesheet" type="text/css" href="view.css" />
+</head>
+<body>
+<div class="main_frame">
+<p><a href="index.html">Home</a></p>
+<p>%Autovala-keep-changes(7)</p>
+<h1>NAME</h1>
+<p>autovala keeping your changes - How to manually modify the configuration file without loosing your changes</p>
+<h1>DESCRIPTION</h1>
+<p>By default, nearly all the lines in the project file starts with an asterisk. Those lines contains automatically created commands, and every time the user launches the command <strong>autovala refresh</strong>, they are deleted and recreated using the current files in the disk.</p>
+<p>Lines without the asterisk contains manually set commands, and they are not deleted before recreating the project file.</p>
+<p>Also, when an automatically created <strong>vala_library</strong> or <strong>vala_binary</strong> command (this is, prefixed with the asterisk) contains at least one subcommand added manually, that command will be considered manually added too, so it will be preserved even if you delete its folder. This is made this way to ensure that the manual data is preserved always.</p>
+<p>Example: let's suppose we have this project file:</p>
+<pre><code>    ### AutoVala Project ###
+    autovala_version: 1
+    project_name: autovala
+    vala_version: 0.16
+    *po: po
+
+    *vala_binary: src/autovala
+    *version: 1.0.0
+    *vala_package: posix
+    *vala_check_package: gee-1.0
+    *vala_check_package: glib-2.0
+    *vala_check_package: gtk+-3.0
+    *vala_source: cmake.vala
+    *vala_source: generate.vala
+    *vala_source: configuration.vala
+    *vala_source: autovala.vala</code></pre>
+<p>We can see that all the commands have been added automatically, because they are prepended by an asterisk.</p>
+<p>Let's say that the version number is incorrect; we want the version number 0.1.0. So we edit the file and modify it (incorrectly) to look like this:</p>
+<pre><code>    ### AutoVala Project ###
+    autovala_version: 1
+    project_name: autovala
+    vala_version: 0.16
+    *po: po
+
+    *vala_binary: src/autovala
+    *version: 0.1.0
+    *vala_package: posix
+    *vala_check_package: gee-1.0
+    *vala_check_package: glib-2.0
+    *vala_check_package: gtk+-3.0
+    *vala_source: cmake.vala
+    *vala_source: generate.vala
+    *vala_source: configuration.vala
+    *vala_source: autovala.vala</code></pre>
+<p>This change is <strong>INCORRECT</strong>, because it keeps the asterisk in the changed line. That means that the next time that <strong>autovala refresh</strong> or <strong>autovala update</strong> is run, that change will disappear and will be replaced by the old guess.</p>
+<p>To ensure that the change remains, it must be put in a line <strong>without</strong> the asterisk. This is:</p>
+<pre><code>    ### AutoVala Project ###
+    autovala_version: 1
+    project_name: autovala
+    vala_version: 0.16
+    *po: po
+
+    *vala_binary: src/autovala
+    version: 0.1.0
+    *vala_package: posix
+    *vala_check_package: gee-1.0
+    *vala_check_package: glib-2.0
+    *vala_check_package: gtk+-3.0
+    *vala_source: cmake.vala
+    *vala_source: generate.vala
+    *vala_source: configuration.vala
+    *vala_source: autovala.vala</code></pre>
+<p>Now the change will remain, no matter how many times <strong>autovala refresh</strong> or <strong>autovala update</strong> is run.</p>
+<h1>SEE ALSO</h1>
+<p><a href="autovala.1">autovala(1)</a> <a href="autovala-rules.7">autovala-rules(7)</a> <a href="autovala-fileformat.5">autovala-fileformat(5)</a> <a href="autovala-tricks.7">autovala-tricks(7)</a></p>
+<h1>AUTHOR</h1>
+<p>Sergio Costas Rodriguez<br /><script type="text/javascript">
+<!--
+h='&#114;&#x61;&#x73;&#116;&#x65;&#114;&#x73;&#x6f;&#102;&#116;&#46;&#x63;&#x6f;&#x6d;';a='&#64;';n='&#114;&#x61;&#x73;&#116;&#x65;&#114;';e=n+a+h;
+document.write('<a h'+'ref'+'="ma'+'ilto'+':'+e+'">'+e+'<\/'+'a'+'>');
+// -->
+</script><noscript>&#114;&#x61;&#x73;&#116;&#x65;&#114;&#32;&#x61;&#116;&#32;&#114;&#x61;&#x73;&#116;&#x65;&#114;&#x73;&#x6f;&#102;&#116;&#32;&#100;&#x6f;&#116;&#32;&#x63;&#x6f;&#x6d;</noscript><br /><a href="http://www.rastersoft.com">http://www.rastersoft.com</a><br /><a href="http://github.com/rastersoft">http://github.com/rastersoft</a></p>
+<p><a href="index.html">Home</a></p>
+</div>
+</body>
+</html>

@@ -169,6 +169,21 @@ namespace AutoVala {
 
 				data_stream.put_string("pkg_check_modules(DEPS REQUIRED ${MODULES_TO_CHECK})\n\n");
 
+				// check for PANDOC, but only if there are man pages in non-groff format
+				foreach(var element in config.configuration_data) {
+					if (element.type!=Config_Type.MANPAGE) {
+						continue;
+					}
+					var len=element.file.length;
+					if ((len>1)&&(element.file[len-2]!='.')&&(element.file[len-1]>='1')&&(element.file[len-1]<='9')) {
+						continue; // this filename ends in .1, .2, ..., .9, so it is a groff man page
+					}
+					// if we reach here, it is a non-groff man page, so ask for PANDOC
+					data_stream.put_string("find_program ( WHERE_PANDOC pandoc )\n");
+					data_stream.put_string("if ( NOT WHERE_PANDOC )\n\tMESSAGE(FATAL_ERROR \"Error! PANDOC is not installed.\")\nendif()\n\n");
+					break;
+				}
+
 				// now, put all the binary and library folders, in order of satisfied dependencies
 				Gee.Set<string> packages_found=new Gee.HashSet<string>();
 				bool all_processed=false;
@@ -367,6 +382,9 @@ namespace AutoVala {
 				}
 				print_conditions.print_condition(element.condition,element.invert_condition);
 				switch(element.type) {
+				case Config_Type.MANPAGE:
+					error=this.create_manpage(dir,element,data_stream);
+					break;
 				case Config_Type.CUSTOM:
 					error=this.create_custom(dir,element,data_stream);
 					break;
@@ -484,6 +502,27 @@ namespace AutoVala {
 				this.error_list+=_("Failed to write the CMakeLists file for %s").printf(element_file);
 				return true;
 			}
+			return false;
+		}
+
+
+		private bool create_manpage(string dir,config_element element,DataOutputStream data_stream) {
+			// First, check the extension to know if we must convert it from other format to groff
+			string final_file="";
+			if (element.file.has_suffix(".md")) {
+				final_file=element.file.substring(0,element.file.length-3);
+				data_stream.put_string("execute_process ( COMMAND pandoc ${CMAKE_CURRENT_SOURCE_DIR}/" + element.file + " -o ${CMAKE_CURRENT_BINARY_DIR}/" + final_file + " -f markdown -t man -s )\n");
+			} else {
+				final_file=element.file;
+				data_stream.put_string("configure_file ( ${CMAKE_CURRENT_SOURCE_DIR}/" + element.file + " ${CMAKE_CURRENT_BINARY_DIR}/" + final_file + " COPYONLY )\n");
+			}
+			data_stream.put_string("execute_process ( COMMAND gzip -f ${CMAKE_CURRENT_BINARY_DIR}/" + final_file + " )\n");
+			final_file+=".gz";
+			data_stream.put_string("install(FILES ${CMAKE_CURRENT_BINARY_DIR}/" + final_file + " DESTINATION share/man/");
+			if (element.language!=null) {
+				data_stream.put_string(element.language+"/");
+			}
+			data_stream.put_string("man%d/ )\n\n".printf(element.section));
 			return false;
 		}
 
