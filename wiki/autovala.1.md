@@ -1,4 +1,26 @@
-# Using Autovala
+%Autovala(1)
+
+# NAME
+
+Autovala - simplify the creation of projects with Vala and CMake
+
+# SYNOPSIS
+
+autovala {init PROJECT_NAME | clear | refresh | cmake | update | help | version}
+
+# DESCRIPTION
+
+Autovala is a program and a library designed to help in the creation of projects with Vala and CMake. The idea is quite simple: CMake is very powerful, but writting CMakeLists files is boring and repetitive. Why not let the computer create them, by guessing what to do with each file? And if, at the end, there are mistakes, let the user fix them in an easy way, and generate the final CMakeLists files.
+
+This is what Autovala does. This process is done in three steps:
+
+* First, Autovala checks all the folders and files, and creates a project with the type of each file
+* It also peeks the source files to determine which Vala packages they need, and generate automagically that list
+* After that (and after allowing the user to check, if (s)he wishes, the project file), it uses that project file to generate the needed CMakeLists files
+
+Autovala uses simple rules, like: "png files go to usr/share/pixmaps", and so on. It even takes into account things like the size and type of picture. For a detailed explanation of the rules followed by Autovala, check the [rules page](autovala_rules).
+
+# USING AUTOVALA
 
 Autovala is designed as several Vala classes, so it can be embedded easily in other projects.
 
@@ -6,7 +28,7 @@ The first thing to do is to initializate the project. This is done by calling au
 
         autovala init PROJECT_NAME
 
-This will create a *PROJECT_NAME.avprj* file, with the most basic info about your project (the format for this file will be explained later). It will also try to create the basic folders for a vala project, and will show a warning if they already exist. It will never delete a file, except the *CMakeLists* files, of course. The folder hierarchy is:
+This will create a file called *PROJECT_NAME.avprj*, with the most basic info about your project (the format for this file will be explained later). It will also try to create the basic folders for a vala project, and will show a warning if they already exist. It will never delete a file, except the *CMakeLists* files, of course. The folder hierarchy is:
 
         .
         +cmake
@@ -85,3 +107,36 @@ You can also use the Gedit plugin. With it, an *Autovala* entry will be added to
 
 Usually you should use *Build project* each time you modify the code, or *Full build* each time you add, remove or rename a file to the project, or modify the *.avprj* file.
 
+# OPTIONS
+
+**autovala init PROJECT_NAME**
+  ~ Creates a new project called PROJECT_NAME, and initializates the basic directory tree.
+
+**autovala clear**
+  ~ Deletes the *.avprj* file.
+
+**autovala refresh**
+  ~ Refreshes the contents of the *.avprj* file, by cheking the files available in the directory tree and guessing what to do which each one.
+
+**autovala cmake**
+  ~ Regenerates the *CMakeList.txt* files using the data from the *.avprj* file.
+
+**autovala update**
+  ~ The same than refresh+cmake
+
+**autovala help**
+  ~ Shows the basic commands available
+
+**autovala version**
+  ~ Shows the version of Autovala
+
+# SEE ALSO
+
+[autovala-rules(7)](autovala-rules.7) [autovala-fileformat(5)](autovala-fileformat.5) [autovala-keep-changes(7)](autovala-keep-changes.7) [autovala-tricks(7)](autovala-tricks.7)
+
+# AUTHOR
+
+Sergio Costas Rodriguez  
+raster@rastersoft.com  
+http://www.rastersoft.com  
+http://github.com/rastersoft  

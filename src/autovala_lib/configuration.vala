@@ -20,7 +20,7 @@ using GLib;
 using Gee;
 using Posix;
 
-// project version=0.24
+// project version=0.25
 
 namespace AutoVala {
 
@@ -370,7 +370,7 @@ namespace AutoVala {
 			if (init_gettext) {
 				Intl.bindtextdomain(AutoValaConstants.GETTEXT_PACKAGE, Path.build_filename(AutoValaConstants.DATADIR,"locale"));
 			}
-			this.current_version=6; // currently we support version 6 of the syntax
+			this.current_version=7; // currently we support version 7 of the syntax
 			this.config_path="";
 			this.configuration_data=new Gee.ArrayList<config_element ?>();
 			this.conditional_elements=new Gee.ArrayList<string>();
@@ -1353,14 +1353,14 @@ namespace AutoVala {
 				data_stream.put_string("autovala_version: %d\n".printf(this.current_version));
 				data_stream.put_string("project_name: "+this.project_name+"\n");
 				data_stream.put_string("vala_version: "+this.vala_version+"\n\n");
-				this.store_data(Config_Type.PO,data_stream);
-				this.store_data(Config_Type.DEFINE,data_stream);
-				this.store_data(Config_Type.DATA,data_stream);
-				this.store_data(Config_Type.DOC,data_stream);
 				this.store_data(Config_Type.IGNORE,data_stream);
 				this.store_data(Config_Type.CUSTOM,data_stream);
+				this.store_data(Config_Type.DEFINE,data_stream);
 				this.store_data(Config_Type.VALA_BINARY,data_stream);
 				this.store_data(Config_Type.VALA_LIBRARY,data_stream);
+				this.store_data(Config_Type.PO,data_stream);
+				this.store_data(Config_Type.DATA,data_stream);
+				this.store_data(Config_Type.DOC,data_stream);
 				this.store_data(Config_Type.BINARY,data_stream);
 				this.store_data(Config_Type.DESKTOP,data_stream);
 				this.store_data(Config_Type.AUTOSTART,data_stream);

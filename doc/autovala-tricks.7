@@ -1,0 +1,143 @@
+<html>
+<head>
+<link rel="stylesheet" type="text/css" href="view.css" />
+</head>
+<body>
+<div class="main_frame">
+<p><a href="index.html">Home</a></p>
+<p>%Autovala-tricks(1)</p>
+<h1>NAME</h1>
+<p>Autovala tricks - Several tricks for Autovala</p>
+<h1>Setting the version number</h1>
+<p>To simplify the maintenance of the code, Autovala allows to set the version number in an easy way inside the source code of your binary or library. That way you will always be sure to use the right number both for the <strong>About</strong> and <strong>--version</strong> commands, and for the library major and minor values.</p>
+<p>To do so, just put in one (no matter which) of the <strong>.vala</strong> source files the following statement:</p>
+<pre><code>    // project version=XX.YY.ZZ</code></pre>
+<p>As expected, this will define a global string with the version number inside. The interesting thing is that Autovala will peek inside all the source files for this kind of string, and will use it whenever it needs a version number. For binaries maybe is not really very useful, but for libraries it is, because there you can set the major and minor version numbers.</p>
+<p>The format for the version number can be both <strong>XX.YY</strong> or <strong>XX.YY.ZZ</strong>, but <strong>X</strong>, <strong>Y</strong> and <strong>Z</strong> must be numbers. So you can use <strong>0.5.34</strong> or <strong>12.5</strong> as version numbers, but not <strong>1.4rc1</strong>, <strong>7</strong>...</p>
+<p>If no version number is defined in the source code, nor manually set in the project file, Autovala will use <strong>1.0.0</strong> whenever it needs it.</p>
+<p>There was an old method, which was putting the statement:</p>
+<pre><code>    const string project_version=&quot;XX.YY.ZZ&quot;;</code></pre>
+<p>This method is now deprecated, because you can still access the version number through the <strong>Constants</strong> namespace, and with the new method you can set the version number in libraries too, without symbol clash.</p>
+<h1>Creating several binaries</h1>
+<p>By default, Autovala presumes that every source file inside <strong>src</strong> or its subdirectories belongs to a single binary. But maybe you want to generate several binaries because your program needs several executables.</p>
+<p>Let's suppose that you have a project called <strong>myproject</strong>, with a folder hierarchy inside <strong>src</strong> like this:</p>
+<pre><code>    src
+     +file1.vala
+     +file2.vala
+     +a_folder
+     |   +file3.vala
+     |   +file4.vala
+     |
+     +another_folder
+         +file5.vala
+         +file6.vala</code></pre>
+<p>And let's suppose that you want to compile <strong>file5.vala</strong> and <strong>file6.vala</strong> as a different executable called <strong>otherprogram</strong>. By default, after running <strong>autovala refresh</strong>, it will create a single executable called <strong>myproject</strong>, using all the source files ( <strong>file1.vala</strong> to <strong>file6.vala</strong> ), and the <strong>.avprj</strong> file will look like this:</p>
+<pre><code>    ### AutoVala Project ###
+    autovala_version: 4
+    project_name: myproject
+    vala_version: 0.16
+
+    *vala_binary: src/myproject
+    [several commands specific of this binary]</code></pre>
+<p>What we have to do is add a new <strong>vala_binary</strong> command to the file, specifying the path and the executable name we want (and WITHOUT an asterisk before; read <a href="autovala-keep-changes.7">Keeping your changes</a> to understand why). So edit it and add this:</p>
+<pre><code>    ### AutoVala Project ###
+    autovala_version: 4
+    project_name: myproject
+    vala_version: 0.16
+
+    vala_binary: src/another_folder/otherprogram
+    *vala_binary: src/myproject
+    [several commands specific of this binary]</code></pre>
+<p>Save it and run <strong>autovala update</strong>. If you edit again the project file, you will see that Autovala automatically added all the packages and other data to the new executable, and will keep doing every time you run it.</p>
+<h1>Creating libraries</h1>
+<p>Creating a library is as easy as editing the project file and replacing the command <strong>vala_binary</strong> with <strong>vala_library</strong> and running again <strong>autovala update</strong>.</p>
+<p>When creating a library, Autovala will peek the source files and check the namespace used inside. If all files uses the same namespace, it will use it, by default, as the name for the library, and also to generate the <strong>.vapi</strong>, <strong>.gir</strong> and <strong>.pc</strong> files. Of course, is possible to set this name manually by editing the project file and modifying the command <strong>namespace</strong>.</p>
+<p>The major and minor numbers for the library are taken from the version number set by the user (read the entry <strong>Setting the version number</strong>). They will be used for the library itself, the <strong>.vapi</strong> and the <strong>.pc</strong> files. The <strong>.gir</strong> introspection file uses the version number <strong>major.0</strong> instead of <strong>major.minor</strong> to ensure compatibility.</p>
+<p>Libraries also can have the constants namespace, but modified to avoid clash between the variables in the library and the same in the binary. The final namespace for constants namespace in libraries is <strong>libraryNameSpaceConstants</strong>. Of course, this will work ONLY IF YOUR LIBRARY HAS DEFINED A NAMESPACE. If not, this variables will NOT be added.</p>
+<p>An example: if your library uses the namespace <strong>aBeautifulNameSpace</strong>, then the namespace for the constants will be <strong>aBeautifulNameSpaceConstants</strong>.</p>
+<h1>Linking an executable against a library from the same project</h1>
+<p>Let's say that the project contains one or more libraries and an executable, and the executable must use that library we are creating in the same project.</p>
+<p>Let's supose that the executable is <strong>myExecutable</strong>, and the library is <strong>myLibrary</strong> (using the namespace <strong>myLibrarynamespace</strong>). The <strong>.avprj</strong> file will look like this:</p>
+<pre><code>    ### AutoVala Project ###
+    autovala_version: 4
+    project_name: myproject
+    vala_version: 0.16
+
+    vala_library: src/mylibrary_src/myLibrary
+    [several commands specific of this library]
+    
+    *vala_binary: src/myExecutable
+    [several commands specific of this binary]</code></pre>
+<p>To allow <strong>myexecutable</strong> to use <strong>mylibrary</strong>, just add to <strong>myexecutable</strong> a <strong>vala_local_package</strong> statement with the namespace of the library it needs. In this example, the <strong>.avprj</strong> will become:</p>
+<pre><code>    ### AutoVala Project ###
+    autovala_version: 4
+    project_name: myproject
+    vala_version: 0.16
+
+    vala_library: src/mylibrary_src/myLibrary
+    [several commands specific of this library]
+    
+    *vala_binary: src/myExecutable
+    vala_local_package: myLibrarynamespace
+    [several commands specific of this binary]</code></pre>
+<p>Run <strong>autovala update</strong>, <strong>cmake ..</strong>, and everything should compile fine.</p>
+<p>Of course, if your executable needs several local libraries, you have to add one <strong>vala_local_package</strong> statement per library.</p>
+<h1>Compiling Valadoc in Ubuntu</h1>
+<p>At the time of writing this, the version of Valadoc shipped with Ubuntu 12.10 has a bug and sometimes fails. The solution is to manually compile it from the sources.</p>
+<p>To get the sources, just use</p>
+<pre><code>    git clone http://git.gnome.org/browse/valadoc</code></pre>
+<p>Then, don't forget to uninstall the <strong>valadoc</strong> and <strong>libvaladoc1</strong> packages, install the packages <strong>libgee-0.8-dev</strong> and <strong>libgraphviz-dev</strong>, and then just run</p>
+<pre><code>    ./autogen.sh
+    make
+    sudo make install
+    sudo ldconfig</code></pre>
+<h1>Using D-Bus service files</h1>
+<p>A D-Bus service file is a file that specifies which binary provides a specific D-Bus service. To ensure that Autovala find them, you must put these files in the <strong>data/</strong> folder, and ensure that their extension is <strong>.service</strong>.</p>
+<p>The problem with these files is that the binary path must be expressed in absolute format; this is: if the binary to run is <strong>mybinary</strong>, you have to put <strong>/usr/bin/mybinary</strong>, or <strong>/usr/local/bin/mybinary</strong>, or the full path where <strong>mybinary</strong> is. This can be a problem, because with CMake, by default, uses <strong>/usr/local/bin</strong>, unless you specify it to use <strong>/usr/bin</strong> when creating a <strong>.deb</strong> or <strong>.rpm</strong> package.</p>
+<p>To avoid this problem, you only need to use the macro <strong>\@DBUS_PREFIX\@</strong> in the path. This CMake macro will be expanded automatically to the base path ( <strong>/usr</strong> or <strong>/usr/local</strong> ), so you only will need to add <strong>bin/</strong> and the binary name.</p>
+<p>An example (extracted from Cronopete):</p>
+<pre><code>        [D-BUS Service]
+        Name=com.rastersoft.cronopete
+        Exec=@DBUS_PREFIX@/bin/cronopete</code></pre>
+<p>In this file, the <strong>com.rastersoft.cronopete</strong> service is provided by the binary <strong>cronopete</strong>. The specific folder ( <strong>local</strong> or not <strong>local</strong> ) will be determined automatically by Autovala.</p>
+<h1>Special variables in CMAKE</h1>
+<p>Several variables are defined in CMake files that can be useful. The first one is <strong>AUTOVALA_INSTALL_PREFIX</strong>. This variable can contain <strong>/usr</strong> or <strong>/usr/local</strong>, based on the PREFIX passed to CMake. The advantage is that it will detect the <strong>final</strong> installation path, not the current one, which is useful when creating <strong>.deb</strong> or <strong>.rpm</strong> packages, because those are first built in a different path.</p>
+<p>Also is available the variable <strong>FINAL_AUTOVALA_PATH</strong>. This variable allows to append an absolute path, and will convert it to a relative path. An example: if the <strong>CMAKE_INSTALL_PREFIX</strong> is <strong>../debian/tmp/usr</strong>, then <strong>FINAL_AUTOVALA_PATH</strong> will be <strong>../debian/tmp/usr/..</strong>, which allows to install files in the <strong>root folder</strong> of the package.</p>
+<h1>Using GIO, GIO-unix, GObject or GModule packages</h1>
+<p>There are some exceptions for <strong>using</strong> and package autodetection. Since the packages <strong>GIO</strong>, <strong>GIO-unix</strong>, <strong>GObject</strong> and <strong>GModule</strong> are included inside the <strong>GLib</strong> namespace, Autovala requires them to be manually marked by adding <strong>//using [package name]</strong>. Since it is a comment, it won't be processed by Valac, but will be understood by Autovala and add the required <strong>-pkg</strong> command.</p>
+<h1>Using conditional compilation to allow to use GTK2 and GTK3</h1>
+<p>An special case is when supporting both GTK2 and GTK3 with the same source code is desirable. It is possible to do it by using conditional compilation.</p>
+<p>First, decide a statement to choose between both libraries. Let's say USE_GTK2.</p>
+<p>In your source code use <strong>#if USE_GTK2</strong>, <strong>#else</strong> and <strong>#endif</strong> for keeping sepearated the code parts where GTK2 and GTK3 differs.</p>
+<p>In your <strong>.avprj</strong> file use conditional compilation for choosing the libraries with these lines:</p>
+<pre><code>    if USE_GTK2
+    vala_check_package: gtk+-2.0
+    vala_check_package: gdk-2.0
+    else
+    vala_check_package: gtk+-3.0
+    vala_check_package: gdk-3.0
+    vala_check_package: glib-2.0
+    end</code></pre>
+<p>Finally, if you have different <strong>glade</strong> files for each library version, use also conditional compilation in your <strong>.avprj</strong> file:</p>
+<pre><code>    if USE_GTK2
+    glade: data/interface2/file1.ui
+    glade: data/interface2/file2.ui
+    glade: data/interface2/file3.ui
+    else
+    glade: data/interface/file1.ui
+    glade: data/interface/file2.ui
+    glade: data/interface/file3.ui
+    end</code></pre>
+<h1>SEE ALSO</h1>
+<p><a href="autovala.1">autovala(1)</a> <a href="autovala-fileformat.5">autovala-fileformat(5)</a> <a href="autovala-keep-changes.7">autovala-keep-changes(7)</a> <a href="autovala-rules.7">autovala-rules(7)</a></p>
+<h1>AUTHOR</h1>
+<p>Sergio Costas Rodriguez<br /><script type="text/javascript">
+<!--
+h='&#114;&#x61;&#x73;&#116;&#x65;&#114;&#x73;&#x6f;&#102;&#116;&#46;&#x63;&#x6f;&#x6d;';a='&#64;';n='&#114;&#x61;&#x73;&#116;&#x65;&#114;';e=n+a+h;
+document.write('<a h'+'ref'+'="ma'+'ilto'+':'+e+'">'+e+'<\/'+'a'+'>');
+// -->
+</script><noscript>&#114;&#x61;&#x73;&#116;&#x65;&#114;&#32;&#x61;&#116;&#32;&#114;&#x61;&#x73;&#116;&#x65;&#114;&#x73;&#x6f;&#102;&#116;&#32;&#100;&#x6f;&#116;&#32;&#x63;&#x6f;&#x6d;</noscript><br /><a href="http://www.rastersoft.com">http://www.rastersoft.com</a><br /><a href="http://github.com/rastersoft">http://github.com/rastersoft</a></p>
+<p><a href="index.html">Home</a></p>
+</div>
+</body>
+</html>

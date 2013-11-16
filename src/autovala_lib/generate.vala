@@ -368,6 +368,11 @@ namespace AutoVala {
 		}
 
 		private void fill_pkgconfig_files(string basepath) {
+
+			/**
+			 * Reads all the pkgconfig files in basepath and creates a list with the libraries managed by them
+			 */
+
 			var newpath=File.new_for_path(Path.build_filename(basepath,"pkgconfig"));
 			if (newpath.query_exists()==false) {
 				return;
@@ -396,7 +401,7 @@ namespace AutoVala {
 		private void check_vapi_file(string basepath, string file_s) {
 
 			/*
-			 * This method checks the namespace provided by a .vapi file
+			 * This method checks the namespaces provided by a .vapi file
 			 */
 
 			string file=file_s;
@@ -579,7 +584,9 @@ namespace AutoVala {
 			this.try_to_add(files_set,Config_Type.PO,"po/");
 			this.try_to_add(files_set,Config_Type.DATA,"data/local/");
 			this.try_to_add(files_set,Config_Type.DOC,"doc/");
-			string[] extensions={".png",".svg"};
+			string[] extensions={".1",".2",".3",".4",".5",".6",".7",".8",".9",".md"};
+			this.process_folder(files_set,"data/man",Config_Type.MANPAGE,extensions,true);
+			extensions={".png",".svg"};
 			this.process_folder(files_set,"data/icons",Config_Type.ICON,extensions,true);
 			extensions={".png",".svg",".jpg"};
 			this.process_folder(files_set,"data/pixmaps",Config_Type.PIXMAP,extensions,true);
@@ -639,10 +646,10 @@ namespace AutoVala {
 					error_list+=_("Warning: failed to add files at folder %s").printf(folder);
 				}
 			}
-
 		}
 
 		private void try_to_add(Gee.Set<string> files_set, Config_Type type, string path, string file_s="") {
+
 			string path_s;
 			string mpath_s;
 			if (file_s=="") {
@@ -662,6 +669,31 @@ namespace AutoVala {
 			if (files_set.contains(path_s)==true) {
 				return; // this file has been already processed (or it has a IGNORE flag)
 			}
+
+			if (type==Config_Type.MANPAGE) {
+				var fname=file_s.split(".");
+				var len=fname.length-1;
+				string extension;
+				int page=1;
+				for(;len>0;len--) {
+					extension=fname[len];
+					if (extension.length!=1) {
+						continue;
+					}
+					if ((extension[0]<'1')||(extension[0]>'9')) {
+						continue;
+					}
+					page=extension[0]-'0';
+					break;
+				}
+				var pname=path.split(GLib.Path.DIR_SEPARATOR_S);
+				string? language="default";
+				if ((pname.length>2)&&(pname[2]!="")) {
+					language=pname[2];
+				}
+				mpath_s="%s %s %d".printf(mpath_s,language,page);
+			}
+
 			var file=File.new_for_path(path_s);
 			if (file.query_exists()) {
 				if (type==Config_Type.DESKTOP) {
