@@ -584,7 +584,7 @@ namespace AutoVala {
 			this.try_to_add(files_set,Config_Type.PO,"po/");
 			this.try_to_add(files_set,Config_Type.DATA,"data/local/");
 			this.try_to_add(files_set,Config_Type.DOC,"doc/");
-			string[] extensions={".1",".2",".3",".4",".5",".6",".7",".8",".9",".md"};
+			string[] extensions={".1",".2",".3",".4",".5",".6",".7",".8",".9",".md",".rst",".htm",".html",".tex",".json",".rdoc",".xml",".txt"};
 			this.process_folder(files_set,"data/man",Config_Type.MANPAGE,extensions,true);
 			extensions={".png",".svg"};
 			this.process_folder(files_set,"data/icons",Config_Type.ICON,extensions,true);

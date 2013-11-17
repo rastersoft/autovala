@@ -1,4 +1,4 @@
-%Autovala-rules(7)
+Autovala-rules(7)
 
 # NAME
 
@@ -38,9 +38,23 @@ The rules followed by Autovala are the following:
 
 * All files ended in **.X** (being X a number between 1 and 9) in the folder **data/man** will be considered man pages in groff format, and will be compressed with gzip and installed in **share/man/manX** (being X the same number).
 
-* All files ended in **.X.md** (being X a number between 1 and 9) in the folder **data/man** will be considered man pages in markdown format, and will be converted to groff using pandoc, compressed with gzip and installed in **share/man/manX** (being X the same number).
+* All files ended in **.X.md** (being X a number between 1 and 9) in the folder **data/man** will be considered man pages in **markdown_github** format, and will be converted to groff using pandoc, compressed with gzip and installed in **share/man/manX** (being X the same number).
 
-* All files ended in **.X** or **.X.md** (being X a number between 1 and 9) in the folder **data/man/YYYY** will be considered man pages in groff or markdown format respectively, and will be converted to groff using pandoc, compressed with gzip and installed in **share/man/YYYY/manX** (being X the same number). This means that **YYYY** will be considered a language (examples for YYYY: **es**, **en_US**, **es_AR.UTF-8**).
+* All files ended in **.X.rst** (being X a number between 1 and 9) in the folder **data/man** will be considered man pages in **reStructuredText** format, and will be converted to groff using pandoc, compressed with gzip and installed in **share/man/manX** (being X the same number).
+
+* All files ended in **.X.htm** or **.X.html** (being X a number between 1 and 9) in the folder **data/man** will be considered man pages in **html** format, and will be converted to groff using pandoc, compressed with gzip and installed in **share/man/manX** (being X the same number).
+
+* All files ended in **.X.tex** (being X a number between 1 and 9) in the folder **data/man** will be considered man pages in **LaTeX** format, and will be converted to groff using pandoc, compressed with gzip and installed in **share/man/manX** (being X the same number).
+
+* All files ended in **.X.json** (being X a number between 1 and 9) in the folder **data/man** will be considered man pages in **JSon version of native AST** format, and will be converted to groff using pandoc, compressed with gzip and installed in **share/man/manX** (being X the same number).
+
+* All files ended in **.X.rdoc** (being X a number between 1 and 9) in the folder **data/man** will be considered man pages in **Textile/RedCloth** format, and will be converted to groff using pandoc, compressed with gzip and installed in **share/man/manX** (being X the same number).
+
+* All files ended in **.X.xml** (being X a number between 1 and 9) in the folder **data/man** will be considered man pages in **DocBook** format, and will be converted to groff using pandoc, compressed with gzip and installed in **share/man/manX** (being X the same number).
+
+* All files ended in **.X.txt** (being X a number between 1 and 9) in the folder **data/man** will be considered man pages in **MediaWiki** format, and will be converted to groff using pandoc, compressed with gzip and installed in **share/man/manX** (being X the same number).
+
+* All files ended in **.X**, **.X.md**, **.X.rst**, **.X.htm**, **.X.html**, **.X.tex**, **.X.json**, **.X.rdoc**, **.X.xml** or **.X.txt** (being X a number between 1 and 9) in the folder **data/man/YYYY** will be considered man pages in groff or markdown format respectively, and will be converted to groff using pandoc, compressed with gzip and installed in **share/man/YYYY/manX** (being X the same number). This means that **YYYY** will be considered a language (examples for YYYY: **es**, **en_US**, **es_AR.UTF-8**).
 
 When Autovala searchs the packages, it uses only the versions available for the currently active version. Also, by default, it uses the most recent version. But if another version is selected manually, it will use that one instead.
 

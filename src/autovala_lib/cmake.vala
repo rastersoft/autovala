@@ -509,13 +509,44 @@ namespace AutoVala {
 		private bool create_manpage(string dir,config_element element,DataOutputStream data_stream) {
 			// First, check the extension to know if we must convert it from other format to groff
 			string final_file="";
+			string? input_format=null;
 			if (element.file.has_suffix(".md")) {
 				final_file=element.file.substring(0,element.file.length-3);
-				data_stream.put_string("execute_process ( COMMAND pandoc ${CMAKE_CURRENT_SOURCE_DIR}/" + element.file + " -o ${CMAKE_CURRENT_BINARY_DIR}/" + final_file + " -f markdown -t man -s )\n");
+				input_format="markdown_github";
+			} else if (element.file.has_suffix(".rst")) {
+				final_file=element.file.substring(0,element.file.length-4);
+				input_format="rst";
+			} else if (element.file.has_suffix(".htm")) {
+				final_file=element.file.substring(0,element.file.length-4);
+				input_format="html";
+			} else if (element.file.has_suffix(".html")) {
+				final_file=element.file.substring(0,element.file.length-5);
+				input_format="html";
+			} else if (element.file.has_suffix(".tex")) {
+				final_file=element.file.substring(0,element.file.length-4);
+				input_format="latex";
+			} else if (element.file.has_suffix(".json")) {
+				final_file=element.file.substring(0,element.file.length-4);
+				input_format="json";
+			} else if (element.file.has_suffix(".rdoc")) {
+				final_file=element.file.substring(0,element.file.length-5);
+				input_format="textile";
+			} else if (element.file.has_suffix(".xml")) {
+				final_file=element.file.substring(0,element.file.length-4);
+				input_format="docbook";
+			} else if (element.file.has_suffix(".txt")) {
+				final_file=element.file.substring(0,element.file.length-4);
+				input_format="mediawiki";
 			} else {
 				final_file=element.file;
-				data_stream.put_string("configure_file ( ${CMAKE_CURRENT_SOURCE_DIR}/" + element.file + " ${CMAKE_CURRENT_BINARY_DIR}/" + final_file + " COPYONLY )\n");
 			}
+			
+			if (input_format==null) {
+				data_stream.put_string("configure_file ( ${CMAKE_CURRENT_SOURCE_DIR}/" + element.file + " ${CMAKE_CURRENT_BINARY_DIR}/" + final_file + " COPYONLY )\n");
+			} else {
+				data_stream.put_string("execute_process ( COMMAND pandoc ${CMAKE_CURRENT_SOURCE_DIR}/" + element.file + " -o ${CMAKE_CURRENT_BINARY_DIR}/" + final_file + " -f " + input_format + " -t man -s )\n");
+			}
+			
 			data_stream.put_string("execute_process ( COMMAND gzip -f ${CMAKE_CURRENT_BINARY_DIR}/" + final_file + " )\n");
 			final_file+=".gz";
 			data_stream.put_string("install(FILES ${CMAKE_CURRENT_BINARY_DIR}/" + final_file + " DESTINATION share/man/");

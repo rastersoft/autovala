@@ -1,4 +1,4 @@
-%Autovala-fileformat(5)
+Autovala-fileformat(5)
 
 # NAME
 

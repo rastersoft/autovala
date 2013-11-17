@@ -1,4 +1,4 @@
-%Autovala-keep-changes(7)
+Autovala-keep-changes(7)
 
 # NAME
 

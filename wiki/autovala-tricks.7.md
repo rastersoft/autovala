@@ -1,10 +1,10 @@
-%Autovala-tricks(1)
+Autovala-tricks(1)
 
 # NAME
 
 Autovala tricks - Several tricks for Autovala
 
-# Setting the version number
+## Setting the version number
 
 To simplify the maintenance of the code, Autovala allows to set the version number in an easy way inside the source code of your binary or library. That way you will always be sure to use the right number both for the **About** and **--version** commands, and for the library major and minor values.
 
@@ -24,7 +24,7 @@ There was an old method, which was putting the statement:
 
 This method is now deprecated, because you can still access the version number through the **Constants** namespace, and with the new method you can set the version number in libraries too, without symbol clash.
 
-# Creating several binaries
+## Creating several binaries
 
 By default, Autovala presumes that every source file inside **src** or its subdirectories belongs to a single binary. But maybe you want to generate several binaries because your program needs several executables.
 
@@ -66,7 +66,7 @@ What we have to do is add a new **vala_binary** command to the file, specifying 
 Save it and run **autovala update**. If you edit again the project file, you will see that Autovala automatically added all the packages and other data to the new executable, and will keep doing every time you run it.
 
 
-# Creating libraries
+## Creating libraries
 
 Creating a library is as easy as editing the project file and replacing the command **vala_binary** with **vala_library** and running again **autovala update**.
 
@@ -78,7 +78,7 @@ Libraries also can have the constants namespace, but modified to avoid clash bet
 
 An example: if your library uses the namespace **aBeautifulNameSpace**, then the namespace for the constants will be **aBeautifulNameSpaceConstants**.
 
-# Linking an executable against a library from the same project
+## Linking an executable against a library from the same project
 
 Let's say that the project contains one or more libraries and an executable, and the executable must use that library we are creating in the same project.
 
@@ -113,7 +113,7 @@ Run **autovala update**, **cmake ..**, and everything should compile fine.
 
 Of course, if your executable needs several local libraries, you have to add one **vala_local_package** statement per library.
 
-# Compiling Valadoc in Ubuntu
+## Compiling Valadoc in Ubuntu
 
 At the time of writing this, the version of Valadoc shipped with Ubuntu 12.10 has a bug and sometimes fails. The solution is to manually compile it from the sources.
 
@@ -128,7 +128,7 @@ Then, don't forget to uninstall the **valadoc** and **libvaladoc1** packages, in
         sudo make install
         sudo ldconfig
 
-# Using D-Bus service files
+## Using D-Bus service files
 
 A D-Bus service file is a file that specifies which binary provides a specific D-Bus service. To ensure that Autovala find them, you must put these files in the **data/** folder, and ensure that their extension is **.service**.
 
@@ -144,17 +144,17 @@ An example (extracted from Cronopete):
 
 In this file, the **com.rastersoft.cronopete** service is provided by the binary **cronopete**. The specific folder ( **local** or not **local** ) will be determined automatically by Autovala.
 
-# Special variables in CMAKE
+## Special variables in CMAKE
 
 Several variables are defined in CMake files that can be useful. The first one is **AUTOVALA_INSTALL_PREFIX**. This variable can contain **/usr** or **/usr/local**, based on the PREFIX passed to CMake. The advantage is that it will detect the **final** installation path, not the current one, which is useful when creating **.deb** or **.rpm** packages, because those are first built in a different path.
 
 Also is available the variable **FINAL_AUTOVALA_PATH**. This variable allows to append an absolute path, and will convert it to a relative path. An example: if the **CMAKE_INSTALL_PREFIX** is **../debian/tmp/usr**, then **FINAL_AUTOVALA_PATH** will be **../debian/tmp/usr/..**, which allows to install files in the **root folder** of the package.
 
-#Using GIO, GIO-unix, GObject or GModule packages
+## Using GIO, GIO-unix, GObject or GModule packages
 
 There are some exceptions for **using** and package autodetection. Since the packages **GIO**, **GIO-unix**, **GObject** and **GModule** are included inside the **GLib** namespace, Autovala requires them to be manually marked by adding **//using [package name]**. Since it is a comment, it won't be processed by Valac, but will be understood by Autovala and add the required **-pkg** command.
 
-#Using conditional compilation to allow to use GTK2 and GTK3
+## Using conditional compilation to allow to use GTK2 and GTK3
 
 An special case is when supporting both GTK2 and GTK3 with the same source code is desirable. It is possible to do it by using conditional compilation.
 

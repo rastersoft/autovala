@@ -1,3 +1,6 @@
+* version 0.26.0 (2013-11-17)
+    * Added support for more input formats when creating man pages
+    * Now MarkDown format is github format
 * version 0.25.0 (2013-11-16)
     * Added support for creating and installing man pages
     * Added manpages for Autovala

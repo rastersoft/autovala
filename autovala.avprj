@@ -7,7 +7,7 @@ custom: data/cmake share/autovala
 custom: data/bash_completion/autovala /etc/bash_completion.d
 
 vala_binary: src/autovala
-*version: 0.25.0
+*version: 0.26.0
 vala_local_package: AutoVala
 *vala_package: posix
 *vala_check_package: gee-1.0
@@ -15,7 +15,7 @@ vala_local_package: AutoVala
 *vala_source: autovala.vala
 
 vala_library: src/autovala_lib/autovala_lib
-*version: 0.25
+*version: 0.26
 *namespace: AutoVala
 *vala_package: posix
 *vala_check_package: gee-1.0
