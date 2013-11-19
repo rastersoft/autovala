@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-11-16 21:37+0100\n"
+"POT-Creation-Date: 2013-11-18 23:32+0100\n"
 "PO-Revision-Date: 2013-04-30 21:00+0200\n"
 "Last-Translator: \n"
 "Language-Team: American English <kde-i18n-doc@kde.org>\n"
@@ -68,156 +68,6 @@ msgstr "Actualizando el fichero de proyecto\n"
 #, c-format
 msgid "Updating CMake files\n"
 msgstr "Actualizando los ficheros de CMake\n"
-
-#: ../src/autovala_lib/cmake.vala:227
-msgid "The following local dependencies cannot be satisfied:"
-msgstr "No se han podido satisfacer las siguientes dependencias locales:"
-
-#: ../src/autovala_lib/cmake.vala:234
-#, c-format
-msgid ""
-"\n"
-"\tLibrary %s, packages:"
-msgstr ""
-"\n"
-"\tBiblioteca %s, paquetes:"
-
-#: ../src/autovala_lib/cmake.vala:236
-#, c-format
-msgid ""
-"\n"
-"\tBinary %s, packages:"
-msgstr ""
-"\n"
-"\tBinario %s, paquetes:"
-
-#: ../src/autovala_lib/cmake.vala:254
-msgid "Failed to create the main CMakeLists file"
-msgstr "Falló la creación del fichero CMakeLists principal"
-
-#: ../src/autovala_lib/cmake.vala:270
-#, c-format
-msgid "Failed to delete the old CMakeLists file at %s"
-msgstr "Incapaz de borrar el viejo fichero CMakeLists en %s"
-
-#: ../src/autovala_lib/cmake.vala:300
-#, c-format
-msgid "Failed to create file %s"
-msgstr "Incapaz de crear el fichero %s"
-
-#: ../src/autovala_lib/cmake.vala:312
-#, c-format
-msgid "Warning: directory %s doesn't exists"
-msgstr "Aviso: el directorio %s no existe"
-
-#: ../src/autovala_lib/cmake.vala:333
-#, c-format
-msgid "Warning: can't access folder %s"
-msgstr "Aviso: no ha sido posible acceder al directorio %s"
-
-#: ../src/autovala_lib/cmake.vala:343
-#, c-format
-msgid "Warning: can't add subdirectory %s"
-msgstr "Aviso: no ha sido posible añadir el subdirectorio %s"
-
-#: ../src/autovala_lib/cmake.vala:379
-#, c-format
-msgid "Warning: file %s doesn't exists"
-msgstr "Aviso: el fichero %s no existe "
-
-#: ../src/autovala_lib/cmake.vala:412
-#, c-format
-msgid "Failed to add binary %s"
-msgstr "Incapaz de añadir el binario %s"
-
-#: ../src/autovala_lib/cmake.vala:425 ../src/autovala_lib/cmake.vala:437
-#: ../src/autovala_lib/cmake.vala:449
-#, c-format
-msgid "Failed to add file %s"
-msgstr "Incapaz de añadir el fichero %s"
-
-#: ../src/autovala_lib/cmake.vala:461
-#, c-format
-msgid "Failed to add schema %s"
-msgstr "Incapaz de añadir el schema %s"
-
-#: ../src/autovala_lib/cmake.vala:480 ../src/autovala_lib/cmake.vala:566
-#, c-format
-msgid "Can't append data to CMakeLists file at %s"
-msgstr "Incapaz de añadir datos al fichero CMakeLists en %s"
-
-#: ../src/autovala_lib/cmake.vala:488
-#, c-format
-msgid "Can't append INCLUDEs to CMakeLists file at %s"
-msgstr "Incapaz de añadir INCLUDEs al fichero CMakeLists en %s"
-
-#: ../src/autovala_lib/cmake.vala:502 ../src/autovala_lib/cmake.vala:576
-#, c-format
-msgid "Failed to write the CMakeLists file for %s"
-msgstr "Incapaz de escribir el fichero CMakeLists de %s"
-
-#: ../src/autovala_lib/cmake.vala:552
-#, c-format
-msgid "Failed to write the CMakeLists file for custom file %s"
-msgstr ""
-"Incapaz de escribir el fichero CMakeLists para el fichero personalizado "
-"(custom) %s"
-
-#: ../src/autovala_lib/cmake.vala:607
-#, c-format
-msgid "Can't get the size for icon %s"
-msgstr "Incapaz de obtener el tamaño del icono %s"
-
-#: ../src/autovala_lib/cmake.vala:613 ../src/autovala_lib/cmake.vala:631
-#, c-format
-msgid "Failed to write the CMakeLists file for icon %s"
-msgstr "Incapaz de escribir el fichero CMakeLists para el icono %s"
-
-#: ../src/autovala_lib/cmake.vala:635
-#, c-format
-msgid "Unknown icon type %s. Must be .png or .svg (in lowercase)"
-msgstr ""
-"Tipo de icono %s desconocido. Tiene que ser .png or .svg (en minúsculas)"
-
-#: ../src/autovala_lib/cmake.vala:668
-#, c-format
-msgid "Failed to install local files at %s"
-msgstr "Incapaz de instalar los ficheros locales de %s"
-
-#: ../src/autovala_lib/cmake.vala:694
-#, c-format
-msgid "Failed to install document files at %s"
-msgstr "Incapaz de instalar los ficheros de documentación de %s"
-
-#: ../src/autovala_lib/cmake.vala:707
-msgid "Failed to delete the old POTFILES.in file"
-msgstr "Incapaz de borrar el viejo fichero POTFILES.in"
-
-#: ../src/autovala_lib/cmake.vala:779
-msgid "Failed to create the PO files"
-msgstr "Falló la creación de los ficheros PO"
-
-#: ../src/autovala_lib/cmake.vala:827 ../src/autovala_lib/cmake.vala:871
-msgid "Failed to create the Config.vala.cmake file"
-msgstr "Falló la creación del fichero Config.vala.cmake"
-
-#: ../src/autovala_lib/cmake.vala:891
-#, c-format
-msgid "Warning: Can't set package %s for binary %s"
-msgstr "Aviso: no ha sido posible asignar el paquete %s para el binario %s"
-
-#: ../src/autovala_lib/cmake.vala:993
-#, c-format
-msgid ""
-"Warning: no namespace specified in library %s; GIR file will not be generated"
-msgstr ""
-"Aviso: no se ha especificado un namespace en la biblioteca %s; no se creará "
-"el fichero GIR"
-
-#: ../src/autovala_lib/cmake.vala:1111
-#, c-format
-msgid "Failed to write the CMakeLists file for binary %s"
-msgstr "Incapaz de escribir el fichero CMakeLists del binario %s"
 
 #: ../src/autovala_lib/configuration.vala:554
 #, c-format
@@ -459,6 +309,156 @@ msgstr "Almacenando la configuración en el fichero %s"
 #, c-format
 msgid "Can't create the config file %s"
 msgstr "No se ha podido crear el fichero de configuración %s"
+
+#: ../src/autovala_lib/cmake.vala:227
+msgid "The following local dependencies cannot be satisfied:"
+msgstr "No se han podido satisfacer las siguientes dependencias locales:"
+
+#: ../src/autovala_lib/cmake.vala:234
+#, c-format
+msgid ""
+"\n"
+"\tLibrary %s, packages:"
+msgstr ""
+"\n"
+"\tBiblioteca %s, paquetes:"
+
+#: ../src/autovala_lib/cmake.vala:236
+#, c-format
+msgid ""
+"\n"
+"\tBinary %s, packages:"
+msgstr ""
+"\n"
+"\tBinario %s, paquetes:"
+
+#: ../src/autovala_lib/cmake.vala:254
+msgid "Failed to create the main CMakeLists file"
+msgstr "Falló la creación del fichero CMakeLists principal"
+
+#: ../src/autovala_lib/cmake.vala:270
+#, c-format
+msgid "Failed to delete the old CMakeLists file at %s"
+msgstr "Incapaz de borrar el viejo fichero CMakeLists en %s"
+
+#: ../src/autovala_lib/cmake.vala:300
+#, c-format
+msgid "Failed to create file %s"
+msgstr "Incapaz de crear el fichero %s"
+
+#: ../src/autovala_lib/cmake.vala:312
+#, c-format
+msgid "Warning: directory %s doesn't exists"
+msgstr "Aviso: el directorio %s no existe"
+
+#: ../src/autovala_lib/cmake.vala:333
+#, c-format
+msgid "Warning: can't access folder %s"
+msgstr "Aviso: no ha sido posible acceder al directorio %s"
+
+#: ../src/autovala_lib/cmake.vala:343
+#, c-format
+msgid "Warning: can't add subdirectory %s"
+msgstr "Aviso: no ha sido posible añadir el subdirectorio %s"
+
+#: ../src/autovala_lib/cmake.vala:379
+#, c-format
+msgid "Warning: file %s doesn't exists"
+msgstr "Aviso: el fichero %s no existe "
+
+#: ../src/autovala_lib/cmake.vala:412
+#, c-format
+msgid "Failed to add binary %s"
+msgstr "Incapaz de añadir el binario %s"
+
+#: ../src/autovala_lib/cmake.vala:425 ../src/autovala_lib/cmake.vala:437
+#: ../src/autovala_lib/cmake.vala:449
+#, c-format
+msgid "Failed to add file %s"
+msgstr "Incapaz de añadir el fichero %s"
+
+#: ../src/autovala_lib/cmake.vala:461
+#, c-format
+msgid "Failed to add schema %s"
+msgstr "Incapaz de añadir el schema %s"
+
+#: ../src/autovala_lib/cmake.vala:480 ../src/autovala_lib/cmake.vala:597
+#, c-format
+msgid "Can't append data to CMakeLists file at %s"
+msgstr "Incapaz de añadir datos al fichero CMakeLists en %s"
+
+#: ../src/autovala_lib/cmake.vala:488
+#, c-format
+msgid "Can't append INCLUDEs to CMakeLists file at %s"
+msgstr "Incapaz de añadir INCLUDEs al fichero CMakeLists en %s"
+
+#: ../src/autovala_lib/cmake.vala:502 ../src/autovala_lib/cmake.vala:607
+#, c-format
+msgid "Failed to write the CMakeLists file for %s"
+msgstr "Incapaz de escribir el fichero CMakeLists de %s"
+
+#: ../src/autovala_lib/cmake.vala:583
+#, c-format
+msgid "Failed to write the CMakeLists file for custom file %s"
+msgstr ""
+"Incapaz de escribir el fichero CMakeLists para el fichero personalizado "
+"(custom) %s"
+
+#: ../src/autovala_lib/cmake.vala:638
+#, c-format
+msgid "Can't get the size for icon %s"
+msgstr "Incapaz de obtener el tamaño del icono %s"
+
+#: ../src/autovala_lib/cmake.vala:644 ../src/autovala_lib/cmake.vala:662
+#, c-format
+msgid "Failed to write the CMakeLists file for icon %s"
+msgstr "Incapaz de escribir el fichero CMakeLists para el icono %s"
+
+#: ../src/autovala_lib/cmake.vala:666
+#, c-format
+msgid "Unknown icon type %s. Must be .png or .svg (in lowercase)"
+msgstr ""
+"Tipo de icono %s desconocido. Tiene que ser .png or .svg (en minúsculas)"
+
+#: ../src/autovala_lib/cmake.vala:699
+#, c-format
+msgid "Failed to install local files at %s"
+msgstr "Incapaz de instalar los ficheros locales de %s"
+
+#: ../src/autovala_lib/cmake.vala:725
+#, c-format
+msgid "Failed to install document files at %s"
+msgstr "Incapaz de instalar los ficheros de documentación de %s"
+
+#: ../src/autovala_lib/cmake.vala:738
+msgid "Failed to delete the old POTFILES.in file"
+msgstr "Incapaz de borrar el viejo fichero POTFILES.in"
+
+#: ../src/autovala_lib/cmake.vala:810
+msgid "Failed to create the PO files"
+msgstr "Falló la creación de los ficheros PO"
+
+#: ../src/autovala_lib/cmake.vala:858 ../src/autovala_lib/cmake.vala:902
+msgid "Failed to create the Config.vala.cmake file"
+msgstr "Falló la creación del fichero Config.vala.cmake"
+
+#: ../src/autovala_lib/cmake.vala:922
+#, c-format
+msgid "Warning: Can't set package %s for binary %s"
+msgstr "Aviso: no ha sido posible asignar el paquete %s para el binario %s"
+
+#: ../src/autovala_lib/cmake.vala:1024
+#, c-format
+msgid ""
+"Warning: no namespace specified in library %s; GIR file will not be generated"
+msgstr ""
+"Aviso: no se ha especificado un namespace en la biblioteca %s; no se creará "
+"el fichero GIR"
+
+#: ../src/autovala_lib/cmake.vala:1142
+#, c-format
+msgid "Failed to write the CMakeLists file for binary %s"
+msgstr "Incapaz de escribir el fichero CMakeLists del binario %s"
 
 #: ../src/autovala_lib/generate.vala:145
 #, c-format

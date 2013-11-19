@@ -71,7 +71,7 @@ Finally, **LOCAL** is a place where to put everything you want to get copied "as
 
         usr/share/PROJECT_NAME/
 
-To know the precise rules used by AutoVala, check the [rules section](Rules).
+To know the precise rules used by AutoVala, check the [rules page](autovala-rules.7).
 
 When you are OK for the first compilation, just use Autovala to check the folders and automatically update the **.avprj** file with:
 
@@ -81,7 +81,7 @@ When using this command, Autovala will guess all the info about your project and
 
         autovala cmake
 
-Now you can go to the **install/** folder and type ' **cmake ..** ' to generate the makefiles for compile your project. You can also use **cmake .. -DBUILD_VALADOC=ON** to add Valadoc support; but if you are using Ubuntu 12.10, maybe you should try to compile Valadoc from scratch, because it seems to be a bug in the version shipped from Canonical (more on this in the [tricks section](tricks)).
+Now you can go to the **install/** folder and type ' **cmake ..** ' to generate the makefiles for compile your project. You can also use **cmake .. -DBUILD_VALADOC=ON** to add Valadoc support; but if you are using Ubuntu 12.10, maybe you should try to compile Valadoc from scratch, because it seems to be a bug in the version shipped from Canonical (more on this in the [tricks section](autovala-tricks.7)).
 
 Since it's very common to call those two commands, one after the other, you can just use:
 
