@@ -252,7 +252,7 @@ namespace AutoVala {
 						continue;
 					}
 					if (line.has_prefix("autostart: ")) {
-						element = new ElementAutoStart();
+						element = new ElementDesktop();
 						continue;
 					}
 					if (line.has_prefix("eos_plug: ")) {
