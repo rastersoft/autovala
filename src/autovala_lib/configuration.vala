@@ -171,10 +171,19 @@ namespace AutoVala {
 				this.lineNumber=0;
 				string line;
 
+				ElementBase element=null;
+
 				while((line = dis.read_line(null))!=null) {
-					string ?cond;
-					bool invert;
+					string ?cond=null;
+					bool invert=false;
 					bool automatic=false;
+
+					if (element!=null) {
+						error|=element.configureLine(line,automatic,cond,invert,lineNumber);
+						this.globalData.addElement(element);
+						element=null;
+					}
+
 					this.lineNumber++;
 
 					if ((line[0]=='#')||(line[0]==';')) { // it is a comment; forget it
@@ -207,66 +216,63 @@ namespace AutoVala {
 						continue;
 					}
 					if (line.has_prefix("custom: ")) {
+						element = new ElementCustom();
 						continue;
 					}
 					if (line.has_prefix("binary: ")) {
-						var element = new ElementBinary();
-						error|=element.configureLine(line,automatic,cond,invert);
-						this.globalData.addElement(element);
+						element = new ElementBinary();
 						continue;
 					}
 					if (line.has_prefix("icon: ")) {
-						var element = new ElementIcon();
-						error|=element.configureLine(line,automatic,cond,invert);
-						this.globalData.addElement(element);
+						element = new ElementIcon();
 						continue;
 					}
 					if (line.has_prefix("manpage: ")) {
+						element = new ElementManPage();
 						continue;
 					}
 					if (line.has_prefix("pixmap: ")) {
+						element = new ElementPixmap();
 						continue;
 					}
 					if (line.has_prefix("po: ")) {
-						var element = new ElementPo();
-						error|=element.configureLine(line,automatic,cond,invert);
-						this.globalData.addElement(element);
+						element = new ElementPo();
 						continue;
 					}
 					if (line.has_prefix("doc: ")) {
-						var element = new ElementDoc();
-						error|=element.configureLine(line,automatic,cond,invert);
-						this.globalData.addElement(element);
+						element = new ElementDoc();
 						continue;
 					}
 					if (line.has_prefix("dbus_service: ")) {
+						element = new ElementDBusService();
 						continue;
 					}
 					if (line.has_prefix("desktop: ")) {
+						element = new ElementDesktop();
 						continue;
 					}
 					if (line.has_prefix("autostart: ")) {
+						element = new ElementAutoStart();
 						continue;
 					}
 					if (line.has_prefix("eos_plug: ")) {
+						element = new ElementEosPlug();
 						continue;
 					}
 					if (line.has_prefix("scheme: ")) {
+						element = new ElementScheme();
 						continue;
 					}
 					if (line.has_prefix("glade: ")) {
+						element = new ElementGlade();
 						continue;
 					}
 					if (line.has_prefix("data: ")) {
-						var element = new ElementData();
-						error|=element.configureLine(line,automatic,cond,invert);
-						this.globalData.addElement(element);
+						element = new ElementData();
 						continue;
 					}
 					if (line.has_prefix("ignore: ")) {
-						var element = new ElementIgnore();
-						error|=element.configureLine(line,automatic,cond,invert);
-						this.globalData.addElement(element);
+						element = new ElementIgnore();
 						continue;
 					}
 					if (line.has_prefix("if ")) {
@@ -326,6 +332,7 @@ namespace AutoVala {
 						continue;
 					}
 					if (line.has_prefix("include: ")) {
+						element = new ElementInclude();
 						continue;
 					}
 					if (line.has_prefix("compile_options: ")) {
@@ -339,9 +346,7 @@ namespace AutoVala {
 						continue;
 					}
 					if (line.has_prefix("define: ")) {
-						var element = new ElementDefine();
-						error|=element.configureLine(line,automatic,cond,invert);
-						this.globalData.addElement(element);
+						element = new ElementDefine();
 						continue;
 					}
 					if (line.has_prefix("autovala_version: ")) {

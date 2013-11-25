@@ -65,7 +65,7 @@ namespace AutoVala {
 			return false;
 		}
 
-		public virtual bool generateCMakePostData(DataOutputStream dataStream, ConfigType type) {
+		public override bool generateCMakePostData(DataOutputStream dataStream, ConfigType type) {
 			ElementDBusService.addedDBusPrefix=false; // set the flag to false to allow to add more DBus services in other CMakeList.txt files
 			return false;
 		}

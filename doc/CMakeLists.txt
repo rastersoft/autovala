@@ -27,13 +27,13 @@ foreach(file_data ${list_data})
 		install(DIRECTORY
 			${file_data}
 		DESTINATION
-			share/doc/cronopete
+			share/doc/autovala
 		)
 	ELSE()
 		install(FILES
 			${file_data}
 		DESTINATION
-			share/doc/cronopete
+			share/doc/autovala
 		)
 	ENDIF()
 endforeach()

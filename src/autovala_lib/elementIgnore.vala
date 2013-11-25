@@ -33,7 +33,7 @@ namespace AutoVala {
 			this.command = "ignore";
 		}
 
-		public override bool configureLine(string line, bool automatic, string? condition, bool invertCondition) {
+		public override bool configureLine(string line, bool automatic, string? condition, bool invertCondition, int lineNumber) {
 
 			// The line starts with 'ignore: '
 			var data=line.substring(8).strip();

@@ -22,11 +22,6 @@ using Gtk;
 
 namespace AutoVala {
 
-	/**
-	 * Represents a generic file of the project, with its path, filename, compilation condition...
-	 * This class must be inherited by several subclasses, one for each kind of file allowed in AutoVala
-	 */
-
 	class ElementIcon : ElementBase {
 
 		private string iconCathegory;
@@ -41,7 +36,7 @@ namespace AutoVala {
 			this.command = "icon";
 		}
 
-		public override bool configureLine(string line, bool automatic, string? condition, bool invertCondition) {
+		public override bool configureLine(string line, bool automatic, string? condition, bool invertCondition, int lineNumber) {
 
 			// The line starts with 'icon: '
 			var data=line.substring(6).strip();

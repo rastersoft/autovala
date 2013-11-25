@@ -21,42 +21,27 @@ using GLib;
 
 namespace AutoVala {
 
-	/**
-	 * Represents a generic file of the project, with its path, filename, compilation condition...
-	 * This class must be inherited by several subclasses, one for each kind of file allowed in AutoVala
-	 */
+	class ElementInclude : ElementBase {
 
-	class ElementScheme : ElementBase {
-
-		public ElementScheme() {
-			this._type = ConfigType.SCHEME;
-			this.command = "scheme";
+		public ElementInclude() {
+			this._type = ConfigType.INCLUDE;
+			this.command = "include";
 		}
 
 		public override bool generateCMake(DataOutputStream dataStream, ConfigType type) {
-
-			// only process this file if it is of the desired type
-			if (type!=this.eType) {
-				return false;
-			}
-
 			return false;
 		}
 
-		public override bool storeConfig(DataOutputStream dataStream, ConfigType type) {
+		public override bool generateCMakePostData(DataOutputStream dataStream, ConfigType type) {
 
 			// only process this file if it is of the desired type
 			if (type!=this.eType) {
 				return false;
 			}
-
 			try {
-				if (this.automatic) {
-					dataStream.put_string("*");
-				}
-				dataStream.put_string("scheme: %s\n".printf(this.fullPath));
+				dataStream.put_string("include(${CMAKE_CURRENT_SOURCE_DIR}/"+this.file+")\n");
 			} catch (Error e) {
-				ElementBase.globalData.addError(_("Failed to store 'scheme: %s' at config").printf(this.fullPath));
+				ElementBase.globalData.addError(_("Failed to write the CMakeLists file for %s").printf(this.file));
 				return true;
 			}
 			return false;

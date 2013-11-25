@@ -98,10 +98,10 @@ namespace AutoVala {
 		 * @param invertCondition When true, invert the condition (this is, the file is after the #else statement)
 		 * return //true// if there was an error; //false// if not. The error texts can be obtained by calling to returnErrors()
 		 */
-		public virtual bool configureLine(string line, bool automatic, string? condition, bool invertCondition) {
+		public virtual bool configureLine(string line, bool automatic, string? condition, bool invertCondition, int lineNumber) {
 
 			// The line starts with 'binary: '
-			var data=line.substring(2+strlen(this.command)).strip();
+			var data=line.substring(2+this.command.length).strip();
 
 			return this.configureElement(data,null,null,automatic,condition,invertCondition);
 		}

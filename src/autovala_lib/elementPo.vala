@@ -33,7 +33,7 @@ namespace AutoVala {
 			this.command = "po";
 		}
 
-		public override bool configureLine(string line, bool automatic, string? condition, bool invertCondition) {
+		public override bool configureLine(string line, bool automatic, string? condition, bool invertCondition, int lineNumber) {
 
 			// The line starts with 'po: '
 			var data=line.substring(4).strip();

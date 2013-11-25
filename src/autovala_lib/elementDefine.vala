@@ -33,7 +33,7 @@ namespace AutoVala {
 			this.command = "define";
 		}
 
-		public override bool configureLine(string line, bool automatic, string? condition, bool invertCondition) {
+		public override bool configureLine(string line, bool automatic, string? condition, bool invertCondition, int lineNumber) {
 
 			// The line starts with 'define: '
 			var data=line.substring(8).strip();
