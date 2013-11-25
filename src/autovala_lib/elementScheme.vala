@@ -43,12 +43,7 @@ namespace AutoVala {
 			return false;
 		}
 
-		public override bool storeConfig(DataOutputStream dataStream, ConfigType type) {
-
-			// only process this file if it is of the desired type
-			if (type!=this.eType) {
-				return false;
-			}
+		public override bool storeConfig(DataOutputStream dataStream) {
 
 			try {
 				if (this.automatic) {

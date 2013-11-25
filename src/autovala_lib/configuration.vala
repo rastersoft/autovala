@@ -172,14 +172,16 @@ namespace AutoVala {
 				string line;
 
 				ElementBase element=null;
-
+				string oldLine="";
+				bool automatic=false;
 				while((line = dis.read_line(null))!=null) {
+
 					string ?cond=null;
 					bool invert=false;
-					bool automatic=false;
+					this.get_current_condition(out cond,out invert);
 
 					if (element!=null) {
-						error|=element.configureLine(line,automatic,cond,invert,lineNumber);
+						error|=element.configureLine(oldLine,automatic,cond,invert,lineNumber);
 						this.globalData.addElement(element);
 						element=null;
 					}
@@ -193,12 +195,13 @@ namespace AutoVala {
 					if (finalline=="") {
 						continue;
 					}
+					oldLine = line;
 					if (line[0]=='*') { // it's an element added automatically, not by the user
 						automatic=true;
 						line=line.substring(1).strip();
+					} else {
+						automatic=false;
 					}
-
-					this.get_current_condition(out cond,out invert);
 
 					if (line.has_prefix("vala_package: ")) {
 						continue;
@@ -412,7 +415,6 @@ namespace AutoVala {
 			}
 			this.basepath=GLib.Path.get_dirname(this.globalData.configFile);
 			var file=File.new_for_path(this.globalData.configFile);
-			this.globalData.addError(_("Storing configuration in file %s").printf(this.globalData.configFile));
 			if (file.query_exists()) {
 				try {
 					file.delete();
@@ -456,8 +458,16 @@ namespace AutoVala {
 			return false;
 		}
 		private void storeData(ConfigType type, GLib.DataOutputStream dataStream) {
+
+			bool printed = false;
 			foreach(var element in this.globalData.globalElements) {
-				element.storeConfig(dataStream,type);
+				if (element.eType==type) {
+					element.storeConfig(dataStream);
+					printed = true;
+				}
+			}
+			if (printed) {
+				dataStream.put_string("\n");
 			}
 		}
 	}
