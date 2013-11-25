@@ -19,6 +19,7 @@
 using GLib;
 using Gee;
 using Posix;
+//using GIO
 
 // project version=0.26.0
 
@@ -34,7 +35,15 @@ int main(string[] argv) {
 	Intl.textdomain(Constants.GETTEXT_PACKAGE);
 	Intl.bind_textdomain_codeset(Constants.GETTEXT_PACKAGE, "utf-8" );
 
-	if (argv.length==1) {
+	var config = new AutoVala.Configuration();
+	if (config.readConfiguration()) {
+		config.showErrors();
+	} else {
+		config.saveConfiguration();
+		config.showErrors();
+	}
+
+/*	if (argv.length==1) {
 		help();
 		return 0;
 	}
@@ -132,6 +141,6 @@ int main(string[] argv) {
 	default:
 		help();
 		return -1;
-	}
+	}*/
 	return 0;
 }

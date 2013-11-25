@@ -49,9 +49,11 @@ set (VALA_PACKAGES ${VALA_PACKAGES} gtk+-3.0)
 
 set (APP_SOURCES ${APP_SOURCES} ${CMAKE_CURRENT_BINARY_DIR}/Config.vala)
 set (APP_SOURCES ${APP_SOURCES} configuration.vala)
-set (APP_SOURCES ${APP_SOURCES} conditional_text.vala)
-set (APP_SOURCES ${APP_SOURCES} cmake.vala)
-set (APP_SOURCES ${APP_SOURCES} generate.vala)
+set (APP_SOURCES ${APP_SOURCES} gen_pkgconfig.vala)
+set (APP_SOURCES ${APP_SOURCES} gen_vapis.vala)
+set (APP_SOURCES ${APP_SOURCES} globals.vala)
+set (APP_SOURCES ${APP_SOURCES} elementPo.vala)
+set (APP_SOURCES ${APP_SOURCES} elementBase.vala)
 
 vala_precompile(VALA_C AutoVala
 	${APP_SOURCES}

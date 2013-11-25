@@ -1,5 +1,1 @@
 src/autovala.vala
-src/autovala_lib/configuration.vala
-src/autovala_lib/cmake.vala
-src/autovala_lib/conditional_text.vala
-src/autovala_lib/generate.vala

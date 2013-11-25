@@ -1,7 +1,7 @@
 ### CMakeLists automatically created with AutoVala
 ### Do not edit
 
-project (autovala)
+project (cronopete)
 cmake_minimum_required (VERSION 2.6)
 cmake_policy (VERSION 2.8)
 list (APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
@@ -24,20 +24,12 @@ endif()
 find_package(PkgConfig)
 
 set(MODULES_TO_CHECK ${MODULES_TO_CHECK} gee-1.0)
+set(MODULES_TO_CHECK ${MODULES_TO_CHECK} gio-2.0)
 set(MODULES_TO_CHECK ${MODULES_TO_CHECK} glib-2.0)
 set(MODULES_TO_CHECK ${MODULES_TO_CHECK} gtk+-3.0)
 
 pkg_check_modules(DEPS REQUIRED ${MODULES_TO_CHECK})
 
-find_program ( WHERE_PANDOC pandoc )
-if ( NOT WHERE_PANDOC )
-	MESSAGE(FATAL_ERROR "Error! PANDOC is not installed.")
-endif()
-
+add_subdirectory(src)
 add_subdirectory(doc)
 add_subdirectory(po)
-add_subdirectory(wiki)
-add_subdirectory(data)
-add_subdirectory(data/bash_completion)
-add_subdirectory(src/autovala_lib)
-add_subdirectory(src)

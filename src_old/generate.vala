@@ -22,98 +22,20 @@ using Posix;
 
 namespace AutoVala {
 
-	class namespaces_element:GLib.Object {
-
-		public string namespace_s;
-		public string current_file;
-		public string filename;
-		public string[] filenames;
-		public int major;
-		public int minor;
-		public bool checkable;
-
-		public namespaces_element(string namespace_s) {
-			this.namespace_s=namespace_s;
-			this.major=0;
-			this.minor=0;
-			this.current_file="";
-			this.filename="";
-			this.filenames={};
-			this.checkable=false;
-		}
-
-		public void add_file(string filename,Gee.Set<string> pkgconfigs, int gir_major, int gir_minor) {
-			int c_major;
-			int c_minor;
-
-			c_major=gir_major;
-			c_minor=gir_minor;
-
-			string file;
-			if (filename.has_suffix(".vapi")) {
-				file=filename.substring(0,filename.length-5); // remove the .vapi extension
-			} else {
-				file=filename;
-			}
-			this.filenames+=file;
-			string newfile=file;
-			// if the filename has a version number, remove it
-			if (Regex.match_simple("-[0-9]+(.[0-9]+)?$",file)) {
-				var pos=file.last_index_of("-");
-				newfile=file.substring(0,pos);
-				// if there is no version number inside, use the one in the filename
-				if ((c_major==0)&&(c_minor==0)) {
-					var version=file.substring(pos+1);
-					pos=version.index_of(".");
-					if (pos==-1) { // only one number
-						c_major=int.parse(version);
-						c_minor=0;
-					} else {
-						c_major=int.parse(version.substring(0,pos));
-						c_minor=int.parse(version.substring(pos+1));
-					}
-				} else {
-
-				}
-			}
-
-			if ((this.current_file=="")||(newfile.length<this.current_file.length)) { // always take the shortest filename
-				this.current_file=newfile;
-				this.filename=file;
-				this.major=c_major;
-				this.minor=c_minor;
-				this.checkable=pkgconfigs.contains(file);
-				return;
-			}
-			if (this.current_file==newfile) { // for the same filename, take always the greatest version
-				if((c_major>this.major)||((c_major==this.major)&&(c_minor>this.minor))) {
-					this.major=c_major;
-					this.minor=c_minor;
-					this.filename=file;
-					this.checkable=pkgconfigs.contains(file);
-					return;
-				}
-			}
-		}
-	}
 
 	public class manage_project:GLib.Object {
 
 		private configuration config;
 		private string[] error_list;
-		private Gee.Map<string,namespaces_element> ?namespaces;
-		private Gee.Map<string,config_element> ?local_namespaces;
-		private Gee.Set<string> ?pkgconfigs;
 		private Gee.Set<string> ?defines;
+		private Gee.Map<string,config_element> ?local_namespaces;
 		private string current_namespace;
 		private bool several_namespaces;
+		private ReadVapis vapis;
 
 		public manage_project() {
 			GLib.Intl.bindtextdomain(AutoValaConstants.GETTEXT_PACKAGE, Path.build_filename(AutoValaConstants.DATADIR,"locale"));
 			this.error_list={};
-			this.namespaces=null;
-			this.local_namespaces=null;
-			this.pkgconfigs=null;
 			this.defines=null;
 		}
 
@@ -367,147 +289,14 @@ namespace AutoVala {
 			return false;
 		}
 
-		private void fill_pkgconfig_files(string basepath) {
-
-			/**
-			 * Reads all the pkgconfig files in basepath and creates a list with the libraries managed by them
-			 */
-
-			var newpath=File.new_for_path(Path.build_filename(basepath,"pkgconfig"));
-			if (newpath.query_exists()==false) {
-				return;
-			}
-			FileInfo file_info;
-			FileEnumerator enumerator;
-			try {
-				enumerator = newpath.enumerate_children (FileAttribute.STANDARD_NAME+","+FileAttribute.STANDARD_TYPE, 0);
-				while ((file_info = enumerator.next_file ()) != null) {
-					var fname=file_info.get_name();
-					var ftype=file_info.get_file_type();
-					if (ftype==FileType.DIRECTORY) {
-						continue;
-					}
-					if (fname.has_suffix(".pc")==false) {
-						continue;
-					}
-					var final_name=fname.substring(0,fname.length-3); // remove .pc extension
-					this.pkgconfigs.add(final_name); // add to the list
-				}
-			} catch (Error e) {
-				return;
-			}
-		}
-
-		private void check_vapi_file(string basepath, string file_s) {
-
-			/*
-			 * This method checks the namespaces provided by a .vapi file
-			 */
-
-			string file=file_s;
-			if (file.has_suffix(".vapi")==false) {
-				return;
-			}
-			file=file.substring(0,file_s.length-5); // remove the .vapi extension
-
-			var file_f = File.new_for_path (basepath);
-			int gir_major=0;
-			int gir_minor=0;
-			MatchInfo found_string;
-			MatchInfo found_version;
-			try {
-				var reg_expression=new GLib.Regex("gir_version( )*=( )*\"[0-9]+(.[0-9]+)?\"");
-				var reg_expression2=new GLib.Regex("[0-9]+(.[0-9]+)?");
-				var dis = new DataInputStream (file_f.read ());
-				string line;
-				while ((line = dis.read_line (null)) != null) {
-					if (reg_expression.match(line,0,out found_string)) {
-						if (reg_expression2.match(found_string.fetch(0),0, out found_version)) {
-							var version=found_version.fetch(0);
-							var pos=version.index_of(".");
-							if (pos==-1) { // single number
-								gir_major=int.parse(version);
-								gir_minor=0;
-							} else {
-								var elements=version.split(".");
-								gir_major=int.parse(elements[0]);
-								gir_minor=int.parse(elements[1]);
-							}
-						}
-					}
-					if (line.has_prefix("namespace ")) {
-						var namespace_s=line.split(" ")[1];
-						if (namespace_s=="GLib") { // GLib needs several tricks
-							if (file_s.has_prefix("glib-")) {
-							} else if (file_s.has_prefix("gio-unix-")) {
-								namespace_s="GIO-unix";
-							} else if (file_s.has_prefix("gio")) {
-								namespace_s="GIO";
-							} else if (file_s.has_prefix("gmodule-")) {
-								namespace_s="GModule";
-							} else if (file_s.has_prefix("gobject-")) {
-								namespace_s="GObject";
-							} else {
-								this.error_list+=_("Unknown file %s uses namespace GLib. Contact the author.").printf(file_s);
-								namespace_s="";
-							}
-						}
-						if (namespace_s!="") {
-							namespaces_element element;
-							if (this.namespaces.has_key(namespace_s)) {
-								element=this.namespaces.get(namespace_s);
-							} else {
-								element=new namespaces_element(namespace_s);
-								this.namespaces.set(namespace_s,element);
-							}
-							element.add_file(file_s,this.pkgconfigs,gir_major,gir_minor);
-						}
-					}
-				}
-			} catch (Error e) {
-				return;
-			}
-		}
-
-		private void fill_namespaces(string basepath) {
-
-			/*
-			 * This method fills the NAMESPACES hashmap with a list of each namespace and the files that provides it, and also the "best" one
-			 * (bigger version)
-			 */
-			var newpath=File.new_for_path(Path.build_filename(basepath,"vapi"));
-			if (newpath.query_exists()==false) {
-				return;
-			}
-			FileInfo file_info;
-			FileEnumerator enumerator;
-			try {
-				enumerator = newpath.enumerate_children (FileAttribute.STANDARD_NAME+","+FileAttribute.STANDARD_TYPE, 0);
-				while ((file_info = enumerator.next_file ()) != null) {
-					var fname=file_info.get_name();
-					var ftype=file_info.get_file_type();
-					if (ftype==FileType.DIRECTORY) {
-						continue;
-					}
-					if (fname.has_suffix(".vapi")==false) {
-						continue;
-					}
-					this.check_vapi_file(Path.build_filename(basepath,"vapi",fname),fname);
-				}
-			} catch (Error e) {
-				return;
-			}
-		}
 
 		public bool refresh(string config_path="") {
 
 			int major;
 			int minor;
 
-			this.namespaces=new Gee.HashMap<string,namespaces_element>();
-			this.local_namespaces=new Gee.HashMap<string,config_element>();
-			this.pkgconfigs=new Gee.HashSet<string>();
 			this.defines=new Gee.HashSet<string>();
+			this.local_namespaces=new Gee.HashMap<string,config_element>();
 			this.current_namespace="";
 
 			this.config=new AutoVala.configuration("",false);
@@ -516,24 +305,8 @@ namespace AutoVala {
 				return true;
 			}
 
-			this.fill_pkgconfig_files("/usr/lib");
-			this.fill_pkgconfig_files("/usr/share");
-			this.fill_pkgconfig_files("/usr/lib/i386-linux-gnu");
-			this.fill_pkgconfig_files("/usr/lib/x86_64-linux-gnu");
-			this.fill_pkgconfig_files("/usr/local/lib");
-			this.fill_pkgconfig_files("/usr/local/share");
-			this.fill_pkgconfig_files("/usr/local/lib/i386-linux-gnu");
-			this.fill_pkgconfig_files("/usr/local/lib/x86_64-linux-gnu");
-			var other_pkgconfig=GLib.Environment.get_variable("PKG_CONFIG_PATH");
-			if (other_pkgconfig!=null) {
-				foreach(var element in other_pkgconfig.split(":")) {
-					this.fill_pkgconfig_files(element);
-				}
-			}
-			this.fill_namespaces("/usr/share/vala");
-			this.fill_namespaces("/usr/share/vala-%d.%d".printf(major,minor));
-			this.fill_namespaces("/usr/local/share/vala");
-			this.fill_namespaces("/usr/local/share/vala-%d.%d".printf(major,minor));
+			this.vapis=new ReadVapis(major,minor);
+
 			bool retval=this.config.read_configuration(config_path);
 			this.add_errors(this.config.get_error_list()); // there can be warnings
 			this.config.clear_errors();
