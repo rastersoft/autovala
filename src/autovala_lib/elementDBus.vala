@@ -26,16 +26,19 @@ namespace AutoVala {
 	 * This class must be inherited by several subclasses, one for each kind of file allowed in AutoVala
 	 */
 
-	class ElementPixmap : ElementBase {
+	class ElementDBusService : ElementBase {
 
-		public ElementPixmap() {
-			this._type = ConfigType.PIXMAP;
+		private static bool addedDBusPrefix;
+
+		public ElementDBusService() {
+			addedDBusPrefix=false;
+			this._type = ConfigType.DBUS_SERVICE;
 		}
 
 		public override bool configureLine(string line, bool automatic, string? condition, bool invertCondition) {
 
-			// The line starts with 'pixmap: '
-			var data=line.substring(8).strip();
+			// The line starts with 'dbus_service: '
+			var data=line.substring(14).strip();
 
 			return this.configureElement(data,null,null,automatic,condition,invertCondition);
 		}
@@ -46,12 +49,31 @@ namespace AutoVala {
 			if (type!=this.eType) {
 				return false;
 			}
+
+			if (ElementDBusService.addedDBusPrefix==false) {
+				try {
+					dataStream.put_string("SET(DBUS_PREFIX ${AUTOVALA_INSTALL_PREFIX})\n");
+					ElementDBusService.addedDBusPrefix=true;
+				} catch (Error e) {
+					ElementBase.globalData.addError(_("Can't append data to CMakeLists file at %s").printf(this._path));
+					return true;
+				}
+			}
+
 			try {
-				dataStream.put_string("install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/"+this.file+" DESTINATION share/"+ElementBase.globalData.projectName+"/ )\n");
+				// DBus files must use DBUS_PREFIX in their path, instead of a fixed one, to allow them to be installed both in /usr or /usr/local
+				dataStream.put_string("configure_file(${CMAKE_CURRENT_SOURCE_DIR}/"+this.file+" ${CMAKE_CURRENT_BINARY_DIR}/"+this.file+")\n");
+				dataStream.put_string("install(FILES ${CMAKE_CURRENT_BINARY_DIR}/"+this.file+" DESTINATION ${CMAKE_INSTALL_PREFIX}/share/dbus-1/services/)\n");
 			} catch (Error e) {
-				ElementBase.globalData.addError(_("Failed to add pixmap %s").printf(this.fullPath));
+				ElementBase.globalData.addError(_("Failed to write the CMakeLists file for %s").printf(this.file));
 				return true;
 			}
+
+			return false;
+		}
+
+		public virtual bool generateCMakePostData(DataOutputStream dataStream, ConfigType type) {
+			ElementDBusService.addedDBusPrefix=false; // set the flag to false to allow to add more DBus services in other CMakeList.txt files
 			return false;
 		}
 
@@ -66,9 +88,9 @@ namespace AutoVala {
 				if (this.automatic) {
 					dataStream.put_string("*");
 				}
-				dataStream.put_string("pixmap: %s\n".printf(this.fullPath));
+				dataStream.put_string("dbus_service: %s\n".printf(this.fullPath));
 			} catch (Error e) {
-				ElementBase.globalData.addError(_("Failed to store 'pixmap: %s' at config").printf(this.fullPath));
+				ElementBase.globalData.addError(_("Failed to store 'dbus_service: %s' at config").printf(this.fullPath));
 				return true;
 			}
 			return false;

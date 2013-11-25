@@ -26,16 +26,16 @@ namespace AutoVala {
 	 * This class must be inherited by several subclasses, one for each kind of file allowed in AutoVala
 	 */
 
-	class ElementPixmap : ElementBase {
+	class ElementEosPlug : ElementBase {
 
-		public ElementPixmap() {
-			this._type = ConfigType.PIXMAP;
+		public ElementEosPlug() {
+			this._type = ConfigType.EOS_PLUG;
 		}
 
 		public override bool configureLine(string line, bool automatic, string? condition, bool invertCondition) {
 
-			// The line starts with 'pixmap: '
-			var data=line.substring(8).strip();
+			// The line starts with 'eos_plug: '
+			var data=line.substring(10).strip();
 
 			return this.configureElement(data,null,null,automatic,condition,invertCondition);
 		}
@@ -47,10 +47,10 @@ namespace AutoVala {
 				return false;
 			}
 			try {
-				dataStream.put_string("install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/"+this.file+" DESTINATION share/"+ElementBase.globalData.projectName+"/ )\n");
+				dataStream.put_string("configure_file(${CMAKE_CURRENT_SOURCE_DIR}/"+this.file+" ${CMAKE_CURRENT_BINARY_DIR}/"+this.file+")\n");
+				dataStream.put_string("install(FILES ${CMAKE_CURRENT_BINARY_DIR}/"+this.file+" DESTINATION lib/plugs/"+ElementBase.globalData.projectName+"/"+ElementBase.globalData.projectName+"/)\n");
 			} catch (Error e) {
-				ElementBase.globalData.addError(_("Failed to add pixmap %s").printf(this.fullPath));
-				return true;
+				ElementBase.globalData.addError(_("Failed to add file %s").printf(this.file));
 			}
 			return false;
 		}
@@ -66,9 +66,9 @@ namespace AutoVala {
 				if (this.automatic) {
 					dataStream.put_string("*");
 				}
-				dataStream.put_string("pixmap: %s\n".printf(this.fullPath));
+				dataStream.put_string("eos_plug: %s\n".printf(this.fullPath));
 			} catch (Error e) {
-				ElementBase.globalData.addError(_("Failed to store 'pixmap: %s' at config").printf(this.fullPath));
+				ElementBase.globalData.addError(_("Failed to store 'eos_plug: %s' at config").printf(this.fullPath));
 				return true;
 			}
 			return false;

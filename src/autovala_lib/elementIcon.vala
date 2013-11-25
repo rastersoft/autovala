@@ -31,12 +31,13 @@ namespace AutoVala {
 
 		private string iconCathegory;
 		private string[] appendText;
-		private static bool addedSuffix=false;
+		private static bool addedSuffix;
 
 		public ElementIcon() {
 			this._type = ConfigType.ICON;
 			this.appendText = {};
 			this.iconCathegory = "";
+			ElementIcon.addedSuffix=false;
 		}
 
 		public override bool configureLine(string line, bool automatic, string? condition, bool invertCondition) {
@@ -66,10 +67,6 @@ namespace AutoVala {
 				this.iconCathegory="apps";
 			}
 			return this.configureElement(path,null,null,true,null,false);
-		}
-
-		public override string[]? getSubFiles() {
-			return null;
 		}
 
 		public override bool generateCMake(DataOutputStream dataStream, ConfigType type) {
