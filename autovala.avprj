@@ -3,39 +3,33 @@ autovala_version: 7
 project_name: autovala
 vala_version: 0.20
 
-*vala_binary: src/autovala
+custom: data/cmake share/autovala
+custom: data/bash_completion/autovala /etc/bash_completion.d
+
+vala_binary: src/autovala
 *version: 0.26
 *vala_package: posix
 *vala_check_package: gee-1.0
 *vala_check_package: gio-2.0
 *vala_check_package: glib-2.0
 *vala_check_package: gtk+-3.0
-*vala_source: autovala_lib/elementInclude.vala
-*vala_source: autovala_lib/elementIgnore.vala
 *vala_source: autovala_lib/elementBase.vala
-*vala_source: autovala_lib/elementGlade.vala
-*vala_source: autovala_lib/elementPixmap.vala
-*vala_source: autovala_lib/elementDoc.vala
 *vala_source: autovala_lib/globals.vala
 *vala_source: autovala_lib/gen_pkgconfig.vala
-*vala_source: autovala_lib/elementDefine.vala
 *vala_source: autovala_lib/gen_vapis.vala
-*vala_source: autovala_lib/elementDBus.vala
-*vala_source: autovala_lib/elementCustom.vala
-*vala_source: autovala_lib/elementBinary.vala
-*vala_source: autovala_lib/elementManpage.vala
 *vala_source: autovala_lib/elementPo.vala
-*vala_source: autovala_lib/elementIcon.vala
 *vala_source: autovala.vala
 *vala_source: autovala_lib/configuration.vala
-*vala_source: autovala_lib/elementEosPlug.vala
-*vala_source: autovala_lib/elementDesktop.vala
-*vala_source: autovala_lib/elementScheme.vala
-*vala_source: autovala_lib/elementData.vala
 
 *po: po
 
 *data: data/local
 
 *doc: doc
+
+manpage: wiki/autovala.1.md
+manpage: wiki/autovala-rules.7.md default 7
+manpage: wiki/autovala-fileformat.5.md default 5
+manpage: wiki/autovala-tricks.7.md default 7
+manpage: wiki/autovala-keep-changes.7.md default 7
 

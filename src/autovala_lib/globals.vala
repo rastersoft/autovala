@@ -37,6 +37,7 @@ namespace AutoVala {
 
 		public Globals(string projectName) {
 
+			ElementBase.globalData = this;
 			this.projectName = projectName;
 			this.projectFolder = null;
 			this.globalElements = new Gee.ArrayList<ElementBase>();
@@ -93,7 +94,7 @@ namespace AutoVala {
 		 * @param filename The filename to check (with path relative to the project's root
 		 * @return //true// if the file has been processed in another object; //false// if not
 		 */
-		public bool checkFile(string filename) {
+		public bool checkFile(string? filename) {
 			foreach (var element in this.files) {
 				if (element == filename) {
 					return true;

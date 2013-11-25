@@ -30,6 +30,14 @@ set(MODULES_TO_CHECK ${MODULES_TO_CHECK} gtk+-3.0)
 
 pkg_check_modules(DEPS REQUIRED ${MODULES_TO_CHECK})
 
+find_program ( WHERE_PANDOC pandoc )
+if ( NOT WHERE_PANDOC )
+	MESSAGE(FATAL_ERROR "Error! PANDOC is not installed.")
+endif()
+
 add_subdirectory(src)
 add_subdirectory(doc)
 add_subdirectory(po)
+add_subdirectory(wiki)
+add_subdirectory(data)
+add_subdirectory(data/bash_completion)

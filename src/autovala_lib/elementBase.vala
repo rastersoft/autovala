@@ -73,7 +73,6 @@ namespace AutoVala {
 				ElementBase.globalData.addError(_("Warning: trying to add again the path %s").printf(path));
 				return true;
 			}
-
 			this._fullPath = fullPath;
 			if (path==null) {
 				this._path = GLib.Path.get_dirname(fullPath);
@@ -83,6 +82,7 @@ namespace AutoVala {
 			if (file==null) {
 				this._file = GLib.Path.get_basename(fullPath);
 			}
+
 			ElementBase.globalData.addFile(fullPath);
 			this.automatic = automatic;
 			this.condition = condition;
