@@ -38,6 +38,7 @@ namespace AutoVala {
 			this.appendText = {};
 			this.iconCathegory = "";
 			ElementIcon.addedSuffix=false;
+			this.command = "icon";
 		}
 
 		public override bool configureLine(string line, bool automatic, string? condition, bool invertCondition) {

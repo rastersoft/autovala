@@ -30,6 +30,7 @@ namespace AutoVala {
 
 		public ElementDefine() {
 			this._type = ConfigType.DEFINE;
+			this.command = "define";
 		}
 
 		public override bool configureLine(string line, bool automatic, string? condition, bool invertCondition) {
@@ -47,25 +48,6 @@ namespace AutoVala {
 
 		public override bool generateCMake(DataOutputStream dataStream, ConfigType type) {
 
-			return false;
-		}
-
-		public override bool storeConfig(DataOutputStream dataStream, ConfigType type) {
-
-			// only process this file if it is of the desired type
-			if (type!=this.eType) {
-				return false;
-			}
-
-			try {
-				if (this.automatic) {
-					dataStream.put_string("*");
-				}
-				dataStream.put_string("define: %s\n".printf(this.fullPath));
-			} catch (Error e) {
-				ElementBase.globalData.addError(_("Failed to store 'define: %s' at config").printf(this.fullPath));
-				return true;
-			}
 			return false;
 		}
 	}

@@ -30,14 +30,7 @@ namespace AutoVala {
 
 		public ElementBinary() {
 			this._type = ConfigType.BINARY;
-		}
-
-		public override bool configureLine(string line, bool automatic, string? condition, bool invertCondition) {
-
-			// The line starts with 'binary: '
-			var data=line.substring(8).strip();
-
-			return this.configureElement(data,null,null,automatic,condition,invertCondition);
+			this.command = "binary";
 		}
 
 		public override bool generateCMake(DataOutputStream dataStream, ConfigType type) {
@@ -54,25 +47,6 @@ namespace AutoVala {
 				return true;
 			}
 
-			return false;
-		}
-
-		public override bool storeConfig(DataOutputStream dataStream, ConfigType type) {
-
-			// only process this file if it is of the desired type
-			if (type!=this.eType) {
-				return false;
-			}
-
-			try {
-				if (this.automatic) {
-					dataStream.put_string("*");
-				}
-				dataStream.put_string("binary: %s\n".printf(this.fullPath));
-			} catch (Error e) {
-				ElementBase.globalData.addError(_("Failed to store 'binary: %s' at config").printf(this.fullPath));
-				return true;
-			}
 			return false;
 		}
 	}

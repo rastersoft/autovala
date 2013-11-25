@@ -33,14 +33,7 @@ namespace AutoVala {
 		public ElementDBusService() {
 			addedDBusPrefix=false;
 			this._type = ConfigType.DBUS_SERVICE;
-		}
-
-		public override bool configureLine(string line, bool automatic, string? condition, bool invertCondition) {
-
-			// The line starts with 'dbus_service: '
-			var data=line.substring(14).strip();
-
-			return this.configureElement(data,null,null,automatic,condition,invertCondition);
+			this.command = "dbus_service";
 		}
 
 		public override bool generateCMake(DataOutputStream dataStream, ConfigType type) {
@@ -74,25 +67,6 @@ namespace AutoVala {
 
 		public virtual bool generateCMakePostData(DataOutputStream dataStream, ConfigType type) {
 			ElementDBusService.addedDBusPrefix=false; // set the flag to false to allow to add more DBus services in other CMakeList.txt files
-			return false;
-		}
-
-		public override bool storeConfig(DataOutputStream dataStream, ConfigType type) {
-
-			// only process this file if it is of the desired type
-			if (type!=this.eType) {
-				return false;
-			}
-
-			try {
-				if (this.automatic) {
-					dataStream.put_string("*");
-				}
-				dataStream.put_string("dbus_service: %s\n".printf(this.fullPath));
-			} catch (Error e) {
-				ElementBase.globalData.addError(_("Failed to store 'dbus_service: %s' at config").printf(this.fullPath));
-				return true;
-			}
 			return false;
 		}
 	}

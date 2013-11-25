@@ -30,6 +30,7 @@ namespace AutoVala {
 
 		public ElementIgnore() {
 			this._type = ConfigType.IGNORE;
+			this.command = "ignore";
 		}
 
 		public override bool configureLine(string line, bool automatic, string? condition, bool invertCondition) {
@@ -43,32 +44,8 @@ namespace AutoVala {
 			return this.configureElement(data,data,data,automatic,condition,invertCondition);
 		}
 
-		public override bool autoConfigure(string path) {
-
-			return false; // nothing to autoconfigure in Ignore
-		}
-
 		public override bool generateCMake(DataOutputStream dataStream, ConfigType type) {
 
-			return false;
-		}
-
-		public override bool storeConfig(DataOutputStream dataStream, ConfigType type) {
-
-			// only process this file if it is of the desired type
-			if (type!=this.eType) {
-				return false;
-			}
-
-			try {
-				if (this.automatic) {
-					dataStream.put_string("*");
-				}
-				dataStream.put_string("ignore: %s\n".printf(this.fullPath));
-			} catch (Error e) {
-				ElementBase.globalData.addError(_("Failed to store 'ignore: %s' at config").printf(this.fullPath));
-				return true;
-			}
 			return false;
 		}
 	}

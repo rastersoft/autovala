@@ -30,14 +30,7 @@ namespace AutoVala {
 
 		public ElementDesktop() {
 			this._type = ConfigType.DESKTOP;
-		}
-
-		public override bool configureLine(string line, bool automatic, string? condition, bool invertCondition) {
-
-			// The line starts with 'desktop: '
-			var data=line.substring(9).strip();
-
-			return this.configureElement(data,null,null,automatic,condition,invertCondition);
+			this.command = "desktop";
 		}
 
 		public override bool generateCMake(DataOutputStream dataStream, ConfigType type) {
@@ -50,25 +43,6 @@ namespace AutoVala {
 				dataStream.put_string("install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/"+this.file+" DESTINATION share/applications/ )\n");
 			} catch (Error e) {
 				ElementBase.globalData.addError(_("Failed to add file %s").printf(this.file));
-			}
-			return false;
-		}
-
-		public override bool storeConfig(DataOutputStream dataStream, ConfigType type) {
-
-			// only process this file if it is of the desired type
-			if (type!=this.eType) {
-				return false;
-			}
-
-			try {
-				if (this.automatic) {
-					dataStream.put_string("*");
-				}
-				dataStream.put_string("desktop: %s\n".printf(this.fullPath));
-			} catch (Error e) {
-				ElementBase.globalData.addError(_("Failed to store 'desktop: %s' at config").printf(this.fullPath));
-				return true;
 			}
 			return false;
 		}

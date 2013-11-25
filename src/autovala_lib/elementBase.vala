@@ -37,6 +37,7 @@ namespace AutoVala {
 		protected string _path; // File path relative to the project's root
 		protected string _file; // File name
 		protected ConfigType _type; // File type
+		protected string command; // command in the config file
 
 		public string fullPath {
 			get {return this._fullPath;}
@@ -97,7 +98,13 @@ namespace AutoVala {
 		 * @param invertCondition When true, invert the condition (this is, the file is after the #else statement)
 		 * return //true// if there was an error; //false// if not. The error texts can be obtained by calling to returnErrors()
 		 */
-		public abstract bool configureLine(string line, bool automatic, string? condition, bool invertCondition);
+		public virtual bool configureLine(string line, bool automatic, string? condition, bool invertCondition) {
+
+			// The line starts with 'binary: '
+			var data=line.substring(2+strlen(this.command)).strip();
+
+			return this.configureElement(data,null,null,automatic,condition,invertCondition);
+		}
 
 		/**
 		 * Reads the file specified and adds automatically all its parameters
@@ -138,7 +145,24 @@ namespace AutoVala {
 		 * @param dataStream The data stream for the CMakeList.txt file being processed
 		 * @return //true// if there was an error; //false// if not. The error texts can be obtained by calling to returnErrors()
 		 */
-		public abstract bool storeConfig(DataOutputStream dataStream, ConfigType type);
+		public virtual bool storeConfig(DataOutputStream dataStream, ConfigType type) {
+
+			// only process this file if it is of the desired type
+			if (type!=this.eType) {
+				return false;
+			}
+
+			try {
+				if (this.automatic) {
+					dataStream.put_string("*");
+				}
+				dataStream.put_string("%s: %s\n".printf(this.command,this.fullPath));
+			} catch (Error e) {
+				ElementBase.globalData.addError(_("Failed to store '%s: %s' at config").printf(this.command,this.fullPath));
+				return true;
+			}
+			return false;
+		}
 
 	}
 

@@ -26,11 +26,18 @@ namespace AutoVala {
 	 * This class must be inherited by several subclasses, one for each kind of file allowed in AutoVala
 	 */
 
-	class ElementEosPlug : ElementBase {
+	class ElementScheme : ElementBase {
 
-		public ElementEosPlug() {
-			this._type = ConfigType.EOS_PLUG;
-			this.command = "eos_plug";
+		public ElementScheme() {
+			this._type = ConfigType.Scheme;
+		}
+
+		public override bool configureLine(string line, bool automatic, string? condition, bool invertCondition) {
+
+			// The line starts with 'scheme: '
+			var data=line.substring(8).strip();
+
+			return this.configureElement(data,null,null,automatic,condition,invertCondition);
 		}
 
 		public override bool generateCMake(DataOutputStream dataStream, ConfigType type) {
@@ -39,11 +46,25 @@ namespace AutoVala {
 			if (type!=this.eType) {
 				return false;
 			}
+
+			return false;
+		}
+
+		public override bool storeConfig(DataOutputStream dataStream, ConfigType type) {
+
+			// only process this file if it is of the desired type
+			if (type!=this.eType) {
+				return false;
+			}
+
 			try {
-				dataStream.put_string("configure_file(${CMAKE_CURRENT_SOURCE_DIR}/"+this.file+" ${CMAKE_CURRENT_BINARY_DIR}/"+this.file+")\n");
-				dataStream.put_string("install(FILES ${CMAKE_CURRENT_BINARY_DIR}/"+this.file+" DESTINATION lib/plugs/"+ElementBase.globalData.projectName+"/"+ElementBase.globalData.projectName+"/)\n");
+				if (this.automatic) {
+					dataStream.put_string("*");
+				}
+				dataStream.put_string("scheme: %s\n".printf(this.fullPath));
 			} catch (Error e) {
-				ElementBase.globalData.addError(_("Failed to add file %s").printf(this.file));
+				ElementBase.globalData.addError(_("Failed to store 'scheme: %s' at config").printf(this.fullPath));
+				return true;
 			}
 			return false;
 		}

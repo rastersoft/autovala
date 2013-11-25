@@ -30,6 +30,7 @@ namespace AutoVala {
 
 		public ElementPo() {
 			this._type = ConfigType.PO;
+			this.command = "po";
 		}
 
 		public override bool configureLine(string line, bool automatic, string? condition, bool invertCondition) {
@@ -122,25 +123,6 @@ namespace AutoVala {
 				}
 			} catch (Error e) {
 				ElementBase.globalData.addError(_("Failed to create the PO files"));
-				return true;
-			}
-			return false;
-		}
-
-		public override bool storeConfig(DataOutputStream dataStream, ConfigType type) {
-
-			// only process this file if it is of the desired type
-			if (type!=this.eType) {
-				return false;
-			}
-
-			try {
-				if (this.automatic) {
-					dataStream.put_string("*");
-				}
-				dataStream.put_string("po: %s\n".printf(this.fullPath));
-			} catch (Error e) {
-				ElementBase.globalData.addError(_("Failed to store 'po: %s' at config").printf(this.fullPath));
 				return true;
 			}
 			return false;

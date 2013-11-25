@@ -30,6 +30,7 @@ namespace AutoVala {
 
 		public ElementData() {
 			this._type = ConfigType.DATA;
+			this.command = "data";
 		}
 
 		public override bool configureLine(string line, bool automatic, string? condition, bool invertCondition) {
@@ -69,25 +70,6 @@ namespace AutoVala {
 				dataStream.put_string("endforeach()\n\n");
 			} catch (Error e) {
 				ElementBase.globalData.addError(_("Failed to install local files at %s").printf(this.fullPath));
-				return true;
-			}
-			return false;
-		}
-
-		public override bool storeConfig(DataOutputStream dataStream, ConfigType type) {
-
-			// only process this file if it is of the desired type
-			if (type!=this.eType) {
-				return false;
-			}
-
-			try {
-				if (this.automatic) {
-					dataStream.put_string("*");
-				}
-				dataStream.put_string("data: %s\n".printf(this.fullPath));
-			} catch (Error e) {
-				ElementBase.globalData.addError(_("Failed to store 'data: %s' at config").printf(this.fullPath));
 				return true;
 			}
 			return false;
