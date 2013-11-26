@@ -33,11 +33,15 @@ namespace AutoVala {
 		public string[] excludeFiles; // A list with all the files and paths that must be avoided when doing automatic detection
 		public Gee.List<ElementBase> globalElements; // The list of all elements
 
+		public bool error;
+		public bool warning;
 		private string[] errorList;
 
 		public Globals(string projectName) {
 
 			ElementBase.globalData = this;
+			this.error = false;
+			this.warning = false;
 			this.projectName = projectName;
 			this.projectFolder = null;
 			this.globalElements = new Gee.ArrayList<ElementBase>();
@@ -210,7 +214,25 @@ namespace AutoVala {
 		 * @param error to add
 		 */
 		public void addError(string errorMsg) {
+			this.error = true;
 			this.errorList += errorMsg;
+		}
+
+		/**
+		 * Inserts a warning in the error list
+		 * @param warning to add
+		 */
+		public void addWarning(string warningMsg) {
+			this.warning = true;
+			this.errorList += warningMsg;
+		}
+
+		/**
+		 * Inserts a message in the error list
+		 * @param message to add
+		 */
+		public void addMessage(string msg) {
+			this.errorList += msg;
 		}
 
 		/**
@@ -218,6 +240,8 @@ namespace AutoVala {
 		 */
 
 		public void clearErrors() {
+			this.error = false;
+			this.warning = false;
 			this.errorList={};
 		}
 

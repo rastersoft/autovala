@@ -38,6 +38,11 @@ namespace AutoVala {
 
 		public override bool configureLine(string line, bool automatic, string? condition, bool invertCondition, int lineNumber) {
 
+			if (false == line.has_prefix("icon: ")) {
+				var badCommand = line.split(": ")[0];
+				ElementBase.globalData.addError(_("Error: invalid command %s after command %s (line %d)").printf(badCommand,this.command, lineNumber));
+				return true;
+			}
 			// The line starts with 'icon: '
 			var data=line.substring(6).strip();
 			var pos=data.index_of(" ");

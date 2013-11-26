@@ -70,7 +70,7 @@ namespace AutoVala {
 		public virtual bool configureElement(string fullPath, string? path, string? file, bool automatic, string? condition, bool invertCondition) {
 
 			if (ElementBase.globalData.checkFile(fullPath)) {
-				ElementBase.globalData.addError(_("Warning: trying to add again the path %s").printf(path));
+				ElementBase.globalData.addWarning(_("Warning: trying to add again the path %s").printf(path));
 				return true;
 			}
 			this._fullPath = fullPath;
@@ -100,7 +100,11 @@ namespace AutoVala {
 		 */
 		public virtual bool configureLine(string line, bool automatic, string? condition, bool invertCondition, int lineNumber) {
 
-			// The line starts with 'binary: '
+			if (false == line.has_prefix(this.command+": ")) {
+				var badCommand = line.split(": ")[0];
+				ElementBase.globalData.addError(_("Error: invalid command %s after command %s (line %d)").printf(badCommand,this.command, lineNumber));
+				return true;
+			}
 			var data=line.substring(2+this.command.length).strip();
 
 			return this.configureElement(data,null,null,automatic,condition,invertCondition);

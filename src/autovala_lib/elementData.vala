@@ -35,6 +35,11 @@ namespace AutoVala {
 
 		public override bool configureLine(string line, bool automatic, string? condition, bool invertCondition, int lineNumber) {
 
+			if (false == line.has_prefix("data: ")) {
+				var badCommand = line.split(": ")[0];
+				ElementBase.globalData.addError(_("Error: invalid command %s after command %s (line %d)").printf(badCommand,this.command, lineNumber));
+				return true;
+			}
 			// The line starts with 'data: '
 			var data=line.substring(6).strip();
 			if (false==data.has_suffix(Path.DIR_SEPARATOR_S)) {

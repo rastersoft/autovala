@@ -35,6 +35,11 @@ namespace AutoVala {
 
 		public override bool configureLine(string line, bool automatic, string? condition, bool invertCondition, int lineNumber) {
 
+			if (false == line.has_prefix("ignore: ")) {
+				var badCommand = line.split(": ")[0];
+				ElementBase.globalData.addError(_("Error: invalid command %s after command %s (line %d)").printf(badCommand,this.command, lineNumber));
+				return true;
+			}
 			// The line starts with 'ignore: '
 			var data=line.substring(8).strip();
 			if((data.length>1)&&(data.has_suffix(Path.DIR_SEPARATOR_S))) {

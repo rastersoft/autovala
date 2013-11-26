@@ -37,9 +37,13 @@ namespace AutoVala {
 			if (line.has_prefix("desktop: ")) {
 				this._type = ConfigType.DESKTOP;
 				this.command = "desktop";
-			} else {
+			} else if (line.has_prefix("autostart: ")) {
 				this._type = ConfigType.AUTOSTART;
 				this.command = "autostart";
+			} else {
+				var badCommand = line.split(": ")[0];
+				ElementBase.globalData.addError(_("Error: invalid command %s after command %s (line %d)").printf(badCommand,this.command, lineNumber));
+				return true;
 			}
 			var data=line.substring(2+this.command.length).strip();
 			return this.configureElement(data,null,null,automatic,condition,invertCondition);

@@ -24,8 +24,6 @@ using Posix;
 
 namespace AutoVala {
 
-	public enum package_type {no_check, do_check, local}
-
 	public class Configuration:GLib.Object {
 
 		private Globals globalData = null;
@@ -172,6 +170,7 @@ namespace AutoVala {
 				string line;
 
 				ElementBase element=null;
+				ElementBase lastElement=null;
 				string oldLine="";
 				bool automatic=false;
 				while((line = dis.read_line(null))!=null) {
@@ -183,6 +182,7 @@ namespace AutoVala {
 					if (element!=null) {
 						error|=element.configureLine(oldLine,automatic,cond,invert,lineNumber);
 						this.globalData.addElement(element);
+						lastElement=element;
 						element=null;
 					}
 
@@ -195,29 +195,14 @@ namespace AutoVala {
 					if (finalline=="") {
 						continue;
 					}
-					oldLine = line;
 					if (line[0]=='*') { // it's an element added automatically, not by the user
 						automatic=true;
 						line=line.substring(1).strip();
 					} else {
 						automatic=false;
 					}
+					oldLine = line;
 
-					if (line.has_prefix("vala_package: ")) {
-						continue;
-					}
-					if (line.has_prefix("vala_check_package: ")) {
-						continue;
-					}
-					if (line.has_prefix("vala_local_package: ")) {
-						continue;
-					}
-					if (line.has_prefix("vala_vapi: ")) {
-						continue;
-					}
-					if (line.has_prefix("vala_source: ")) {
-						continue;
-					}
 					if (line.has_prefix("custom: ")) {
 						element = new ElementCustom();
 						continue;
@@ -322,30 +307,16 @@ namespace AutoVala {
 						}
 						continue;
 					}
-					if (line.has_prefix("vala_binary: ")) {
-						continue;
-					}
-					if (line.has_prefix("vala_library: ")) {
-						continue;
-					}
-					if (line.has_prefix("version: ")) {
-						continue;
-					}
-					if (line.has_prefix("namespace: ")) {
+					if ((line.has_prefix("vala_binary: "))||(line.has_prefix("vala_library: "))) {
+						element = new ElementValaBinary();
 						continue;
 					}
 					if (line.has_prefix("include: ")) {
 						element = new ElementInclude();
 						continue;
 					}
-					if (line.has_prefix("compile_options: ")) {
-						continue;
-					}
 					if (line.has_prefix("project_name: ")) {
 						this.globalData.projectName=line.substring(14).strip();
-						continue;
-					}
-					if (line.has_prefix("vala_destination: ")) {
 						continue;
 					}
 					if (line.has_prefix("define: ")) {
@@ -363,8 +334,7 @@ namespace AutoVala {
 						}
 						continue;
 					}
-					error=true;
-					this.globalData.addError(_("Syntax error in line %d").printf(this.lineNumber));
+					error|=lastElement.configureLine(line,automatic,cond,invert,lineNumber);
 				}
 			} catch (Error e) {
 				this.globalData.configFile="";
@@ -423,8 +393,8 @@ namespace AutoVala {
 					return true;
 				}
 			}
-			this.globalData.addError(_("Storing configuration in file %s").printf(this.globalData.configFile));
-			//this.sort_configuration();
+			this.globalData.addMessage(_("Storing configuration in file %s").printf(this.globalData.configFile));
+
 			try {
 				var dis = file.create(FileCreateFlags.NONE);
 				var data_stream = new DataOutputStream(dis);
@@ -467,7 +437,11 @@ namespace AutoVala {
 				}
 			}
 			if (printed) {
-				dataStream.put_string("\n");
+				try {
+					dataStream.put_string("\n");
+				} catch (Error e) {
+					this.globalData.addError(_("Error while storing the data"));
+				}
 			}
 		}
 	}
