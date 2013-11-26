@@ -156,7 +156,7 @@ namespace AutoVala {
 		 * @param dataStream The data stream for the CMakeList.txt file being processed
 		 * @return //true// if there was an error; //false// if not. The error texts can be obtained by calling to returnErrors()
 		 */
-		public virtual bool storeConfig(DataOutputStream dataStream) {
+		public virtual bool storeConfig(DataOutputStream dataStream,ConditionalText printConditions) {
 
 			try {
 				if (this.automatic) {

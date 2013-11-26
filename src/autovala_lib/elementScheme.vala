@@ -28,9 +28,12 @@ namespace AutoVala {
 
 	class ElementScheme : ElementBase {
 
+		private bool addedSchemePrefix;
+
 		public ElementScheme() {
 			this._type = ConfigType.SCHEME;
 			this.command = "scheme";
+			this.addedSchemePrefix=false;
 		}
 
 		public override bool generateCMake(DataOutputStream dataStream, ConfigType type) {
@@ -39,19 +42,14 @@ namespace AutoVala {
 			if (type!=this.eType) {
 				return false;
 			}
-
-			return false;
-		}
-
-		public override bool storeConfig(DataOutputStream dataStream) {
-
 			try {
-				if (this.automatic) {
-					dataStream.put_string("*");
+				if (addedSchemePrefix==false) {
+					dataStream.put_string("include(GSettings)\n");
+					addedSchemePrefix=true;
 				}
-				dataStream.put_string("scheme: %s\n".printf(this.fullPath));
+				dataStream.put_string("add_schema("+this.file+")\n");
 			} catch (Error e) {
-				ElementBase.globalData.addError(_("Failed to store 'scheme: %s' at config").printf(this.fullPath));
+				ElementBase.globalData.addError(_("Failed to add schema %s").printf(this.file));
 				return true;
 			}
 			return false;

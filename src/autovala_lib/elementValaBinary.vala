@@ -287,7 +287,7 @@ namespace AutoVala {
 			return false;
 		}
 
-		public override bool storeConfig(DataOutputStream dataStream) {
+		public override bool storeConfig(DataOutputStream dataStream,ConditionalText printConditions) {
 
 			try {
 				if (this.automatic) {
@@ -318,40 +318,54 @@ namespace AutoVala {
 				}
 				foreach(var element in this.packages) {
 					if (element.type == packageType.NO_CHECK) {
+						printConditions.printCondition(element.condition,element.invertCondition);
 						if (element.automatic) {
 							dataStream.put_string("*");
 						}
 						dataStream.put_string("vala_package: %s\n".printf(element.elementName));
 					}
 				}
+				printConditions.printTail();
+
 				foreach(var element in this.packages) {
 					if (element.type == packageType.DO_CHECK) {
+						printConditions.printCondition(element.condition,element.invertCondition);
 						if (element.automatic) {
 							dataStream.put_string("*");
 						}
 						dataStream.put_string("vala_check_package: %s\n".printf(element.elementName));
 					}
 				}
+				printConditions.printTail();
+
 				foreach(var element in this.packages) {
 					if (element.type == packageType.LOCAL) {
+						printConditions.printCondition(element.condition,element.invertCondition);
 						if (element.automatic) {
 							dataStream.put_string("*");
 						}
 						dataStream.put_string("vala_local_package: %s\n".printf(element.elementName));
 					}
 				}
+				printConditions.printTail();
+
 				foreach(var element in this.sources) {
+					printConditions.printCondition(element.condition,element.invertCondition);
 					if (element.automatic) {
 						dataStream.put_string("*");
 					}
 					dataStream.put_string("vala_source: %s\n".printf(element.elementName));
 				}
+				printConditions.printTail();
+
 				foreach(var element in this.vapis) {
+					printConditions.printCondition(element.condition,element.invertCondition);
 					if (element.automatic) {
 						dataStream.put_string("*");
 					}
 					dataStream.put_string("vala_vapi: %s\n".printf(element.elementName));
 				}
+				printConditions.printTail();
 			} catch (Error e) {
 				ElementBase.globalData.addError(_("Failed to store ': %s' at config").printf(this.fullPath));
 				return true;

@@ -83,7 +83,7 @@ namespace AutoVala {
 			return false;
 		}
 
-		public override bool storeConfig(DataOutputStream dataStream) {
+		public override bool storeConfig(DataOutputStream dataStream,ConditionalText printConditions) {
 
 			try {
 				if (this.automatic) {

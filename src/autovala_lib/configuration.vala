@@ -277,13 +277,11 @@ namespace AutoVala {
 						continue;
 					}
 
-					if (cond!=null) {
-						error=true;
-						this.globalData.addError(_("Conditionals are not supported in this statement (line %d)").printf(this.lineNumber));
-						this.reset_condition();
-					}
-
 					if (line.has_prefix("vala_version: ")) {
+						if (this.checkConditionals(cond)) {
+							error=true;
+							continue;
+						}
 						var version=line.substring(14).strip();
 						if (false==this.check_version(version)) {
 							this.globalData.addError(_("Vala version string not valid. It must be in the form N.N or N.N.N (line %d)").printf(this.lineNumber));
@@ -308,22 +306,42 @@ namespace AutoVala {
 						continue;
 					}
 					if ((line.has_prefix("vala_binary: "))||(line.has_prefix("vala_library: "))) {
+						if (this.checkConditionals(cond)) {
+							error=true;
+							continue;
+						}
 						element = new ElementValaBinary();
 						continue;
 					}
 					if (line.has_prefix("include: ")) {
+						if (this.checkConditionals(cond)) {
+							error=true;
+							continue;
+						}
 						element = new ElementInclude();
 						continue;
 					}
 					if (line.has_prefix("project_name: ")) {
+						if (this.checkConditionals(cond)) {
+							error=true;
+							continue;
+						}
 						this.globalData.projectName=line.substring(14).strip();
 						continue;
 					}
 					if (line.has_prefix("define: ")) {
+						if (this.checkConditionals(cond)) {
+							error=true;
+							continue;
+						}
 						element = new ElementDefine();
 						continue;
 					}
 					if (line.has_prefix("autovala_version: ")) {
+						if (this.checkConditionals(cond)) {
+							error=true;
+							continue;
+						}
 						this.version=int.parse(line.substring(18).strip());
 						if (this.version>this.current_version) {
 							this.globalData.configFile="";
@@ -352,6 +370,15 @@ namespace AutoVala {
 			return error;
 		}
 
+		private bool checkConditionals(string ?cond) {
+
+			if (cond!=null) {
+				this.globalData.addError(_("Conditionals are not supported in this statement (line %d)").printf(this.lineNumber));
+				this.reset_condition();
+				return true;
+			}
+			return false;
+		}
 
 		private bool check_version(string version) {
 			return Regex.match_simple("^[0-9]+.[0-9]+(.[0-9]+)?$",version);
@@ -430,12 +457,15 @@ namespace AutoVala {
 		private void storeData(ConfigType type, GLib.DataOutputStream dataStream) {
 
 			bool printed = false;
+			var printConditions=new ConditionalText(dataStream,false);
 			foreach(var element in this.globalData.globalElements) {
 				if (element.eType==type) {
-					element.storeConfig(dataStream);
+					printConditions.printCondition(element.conditionE,element.invertConditionE);
+					element.storeConfig(dataStream,printConditions);
 					printed = true;
 				}
 			}
+			printConditions.printTail();
 			if (printed) {
 				try {
 					dataStream.put_string("\n");

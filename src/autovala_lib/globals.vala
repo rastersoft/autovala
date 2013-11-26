@@ -40,6 +40,7 @@ namespace AutoVala {
 		public Globals(string projectName) {
 
 			ElementBase.globalData = this;
+			ConditionalText.globalData = this;
 			this.error = false;
 			this.warning = false;
 			this.projectName = projectName;

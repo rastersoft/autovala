@@ -134,12 +134,13 @@ namespace AutoVala {
 				}
 			} catch (Error e) {
 				ElementBase.globalData.addError(_("Failed to write the PostData for icons at %s").printf(fullPath));
+				return true;
 			}
 			ElementIcon.addedSuffix=false;
 			return false;
 		}
 
-		public override bool storeConfig(DataOutputStream dataStream) {
+		public override bool storeConfig(DataOutputStream dataStream,ConditionalText printConditions) {
 
 			try {
 				if (this.automatic) {
