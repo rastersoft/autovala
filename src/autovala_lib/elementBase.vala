@@ -56,6 +56,13 @@ namespace AutoVala {
 		protected bool invertCondition; // When true, invert the condition (this is, the file is after the #else, not before)
 		protected bool automatic; // This file class has been filled automatically by AutoVala
 
+		public string? conditionE {
+			get {return this.condition;}
+		}
+		public bool invertConditionE {
+			get {return this.invertCondition;}
+		}
+
 		public ElementBase() {
 		}
 
@@ -163,24 +170,11 @@ namespace AutoVala {
 			return false;
 		}
 
+		/**
+		 * Sorts the subelements to allow a better creation of the configuration file
+		 */
+		public virtual void sortElements() {
+			return;
+		}
 	}
-
-/*		public string compile_options;
-		public string icon_path;
-		public string version;
-		public string? destination;
-		public string define;
-		public string? language;
-		public int section;
-		public bool version_set;
-		public bool version_manually_set;
-
-		public Gee.List<package_element ?> packages;
-		public Gee.List<source_element ?> sources;
-		public Gee.List<vapi_element ?> vapis;
-		public string current_namespace;
-		public bool namespace_manually_set;
-
-
-	}*/
 }

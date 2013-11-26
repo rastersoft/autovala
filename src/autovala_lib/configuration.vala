@@ -394,7 +394,7 @@ namespace AutoVala {
 				}
 			}
 			this.globalData.addMessage(_("Storing configuration in file %s").printf(this.globalData.configFile));
-
+			this.globalData.sortElements();
 			try {
 				var dis = file.create(FileCreateFlags.NONE);
 				var data_stream = new DataOutputStream(dis);

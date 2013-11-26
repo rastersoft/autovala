@@ -273,5 +273,38 @@ namespace AutoVala {
 			}
 			this.projectFolder=GLib.Path.get_dirname(this.configFile);
 		}
+
+		/**
+		 * Comparation function to sort the elements
+		 */
+		public static int compareElements (ElementBase? a, ElementBase? b) {
+			if ((a.conditionE=="")&&(b.conditionE=="")) {
+				return a.fullPath.collate(b.fullPath);
+			}
+			if (a.conditionE=="") {
+				return -1;
+			}
+			if (b.conditionE=="") {
+				return 1;
+			}
+			if (a.conditionE==b.conditionE) {
+				if (a.invertConditionE==b.invertConditionE) {
+					return a.fullPath.collate(b.fullPath); // both are equal; sort alphabetically
+				} else {
+					return a.invertConditionE ? 1 : -1; // the one with the condition not inverted goes first
+				}
+			}
+			return (a.conditionE>b.conditionE ? 1 : -1);
+		}
+
+		/**
+		 * Sorts all the elements to allow a better creation of the configuration file
+		 */
+		public void sortElements() {
+			this.globalElements.sort(AutoVala.Globals.compareElements);
+			foreach (var element in this.globalElements) {
+				element.sortElements();
+			}
+		}
 	}
 }

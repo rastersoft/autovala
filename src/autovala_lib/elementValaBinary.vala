@@ -93,6 +93,32 @@ namespace AutoVala {
 			this.vapis=new Gee.ArrayList<vapiElement ?>();
 		}
 
+		public static int comparePackages (genericElement? a, genericElement? b) {
+			if ((a.condition=="")&&(b.condition=="")) {
+				return a.elementName.collate(b.elementName);
+			}
+			if (a.condition=="") {
+				return -1;
+			}
+			if (b.condition=="") {
+				return 1;
+			}
+			if (a.condition==b.condition) {
+				if (a.invertCondition==b.invertCondition) {
+					return a.elementName.collate(b.elementName); // both are equal; sort alphabetically
+				} else {
+					return a.invertCondition ? 1 : -1; // the one with the condition not inverted goes first
+				}
+			}
+			return (a.condition>b.condition ? 1 : -1);
+		}
+
+		public override void sortElements() {
+			this.packages.sort(AutoVala.ElementValaBinary.comparePackages);
+			this.sources.sort(AutoVala.ElementValaBinary.comparePackages);
+			this.vapis.sort(AutoVala.ElementValaBinary.comparePackages);
+		}
+
 		private void transformToNonAutomatic(bool automatic) {
 			if (automatic) {
 				return;

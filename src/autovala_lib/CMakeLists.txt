@@ -69,8 +69,8 @@ set (APP_SOURCES ${APP_SOURCES} elementEosPlug.vala)
 set (APP_SOURCES ${APP_SOURCES} elementPo.vala)
 set (APP_SOURCES ${APP_SOURCES} elementDesktop.vala)
 set (APP_SOURCES ${APP_SOURCES} elementScheme.vala)
-set (APP_SOURCES ${APP_SOURCES} elementBase.vala)
 set (APP_SOURCES ${APP_SOURCES} elementIgnore.vala)
+set (APP_SOURCES ${APP_SOURCES} elementBase.vala)
 
 vala_precompile(VALA_C AutoVala
 	${APP_SOURCES}
