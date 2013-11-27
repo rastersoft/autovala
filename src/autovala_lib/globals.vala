@@ -37,10 +37,19 @@ namespace AutoVala {
 		public bool warning;
 		private string[] errorList;
 
+		public Gee.Set<string> defines;
+		public Gee.Map<string,string> localModules;
+		public Gee.Set<string> ignoreList;
+		public Gee.Set<string> pathList;
+
 		public Globals(string projectName) {
 
 			ElementBase.globalData = this;
 			ConditionalText.globalData = this;
+			this.defines = null;
+			this.localModules=null;
+			this.ignoreList=null;
+			this.pathList = null;
 			this.error = false;
 			this.warning = false;
 			this.projectName = projectName;
@@ -63,6 +72,37 @@ namespace AutoVala {
 					break;
 				}
 				len--;
+			}
+		}
+
+
+		/**
+		 * Generates several lists with extra data needed for several parts, like a list with all defines, local modules, etc.
+		 */
+		public void generateExtraData() {
+
+			this.defines=new Gee.HashSet<string>();
+			foreach(var element in this.globalElements) {
+				if (element.eType==ConfigType.DEFINE) {
+					defines.add(element.path);
+				}
+			}
+			this.localModules=new Gee.HashMap<string,string>();
+			this.ignoreList=new Gee.HashSet<string>();
+			this.pathList=new Gee.HashSet<string>();
+			foreach(var element in this.globalElements) {
+				if ((element.eType==ConfigType.IGNORE)&&(ignoreList.contains(element.path)==false)) {
+					ignoreList.add(element.path);
+				}
+				if ((element.eType!=ConfigType.IGNORE)&&(element.eType!=ConfigType.DEFINE)&&(!this.pathList.contains(element.path))) {
+					this.pathList.add(element.path);
+				}
+				if (element.eType==ConfigType.VALA_LIBRARY) {
+					var elementLibrary = element as ElementValaBinary;
+					if ((elementLibrary.currentNamespace!=null)&&(!this.localModules.has_key(elementLibrary.currentNamespace))) {
+						this.localModules.set(elementLibrary.currentNamespace,elementLibrary.path);
+					}
+				}
 			}
 		}
 

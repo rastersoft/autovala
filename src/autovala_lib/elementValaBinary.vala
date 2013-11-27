@@ -73,11 +73,16 @@ namespace AutoVala {
 		private Gee.List<sourceElement ?> sources;
 		private Gee.List<vapiElement ?> vapis;
 
-		private string? currentNamespace;
+		private string? _currentNamespace;
+		public string ? currentNamespace {
+			get {return this._currentNamespace;}
+		}
 		private bool namespaceAutomatic;
 
 		private string? compileOptions;
 		private string? destination;
+
+		private static bool addedValaBinaries;
 
 		public ElementValaBinary() {
 			this.command = "";
@@ -85,12 +90,13 @@ namespace AutoVala {
 			this.versionSet=false;
 			this.versionAutomatic=true;
 			this.compileOptions=null;
-			this.currentNamespace=null;
+			this._currentNamespace=null;
 			this.namespaceAutomatic=true;
 			this.destination=null;
 			this.packages=new Gee.ArrayList<packageElement ?>();
 			this.sources=new Gee.ArrayList<sourceElement ?>();
 			this.vapis=new Gee.ArrayList<vapiElement ?>();
+			ElementValaBinary.addedValaBinaries = false;
 		}
 
 		public static int comparePackages (genericElement? a, genericElement? b) {
@@ -147,8 +153,8 @@ namespace AutoVala {
 		}
 
 		private bool setNamespace(string namespaceT, bool automatic, int lineNumber) {
-			if (this.currentNamespace==null) {
-				this.currentNamespace=namespaceT;
+			if (this._currentNamespace==null) {
+				this._currentNamespace=namespaceT;
 				if (!automatic) {
 					this.namespaceAutomatic=false;
 				}
@@ -277,11 +283,357 @@ namespace AutoVala {
 			return this.configureElement(data,null,null,automatic,condition,invertCondition);
 		}
 
+		public override void endedCMakeFile() {
+			ElementValaBinary.addedValaBinaries=false;
+		}
+
+		public override bool generateCMakeHeader(DataOutputStream dataStream, ConfigType type) {
+
+			// only process this file if it is of the desired type
+			if (type!=this.eType) {
+				return false;
+			}
+
+			try {
+				if (ElementValaBinary.addedValaBinaries==false) {
+					dataStream.put_string("set (DATADIR \"${AUTOVALA_INSTALL_PREFIX}/share\")\n");
+					dataStream.put_string("set (PKGDATADIR \"${DATADIR}/"+ElementBase.globalData.projectName+"\")\n");
+					dataStream.put_string("set (GETTEXT_PACKAGE \""+ElementBase.globalData.projectName+"\")\n");
+					dataStream.put_string("set (RELEASE_NAME \""+ElementBase.globalData.projectName+"\")\n");
+					dataStream.put_string("set (CMAKE_C_FLAGS \"\")\n");
+					dataStream.put_string("set (PREFIX ${CMAKE_INSTALL_PREFIX})\n");
+					dataStream.put_string("set (VERSION \""+this.version+"\")\n");
+					dataStream.put_string("set (DOLLAR \"$\")\n\n");
+					if (this._path!="") {
+						dataStream.put_string("configure_file (${CMAKE_SOURCE_DIR}/"+this._path+"/Config.vala.cmake ${CMAKE_BINARY_DIR}/"+this._path+"/Config.vala)\n");
+					} else {
+						dataStream.put_string("configure_file (${CMAKE_SOURCE_DIR}/Config.vala.cmake ${CMAKE_BINARY_DIR}/Config.vala)\n");
+					}
+					dataStream.put_string("add_definitions(-DGETTEXT_PACKAGE=\\\"${GETTEXT_PACKAGE}\\\")\n");
+				}
+				ElementValaBinary.addedValaBinaries=true;
+			} catch (Error e) {
+				ElementBase.globalData.addError(_("Failed to write the header for binary file %s").printf(this.fullPath));
+				return true;
+			}
+			return false;
+		}
+
 		public override bool generateCMake(DataOutputStream dataStream, ConfigType type) {
 
 			// only process this file if it is of the desired type
 			if (type!=this.eType) {
 				return false;
+			}
+
+			string girFilename="";
+			string libFilename=this.file;
+			if (this._currentNamespace!=null) {
+				// Build the GIR filename
+				girFilename=this._currentNamespace+"-"+this.version.split(".")[0]+".0.gir";
+				libFilename=this._currentNamespace;
+			}
+
+			string ?destination;
+			if (this.destination==null) {
+				destination=null;
+			} else {
+				if (this.destination[0]!='/') {
+					destination=this.destination;
+				} else {
+					destination="${FINAL_AUTOVALA_PATH}%s".printf(this.destination);
+				}
+			}
+
+			var fname=File.new_for_path(Path.build_filename(ElementBase.globalData.projectFolder,this._path,"Config.vala.cmake"));
+			try {
+				if (fname.query_exists()) {
+					fname.delete();
+				}
+				var dis = fname.create(FileCreateFlags.NONE);
+				var dataStream2 = new DataOutputStream(dis);
+				if ((this._type == ConfigType.VALA_LIBRARY) && (this._currentNamespace!=null)) {
+					dataStream2.put_string("namespace "+libFilename+"Constants {\n");
+				} else {
+					dataStream2.put_string("namespace Constants {\n");
+				}
+				dataStream2.put_string("\tpublic const string DATADIR = \"@DATADIR@\";\n");
+				dataStream2.put_string("\tpublic const string PKGDATADIR = \"@PKGDATADIR@\";\n");
+				dataStream2.put_string("\tpublic const string GETTEXT_PACKAGE = \"@GETTEXT_PACKAGE@\";\n");
+				dataStream2.put_string("\tpublic const string RELEASE_NAME = \"@RELEASE_NAME@\";\n");
+				dataStream2.put_string("\tpublic const string VERSION = \"@VERSION@\";\n");
+				dataStream2.put_string("}\n");
+				dataStream2.close();
+			} catch (Error e) {
+				ElementBase.globalData.addError(_("Failed to create the Config.vala.cmake file"));
+				return true;
+			}
+
+			try {
+				string pcFilename=libFilename+".pc";
+
+				if (this._type == ConfigType.VALA_LIBRARY) {
+					fname=File.new_for_path(Path.build_filename(ElementBase.globalData.projectFolder,this._path,libFilename+".pc"));
+					if (fname.query_exists()) {
+						fname.delete();
+					}
+					try {
+						var dis = fname.create(FileCreateFlags.NONE);
+						var dataStream2 = new DataOutputStream(dis);
+						dataStream2.put_string("prefix=@AUTOVALA_INSTALL_PREFIX@\n");
+						dataStream2.put_string("real_prefix=@CMAKE_INSTALL_PREFIX@\n");
+						dataStream2.put_string("exec_prefix=@DOLLAR@{prefix}\n");
+						dataStream2.put_string("libdir=@DOLLAR@{exec_prefix}/lib\n");
+						dataStream2.put_string("includedir=@DOLLAR@{exec_prefix}/include\n\n");
+						dataStream2.put_string("Name: "+libFilename+"\n");
+						dataStream2.put_string("Description: "+libFilename+"\n");
+						dataStream2.put_string("Version: "+this.version+"\n");
+						dataStream2.put_string("Libs: -L@DOLLAR@{libdir} -l"+libFilename+"\n");
+						dataStream2.put_string("Cflags: -I@DOLLAR@{includedir}\n");
+						dataStream2.close();
+					} catch (Error e) {
+						ElementBase.globalData.addError(_("Failed to create the Config.vala.cmake file"));
+						return true;
+					}
+					dataStream.put_string("configure_file (${CMAKE_CURRENT_SOURCE_DIR}/"+pcFilename+" ${CMAKE_CURRENT_BINARY_DIR}/"+pcFilename+")\n");
+				}
+
+				dataStream.put_string("set (VERSION \""+this.version+"\")\n");
+
+				dataStream.put_string("add_definitions(${DEPS_CFLAGS})\n");
+
+				bool addedPrefix=false;
+				foreach(var module in this.packages) {
+					if (module.type==packageType.LOCAL) {
+						if (ElementBase.globalData.localModules.has_key(module.elementName)) {
+							if (addedPrefix==false) {
+								dataStream.put_string("include_directories( ");
+								addedPrefix=true;
+							}
+							dataStream.put_string("${CMAKE_BINARY_DIR}/"+ElementBase.globalData.localModules.get(module.elementName)+" ");
+						} else {
+							ElementBase.globalData.addWarning(_("Warning: Can't set package %s for binary %s").printf(module.elementName,this.file));
+						}
+					}
+				}
+				if (addedPrefix) {
+					dataStream.put_string(")\n");
+				}
+
+				dataStream.put_string("link_libraries( ${DEPS_LIBRARIES} ");
+				foreach(var module in this.packages) {
+					if ((module.type==packageType.LOCAL)&&(ElementBase.globalData.localModules.has_key(module.elementName))) {
+						dataStream.put_string("-l"+module.elementName+" ");
+					}
+				}
+				dataStream.put_string(")\n");
+				dataStream.put_string("link_directories( ${DEPS_LIBRARY_DIRS} ");
+				foreach(var module in this.packages) {
+					if ((module.type==packageType.LOCAL)&&(ElementBase.globalData.localModules.has_key(module.elementName))) {
+						dataStream.put_string("${CMAKE_BINARY_DIR}/"+ElementBase.globalData.localModules.get(module.elementName)+" ");
+					}
+				}
+				dataStream.put_string(")\n");
+				dataStream.put_string("find_package(Vala REQUIRED)\n");
+				dataStream.put_string("include(ValaVersion)\n");
+				dataStream.put_string("ensure_vala_version(\"%d.%d\" MINIMUM)\n".printf(ElementBase.globalData.valaMajor,ElementBase.globalData.valaMinor));
+				dataStream.put_string("include(ValaPrecompile)\n\n");
+
+				var printConditions=new ConditionalText(dataStream,true);
+
+				bool found_local=false;
+				foreach(var module in this.packages) {
+					if (module.type==packageType.LOCAL) {
+						found_local=true;
+						continue;
+					}
+					printConditions.printCondition(module.condition,module.invertCondition);
+					dataStream.put_string("set (VALA_PACKAGES ${VALA_PACKAGES} %s)\n".printf(module.elementName));
+				}
+				printConditions.printTail();
+				dataStream.put_string("\n");
+
+				if ((this._type != ConfigType.VALA_LIBRARY)||(this._currentNamespace!="")) {
+					dataStream.put_string("set (APP_SOURCES ${APP_SOURCES} ${CMAKE_CURRENT_BINARY_DIR}/Config.vala)\n");
+				}
+				foreach(var module in this.sources) {
+					printConditions.printCondition(module.condition,module.invertCondition);
+					dataStream.put_string("set (APP_SOURCES ${APP_SOURCES} %s)\n".printf(module.elementName));
+				}
+				printConditions.printTail();
+				dataStream.put_string("\n");
+
+				bool has_custom_VAPIs=false;
+				if ((this.vapis.size!=0)||(found_local==true)) {
+					foreach (var filename in this.vapis) {
+						printConditions.printCondition(filename.condition,filename.invertCondition);
+						dataStream.put_string("set(CUSTOM_VAPIS_LIST ${CUSTOM_VAPIS_LIST} ${CMAKE_SOURCE_DIR}/%s)\n".printf(Path.build_filename(this._path,filename.elementName)));
+						has_custom_VAPIs=true;
+					}
+					printConditions.printTail();
+					foreach(var module in this.packages) {
+						if (module.type==packageType.LOCAL) {
+							if (ElementBase.globalData.localModules.has_key(module.elementName)) {
+								printConditions.printCondition(module.condition,module.invertCondition);
+								dataStream.put_string("set(CUSTOM_VAPIS_LIST ${CUSTOM_VAPIS_LIST} ${CMAKE_BINARY_DIR}/%s)\n".printf(Path.build_filename(ElementBase.globalData.localModules.get(module.elementName), module.elementName +".vapi")));
+								has_custom_VAPIs=true;
+							}
+						}
+					}
+					printConditions.printTail();
+					dataStream.put_string("\n");
+				}
+
+				bool addedDefines=false;
+				foreach(var l in ElementBase.globalData.defines) {
+					if (addedDefines==false) {
+						addedDefines=true;
+						this.compileOptions+=" ${OPTION_DEFINES}";
+					}
+					dataStream.put_string("IF (%s)\n".printf(l));
+					dataStream.put_string("\tSET(OPTION_DEFINES ${OPTION_DEFINES} -D %s)\n".printf(l));
+					dataStream.put_string("ENDIF()\n");
+				}
+				if (addedDefines) {
+					dataStream.put_string("\n");
+				}
+
+				dataStream.put_string("vala_precompile(VALA_C "+libFilename+"\n");
+				dataStream.put_string("\t${APP_SOURCES}\n");
+				dataStream.put_string("PACKAGES\n");
+				dataStream.put_string("\t${VALA_PACKAGES}\n");
+				if (has_custom_VAPIs) {
+					dataStream.put_string("CUSTOM_VAPIS\n");
+					dataStream.put_string("\t${CUSTOM_VAPIS_LIST}\n");
+				}
+
+				var final_options=this.compileOptions;
+				if (this._type == ConfigType.VALA_LIBRARY) {
+					// If it is a library, generate the Gobject Introspection file
+					final_options="--library="+libFilename;
+					if (girFilename!="") {
+						final_options+=" --gir "+girFilename;
+					} else {
+						ElementBase.globalData.addWarning(_("Warning: no namespace specified in library %s; GIR file will not be generated").printf(this.file));
+					}
+					final_options+=" "+this.compileOptions;
+				}
+
+				if (final_options!="") {
+					dataStream.put_string("OPTIONS\n");
+					dataStream.put_string("\t"+final_options+"\n");
+				}
+
+				if (this._type == ConfigType.VALA_LIBRARY) {
+					// Generate both VAPI and headers
+					dataStream.put_string("GENERATE_VAPI\n");
+					dataStream.put_string("\t"+libFilename+"\n");
+					dataStream.put_string("GENERATE_HEADER\n");
+					dataStream.put_string("\t"+libFilename+"\n");
+				}
+
+				dataStream.put_string(")\n\n");
+				if (this._type == ConfigType.VALA_LIBRARY) {
+					dataStream.put_string("add_library("+libFilename+" SHARED ${VALA_C})\n\n");
+
+					// Set library version number
+					dataStream.put_string("set_target_properties( "+libFilename+" PROPERTIES\n");
+					dataStream.put_string("VERSION\n");
+					dataStream.put_string("\t"+this.version+"\n");
+					dataStream.put_string("SOVERSION\n");
+					dataStream.put_string("\t"+this.version.split(".")[0]+" )\n\n");
+
+					// Install library
+					dataStream.put_string("install(TARGETS\n");
+					dataStream.put_string("\t"+libFilename+"\n");
+					dataStream.put_string("LIBRARY DESTINATION\n");
+					if (destination==null) {
+						dataStream.put_string("\tlib/\n");
+					} else {
+						dataStream.put_string("\t%s\n".printf(destination));
+					}
+					dataStream.put_string(")\n");
+
+					// Install headers
+					dataStream.put_string("install(FILES\n");
+					dataStream.put_string("\t${CMAKE_CURRENT_BINARY_DIR}/"+libFilename+".h\n");
+					dataStream.put_string("DESTINATION\n");
+					if (destination==null) {
+						dataStream.put_string("\tinclude/\n");
+					} else {
+						dataStream.put_string("\t%s\n".printf(destination));
+					}
+					dataStream.put_string(")\n");
+
+					// Install VAPI
+					dataStream.put_string("install(FILES\n");
+					dataStream.put_string("\t${CMAKE_CURRENT_BINARY_DIR}/"+libFilename+".vapi\n");
+					dataStream.put_string("DESTINATION\n");
+					if (destination==null) {
+						dataStream.put_string("\tshare/vala/vapi/\n");
+					} else {
+						dataStream.put_string("\t%s\n".printf(destination));
+					}
+					dataStream.put_string(")\n");
+
+					// Install GIR
+					if (girFilename!="") {
+						dataStream.put_string("install(FILES\n");
+						dataStream.put_string("\t${CMAKE_CURRENT_BINARY_DIR}/"+girFilename+"\n");
+						dataStream.put_string("DESTINATION\n");
+					if (destination==null) {
+						dataStream.put_string("\tshare/gir-1.0/\n");
+					} else {
+						dataStream.put_string("\t%s\n".printf(destination));
+					}
+						dataStream.put_string(")\n");
+					}
+
+					// Install PC
+					dataStream.put_string("install(FILES\n");
+					dataStream.put_string("\t${CMAKE_CURRENT_BINARY_DIR}/"+pcFilename+"\n");
+					dataStream.put_string("DESTINATION\n");
+					if (destination==null) {
+						dataStream.put_string("\tlib/pkgconfig/\n");
+					} else {
+						dataStream.put_string("\t%s\n".printf(destination));
+					}
+					dataStream.put_string(")\n");
+
+				} else {
+
+					// Install executable
+					dataStream.put_string("add_executable("+libFilename+" ${VALA_C})\n\n");
+					dataStream.put_string("install(TARGETS\n");
+					dataStream.put_string("\t"+libFilename+"\n");
+					dataStream.put_string("RUNTIME DESTINATION\n");
+					if (destination==null) {
+						dataStream.put_string("\tbin/\n");
+					} else {
+						dataStream.put_string("\t%s\n".printf(destination));
+					}
+					dataStream.put_string(")\n\n");
+				}
+
+				dataStream.put_string("if(HAVE_VALADOC)\n");
+				dataStream.put_string("\tvaladoc("+libFilename+"\n");
+				dataStream.put_string("\t\t${CMAKE_BINARY_DIR}/"+Path.build_filename("valadoc",libFilename)+"\n");
+				dataStream.put_string("\t\t${APP_SOURCES}\n");
+				dataStream.put_string("\tPACKAGES\n");
+				dataStream.put_string("\t\t${VALA_PACKAGES}\n");
+				dataStream.put_string("\tCUSTOM_VAPIS\n");
+				dataStream.put_string("\t\t${CUSTOM_VAPIS_LIST}\n");
+				dataStream.put_string("\t)\n");
+
+				dataStream.put_string("\tinstall(DIRECTORY\n");
+				dataStream.put_string("\t\t${CMAKE_BINARY_DIR}/valadoc\n");
+				dataStream.put_string("\tDESTINATION\n");
+				dataStream.put_string("\t\t"+Path.build_filename("share/doc",ElementBase.globalData.projectName)+"\n");
+				dataStream.put_string("\t)\n");
+				dataStream.put_string("endif()\n");
+			} catch (Error e) {
+				ElementBase.globalData.addError(_("Failed to write the CMakeLists file for binary %s").printf(libFilename));
+				return true;
 			}
 
 			return false;
@@ -304,11 +656,11 @@ namespace AutoVala {
 					}
 					dataStream.put_string("version: %s\n".printf(this.version));
 				}
-				if (this.currentNamespace!=null) {
+				if (this._currentNamespace!=null) {
 					if (this.namespaceAutomatic) {
 						dataStream.put_string("*");
 					}
-					dataStream.put_string("namespace: %s\n".printf(this.currentNamespace));
+					dataStream.put_string("namespace: %s\n".printf(this._currentNamespace));
 				}
 				if (this.compileOptions!=null) {
 					dataStream.put_string("compile_options: %s\n".printf(this.compileOptions));
