@@ -116,28 +116,33 @@ namespace AutoVala {
 				return true;
 			}
 
-			// Refresh the icon cache (but only if ICON_UPDATE is not OFF; that means we are building a package)
-			if (ElementIcon.addedSuffix==false) {
-				ElementIcon.addedSuffix=true;
-				this.appendText+="IF( NOT (${ICON_UPDATE} STREQUAL \"OFF\" ))\n";
-				this.appendText+="\tinstall (CODE \"execute_process ( COMMAND /usr/bin/gtk-update-icon-cache-3.0 -t ${CMAKE_INSTALL_PREFIX}/share/icons/hicolor )\" )\n";
-				this.appendText+="ENDIF()\n";
-			}
-
 			return false;
 		}
 
 		public override bool generateCMakePostData(DataOutputStream dataStream, ConfigType type) {
-			try {
-				foreach(var line in this.appendText) {
-					dataStream.put_string(line);
-				}
-			} catch (Error e) {
-				ElementBase.globalData.addError(_("Failed to write the PostData for icons at %s").printf(fullPath));
-				return true;
+
+			// only process this file if it is of the desired type
+			if (type!=this.eType) {
+				return false;
 			}
-			ElementIcon.addedSuffix=false;
+
+			if (ElementIcon.addedSuffix==false) {
+				// Refresh the icon cache (but only if ICON_UPDATE is not OFF; that means we are building a package)
+				try {
+					ElementIcon.addedSuffix=true;
+					dataStream.put_string("IF( NOT (${ICON_UPDATE} STREQUAL \"OFF\" ))\n");
+					dataStream.put_string("\tinstall (CODE \"execute_process ( COMMAND /usr/bin/gtk-update-icon-cache-3.0 -t ${CMAKE_INSTALL_PREFIX}/share/icons/hicolor )\" )\n");
+					dataStream.put_string("ENDIF()\n");
+				} catch (Error e) {
+					ElementBase.globalData.addError(_("Failed to write the PostData for icons at %s").printf(fullPath));
+					return true;
+				}
+			}
 			return false;
+		}
+
+		public override void endedCMakeFile() {
+			ElementIcon.addedSuffix=false;
 		}
 
 		public override bool storeConfig(DataOutputStream dataStream,ConditionalText printConditions) {

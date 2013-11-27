@@ -132,7 +132,18 @@ namespace AutoVala {
 		 * @param dataStream The data stream for the CMakeList.txt file being processed
 		 * @return //true// if there was an error; //false// if not. The error texts can be obtained by calling to returnErrors()
 		 */
-		public abstract bool generateCMake(DataOutputStream dataStream, ConfigType type);
+		public virtual bool generateCMake(DataOutputStream dataStream, ConfigType type) {
+			return false;
+		}
+
+		/**
+		 * Inserts the CMake commands needed for this file AT THE HEADER in the data stream specified. This allows to add definitions and other preparatory commands at the head of a file
+		 * @param dataStream The data stream for the CMakeList.txt file being processed
+		 * @return //true// if there was an error; //false// if not. The error texts can be obtained by calling to returnErrors()
+		 */
+		public virtual bool generateCMakeHeader(DataOutputStream dataStream, ConfigType type) {
+			return false;
+		}
 
 		/**
 		 * Inserts the CMake commands needed for this file AT ITS END in the data stream specified. This allows to add extra commands at the end of a file
@@ -141,6 +152,9 @@ namespace AutoVala {
 		 */
 		public virtual bool generateCMakePostData(DataOutputStream dataStream, ConfigType type) {
 			return false;
+		}
+
+		public virtual void endedCMakeFile() {
 		}
 
 		/**

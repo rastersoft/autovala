@@ -28,10 +28,6 @@ namespace AutoVala {
 			this.command = "include";
 		}
 
-		public override bool generateCMake(DataOutputStream dataStream, ConfigType type) {
-			return false;
-		}
-
 		public override bool generateCMakePostData(DataOutputStream dataStream, ConfigType type) {
 
 			// only process this file if it is of the desired type

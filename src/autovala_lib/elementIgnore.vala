@@ -48,10 +48,5 @@ namespace AutoVala {
 			ElementBase.globalData.addExclude(data);
 			return this.configureElement(data,data,data,automatic,condition,invertCondition);
 		}
-
-		public override bool generateCMake(DataOutputStream dataStream, ConfigType type) {
-
-			return false;
-		}
 	}
 }

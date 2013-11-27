@@ -36,7 +36,7 @@ namespace AutoVala {
 			this.command = "dbus_service";
 		}
 
-		public override bool generateCMake(DataOutputStream dataStream, ConfigType type) {
+		public override bool generateCMakeHeader(DataOutputStream dataStream, ConfigType type) {
 
 			// only process this file if it is of the desired type
 			if (type!=this.eType) {
@@ -48,9 +48,18 @@ namespace AutoVala {
 					dataStream.put_string("SET(DBUS_PREFIX ${AUTOVALA_INSTALL_PREFIX})\n");
 					ElementDBusService.addedDBusPrefix=true;
 				} catch (Error e) {
-					ElementBase.globalData.addError(_("Can't append data to CMakeLists file at %s").printf(this._path));
+					ElementBase.globalData.addError(_("Can't append DBUS data to the header CMakeLists file at %s").printf(this._path));
 					return true;
 				}
+			}
+			return false;
+		}
+
+		public override bool generateCMake(DataOutputStream dataStream, ConfigType type) {
+
+			// only process this file if it is of the desired type
+			if (type!=this.eType) {
+				return false;
 			}
 
 			try {
@@ -65,9 +74,8 @@ namespace AutoVala {
 			return false;
 		}
 
-		public override bool generateCMakePostData(DataOutputStream dataStream, ConfigType type) {
+		public override void endedCMakeFile() {
 			ElementDBusService.addedDBusPrefix=false; // set the flag to false to allow to add more DBus services in other CMakeList.txt files
-			return false;
 		}
 	}
 }

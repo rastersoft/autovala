@@ -50,10 +50,5 @@ namespace AutoVala {
 
 			return false;
 		}
-
-		public override bool generateCMake(DataOutputStream dataStream, ConfigType type) {
-
-			return false;
-		}
 	}
 }
