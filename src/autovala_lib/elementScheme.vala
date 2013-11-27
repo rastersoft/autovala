@@ -36,12 +36,8 @@ namespace AutoVala {
 			this.addedSchemePrefix=false;
 		}
 
-		public override bool generateCMake(DataOutputStream dataStream, ConfigType type) {
+		public override bool generateCMake(DataOutputStream dataStream) {
 
-			// only process this file if it is of the desired type
-			if (type!=this.eType) {
-				return false;
-			}
 			try {
 				if (addedSchemePrefix==false) {
 					dataStream.put_string("include(GSettings)\n");

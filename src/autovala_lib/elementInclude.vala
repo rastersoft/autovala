@@ -28,12 +28,8 @@ namespace AutoVala {
 			this.command = "include";
 		}
 
-		public override bool generateCMakePostData(DataOutputStream dataStream, ConfigType type) {
+		public override bool generateCMakePostData(DataOutputStream dataStream) {
 
-			// only process this file if it is of the desired type
-			if (type!=this.eType) {
-				return false;
-			}
 			try {
 				dataStream.put_string("include(${CMAKE_CURRENT_SOURCE_DIR}/"+this.file+")\n");
 			} catch (Error e) {

@@ -33,12 +33,8 @@ namespace AutoVala {
 			this.command = "eos_plug";
 		}
 
-		public override bool generateCMake(DataOutputStream dataStream, ConfigType type) {
+		public override bool generateCMake(DataOutputStream dataStream) {
 
-			// only process this file if it is of the desired type
-			if (type!=this.eType) {
-				return false;
-			}
 			try {
 				dataStream.put_string("configure_file(${CMAKE_CURRENT_SOURCE_DIR}/"+this.file+" ${CMAKE_CURRENT_BINARY_DIR}/"+this.file+")\n");
 				dataStream.put_string("install(FILES ${CMAKE_CURRENT_BINARY_DIR}/"+this.file+" DESTINATION lib/plugs/"+ElementBase.globalData.projectName+"/"+ElementBase.globalData.projectName+"/)\n");

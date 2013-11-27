@@ -72,12 +72,8 @@ namespace AutoVala {
 			return this.configureElement(path,null,null,true,null,false);
 		}
 
-		public override bool generateCMake(DataOutputStream dataStream, ConfigType type) {
+		public override bool generateCMake(DataOutputStream dataStream) {
 
-			// only process this file if it is of the desired type
-			if (type!=this.eType) {
-				return false;
-			}
 			try {
 				if (this._type == ConfigType.DESKTOP) {
 					dataStream.put_string("install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/"+this.file+" DESTINATION share/applications/ )\n");

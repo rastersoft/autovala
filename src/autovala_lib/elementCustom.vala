@@ -49,12 +49,7 @@ namespace AutoVala {
 			return this.configureElement(file,null,null,automatic,condition,invertCondition);
 		}
 
-		public override bool generateCMake(DataOutputStream dataStream, ConfigType type) {
-
-			// only process this file if it is of the desired type
-			if (type!=this.eType) {
-				return false;
-			}
+		public override bool generateCMake(DataOutputStream dataStream) {
 
 			string finalDestination;
 			if (this.destination[0]!='/') {

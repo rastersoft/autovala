@@ -56,6 +56,10 @@ namespace AutoVala {
 		protected bool invertCondition; // When true, invert the condition (this is, the file is after the #else, not before)
 		protected bool automatic; // This file class has been filled automatically by AutoVala
 
+		public bool getAutomatic {
+			get {return this.automatic;}
+		}
+
 		public string? conditionE {
 			get {return this.condition;}
 		}
@@ -132,7 +136,7 @@ namespace AutoVala {
 		 * @param dataStream The data stream for the CMakeList.txt file being processed
 		 * @return //true// if there was an error; //false// if not. The error texts can be obtained by calling to returnErrors()
 		 */
-		public virtual bool generateCMake(DataOutputStream dataStream, ConfigType type) {
+		public virtual bool generateCMake(DataOutputStream dataStream) {
 			return false;
 		}
 
@@ -141,7 +145,7 @@ namespace AutoVala {
 		 * @param dataStream The data stream for the CMakeList.txt file being processed
 		 * @return //true// if there was an error; //false// if not. The error texts can be obtained by calling to returnErrors()
 		 */
-		public virtual bool generateCMakeHeader(DataOutputStream dataStream, ConfigType type) {
+		public virtual bool generateCMakeHeader(DataOutputStream dataStream) {
 			return false;
 		}
 
@@ -150,11 +154,21 @@ namespace AutoVala {
 		 * @param dataStream The data stream for the CMakeList.txt file being processed
 		 * @return //true// if there was an error; //false// if not. The error texts can be obtained by calling to returnErrors()
 		 */
-		public virtual bool generateCMakePostData(DataOutputStream dataStream, ConfigType type) {
+		public virtual bool generateCMakePostData(DataOutputStream dataStream) {
 			return false;
 		}
 
+		/**
+		 * Informs to the element that the current CMakeList.txt file has been completed
+		 */
 		public virtual void endedCMakeFile() {
+		}
+
+
+		/**
+		 * Removes all the automatic data in the element
+		 */
+		public virtual void clearAutomatic() {
 		}
 
 		/**

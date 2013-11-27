@@ -36,12 +36,7 @@ namespace AutoVala {
 			this.command = "dbus_service";
 		}
 
-		public override bool generateCMakeHeader(DataOutputStream dataStream, ConfigType type) {
-
-			// only process this file if it is of the desired type
-			if (type!=this.eType) {
-				return false;
-			}
+		public override bool generateCMakeHeader(DataOutputStream dataStream) {
 
 			if (ElementDBusService.addedDBusPrefix==false) {
 				try {
@@ -55,12 +50,7 @@ namespace AutoVala {
 			return false;
 		}
 
-		public override bool generateCMake(DataOutputStream dataStream, ConfigType type) {
-
-			// only process this file if it is of the desired type
-			if (type!=this.eType) {
-				return false;
-			}
+		public override bool generateCMake(DataOutputStream dataStream) {
 
 			try {
 				// DBus files must use DBUS_PREFIX in their path, instead of a fixed one, to allow them to be installed both in /usr or /usr/local

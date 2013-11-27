@@ -55,10 +55,10 @@ namespace AutoVala {
 			this.conditional_elements=new Gee.ArrayList<string>();
 			this.version=0;
 
-			this.globalData = new Globals(projectName);
+			this.globalData = new AutoVala.Globals(projectName);
 
 			this.vala_version="0.16";
-			this.reset_condition();
+			this.resetCondition();
 		}
 
 		/**
@@ -74,14 +74,22 @@ namespace AutoVala {
 		}
 
 		/**
+		 * Removes all the non-automatic elements
+		 */
+
+		 public void clearAutomatic() {
+			this.globalData.clearAutomatic();
+		 }
+
+		/**
 		 * Condition management methods
 		 */
-		private void reset_condition() {
+		private void resetCondition() {
 			this.current_condition="";
 			this.condition_inverted=false;
 		}
 
-		private void get_current_condition(out string? condition, out bool inverted) {
+		private void getCurrentCondition(out string? condition, out bool inverted) {
 			if (this.current_condition=="") {
 				condition=null;
 				inverted=false;
@@ -91,7 +99,7 @@ namespace AutoVala {
 			}
 		}
 
-		private bool add_condition(string condition) {
+		private bool addCondition(string condition) {
 			if (this.current_condition!="") {
 				this.globalData.addError(_("Nested IFs not allowed (line %d)").printf(this.lineNumber));
 				return true;
@@ -113,17 +121,17 @@ namespace AutoVala {
 			}
 		}
 
-		private bool remove_condition() {
+		private bool removeCondition() {
 			if (this.current_condition=="") {
 				this.globalData.addError(_("Mismatched END (line %d)").printf(this.lineNumber));
 				return true;
 			} else {
-				this.reset_condition();
+				this.resetCondition();
 				return false;
 			}
 		}
 
-		private bool invert_condition() {
+		private bool invertCondition() {
 			if (this.current_condition=="") {
 				this.globalData.addError(_("Mismatched ELSE (line %d)").printf(this.lineNumber));
 				return true;
@@ -158,7 +166,7 @@ namespace AutoVala {
 
 		public bool readConfiguration() {
 
-			this.reset_condition();
+			this.resetCondition();
 
 			var file=File.new_for_path(this.globalData.configFile);
 			bool error=false;
@@ -177,7 +185,7 @@ namespace AutoVala {
 
 					string ?cond=null;
 					bool invert=false;
-					this.get_current_condition(out cond,out invert);
+					this.getCurrentCondition(out cond,out invert);
 
 					if (element!=null) {
 						error|=element.configureLine(oldLine,automatic,cond,invert,lineNumber);
@@ -264,16 +272,16 @@ namespace AutoVala {
 						continue;
 					}
 					if (line.has_prefix("if ")) {
-						error|=this.add_condition(line.substring(3).strip());
+						error|=this.addCondition(line.substring(3).strip());
 						ifLineNumber=this.lineNumber;
 						continue;
 					}
 					if (line.strip()=="else") {
-						error|=this.invert_condition();
+						error|=this.invertCondition();
 						continue;
 					}
 					if (line.strip()=="end") {
-						error|=this.remove_condition();
+						error|=this.removeCondition();
 						continue;
 					}
 
@@ -296,7 +304,7 @@ namespace AutoVala {
 							f_minor=int.parse(version_elements[1]);
 							if ((f_major>this.globalData.valaMajor)||((f_major==this.globalData.valaMajor)&&(f_minor>this.globalData.valaMinor))) {
 								this.globalData.configFile="";
-								this.reset_condition();
+								this.resetCondition();
 								this.globalData.addError(_("This project needs Vala version %s or greater, but you have version %d.%d. Can't open it.").printf(version,this.globalData.valaMajor,this.globalData.valaMinor));
 								error=true;
 								break;
@@ -345,7 +353,7 @@ namespace AutoVala {
 						this.version=int.parse(line.substring(18).strip());
 						if (this.version>this.current_version) {
 							this.globalData.configFile="";
-							this.reset_condition();
+							this.resetCondition();
 							this.globalData.addError(_("This project was created with a newer version of Autovala. Can't open it."));
 							error=true;
 							break;
@@ -356,13 +364,13 @@ namespace AutoVala {
 				}
 			} catch (Error e) {
 				this.globalData.configFile="";
-				this.reset_condition();
+				this.resetCondition();
 				this.globalData.addError(_("Can't open configuration file"));
 				error=true;
 			}
 			string ?condition;
 			bool invert;
-			this.get_current_condition(out condition,out invert);
+			this.getCurrentCondition(out condition,out invert);
 			if (condition!=null) {
 				this.globalData.addError(_("IF without END in line %d").printf(ifLineNumber));
 				error=true;
@@ -374,7 +382,7 @@ namespace AutoVala {
 
 			if (cond!=null) {
 				this.globalData.addError(_("Conditionals are not supported in this statement (line %d)").printf(this.lineNumber));
-				this.reset_condition();
+				this.resetCondition();
 				return true;
 			}
 			return false;

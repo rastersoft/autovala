@@ -70,12 +70,7 @@ namespace AutoVala {
 			return this.configureElement(path,null,null,true,null,false);
 		}
 
-		public override bool generateCMake(DataOutputStream dataStream, ConfigType type) {
-
-			// only process this file if it is of the desired type
-			if (type!=this.eType) {
-				return false;
-			}
+		public override bool generateCMake(DataOutputStream dataStream) {
 
 			var fullPath=Path.build_filename(ElementBase.globalData.projectFolder,this._fullPath);
 			int size=0;
@@ -119,12 +114,7 @@ namespace AutoVala {
 			return false;
 		}
 
-		public override bool generateCMakePostData(DataOutputStream dataStream, ConfigType type) {
-
-			// only process this file if it is of the desired type
-			if (type!=this.eType) {
-				return false;
-			}
+		public override bool generateCMakePostData(DataOutputStream dataStream) {
 
 			if (ElementIcon.addedSuffix==false) {
 				// Refresh the icon cache (but only if ICON_UPDATE is not OFF; that means we are building a package)

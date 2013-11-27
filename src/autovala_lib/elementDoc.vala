@@ -49,12 +49,7 @@ namespace AutoVala {
 			return this.configureElement(data,null,null,automatic,condition,invertCondition);
 		}
 
-		public override bool generateCMake(DataOutputStream dataStream, ConfigType type) {
-
-			// only process this file if it is of the desired type
-			if (type!=this.eType) {
-				return false;
-			}
+		public override bool generateCMake(DataOutputStream dataStream) {
 
 			try {
 				dataStream.put_string("file(GLOB list_data RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *)\n");

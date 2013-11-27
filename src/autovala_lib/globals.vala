@@ -107,6 +107,21 @@ namespace AutoVala {
 		}
 
 		/**
+		 * Removes the non-automatic elements
+		 */
+
+		public void clearAutomatic() {
+			var newElements = new Gee.ArrayList<ElementBase>();
+			foreach (var element in this.globalElements) {
+				element.clearAutomatic();
+				if (element.getAutomatic==false) {
+					newElements.add(element);
+				}
+			}
+			this.globalElements=newElements;
+		}
+
+		/**
 		 * Inserts a new file structure in the global list
 		 * @param element The file structure to add
 		 */

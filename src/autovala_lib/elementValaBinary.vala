@@ -99,6 +99,40 @@ namespace AutoVala {
 			ElementValaBinary.addedValaBinaries = false;
 		}
 
+		public override void clearAutomatic() {
+
+			if ((this.versionSet)&&(this.versionAutomatic)) {
+				this.version="1.0.0";
+				this.versionSet=false;
+				this.versionAutomatic=true;
+			}
+			if ((this._currentNamespace!=null)&&(this.namespaceAutomatic)) {
+				this._currentNamespace=null;
+				this.namespaceAutomatic=true;
+			}
+			var packagesTmp=new Gee.ArrayList<packageElement ?>();
+			var sourcesTmp=new Gee.ArrayList<sourceElement ?>();
+			var vapisTmp=new Gee.ArrayList<vapiElement ?>();
+			foreach (var e in this.packages) {
+				if (e.automatic==false) {
+					packagesTmp.add(e);
+				}
+			}
+			foreach (var e in this.sources) {
+				if (e.automatic==false) {
+					sourcesTmp.add(e);
+				}
+			}
+			foreach (var e in this.vapis) {
+				if (e.automatic==false) {
+					vapisTmp.add(e);
+				}
+			}
+			this.packages=packagesTmp;
+			this.sources=sourcesTmp;
+			this.vapis=vapisTmp;
+		}
+
 		public static int comparePackages (genericElement? a, genericElement? b) {
 			if ((a.condition=="")&&(b.condition=="")) {
 				return a.elementName.collate(b.elementName);
@@ -287,12 +321,7 @@ namespace AutoVala {
 			ElementValaBinary.addedValaBinaries=false;
 		}
 
-		public override bool generateCMakeHeader(DataOutputStream dataStream, ConfigType type) {
-
-			// only process this file if it is of the desired type
-			if (type!=this.eType) {
-				return false;
-			}
+		public override bool generateCMakeHeader(DataOutputStream dataStream) {
 
 			try {
 				if (ElementValaBinary.addedValaBinaries==false) {
@@ -319,12 +348,7 @@ namespace AutoVala {
 			return false;
 		}
 
-		public override bool generateCMake(DataOutputStream dataStream, ConfigType type) {
-
-			// only process this file if it is of the desired type
-			if (type!=this.eType) {
-				return false;
-			}
+		public override bool generateCMake(DataOutputStream dataStream) {
 
 			string girFilename="";
 			string libFilename=this.file;

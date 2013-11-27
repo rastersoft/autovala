@@ -33,12 +33,7 @@ namespace AutoVala {
 			this.command = "binary";
 		}
 
-		public override bool generateCMake(DataOutputStream dataStream, ConfigType type) {
-
-			// only process this file if it is of the desired type
-			if (type!=this.eType) {
-				return false;
-			}
+		public override bool generateCMake(DataOutputStream dataStream) {
 
 			try {
 				dataStream.put_string("install(PROGRAMS ${CMAKE_CURRENT_SOURCE_DIR}/"+this.file+" DESTINATION bin/)\n");
