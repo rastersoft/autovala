@@ -52,19 +52,19 @@ namespace AutoVala {
 			get {return this._type;}
 		}
 
-		protected string? condition; // Condition (#if/#else/#end) for this file (null if there is no condition)
-		protected bool invertCondition; // When true, invert the condition (this is, the file is after the #else, not before)
-		protected bool automatic; // This file class has been filled automatically by AutoVala
+		protected string? _condition; // Condition (#if/#else/#end) for this file (null if there is no condition)
+		protected bool _invertCondition; // When true, invert the condition (this is, the file is after the #else, not before)
+		protected bool _automatic; // This file class has been filled automatically by AutoVala
 
-		public bool getAutomatic {
-			get {return this.automatic;}
+		public bool automatic {
+			get {return this._automatic;}
 		}
 
-		public string? conditionE {
-			get {return this.condition;}
+		public string? condition {
+			get {return this._condition;}
 		}
-		public bool invertConditionE {
-			get {return this.invertCondition;}
+		public bool invertCondition {
+			get {return this._invertCondition;}
 		}
 
 		public ElementBase() {
@@ -95,9 +95,9 @@ namespace AutoVala {
 			}
 
 			ElementBase.globalData.addFile(fullPath);
-			this.automatic = automatic;
-			this.condition = condition;
-			this.invertCondition = invertCondition;
+			this._automatic = automatic;
+			this._condition = condition;
+			this._invertCondition = invertCondition;
 			return false;
 		}
 
@@ -187,7 +187,7 @@ namespace AutoVala {
 		public virtual bool storeConfig(DataOutputStream dataStream,ConditionalText printConditions) {
 
 			try {
-				if (this.automatic) {
+				if (this._automatic) {
 					dataStream.put_string("*");
 				}
 				dataStream.put_string("%s: %s\n".printf(this.command,this.fullPath));

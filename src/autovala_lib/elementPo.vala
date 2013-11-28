@@ -68,17 +68,18 @@ namespace AutoVala {
 				var dataStream2 = new DataOutputStream(dis);
 
 				foreach(var element in ElementBase.globalData.globalElements) {
-					var finalPath=Path.build_filename(element.path,element.file);
 					switch (element.eType) {
 					case ConfigType.VALA_BINARY:
 					case ConfigType.VALA_LIBRARY:
 						var subFiles=element.getSubFiles();
-						foreach(var subFile in subFiles) {
-							dataStream2.put_string(Path.build_filename(finalPath,subFile)+"\n");
+						if (subFiles!=null) {
+							foreach(var subFile in subFiles) {
+								dataStream2.put_string(Path.build_filename(element.path,subFile)+"\n");
+							}
 						}
 					break;
 					case ConfigType.GLADE:
-						dataStream2.put_string("[type: gettext/glade]"+finalPath+"\n");
+						dataStream2.put_string("[type: gettext/glade]"+Path.build_filename(element.fullPath)+"\n");
 					break;
 					default:
 					break;

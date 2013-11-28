@@ -468,7 +468,7 @@ namespace AutoVala {
 			var printConditions=new ConditionalText(dataStream,false);
 			foreach(var element in this.globalData.globalElements) {
 				if (element.eType==type) {
-					printConditions.printCondition(element.conditionE,element.invertConditionE);
+					printConditions.printCondition(element.condition,element.invertCondition);
 					element.storeConfig(dataStream,printConditions);
 					printed = true;
 				}

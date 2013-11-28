@@ -60,17 +60,35 @@ namespace AutoVala {
 					}
 					var dis = file.create(FileCreateFlags.NONE);
 					var dataStream = new DataOutputStream(dis);
+
+					error |= globalElement.generateCMakeHeader(dataStream);
 					foreach(var element in this.globalData.globalElements) {
 						if (element.path!=path) {
 							continue;
 						}
-						error |= globalElement.generateCMakeHeader(dataStream);
 						error |= element.generateCMakeHeader(dataStream);
-						error |= globalElement.generateCMake(dataStream);
+					}
+
+					var condition = new ConditionalText(dataStream,true);
+					error |= globalElement.generateCMake(dataStream);
+					foreach(var element in this.globalData.globalElements) {
+						if (element.path!=path) {
+							continue;
+						}
+						condition.printCondition(element.condition,element.invertCondition);
 						error |= element.generateCMake(dataStream);
-						error |= globalElement.generateCMakePostData(dataStream);
+					}
+					condition.printTail();
+
+					error |= globalElement.generateCMakePostData(dataStream);
+					foreach(var element in this.globalData.globalElements) {
+						if (element.path!=path) {
+							continue;
+						}
 						error |= element.generateCMakePostData(dataStream);
 					}
+
+					globalElement.endedCMakeFile();
 					foreach(var element in this.globalData.globalElements) {
 						if (element.path!=path) {
 							continue;

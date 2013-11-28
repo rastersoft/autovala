@@ -114,7 +114,7 @@ namespace AutoVala {
 			var newElements = new Gee.ArrayList<ElementBase>();
 			foreach (var element in this.globalElements) {
 				element.clearAutomatic();
-				if (element.getAutomatic==false) {
+				if (element.automatic==false) {
 					newElements.add(element);
 				}
 			}
@@ -334,23 +334,23 @@ namespace AutoVala {
 		 * Comparation function to sort the elements
 		 */
 		public static int compareElements (ElementBase? a, ElementBase? b) {
-			if ((a.conditionE==null)&&(b.conditionE==null)) {
+			if ((a.condition==null)&&(b.condition==null)) {
 				return Posix.strcmp(a.fullPath,b.fullPath);
 			}
-			if (a.conditionE==null) {
+			if (a.condition==null) {
 				return -1;
 			}
-			if (b.conditionE==null) {
+			if (b.condition==null) {
 				return 1;
 			}
-			if (a.conditionE==b.conditionE) {
-				if (a.invertConditionE==b.invertConditionE) {
+			if (a.condition==b.condition) {
+				if (a.invertCondition==b.invertCondition) {
 					return Posix.strcmp(a.fullPath,b.fullPath); // both are equal; sort alphabetically
 				} else {
-					return a.invertConditionE ? 1 : -1; // the one with the condition not inverted goes first
+					return a.invertCondition ? 1 : -1; // the one with the condition not inverted goes first
 				}
 			}
-			return (Posix.strcmp(a.conditionE,b.conditionE));
+			return (Posix.strcmp(a.condition,b.condition));
 		}
 
 		/**

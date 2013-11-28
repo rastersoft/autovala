@@ -81,7 +81,7 @@ namespace AutoVala {
 		public override bool storeConfig(DataOutputStream dataStream,ConditionalText printConditions) {
 
 			try {
-				if (this.automatic) {
+				if (this._automatic) {
 					dataStream.put_string("*");
 				}
 				dataStream.put_string("custom: %s %s\n".printf(this.fullPath, this.destination));

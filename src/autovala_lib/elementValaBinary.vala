@@ -163,7 +163,7 @@ namespace AutoVala {
 			if (automatic) {
 				return;
 			}
-			this.automatic=false;
+			this._automatic=false;
 		}
 
 		private bool checkVersion(string version) {
@@ -224,7 +224,7 @@ namespace AutoVala {
 			}
 
 			// adding a non-automatic package to an automatic binary transforms this binary to non-automatic
-			if ((automatic==false)&&(this.automatic==true)) {
+			if ((automatic==false)&&(this._automatic==true)) {
 				this.transformToNonAutomatic(false);
 			}
 
@@ -246,7 +246,7 @@ namespace AutoVala {
 			}
 
 			// adding a non-automatic source to an automatic binary transforms this binary to non-automatic
-			if ((automatic==false)&&(this.automatic==true)) {
+			if ((automatic==false)&&(this._automatic==true)) {
 				this.transformToNonAutomatic(false);
 			}
 
@@ -267,7 +267,7 @@ namespace AutoVala {
 			}
 
 			// adding a non-automatic VAPI to an automatic binary transforms this binary to non-automatic
-			if ((automatic==false)&&(this.automatic==true)) {
+			if ((automatic==false)&&(this._automatic==true)) {
 				this.transformToNonAutomatic(false);
 			}
 
@@ -666,7 +666,7 @@ namespace AutoVala {
 		public override bool storeConfig(DataOutputStream dataStream,ConditionalText printConditions) {
 
 			try {
-				if (this.automatic) {
+				if (this._automatic) {
 					dataStream.put_string("*");
 				}
 				if (this._type == ConfigType.VALA_BINARY) {
@@ -747,6 +747,13 @@ namespace AutoVala {
 				return true;
 			}
 			return false;
+		}
+		public override string[]? getSubFiles() {
+			string[] subFileList = {};
+			foreach (var element in this.sources) {
+				subFileList += element.elementName;
+			}
+			return subFileList;
 		}
 	}
 }
