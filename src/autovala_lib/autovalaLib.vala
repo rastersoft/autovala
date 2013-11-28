@@ -52,7 +52,6 @@ namespace AutoVala {
 			this.globalData.generateExtraData();
 			var globalElement = new ElementGlobal();
 			try {
-				// First, generate the main CMakeLists.txt file
 				var mainPath = GLib.Path.build_filename(this.globalData.projectFolder,"CMakeLists.txt");
 				var file = File.new_for_path(mainPath);
 				if (file.query_exists()) {
@@ -60,20 +59,7 @@ namespace AutoVala {
 				}
 				var dis = file.create(FileCreateFlags.NONE);
 				var dataStream = new DataOutputStream(dis);
-
 				error |= globalElement.generateMainCMakeHeader(dataStream);
-				foreach(var element in this.globalData.globalElements) {
-					error |= element.generateMainCMake(dataStream);
-				}
-				error |= globalElement.generateMainCMakeHeader(dataStream);
-				foreach(var element in this.globalData.globalElements) {
-					error |= element.generateMainCMake(dataStream);
-				}
-				dataStream.close();
-				error |= globalElement.generateMainCMakePostData(dataStream);
-				foreach(var element in this.globalData.globalElements) {
-					error |= element.generateMainCMakePostData(dataStream);
-				}
 
 				// and now, generate each one of the CMakeLists.txt files in each folder
 				foreach(var path in this.globalData.pathList) {
