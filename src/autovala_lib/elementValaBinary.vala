@@ -89,7 +89,7 @@ namespace AutoVala {
 			this.version="1.0.0";
 			this.versionSet=false;
 			this.versionAutomatic=true;
-			this.compileOptions=null;
+			this.compileOptions="";
 			this._currentNamespace=null;
 			this.namespaceAutomatic=true;
 			this.destination=null;
@@ -134,23 +134,23 @@ namespace AutoVala {
 		}
 
 		public static int comparePackages (genericElement? a, genericElement? b) {
-			if ((a.condition=="")&&(b.condition=="")) {
-				return a.elementName.collate(b.elementName);
+			if ((a.condition==null)&&(b.condition==null)) {
+				return Posix.strcmp(a.elementName,b.elementName);
 			}
-			if (a.condition=="") {
+			if (a.condition==null) {
 				return -1;
 			}
-			if (b.condition=="") {
+			if (b.condition==null) {
 				return 1;
 			}
 			if (a.condition==b.condition) {
 				if (a.invertCondition==b.invertCondition) {
-					return a.elementName.collate(b.elementName); // both are equal; sort alphabetically
+					return Posix.strcmp(a.elementName,b.elementName); // both are equal; sort alphabetically
 				} else {
 					return a.invertCondition ? 1 : -1; // the one with the condition not inverted goes first
 				}
 			}
-			return (a.condition>b.condition ? 1 : -1);
+			return (Posix.strcmp(a.condition,b.condition));
 		}
 
 		public override void sortElements() {
@@ -686,7 +686,7 @@ namespace AutoVala {
 					}
 					dataStream.put_string("namespace: %s\n".printf(this._currentNamespace));
 				}
-				if (this.compileOptions!=null) {
+				if (this.compileOptions!="") {
 					dataStream.put_string("compile_options: %s\n".printf(this.compileOptions));
 				}
 				if (this.destination!=null) {

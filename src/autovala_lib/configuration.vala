@@ -38,8 +38,8 @@ namespace AutoVala {
 		private int version;
 		private int lineNumber;
 
-		private string current_condition;
-		private bool condition_inverted;
+		private string currentCondition;
+		private bool conditionInverted;
 
 		/**
 		 * @param projectName The name for this project. Left blank if opening an existing project.
@@ -85,27 +85,27 @@ namespace AutoVala {
 		 * Condition management methods
 		 */
 		private void resetCondition() {
-			this.current_condition="";
-			this.condition_inverted=false;
+			this.currentCondition="";
+			this.conditionInverted=false;
 		}
 
 		private void getCurrentCondition(out string? condition, out bool inverted) {
-			if (this.current_condition=="") {
+			if (this.currentCondition=="") {
 				condition=null;
 				inverted=false;
 			} else {
-				condition=this.current_condition;
-				inverted=this.condition_inverted;
+				condition=this.currentCondition;
+				inverted=this.conditionInverted;
 			}
 		}
 
-		private bool addCondition(string condition) {
-			if (this.current_condition!="") {
+		private bool addCondition(string? condition) {
+			if (this.currentCondition!="") {
 				this.globalData.addError(_("Nested IFs not allowed (line %d)").printf(this.lineNumber));
 				return true;
 			} else {
-				this.current_condition=condition;
-				this.condition_inverted=false;
+				this.currentCondition=condition;
+				this.conditionInverted=false;
 				var new_condition=" "+(condition.replace("("," ").replace(")"," "))+" ";
 				var list_conditions=new_condition.replace(" AND "," ").replace(" and "," ").replace(" And "," ").replace(" OR "," ").replace(" or "," ").replace(" Or "," ").replace(" NOT "," ").replace(" not "," ").replace(" Not "," ").split(" ");
 				foreach(var l in list_conditions) {
@@ -122,7 +122,7 @@ namespace AutoVala {
 		}
 
 		private bool removeCondition() {
-			if (this.current_condition=="") {
+			if (this.currentCondition=="") {
 				this.globalData.addError(_("Mismatched END (line %d)").printf(this.lineNumber));
 				return true;
 			} else {
@@ -132,15 +132,15 @@ namespace AutoVala {
 		}
 
 		private bool invertCondition() {
-			if (this.current_condition=="") {
+			if (this.currentCondition=="") {
 				this.globalData.addError(_("Mismatched ELSE (line %d)").printf(this.lineNumber));
 				return true;
 			} else {
-				if (this.condition_inverted) {
+				if (this.conditionInverted) {
 					this.globalData.addError(_("Mismatched ELSE (line %d)").printf(this.lineNumber));
 					return true;
 				} else {
-					this.condition_inverted=true;
+					this.conditionInverted=true;
 					return false;
 				}
 			}

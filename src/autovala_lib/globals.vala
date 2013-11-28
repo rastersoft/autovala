@@ -334,23 +334,23 @@ namespace AutoVala {
 		 * Comparation function to sort the elements
 		 */
 		public static int compareElements (ElementBase? a, ElementBase? b) {
-			if ((a.conditionE=="")&&(b.conditionE=="")) {
-				return a.fullPath.collate(b.fullPath);
+			if ((a.conditionE==null)&&(b.conditionE==null)) {
+				return Posix.strcmp(a.fullPath,b.fullPath);
 			}
-			if (a.conditionE=="") {
+			if (a.conditionE==null) {
 				return -1;
 			}
-			if (b.conditionE=="") {
+			if (b.conditionE==null) {
 				return 1;
 			}
 			if (a.conditionE==b.conditionE) {
 				if (a.invertConditionE==b.invertConditionE) {
-					return a.fullPath.collate(b.fullPath); // both are equal; sort alphabetically
+					return Posix.strcmp(a.fullPath,b.fullPath); // both are equal; sort alphabetically
 				} else {
 					return a.invertConditionE ? 1 : -1; // the one with the condition not inverted goes first
 				}
 			}
-			return (a.conditionE>b.conditionE ? 1 : -1);
+			return (Posix.strcmp(a.conditionE,b.conditionE));
 		}
 
 		/**

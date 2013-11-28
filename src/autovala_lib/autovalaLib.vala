@@ -86,6 +86,12 @@ namespace AutoVala {
 		}
 
 		public bool refresh() {
+
+			bool error;
+
+			error=config.readConfiguration();
+			error|=config.saveConfiguration();
+
 			return false;
 		}
 
