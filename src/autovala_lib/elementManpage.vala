@@ -110,19 +110,24 @@ namespace AutoVala {
 				finalFile=this.file;
 			}
 
-			if (inputFormat==null) {
-				dataStream.put_string("configure_file ( ${CMAKE_CURRENT_SOURCE_DIR}/" + this.file + " ${CMAKE_CURRENT_BINARY_DIR}/" + finalFile + " COPYONLY )\n");
-			} else {
-				dataStream.put_string("execute_process ( COMMAND pandoc ${CMAKE_CURRENT_SOURCE_DIR}/" + this.file + " -o ${CMAKE_CURRENT_BINARY_DIR}/" + finalFile + " -f " + inputFormat + " -t man -s )\n");
-			}
+			try {
+				if (inputFormat==null) {
+					dataStream.put_string("configure_file ( ${CMAKE_CURRENT_SOURCE_DIR}/" + this.file + " ${CMAKE_CURRENT_BINARY_DIR}/" + finalFile + " COPYONLY )\n");
+				} else {
+					dataStream.put_string("execute_process ( COMMAND pandoc ${CMAKE_CURRENT_SOURCE_DIR}/" + this.file + " -o ${CMAKE_CURRENT_BINARY_DIR}/" + finalFile + " -f " + inputFormat + " -t man -s )\n");
+				}
 
-			dataStream.put_string("execute_process ( COMMAND gzip -f ${CMAKE_CURRENT_BINARY_DIR}/" + finalFile + " )\n");
-			finalFile+=".gz";
-			dataStream.put_string("install(FILES ${CMAKE_CURRENT_BINARY_DIR}/" + finalFile + " DESTINATION share/man/");
-			if (this.language!=null) {
-				dataStream.put_string(this.language+"/");
+				dataStream.put_string("execute_process ( COMMAND gzip -f ${CMAKE_CURRENT_BINARY_DIR}/" + finalFile + " )\n");
+				finalFile+=".gz";
+				dataStream.put_string("install(FILES ${CMAKE_CURRENT_BINARY_DIR}/" + finalFile + " DESTINATION share/man/");
+				if (this.language!=null) {
+					dataStream.put_string(this.language+"/");
+				}
+				dataStream.put_string("man%d/ )\n\n".printf(this.pageSection));
+			} catch (Error e) {
+				ElementBase.globalData.addError(_("Failed to install MANpages at %s").printf(this.fullPath));
+				return true;
 			}
-			dataStream.put_string("man%d/ )\n\n".printf(this.pageSection));
 
 			return false;
 		}
