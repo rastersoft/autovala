@@ -32,6 +32,245 @@ namespace AutoVala {
 			return false;
 		}
 
+		private void addFolderToMainCMakeLists(string element, DataOutputStream dataStream) {
+
+			var dirpath=File.new_for_path(Path.build_filename(ElementBase.globalData.projectFolder,element));
+			if (dirpath.query_exists()==false) {
+				ElementBase.globalData.addError(_("Warning: directory %s doesn't exists").printf(element));
+				return;
+			} else {
+				if (element!="src") {
+					bool hasChildrens=false;
+					try {
+						var enumerator = dirpath.enumerate_children (FileAttribute.STANDARD_NAME+","+FileAttribute.STANDARD_TYPE, 0);
+						FileInfo fileInfo;
+						while ((fileInfo = enumerator.next_file ()) != null) {
+							var fname=fileInfo.get_name();
+							var ftype=fileInfo.get_file_type();
+							if (ftype==FileType.DIRECTORY) {
+								continue; // don't add folders that only contains folders
+							}
+							if (fname=="CMakeLists.txt") {
+								continue;
+							}
+							hasChildrens=true; // found a file, so we add it
+							break;
+						}
+					} catch (Error e) {
+						ElementBase.globalData.addError(_("Warning: can't access folder %s").printf(element));
+						return;
+					}
+					if (hasChildrens==false) {
+						return;
+					}
+				}
+				try {
+					dataStream.put_string("add_subdirectory("+element+")\n");
+				} catch (Error e) {
+					ElementBase.globalData.addError(_("Warning: can't add subdirectory %s").printf(element));
+				}
+			}
+
+		}
+
+		public override bool generateMainCMakeHeader(DataOutputStream dataStream) {
+
+			try {
+				dataStream.put_string("### CMakeLists automatically created with AutoVala\n### Do not edit\n\n");
+				dataStream.put_string("project ("+ElementBase.globalData.projectName+")\n");
+				dataStream.put_string("cmake_minimum_required (VERSION 2.6)\n");
+				dataStream.put_string("cmake_policy (VERSION 2.8)\n");
+				dataStream.put_string("list (APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)\n");
+				dataStream.put_string("enable_testing ()\n\n");
+				dataStream.put_string("option(ICON_UPDATE \"Update the icon cache after installing\" ON)\n");
+				dataStream.put_string("option(BUILD_VALADOC \"Build API documentation if Valadoc is available\" OFF)\n");
+				foreach(var element in ElementBase.globalData.globalElements) {
+					if (element.eType!=ConfigType.DEFINE) {
+						continue;
+					}
+					dataStream.put_string("option(%s \"%s\" OFF)\n".printf(element.file,element.file));
+				}
+				dataStream.put_string("\nset(HAVE_VALADOC OFF)\n");
+				dataStream.put_string("if(BUILD_VALADOC)\n");
+				dataStream.put_string("\tfind_package(Valadoc)\n");
+				dataStream.put_string("\tif(VALADOC_FOUND)\n");
+				dataStream.put_string("\t\tset(HAVE_VALADOC ON)\n");
+				dataStream.put_string("\t\tinclude(Valadoc)\n");
+				dataStream.put_string("\telse()\n");
+				dataStream.put_string("\t\tmessage(\"Valadoc not found, will not build documentation\")\n");
+				dataStream.put_string("\tendif()\n");
+				dataStream.put_string("endif()\n\n");
+
+				dataStream.put_string("find_package(PkgConfig)\n\n");
+
+				Gee.Set<string> tocheck=new Gee.HashSet<string>();
+				Gee.List<GenericElement> elements=new Gee.ArrayList<GenericElement>();
+
+				// First add the ones without conditions
+				foreach(var element in ElementBase.globalData.globalElements) {
+					if ((element.eType!=ConfigType.VALA_BINARY)&&(element.eType!=ConfigType.VALA_LIBRARY)) {
+						continue;
+					}
+					var binElement = element as ElementValaBinary;
+					foreach(var module in binElement.packages) {
+						if ((module.type==packageType.DO_CHECK)&&(module.condition==null)) {
+							if (tocheck.contains(module.elementName)) {
+								continue;
+							}
+							elements.add(module);
+							tocheck.add(module.elementName);
+						}
+					}
+				}
+
+				// And now add the ones with conditions, so those present with and without conditions will be checked unconditionally
+				foreach(var element in ElementBase.globalData.globalElements) {
+					if ((element.eType!=ConfigType.VALA_BINARY)&&(element.eType!=ConfigType.VALA_LIBRARY)) {
+						continue;
+					}
+					var binElement = element as ElementValaBinary;
+					foreach(var module in binElement.packages) {
+						if ((module.type==packageType.DO_CHECK)&&(module.condition!=null)) {
+							if (tocheck.contains(module.elementName)) {
+								continue;
+							}
+							elements.add(module);
+							tocheck.add(module.elementName);
+						}
+					}
+				}
+
+				elements.sort(ElementValaBinary.comparePackages);
+				var printConditions=new ConditionalText(dataStream,true);
+				foreach(var module in elements) {
+					printConditions.printCondition(module.condition,module.invertCondition);
+					dataStream.put_string("set(MODULES_TO_CHECK ${MODULES_TO_CHECK} %s)\n".printf(module.elementName));
+				}
+				printConditions.printTail();
+
+				dataStream.put_string("\n");
+
+				dataStream.put_string("pkg_check_modules(DEPS REQUIRED ${MODULES_TO_CHECK})\n\n");
+
+				var localModules=new Gee.HashMap<string,string>();
+				var ignoreList=new Gee.HashSet<string>();
+				foreach(var element in ElementBase.globalData.globalElements) {
+					if ((element.eType==ConfigType.IGNORE)&&(ignoreList.contains(element.path)==false)) {
+						ignoreList.add(element.path);
+					}
+					if (element.eType==ConfigType.VALA_LIBRARY) {
+						var binElement = element as ElementValaBinary;
+						if ((binElement.currentNamespace!="")&&(localModules.has_key(binElement.currentNamespace)==false)) {
+							localModules.set(binElement.currentNamespace,binElement.path);
+						}
+					}
+				}
+
+				// check for PANDOC, but only if there are man pages in non-groff format
+				foreach(var element in ElementBase.globalData.globalElements) {
+					if (element.eType!=ConfigType.MANPAGE) {
+						continue;
+					}
+					var len=element.file.length;
+					if ((len>1)&&(element.file[len-2]!='.')&&(element.file[len-1]>='1')&&(element.file[len-1]<='9')) {
+						continue; // this filename ends in .1, .2, ..., .9, so it is a groff man page
+					}
+					// if we reach here, it is a non-groff man page, so ask for PANDOC
+					dataStream.put_string("find_program ( WHERE_PANDOC pandoc )\n");
+					dataStream.put_string("if ( NOT WHERE_PANDOC )\n\tMESSAGE(FATAL_ERROR \"Error! PANDOC is not installed.\")\nendif()\n\n");
+					break;
+				}
+
+				// now, put all the binary and library folders, in order of satisfied dependencies
+				var paths=new Gee.HashMap<string,ElementBase>();
+				foreach(var element in ElementBase.globalData.globalElements) {
+					if ((paths.has_key(element.path)==false)&&(ignoreList.contains(element.path)==false)) {
+						if ((element.eType==ConfigType.VALA_BINARY)||(element.eType==ConfigType.VALA_LIBRARY)) {
+							var binElement = element as ElementValaBinary;
+							if (binElement.sources.size==0) { // don't add binary folders without source files
+								continue;
+							}
+						}
+						paths.set(element.path,element);
+					}
+				}
+				Gee.Set<string> packagesFound=new Gee.HashSet<string>();
+				bool allProcessed=false;
+				while(allProcessed==false) {
+					bool addedOne=false;
+					allProcessed=true;
+					foreach(var path in paths.keys) {
+						var element=paths.get(path);
+						if (element.eType==ConfigType.DEFINE) {
+							continue;
+						}
+						if (element.processed) {
+							continue;
+						}
+						if ((element.eType!=ConfigType.VALA_LIBRARY)&&(element.eType!=ConfigType.VALA_BINARY)) {
+							element.processed=true;
+							this.addFolderToMainCMakeLists(path,dataStream);
+							addedOne=true;
+							continue;
+						} else {
+							var binElement = element as ElementValaBinary;
+							allProcessed=false;
+							bool valid=true;
+							foreach(var package in binElement.packages) {
+								if((package.type==packageType.LOCAL)&&(false==packagesFound.contains(package.elementName))) {
+									valid=false;
+									break;
+								}
+							}
+							if (valid==false) { // has dependencies still not satisfied
+								continue;
+							}
+
+							addFolderToMainCMakeLists(path,dataStream);
+							addedOne=true;
+							element.processed=true;
+							if ((binElement.eType==ConfigType.VALA_LIBRARY)&&(binElement.currentNamespace!="")) {
+								packagesFound.add(binElement.currentNamespace);
+							}
+						}
+					}
+					if ((allProcessed==false)&&(addedOne==false)) {
+						string error=_("The following local dependencies cannot be satisfied:");
+						foreach(var path in paths.keys) {
+							var element=paths.get(path);
+							if ((element.processed)||((element.eType!=ConfigType.VALA_LIBRARY)&&(element.eType!=ConfigType.VALA_BINARY))) {
+								continue;
+							}
+							if (element.eType==ConfigType.VALA_LIBRARY) {
+								error+=_("\n\tLibrary %s, packages:").printf(Path.build_filename(element.path,element.file));
+							} else {
+								error+=_("\n\tBinary %s, packages:").printf(Path.build_filename(element.path,element.file));
+							}
+							var binElement = element as ElementValaBinary;
+							foreach(var package in binElement.packages) {
+								if((package.type==packageType.LOCAL)&&(false==packagesFound.contains(package.elementName))) {
+									error+=" "+package.elementName;
+								}
+							}
+						}
+						ElementBase.globalData.addError(error);
+						return true;
+					}
+				}
+			} catch (Error e) {
+				ElementBase.globalData.addError(_("Failed to generate the main CMakeLists.txt file"));
+			}
+			return false;
+		}
+
+		public override bool generateMainCMake(DataOutputStream dataStream) {
+			return false;
+		}
+
+		public override bool generateMainCMakePostData(DataOutputStream dataStream) {
+			return false;
+		}
+
 		public override bool generateCMakeHeader(DataOutputStream dataStream) {
 
 			try {

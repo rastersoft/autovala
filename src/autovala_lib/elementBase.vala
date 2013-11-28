@@ -32,6 +32,7 @@ namespace AutoVala {
 	abstract class ElementBase : GLib.Object {
 
 		public static Globals globalData = null;
+		public bool processed=false;
 
 		protected string _fullPath; // Full file path, relative to the project's root
 		protected string _path; // File path relative to the project's root
@@ -155,6 +156,33 @@ namespace AutoVala {
 		 * @return //true// if there was an error; //false// if not. The error texts can be obtained by calling to returnErrors()
 		 */
 		public virtual bool generateCMakePostData(DataOutputStream dataStream) {
+			return false;
+		}
+
+		/**
+		 * Inserts the CMake commands needed in the main CMakeLists.txt for this file in the data stream specified
+		 * @param dataStream The data stream for the CMakeList.txt file being processed
+		 * @return //true// if there was an error; //false// if not. The error texts can be obtained by calling to returnErrors()
+		 */
+		public virtual bool generateMainCMake(DataOutputStream dataStream) {
+			return false;
+		}
+
+		/**
+		 * Inserts the CMake commands needed for this file AT THE HEADER of the main CMakeLists.txt in the data stream specified. This allows to add definitions and other preparatory commands at the head of a file
+		 * @param dataStream The data stream for the CMakeList.txt file being processed
+		 * @return //true// if there was an error; //false// if not. The error texts can be obtained by calling to returnErrors()
+		 */
+		public virtual bool generateMainCMakeHeader(DataOutputStream dataStream) {
+			return false;
+		}
+
+		/**
+		 * Inserts the CMake commands needed for this file AT THE END of the main CMakeLists.txt in the data stream specified. This allows to add extra commands at the end of a file
+		 * @param dataStream The data stream for the CMakeList.txt file being processed
+		 * @return //true// if there was an error; //false// if not. The error texts can be obtained by calling to returnErrors()
+		 */
+		public virtual bool generateMainCMakePostData(DataOutputStream dataStream) {
 			return false;
 		}
 

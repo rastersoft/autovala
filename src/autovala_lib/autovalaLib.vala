@@ -52,14 +52,38 @@ namespace AutoVala {
 			this.globalData.generateExtraData();
 			var globalElement = new ElementGlobal();
 			try {
+				// First, generate the main CMakeLists.txt file
+				var mainPath = GLib.Path.build_filename(this.globalData.projectFolder,"CMakeLists.txt");
+				var file = File.new_for_path(mainPath);
+				if (file.query_exists()) {
+					file.delete();
+				}
+				var dis = file.create(FileCreateFlags.NONE);
+				var dataStream = new DataOutputStream(dis);
+
+				error |= globalElement.generateMainCMakeHeader(dataStream);
+				foreach(var element in this.globalData.globalElements) {
+					error |= element.generateMainCMake(dataStream);
+				}
+				error |= globalElement.generateMainCMakeHeader(dataStream);
+				foreach(var element in this.globalData.globalElements) {
+					error |= element.generateMainCMake(dataStream);
+				}
+				dataStream.close();
+				error |= globalElement.generateMainCMakePostData(dataStream);
+				foreach(var element in this.globalData.globalElements) {
+					error |= element.generateMainCMakePostData(dataStream);
+				}
+
+				// and now, generate each one of the CMakeLists.txt files in each folder
 				foreach(var path in this.globalData.pathList) {
 					var fullPath = GLib.Path.build_filename(this.globalData.projectFolder,path,"CMakeLists.txt");
-					var file = File.new_for_path(fullPath);
+					file = File.new_for_path(fullPath);
 					if (file.query_exists()) {
 						file.delete();
 					}
-					var dis = file.create(FileCreateFlags.NONE);
-					var dataStream = new DataOutputStream(dis);
+					dis = file.create(FileCreateFlags.NONE);
+					dataStream = new DataOutputStream(dis);
 
 					error |= globalElement.generateCMakeHeader(dataStream);
 					foreach(var element in this.globalData.globalElements) {
@@ -95,6 +119,7 @@ namespace AutoVala {
 						}
 						element.endedCMakeFile();
 					}
+					dataStream.close();
 				}
 			} catch (Error e) {
 				ElementBase.globalData.addError(_("Failed while generating the CMakeLists.txt files"));

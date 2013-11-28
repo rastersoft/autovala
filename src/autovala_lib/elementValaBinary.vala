@@ -23,18 +23,18 @@ namespace AutoVala {
 
 	public enum packageType {NO_CHECK, DO_CHECK, LOCAL}
 
-	public class genericElement:GLib.Object {
+	public class GenericElement:GLib.Object {
 		public string elementName;
 		public string? condition;
 		public bool invertCondition;
 		public bool automatic;
 	}
 
-	public class packageElement:genericElement {
+	public class PackageElement:GenericElement {
 
 		public packageType type;
 
-		public packageElement(string package, packageType type, bool automatic, string? condition, bool inverted) {
+		public PackageElement(string package, packageType type, bool automatic, string? condition, bool inverted) {
 			this.elementName=package;
 			this.type=type;
 			this.automatic=automatic;
@@ -43,9 +43,9 @@ namespace AutoVala {
 		}
 	}
 
-	public class sourceElement:genericElement {
+	public class SourceElement:GenericElement {
 
-		public sourceElement(string source, bool automatic, string? condition, bool inverted) {
+		public SourceElement(string source, bool automatic, string? condition, bool inverted) {
 			this.elementName=source;
 			this.automatic=automatic;
 			this.condition=condition;
@@ -53,9 +53,9 @@ namespace AutoVala {
 		}
 	}
 
-	public class vapiElement:genericElement {
+	public class VapiElement:GenericElement {
 
-		public vapiElement(string vapi, bool automatic, string? condition, bool inverted) {
+		public VapiElement(string vapi, bool automatic, string? condition, bool inverted) {
 			this.elementName=vapi;
 			this.automatic=automatic;
 			this.condition=condition;
@@ -69,9 +69,15 @@ namespace AutoVala {
 		private bool versionSet;
 		private bool versionAutomatic;
 
-		private Gee.List<packageElement ?> packages;
-		private Gee.List<sourceElement ?> sources;
-		private Gee.List<vapiElement ?> vapis;
+		private Gee.List<PackageElement ?> _packages;
+		public Gee.List<PackageElement ?> packages {
+			get {return this._packages;}
+		}
+		private Gee.List<SourceElement ?> _sources;
+		public Gee.List<SourceElement ?> sources {
+			get {return this._sources;}
+		}
+		private Gee.List<VapiElement ?> vapis;
 
 		private string? _currentNamespace;
 		public string ? currentNamespace {
@@ -93,9 +99,9 @@ namespace AutoVala {
 			this._currentNamespace=null;
 			this.namespaceAutomatic=true;
 			this.destination=null;
-			this.packages=new Gee.ArrayList<packageElement ?>();
-			this.sources=new Gee.ArrayList<sourceElement ?>();
-			this.vapis=new Gee.ArrayList<vapiElement ?>();
+			this._packages=new Gee.ArrayList<PackageElement ?>();
+			this._sources=new Gee.ArrayList<SourceElement ?>();
+			this.vapis=new Gee.ArrayList<VapiElement ?>();
 			ElementValaBinary.addedValaBinaries = false;
 		}
 
@@ -110,15 +116,15 @@ namespace AutoVala {
 				this._currentNamespace=null;
 				this.namespaceAutomatic=true;
 			}
-			var packagesTmp=new Gee.ArrayList<packageElement ?>();
-			var sourcesTmp=new Gee.ArrayList<sourceElement ?>();
-			var vapisTmp=new Gee.ArrayList<vapiElement ?>();
-			foreach (var e in this.packages) {
+			var packagesTmp=new Gee.ArrayList<PackageElement ?>();
+			var sourcesTmp=new Gee.ArrayList<SourceElement ?>();
+			var vapisTmp=new Gee.ArrayList<VapiElement ?>();
+			foreach (var e in this._packages) {
 				if (e.automatic==false) {
 					packagesTmp.add(e);
 				}
 			}
-			foreach (var e in this.sources) {
+			foreach (var e in this._sources) {
 				if (e.automatic==false) {
 					sourcesTmp.add(e);
 				}
@@ -128,12 +134,12 @@ namespace AutoVala {
 					vapisTmp.add(e);
 				}
 			}
-			this.packages=packagesTmp;
-			this.sources=sourcesTmp;
+			this._packages=packagesTmp;
+			this._sources=sourcesTmp;
 			this.vapis=vapisTmp;
 		}
 
-		public static int comparePackages (genericElement? a, genericElement? b) {
+		public static int comparePackages (GenericElement? a, GenericElement? b) {
 			if ((a.condition==null)&&(b.condition==null)) {
 				return Posix.strcmp(a.elementName,b.elementName);
 			}
@@ -154,8 +160,8 @@ namespace AutoVala {
 		}
 
 		public override void sortElements() {
-			this.packages.sort(AutoVala.ElementValaBinary.comparePackages);
-			this.sources.sort(AutoVala.ElementValaBinary.comparePackages);
+			this._packages.sort(AutoVala.ElementValaBinary.comparePackages);
+			this._sources.sort(AutoVala.ElementValaBinary.comparePackages);
 			this.vapis.sort(AutoVala.ElementValaBinary.comparePackages);
 		}
 
@@ -228,14 +234,14 @@ namespace AutoVala {
 				this.transformToNonAutomatic(false);
 			}
 
-			foreach(var element in this.packages) {
+			foreach(var element in this._packages) {
 				if (element.elementName==package) {
 					return false;
 				}
 			}
 
-			var element=new packageElement(package,type,automatic,condition,invertCondition);
-			this.packages.add(element);
+			var element=new PackageElement(package,type,automatic,condition,invertCondition);
+			this._packages.add(element);
 			return false;
 		}
 
@@ -250,13 +256,13 @@ namespace AutoVala {
 				this.transformToNonAutomatic(false);
 			}
 
-			foreach(var element in this.sources) {
+			foreach(var element in this._sources) {
 				if (element.elementName==sourceFile) {
 					return false;
 				}
 			}
-			var element=new sourceElement(sourceFile,automatic,condition, invertCondition);
-			this.sources.add(element);
+			var element=new SourceElement(sourceFile,automatic,condition, invertCondition);
+			this._sources.add(element);
 			return false;
 		}
 
@@ -276,7 +282,7 @@ namespace AutoVala {
 					return false;
 				}
 			}
-			var element=new vapiElement(vapiFile,automatic,condition, invertCondition);
+			var element=new VapiElement(vapiFile,automatic,condition, invertCondition);
 			this.vapis.add(element);
 			return false;
 		}
@@ -427,7 +433,7 @@ namespace AutoVala {
 				dataStream.put_string("add_definitions(${DEPS_CFLAGS})\n");
 
 				bool addedPrefix=false;
-				foreach(var module in this.packages) {
+				foreach(var module in this._packages) {
 					if (module.type==packageType.LOCAL) {
 						if (ElementBase.globalData.localModules.has_key(module.elementName)) {
 							if (addedPrefix==false) {
@@ -445,14 +451,14 @@ namespace AutoVala {
 				}
 
 				dataStream.put_string("link_libraries( ${DEPS_LIBRARIES} ");
-				foreach(var module in this.packages) {
+				foreach(var module in this._packages) {
 					if ((module.type==packageType.LOCAL)&&(ElementBase.globalData.localModules.has_key(module.elementName))) {
 						dataStream.put_string("-l"+module.elementName+" ");
 					}
 				}
 				dataStream.put_string(")\n");
 				dataStream.put_string("link_directories( ${DEPS_LIBRARY_DIRS} ");
-				foreach(var module in this.packages) {
+				foreach(var module in this._packages) {
 					if ((module.type==packageType.LOCAL)&&(ElementBase.globalData.localModules.has_key(module.elementName))) {
 						dataStream.put_string("${CMAKE_BINARY_DIR}/"+ElementBase.globalData.localModules.get(module.elementName)+" ");
 					}
@@ -466,7 +472,7 @@ namespace AutoVala {
 				var printConditions=new ConditionalText(dataStream,true);
 
 				bool found_local=false;
-				foreach(var module in this.packages) {
+				foreach(var module in this._packages) {
 					if (module.type==packageType.LOCAL) {
 						found_local=true;
 						continue;
@@ -480,7 +486,7 @@ namespace AutoVala {
 				if ((this._type != ConfigType.VALA_LIBRARY)||(this._currentNamespace!="")) {
 					dataStream.put_string("set (APP_SOURCES ${APP_SOURCES} ${CMAKE_CURRENT_BINARY_DIR}/Config.vala)\n");
 				}
-				foreach(var module in this.sources) {
+				foreach(var module in this._sources) {
 					printConditions.printCondition(module.condition,module.invertCondition);
 					dataStream.put_string("set (APP_SOURCES ${APP_SOURCES} %s)\n".printf(module.elementName));
 				}
@@ -495,7 +501,7 @@ namespace AutoVala {
 						has_custom_VAPIs=true;
 					}
 					printConditions.printTail();
-					foreach(var module in this.packages) {
+					foreach(var module in this._packages) {
 						if (module.type==packageType.LOCAL) {
 							if (ElementBase.globalData.localModules.has_key(module.elementName)) {
 								printConditions.printCondition(module.condition,module.invertCondition);
@@ -692,7 +698,7 @@ namespace AutoVala {
 				if (this.destination!=null) {
 					dataStream.put_string("destination: %s\n".printf(this.destination));
 				}
-				foreach(var element in this.packages) {
+				foreach(var element in this._packages) {
 					if (element.type == packageType.NO_CHECK) {
 						printConditions.printCondition(element.condition,element.invertCondition);
 						if (element.automatic) {
@@ -703,7 +709,7 @@ namespace AutoVala {
 				}
 				printConditions.printTail();
 
-				foreach(var element in this.packages) {
+				foreach(var element in this._packages) {
 					if (element.type == packageType.DO_CHECK) {
 						printConditions.printCondition(element.condition,element.invertCondition);
 						if (element.automatic) {
@@ -714,7 +720,7 @@ namespace AutoVala {
 				}
 				printConditions.printTail();
 
-				foreach(var element in this.packages) {
+				foreach(var element in this._packages) {
 					if (element.type == packageType.LOCAL) {
 						printConditions.printCondition(element.condition,element.invertCondition);
 						if (element.automatic) {
@@ -725,7 +731,7 @@ namespace AutoVala {
 				}
 				printConditions.printTail();
 
-				foreach(var element in this.sources) {
+				foreach(var element in this._sources) {
 					printConditions.printCondition(element.condition,element.invertCondition);
 					if (element.automatic) {
 						dataStream.put_string("*");
@@ -750,7 +756,7 @@ namespace AutoVala {
 		}
 		public override string[]? getSubFiles() {
 			string[] subFileList = {};
-			foreach (var element in this.sources) {
+			foreach (var element in this._sources) {
 				subFileList += element.elementName;
 			}
 			return subFileList;

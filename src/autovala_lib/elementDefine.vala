@@ -42,6 +42,11 @@ namespace AutoVala {
 			}
 			// The line starts with 'define: '
 			var data=line.substring(8).strip();
+			foreach (var element in ElementBase.globalData.globalElements) {
+				if (element.file==data) {
+					return false; // this DEFINE already exists
+				}
+			}
 
 			return this.configureElement(data,data,data,automatic,condition,invertCondition);
 		}
