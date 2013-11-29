@@ -33,7 +33,6 @@ namespace AutoVala {
 		public int valaMajor; // Vala version currently installed in the system (major number)
 		public int valaMinor; // Vala version currently installed in the system (minor number)
 
-		private string[] files; // A list with all the files already processed, to allow to new objects to know if a file has already been processed (that's why it's a class property instead of an object one)
 		public string[] excludeFiles; // A list with all the files and paths that must be avoided when doing automatic detection
 		public Gee.List<ElementBase> globalElements; // The list of all elements
 
@@ -42,7 +41,6 @@ namespace AutoVala {
 		private string[] errorList; // Contains all the messages to show to the user: normal messages, warnings and errors
 
 		public Gee.Map<string,string> localModules;
-		public Gee.Set<string> ignoreList;
 		public Gee.Set<string> pathList;
 
 		public Globals(string projectName) {
@@ -50,14 +48,12 @@ namespace AutoVala {
 			ElementBase.globalData = this;
 			ConditionalText.globalData = this;
 			this.localModules=null;
-			this.ignoreList=null;
-			this.pathList = null;
+			this.pathList=null;
 			this.error = false;
 			this.warning = false;
 			this.projectName = projectName;
 			this.projectFolder = null;
 			this.globalElements = new Gee.ArrayList<ElementBase>();
-			this.files = {};
 			this.excludeFiles = {};
 			this.getValaVersion();
 
@@ -84,12 +80,8 @@ namespace AutoVala {
 		public void generateExtraData() {
 
 			this.localModules=new Gee.HashMap<string,string>();
-			this.ignoreList=new Gee.HashSet<string>();
 			this.pathList=new Gee.HashSet<string>();
 			foreach(var element in this.globalElements) {
-				if ((element.eType==ConfigType.IGNORE)&&(ignoreList.contains(element.path)==false)) {
-					ignoreList.add(element.path);
-				}
 				if ((element.eType!=ConfigType.IGNORE)&&(element.eType!=ConfigType.DEFINE)&&(!this.pathList.contains(element.path))) {
 					this.pathList.add(element.path);
 				}
@@ -108,10 +100,12 @@ namespace AutoVala {
 
 		public void clearAutomatic() {
 			var newElements = new Gee.ArrayList<ElementBase>();
+			this.excludeFiles={};
 			foreach (var element in this.globalElements) {
 				element.clearAutomatic();
 				if (element.automatic==false) {
 					newElements.add(element);
+					this.addExclude(element.fullPath);
 				}
 			}
 			this.globalElements=newElements;
@@ -126,45 +120,30 @@ namespace AutoVala {
 		}
 
 		/**
-		 * Inserts a new file in the list
-		 * @param filename to add (with path relative to the project's root)
-		 */
-		public void addFile(string filename) {
-			if (false==this.checkFile(filename)) {
-				this.files += filename;
-			}
-		}
-
-		/**
 		 * Inserts a new file/path in the list of exclude files/paths
 		 * @param file/path to add (with path relative to the project's root)
 		 */
-		public void addExclude(string filename) {
+		public void addExclude(string filenameP) {
+			var filename=filenameP;
+			// add without the last '/'
+			if(filename.has_suffix(Path.DIR_SEPARATOR_S)) {
+				filename=filename.substring(0,filename.length-1);
+			}
 			if (false==this.checkExclude(filename)) {
 				this.excludeFiles += filename;
 			}
 		}
 
 		/**
-		 * Checks whether a file has been already processed
-		 * @param filename The filename to check (with path relative to the project's root
-		 * @return //true// if the file has been processed in another object; //false// if not
-		 */
-		public bool checkFile(string? filename) {
-			foreach (var element in this.files) {
-				if (element == filename) {
-					return true;
-				}
-			}
-			return false;
-		}
-
-		/**
 		 * Checks whether a file/path is in the exclude list
-		 * @param filename The file/path to check (with path relative to the project's root
+		 * @param filename The file/path to check (with path relative to the project's root)
 		 * @return //true// if the file is in the list; //false// if not
 		 */
-		public bool checkExclude(string filename) {
+		public bool checkExclude(string filenameP) {
+			string filename=filenameP;
+			if(filename.has_suffix(Path.DIR_SEPARATOR_S)) {
+				filename=filename.substring(0,filename.length-1);
+			}
 			foreach (var element in this.excludeFiles) {
 				if (element == filename) {
 					return true;

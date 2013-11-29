@@ -36,6 +36,21 @@ namespace AutoVala {
 			this.command = "icon";
 		}
 
+		public static bool autoGenerate() {
+			bool error=false;
+			// checks for "data/icons" folder
+			var filePath = File.new_for_path(Path.build_filename(ElementBase.globalData.projectFolder,"data","icons"));
+			// If the folder exists, create a PO element with it
+			if (filePath.query_exists()) {
+				var files = ElementBase.getFilesFromFolder("data/icons",{".png",".svg"},true);
+				foreach (var file in files) {
+					var element = new ElementIcon();
+					error|=element.autoConfigure(file);
+				}
+			}
+			return error;
+		}
+
 		public override bool configureLine(string line, bool automatic, string? condition, bool invertCondition, int lineNumber) {
 
 			if (false == line.has_prefix("icon: ")) {

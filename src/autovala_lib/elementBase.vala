@@ -74,6 +74,56 @@ namespace AutoVala {
 		}
 
 		/**
+		 * Generates a list of files with the specified extensions and, if desired, recursively, avoiding the files and folders at EXCLUDE
+		 */
+
+		public static string[] getFilesFromFolder(string folder, string[] extensions, bool recursive) {
+			
+			string[] files = {};
+			if (ElementBase.globalData.checkExclude(folder)) {
+				return files;
+			}
+			var dirPath=File.new_for_path(Path.build_filename(ElementBase.globalData.projectFolder,folder));
+			if (dirPath.query_exists()==false) {
+				ElementBase.globalData.addWarning(_("Warning: directory %s doesn't exists").printf(folder));
+				return files;
+			}
+
+			try {
+				var enumerator = dirPath.enumerate_children (FileAttribute.STANDARD_NAME+","+FileAttribute.STANDARD_TYPE, 0);
+				FileInfo file_info;
+				while ((file_info = enumerator.next_file ()) != null) {
+					var fname=Path.build_filename(folder,file_info.get_name());
+					if (ElementBase.globalData.checkExclude(fname)) {
+						continue;
+					}
+					var ftype=file_info.get_file_type();
+					if (ftype==GLib.FileType.DIRECTORY) {
+						if (recursive) {
+							var subDirs = ElementBase.getFilesFromFolder(fname,extensions,recursive);
+							foreach (var element in subDirs) {
+								files+=element;
+							}
+						}
+						continue;
+					}
+					if ((ftype==GLib.FileType.REGULAR)||(ftype==GLib.FileType.SYMBOLIC_LINK)) {
+						foreach(var extension in extensions) {
+							if (fname.has_suffix(extension)) {
+								files+=fname;
+								break;
+							}
+						}
+					}
+				}
+			} catch (Error e) {
+				ElementBase.globalData.addWarning(_("Warning: can't access folder %s").printf(folder));
+				return files;
+			}
+			return files;
+		}
+
+		/**
 		 * Configures the common file parameters
 		 * @param path The file path, relative to the project's root
 		 * @param automatic //true// if this file has been processed automatically; //false// if the user modified something manually in the configuration file
@@ -83,10 +133,11 @@ namespace AutoVala {
 		 */
 		public virtual bool configureElement(string fullPath, string? path, string? file, bool automatic, string? condition, bool invertCondition) {
 
-			if (ElementBase.globalData.checkFile(fullPath)) {
-				ElementBase.globalData.addWarning(_("Warning: trying to add again the path %s").printf(path));
+			if (ElementBase.globalData.checkExclude(fullPath)) {
+				ElementBase.globalData.addWarning(_("Warning: trying to add twice the path %s").printf(fullPath));
 				return true;
 			}
+
 			this._fullPath = fullPath;
 			if (path==null) {
 				this._path = GLib.Path.get_dirname(fullPath);
@@ -97,7 +148,8 @@ namespace AutoVala {
 				this._name = GLib.Path.get_basename(fullPath);
 			}
 
-			ElementBase.globalData.addFile(fullPath);
+			ElementBase.globalData.addElement(this);
+			ElementBase.globalData.addExclude(fullPath);
 			this._automatic = automatic;
 			this._condition = condition;
 			this._invertCondition = invertCondition;

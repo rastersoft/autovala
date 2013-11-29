@@ -119,9 +119,15 @@ namespace AutoVala {
 			bool error;
 
 			error=config.readConfiguration();
+			ElementBase.globalData.clearAutomatic();
+			ElementBase.globalData.generateExtraData();
+
+			error|=ElementPo.autoGenerate();
+			error|=ElementIcon.autoGenerate();
+
 			error|=config.saveConfiguration();
 
-			return false;
+			return error;
 		}
 
 	}

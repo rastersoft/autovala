@@ -189,7 +189,6 @@ namespace AutoVala {
 
 					if (element!=null) {
 						error|=element.configureLine(oldLine,automatic,cond,invert,lineNumber);
-						this.globalData.addElement(element);
 						lastElement=element;
 						element=null;
 					}
