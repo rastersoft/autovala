@@ -76,7 +76,7 @@ namespace AutoVala {
 			int size=0;
 
 			// For each PNG file, find the icon size to which it belongs
-			if (this.file.has_suffix(".png")) {
+			if (this.name.has_suffix(".png")) {
 				try {
 					var picture=new Gdk.Pixbuf.from_file(fullPath);
 					int w=picture.width;
@@ -94,20 +94,20 @@ namespace AutoVala {
 					return true;
 				}
 				try {
-					dataStream.put_string("install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/%s DESTINATION share/icons/hicolor/%d/%s/)\n".printf(this.file,size,this.iconCathegory));
+					dataStream.put_string("install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/%s DESTINATION share/icons/hicolor/%d/%s/)\n".printf(this.name,size,this.iconCathegory));
 				} catch (Error e) {
 					ElementBase.globalData.addError(_("Failed to write the CMakeLists file for icon %s").printf(fullPath));
 					return true;
 				}
-			} else if (this.file.has_suffix(".svg")) {
+			} else if (this.name.has_suffix(".svg")) {
 				try {
-					dataStream.put_string("install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/%s DESTINATION share/icons/hicolor/scalable/%s/)\n".printf(this.file,this.iconCathegory));
+					dataStream.put_string("install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/%s DESTINATION share/icons/hicolor/scalable/%s/)\n".printf(this.name,this.iconCathegory));
 				} catch (Error e) {
 					ElementBase.globalData.addError(_("Failed to write the CMakeLists file for icon %s").printf(fullPath));
 					return true;
 				}
 			} else {
-				ElementBase.globalData.addError(_("Unknown icon type %s. Must be .png or .svg (in lowercase)").printf(this.file));
+				ElementBase.globalData.addError(_("Unknown icon type %s. Must be .png or .svg (in lowercase)").printf(this.name));
 				return true;
 			}
 

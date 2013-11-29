@@ -73,7 +73,7 @@ namespace AutoVala {
 
 		}
 
-		public override bool generateMainCMakeHeader(DataOutputStream dataStream) {
+		public bool generateMainCMakeHeader(DataOutputStream dataStream) {
 
 			try {
 				dataStream.put_string("### CMakeLists automatically created with AutoVala\n### Do not edit\n\n");
@@ -88,7 +88,7 @@ namespace AutoVala {
 					if (element.eType!=ConfigType.DEFINE) {
 						continue;
 					}
-					dataStream.put_string("option(%s \"%s\" OFF)\n".printf(element.file,element.file));
+					dataStream.put_string("option(%s \"%s\" OFF)\n".printf(element.name,element.name));
 				}
 				dataStream.put_string("\nset(HAVE_VALADOC OFF)\n");
 				dataStream.put_string("if(BUILD_VALADOC)\n");
@@ -171,8 +171,8 @@ namespace AutoVala {
 					if (element.eType!=ConfigType.MANPAGE) {
 						continue;
 					}
-					var len=element.file.length;
-					if ((len>1)&&(element.file[len-2]!='.')&&(element.file[len-1]>='1')&&(element.file[len-1]<='9')) {
+					var len=element.name.length;
+					if ((len>1)&&(element.name[len-2]!='.')&&(element.name[len-1]>='1')&&(element.name[len-1]<='9')) {
 						continue; // this filename ends in .1, .2, ..., .9, so it is a groff man page
 					}
 					// if we reach here, it is a non-groff man page, so ask for PANDOC
@@ -242,9 +242,9 @@ namespace AutoVala {
 								continue;
 							}
 							if (element.eType==ConfigType.VALA_LIBRARY) {
-								error+=_("\n\tLibrary %s, packages:").printf(Path.build_filename(element.path,element.file));
+								error+=_("\n\tLibrary %s, packages:").printf(Path.build_filename(element.path,element.name));
 							} else {
-								error+=_("\n\tBinary %s, packages:").printf(Path.build_filename(element.path,element.file));
+								error+=_("\n\tBinary %s, packages:").printf(Path.build_filename(element.path,element.name));
 							}
 							var binElement = element as ElementValaBinary;
 							foreach(var package in binElement.packages) {
@@ -260,14 +260,6 @@ namespace AutoVala {
 			} catch (Error e) {
 				ElementBase.globalData.addError(_("Failed to generate the main CMakeLists.txt file"));
 			}
-			return false;
-		}
-
-		public override bool generateMainCMake(DataOutputStream dataStream) {
-			return false;
-		}
-
-		public override bool generateMainCMakePostData(DataOutputStream dataStream) {
 			return false;
 		}
 

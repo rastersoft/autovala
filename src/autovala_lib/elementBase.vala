@@ -27,6 +27,8 @@ namespace AutoVala {
 	/**
 	 * Represents a generic file of the project, with its path, filename, compilation condition...
 	 * This class must be inherited by several subclasses, one for each kind of file allowed in AutoVala
+	 * Also, each subclass must implement an static method to automagically find its files in a project, and this
+	 * method must be added in the autovalaLib.vala file to be called each time the user asks for a refresh or update
 	 */
 
 	abstract class ElementBase : GLib.Object {
@@ -36,7 +38,7 @@ namespace AutoVala {
 
 		protected string _fullPath; // Full file path, relative to the project's root
 		protected string _path; // File path relative to the project's root
-		protected string _file; // File name
+		protected string _name; // File name
 		protected ConfigType _type; // File type
 		protected string command; // command in the config file
 
@@ -46,8 +48,8 @@ namespace AutoVala {
 		public string path {
 			get {return this._path;}
 		}
-		public string file {
-			get {return this._file;}
+		public string name {
+			get {return this._name;}
 		}
 		public ConfigType eType {
 			get {return this._type;}
@@ -92,7 +94,7 @@ namespace AutoVala {
 				this._path=path;
 			}
 			if (file==null) {
-				this._file = GLib.Path.get_basename(fullPath);
+				this._name = GLib.Path.get_basename(fullPath);
 			}
 
 			ElementBase.globalData.addFile(fullPath);
@@ -156,33 +158,6 @@ namespace AutoVala {
 		 * @return //true// if there was an error; //false// if not. The error texts can be obtained by calling to returnErrors()
 		 */
 		public virtual bool generateCMakePostData(DataOutputStream dataStream) {
-			return false;
-		}
-
-		/**
-		 * Inserts the CMake commands needed in the main CMakeLists.txt for this file in the data stream specified
-		 * @param dataStream The data stream for the CMakeList.txt file being processed
-		 * @return //true// if there was an error; //false// if not. The error texts can be obtained by calling to returnErrors()
-		 */
-		public virtual bool generateMainCMake(DataOutputStream dataStream) {
-			return false;
-		}
-
-		/**
-		 * Inserts the CMake commands needed for this file AT THE HEADER of the main CMakeLists.txt in the data stream specified. This allows to add definitions and other preparatory commands at the head of a file
-		 * @param dataStream The data stream for the CMakeList.txt file being processed
-		 * @return //true// if there was an error; //false// if not. The error texts can be obtained by calling to returnErrors()
-		 */
-		public virtual bool generateMainCMakeHeader(DataOutputStream dataStream) {
-			return false;
-		}
-
-		/**
-		 * Inserts the CMake commands needed for this file AT THE END of the main CMakeLists.txt in the data stream specified. This allows to add extra commands at the end of a file
-		 * @param dataStream The data stream for the CMakeList.txt file being processed
-		 * @return //true// if there was an error; //false// if not. The error texts can be obtained by calling to returnErrors()
-		 */
-		public virtual bool generateMainCMakePostData(DataOutputStream dataStream) {
 			return false;
 		}
 

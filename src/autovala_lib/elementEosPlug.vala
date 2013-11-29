@@ -21,11 +21,6 @@ using GLib;
 
 namespace AutoVala {
 
-	/**
-	 * Represents a generic file of the project, with its path, filename, compilation condition...
-	 * This class must be inherited by several subclasses, one for each kind of file allowed in AutoVala
-	 */
-
 	class ElementEosPlug : ElementBase {
 
 		public ElementEosPlug() {
@@ -36,10 +31,10 @@ namespace AutoVala {
 		public override bool generateCMake(DataOutputStream dataStream) {
 
 			try {
-				dataStream.put_string("configure_file(${CMAKE_CURRENT_SOURCE_DIR}/"+this.file+" ${CMAKE_CURRENT_BINARY_DIR}/"+this.file+")\n");
-				dataStream.put_string("install(FILES ${CMAKE_CURRENT_BINARY_DIR}/"+this.file+" DESTINATION lib/plugs/"+ElementBase.globalData.projectName+"/"+ElementBase.globalData.projectName+"/)\n");
+				dataStream.put_string("configure_file(${CMAKE_CURRENT_SOURCE_DIR}/"+this.name+" ${CMAKE_CURRENT_BINARY_DIR}/"+this.name+")\n");
+				dataStream.put_string("install(FILES ${CMAKE_CURRENT_BINARY_DIR}/"+this.name+" DESTINATION lib/plugs/"+ElementBase.globalData.projectName+"/"+ElementBase.globalData.projectName+"/)\n");
 			} catch (Error e) {
-				ElementBase.globalData.addError(_("Failed to add file %s").printf(this.file));
+				ElementBase.globalData.addError(_("Failed to add file %s").printf(this.name));
 			}
 			return false;
 		}

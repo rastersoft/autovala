@@ -21,11 +21,6 @@ using GLib;
 
 namespace AutoVala {
 
-	/**
-	 * Represents a generic file of the project, with its path, filename, compilation condition...
-	 * This class must be inherited by several subclasses, one for each kind of file allowed in AutoVala
-	 */
-
 	class ElementDefine : ElementBase {
 
 		public ElementDefine() {
@@ -43,7 +38,7 @@ namespace AutoVala {
 			// The line starts with 'define: '
 			var data=line.substring(8).strip();
 			foreach (var element in ElementBase.globalData.globalElements) {
-				if (element.file==data) {
+				if (element.name==data) {
 					return false; // this DEFINE already exists
 				}
 			}

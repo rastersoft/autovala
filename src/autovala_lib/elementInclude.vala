@@ -31,9 +31,9 @@ namespace AutoVala {
 		public override bool generateCMakePostData(DataOutputStream dataStream) {
 
 			try {
-				dataStream.put_string("include(${CMAKE_CURRENT_SOURCE_DIR}/"+this.file+")\n");
+				dataStream.put_string("include(${CMAKE_CURRENT_SOURCE_DIR}/"+this.name+")\n");
 			} catch (Error e) {
-				ElementBase.globalData.addError(_("Failed to write the CMakeLists file for %s").printf(this.file));
+				ElementBase.globalData.addError(_("Failed to write the CMakeLists file for %s").printf(this.name));
 				return true;
 			}
 			return false;

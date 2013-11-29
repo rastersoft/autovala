@@ -21,11 +21,6 @@ using GLib;
 
 namespace AutoVala {
 
-	/**
-	 * Represents a generic file of the project, with its path, filename, compilation condition...
-	 * This class must be inherited by several subclasses, one for each kind of file allowed in AutoVala
-	 */
-
 	class ElementData : ElementBase {
 
 		public ElementData() {

@@ -20,24 +20,27 @@ using GLib;
 
 namespace AutoVala {
 
+	/**
+	 * Contains all the global parameters, like the project name, project folder, the current configuration file, and so on
+	 */
+
 	class Globals : GLib.Object {
 
 		public string projectName; // The project's name
 		public string? projectFolder; // The absolute path to the project's root folder
 		public string? configFile; // The absolute path to the project definition file
 
-		public int valaMajor;
-		public int valaMinor;
+		public int valaMajor; // Vala version currently installed in the system (major number)
+		public int valaMinor; // Vala version currently installed in the system (minor number)
 
 		private string[] files; // A list with all the files already processed, to allow to new objects to know if a file has already been processed (that's why it's a class property instead of an object one)
 		public string[] excludeFiles; // A list with all the files and paths that must be avoided when doing automatic detection
 		public Gee.List<ElementBase> globalElements; // The list of all elements
 
-		public bool error;
-		public bool warning;
-		private string[] errorList;
+		public bool error; // There is at least one error message in the the error list
+		public bool warning; // There is at least one warning message in the the error list
+		private string[] errorList; // Contains all the messages to show to the user: normal messages, warnings and errors
 
-		public Gee.Set<string> defines;
 		public Gee.Map<string,string> localModules;
 		public Gee.Set<string> ignoreList;
 		public Gee.Set<string> pathList;
@@ -46,7 +49,6 @@ namespace AutoVala {
 
 			ElementBase.globalData = this;
 			ConditionalText.globalData = this;
-			this.defines = null;
 			this.localModules=null;
 			this.ignoreList=null;
 			this.pathList = null;
@@ -77,16 +79,10 @@ namespace AutoVala {
 
 
 		/**
-		 * Generates several lists with extra data needed for several parts, like a list with all defines, local modules, etc.
+		 * Generates several lists with extra data needed for several parts, like a list with all local modules, etc.
 		 */
 		public void generateExtraData() {
 
-			this.defines=new Gee.HashSet<string>();
-			foreach(var element in this.globalElements) {
-				if (element.eType==ConfigType.DEFINE) {
-					defines.add(element.path);
-				}
-			}
 			this.localModules=new Gee.HashMap<string,string>();
 			this.ignoreList=new Gee.HashSet<string>();
 			this.pathList=new Gee.HashSet<string>();

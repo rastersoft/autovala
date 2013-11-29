@@ -21,11 +21,6 @@ using GLib;
 
 namespace AutoVala {
 
-	/**
-	 * Represents a generic file of the project, with its path, filename, compilation condition...
-	 * This class must be inherited by several subclasses, one for each kind of file allowed in AutoVala
-	 */
-
 	class ElementScheme : ElementBase {
 
 		private bool addedSchemePrefix;
@@ -43,9 +38,9 @@ namespace AutoVala {
 					dataStream.put_string("include(GSettings)\n");
 					addedSchemePrefix=true;
 				}
-				dataStream.put_string("add_schema("+this.file+")\n");
+				dataStream.put_string("add_schema("+this.name+")\n");
 			} catch (Error e) {
-				ElementBase.globalData.addError(_("Failed to add schema %s").printf(this.file));
+				ElementBase.globalData.addError(_("Failed to add schema %s").printf(this.name));
 				return true;
 			}
 			return false;

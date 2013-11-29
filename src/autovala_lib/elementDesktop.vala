@@ -21,11 +21,6 @@ using GLib;
 
 namespace AutoVala {
 
-	/**
-	 * Represents a generic file of the project, with its path, filename, compilation condition...
-	 * This class must be inherited by several subclasses, one for each kind of file allowed in AutoVala
-	 */
-
 	class ElementDesktop : ElementBase {
 
 		public ElementDesktop() {
@@ -65,7 +60,7 @@ namespace AutoVala {
 					}
 				}
 			} catch(Error e) {
-				ElementBase.globalData.addError(_("Failed to check if file %s is a GNome autostart file").printf(this.file));
+				ElementBase.globalData.addError(_("Failed to check if file %s is a GNome autostart file").printf(this.name));
 				return true;
 			}
 
@@ -76,12 +71,12 @@ namespace AutoVala {
 
 			try {
 				if (this._type == ConfigType.DESKTOP) {
-					dataStream.put_string("install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/"+this.file+" DESTINATION share/applications/ )\n");
+					dataStream.put_string("install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/"+this.name+" DESTINATION share/applications/ )\n");
 				} else {
-					dataStream.put_string("install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/"+this.file+" DESTINATION ${FINAL_AUTOVALA_PATH}/etc/xdg/autostart/ )\n");
+					dataStream.put_string("install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/"+this.name+" DESTINATION ${FINAL_AUTOVALA_PATH}/etc/xdg/autostart/ )\n");
 				}
 			} catch (Error e) {
-				ElementBase.globalData.addError(_("Failed to add file %s").printf(this.file));
+				ElementBase.globalData.addError(_("Failed to add file %s").printf(this.name));
 				return true;
 			}
 			return false;

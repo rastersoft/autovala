@@ -58,21 +58,21 @@ namespace AutoVala {
 				finalDestination="${FINAL_AUTOVALA_PATH}%s".printf(this.destination);
 			}
 			try {
-				dataStream.put_string("IF(IS_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/%s)\n".printf(this.file));
+				dataStream.put_string("IF(IS_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/%s)\n".printf(this.name));
 				dataStream.put_string("\tinstall(DIRECTORY\n");
-				dataStream.put_string("\t\t${CMAKE_CURRENT_SOURCE_DIR}/%s\n".printf(this.file));
+				dataStream.put_string("\t\t${CMAKE_CURRENT_SOURCE_DIR}/%s\n".printf(this.name));
 				dataStream.put_string("\tDESTINATION\n");
 				dataStream.put_string("\t\t"+finalDestination+"\n");
 				dataStream.put_string("\t)\n");
 				dataStream.put_string("ELSE()\n");
 				dataStream.put_string("\tinstall(FILES\n");
-				dataStream.put_string("\t\t${CMAKE_CURRENT_SOURCE_DIR}/%s\n".printf(this.file));
+				dataStream.put_string("\t\t${CMAKE_CURRENT_SOURCE_DIR}/%s\n".printf(this.name));
 				dataStream.put_string("\tDESTINATION\n");
 				dataStream.put_string("\t\t"+finalDestination+"\n");
 				dataStream.put_string("\t)\n");
 				dataStream.put_string("ENDIF()\n\n");
 			} catch (Error e) {
-				ElementBase.globalData.addError(_("Failed to write the CMakeLists file for custom file %s").printf(this.file));
+				ElementBase.globalData.addError(_("Failed to write the CMakeLists file for custom file %s").printf(this.name));
 				return true;
 			}
 			return false;

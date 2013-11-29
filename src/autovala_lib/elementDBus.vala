@@ -21,11 +21,6 @@ using GLib;
 
 namespace AutoVala {
 
-	/**
-	 * Represents a generic file of the project, with its path, filename, compilation condition...
-	 * This class must be inherited by several subclasses, one for each kind of file allowed in AutoVala
-	 */
-
 	class ElementDBusService : ElementBase {
 
 		private static bool addedDBusPrefix;
@@ -54,10 +49,10 @@ namespace AutoVala {
 
 			try {
 				// DBus files must use DBUS_PREFIX in their path, instead of a fixed one, to allow them to be installed both in /usr or /usr/local
-				dataStream.put_string("configure_file(${CMAKE_CURRENT_SOURCE_DIR}/"+this.file+" ${CMAKE_CURRENT_BINARY_DIR}/"+this.file+")\n");
-				dataStream.put_string("install(FILES ${CMAKE_CURRENT_BINARY_DIR}/"+this.file+" DESTINATION ${CMAKE_INSTALL_PREFIX}/share/dbus-1/services/)\n");
+				dataStream.put_string("configure_file(${CMAKE_CURRENT_SOURCE_DIR}/"+this.name+" ${CMAKE_CURRENT_BINARY_DIR}/"+this.name+")\n");
+				dataStream.put_string("install(FILES ${CMAKE_CURRENT_BINARY_DIR}/"+this.name+" DESTINATION ${CMAKE_INSTALL_PREFIX}/share/dbus-1/services/)\n");
 			} catch (Error e) {
-				ElementBase.globalData.addError(_("Failed to write the CMakeLists file for %s").printf(this.file));
+				ElementBase.globalData.addError(_("Failed to write the CMakeLists file for %s").printf(this.name));
 				return true;
 			}
 

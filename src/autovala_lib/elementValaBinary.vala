@@ -357,7 +357,7 @@ namespace AutoVala {
 		public override bool generateCMake(DataOutputStream dataStream) {
 
 			string girFilename="";
-			string libFilename=this.file;
+			string libFilename=this.name;
 			if (this._currentNamespace!=null) {
 				// Build the GIR filename
 				girFilename=this._currentNamespace+"-"+this.version.split(".")[0]+".0.gir";
@@ -442,7 +442,7 @@ namespace AutoVala {
 							}
 							dataStream.put_string("${CMAKE_BINARY_DIR}/"+ElementBase.globalData.localModules.get(module.elementName)+" ");
 						} else {
-							ElementBase.globalData.addWarning(_("Warning: Can't set package %s for binary %s").printf(module.elementName,this.file));
+							ElementBase.globalData.addWarning(_("Warning: Can't set package %s for binary %s").printf(module.elementName,this.name));
 						}
 					}
 				}
@@ -514,15 +514,18 @@ namespace AutoVala {
 					dataStream.put_string("\n");
 				}
 
+				// Add all the DEFINEs set both in the code and the configuration file
 				bool addedDefines=false;
-				foreach(var l in ElementBase.globalData.defines) {
-					if (addedDefines==false) {
-						addedDefines=true;
-						this.compileOptions+=" ${OPTION_DEFINES}";
+				foreach(var element in ElementBase.globalData.globalElements) {
+					if (element.eType==ConfigType.DEFINE) {
+						if (addedDefines==false) {
+							addedDefines=true;
+							this.compileOptions+=" ${OPTION_DEFINES}";
+						}
+						dataStream.put_string("IF (%s)\n".printf(element.path));
+						dataStream.put_string("\tSET(OPTION_DEFINES ${OPTION_DEFINES} -D %s)\n".printf(element.path));
+						dataStream.put_string("ENDIF()\n");
 					}
-					dataStream.put_string("IF (%s)\n".printf(l));
-					dataStream.put_string("\tSET(OPTION_DEFINES ${OPTION_DEFINES} -D %s)\n".printf(l));
-					dataStream.put_string("ENDIF()\n");
 				}
 				if (addedDefines) {
 					dataStream.put_string("\n");
@@ -544,7 +547,7 @@ namespace AutoVala {
 					if (girFilename!="") {
 						final_options+=" --gir "+girFilename;
 					} else {
-						ElementBase.globalData.addWarning(_("Warning: no namespace specified in library %s; GIR file will not be generated").printf(this.file));
+						ElementBase.globalData.addWarning(_("Warning: no namespace specified in library %s; GIR file will not be generated").printf(this.name));
 					}
 					final_options+=" "+this.compileOptions;
 				}

@@ -79,42 +79,42 @@ namespace AutoVala {
 
 			string finalFile="";
 			string? inputFormat=null;
-			if (this.file.has_suffix(".md")) {
-				finalFile=this.file.substring(0,this.file.length-3);
+			if (this.name.has_suffix(".md")) {
+				finalFile=this.name.substring(0,this.name.length-3);
 				inputFormat="markdown_github";
-			} else if (this.file.has_suffix(".rst")) {
-				finalFile=this.file.substring(0,this.file.length-4);
+			} else if (this.name.has_suffix(".rst")) {
+				finalFile=this.name.substring(0,this.name.length-4);
 				inputFormat="rst";
-			} else if (this.file.has_suffix(".htm")) {
-				finalFile=this.file.substring(0,this.file.length-4);
+			} else if (this.name.has_suffix(".htm")) {
+				finalFile=this.name.substring(0,this.name.length-4);
 				inputFormat="html";
-			} else if (this.file.has_suffix(".html")) {
-				finalFile=this.file.substring(0,this.file.length-5);
+			} else if (this.name.has_suffix(".html")) {
+				finalFile=this.name.substring(0,this.name.length-5);
 				inputFormat="html";
-			} else if (this.file.has_suffix(".tex")) {
-				finalFile=this.file.substring(0,this.file.length-4);
+			} else if (this.name.has_suffix(".tex")) {
+				finalFile=this.name.substring(0,this.name.length-4);
 				inputFormat="latex";
-			} else if (this.file.has_suffix(".json")) {
-				finalFile=this.file.substring(0,this.file.length-4);
+			} else if (this.name.has_suffix(".json")) {
+				finalFile=this.name.substring(0,this.name.length-4);
 				inputFormat="json";
-			} else if (this.file.has_suffix(".rdoc")) {
-				finalFile=this.file.substring(0,this.file.length-5);
+			} else if (this.name.has_suffix(".rdoc")) {
+				finalFile=this.name.substring(0,this.name.length-5);
 				inputFormat="textile";
-			} else if (this.file.has_suffix(".xml")) {
-				finalFile=this.file.substring(0,this.file.length-4);
+			} else if (this.name.has_suffix(".xml")) {
+				finalFile=this.name.substring(0,this.name.length-4);
 				inputFormat="docbook";
-			} else if (this.file.has_suffix(".txt")) {
-				finalFile=this.file.substring(0,this.file.length-4);
+			} else if (this.name.has_suffix(".txt")) {
+				finalFile=this.name.substring(0,this.name.length-4);
 				inputFormat="mediawiki";
 			} else {
-				finalFile=this.file;
+				finalFile=this.name;
 			}
 
 			try {
 				if (inputFormat==null) {
-					dataStream.put_string("configure_file ( ${CMAKE_CURRENT_SOURCE_DIR}/" + this.file + " ${CMAKE_CURRENT_BINARY_DIR}/" + finalFile + " COPYONLY )\n");
+					dataStream.put_string("configure_file ( ${CMAKE_CURRENT_SOURCE_DIR}/" + this.name + " ${CMAKE_CURRENT_BINARY_DIR}/" + finalFile + " COPYONLY )\n");
 				} else {
-					dataStream.put_string("execute_process ( COMMAND pandoc ${CMAKE_CURRENT_SOURCE_DIR}/" + this.file + " -o ${CMAKE_CURRENT_BINARY_DIR}/" + finalFile + " -f " + inputFormat + " -t man -s )\n");
+					dataStream.put_string("execute_process ( COMMAND pandoc ${CMAKE_CURRENT_SOURCE_DIR}/" + this.name + " -o ${CMAKE_CURRENT_BINARY_DIR}/" + finalFile + " -f " + inputFormat + " -t man -s )\n");
 				}
 
 				dataStream.put_string("execute_process ( COMMAND gzip -f ${CMAKE_CURRENT_BINARY_DIR}/" + finalFile + " )\n");
