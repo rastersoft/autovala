@@ -39,22 +39,6 @@ namespace AutoVala {
 			return false;
 		}
 
-		public override bool configureLine(string line, bool automatic, string? condition, bool invertCondition, int lineNumber) {
-
-			if (false == line.has_prefix("po: ")) {
-				var badCommand = line.split(": ")[0];
-				ElementBase.globalData.addError(_("Error: invalid command %s after command %s (line %d)").printf(badCommand,this.command, lineNumber));
-				return true;
-			}
-			// The line starts with 'po: '
-			var data=line.substring(4).strip();
-
-			if (data.has_suffix(Path.DIR_SEPARATOR_S)) {
-				data=data.substring(0,data.length-1);
-			}
-			return this.configureElement(data,null,null,automatic,condition,invertCondition);
-		}
-
 		public override bool generateCMake(DataOutputStream dataStream) {
 
 			var potFile=Path.build_filename(ElementBase.globalData.projectFolder,this._path,"POTFILES.in");

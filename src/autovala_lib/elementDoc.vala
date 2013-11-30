@@ -40,18 +40,6 @@ namespace AutoVala {
 			return error;
 		}
 
-		public override bool configureLine(string line, bool automatic, string? condition, bool invertCondition, int lineNumber) {
-
-			if (false == line.has_prefix("doc: ")) {
-				var badCommand = line.split(": ")[0];
-				ElementBase.globalData.addError(_("Error: invalid command %s after command %s (line %d)").printf(badCommand,this.command, lineNumber));
-				return true;
-			}
-			// The line starts with 'doc: '
-			var data=line.substring(5).strip();
-
-			return this.configureElement(data,null,null,automatic,condition,invertCondition);
-		}
 
 		public override bool generateCMake(DataOutputStream dataStream) {
 
