@@ -52,7 +52,7 @@ namespace AutoVala {
 			if (data.has_suffix(Path.DIR_SEPARATOR_S)) {
 				data=data.substring(0,data.length-1);
 			}
-			return this.configureElement(data,null,null,automatic,condition,invertCondition);
+			return this.configureElement(data,data,data,automatic,condition,invertCondition);
 		}
 
 

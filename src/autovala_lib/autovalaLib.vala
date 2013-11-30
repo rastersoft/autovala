@@ -60,16 +60,22 @@ namespace AutoVala {
 				var dis = file.create(FileCreateFlags.NONE);
 				var dataStream = new DataOutputStream(dis);
 				error |= globalElement.generateMainCMakeHeader(dataStream);
+				dataStream.close();
+			} catch (Error e) {
+				ElementBase.globalData.addError(_("Failed while generating the main CMakeLists.txt file"));
+				return true;
+			}
 
+			try {
 				// and now, generate each one of the CMakeLists.txt files in each folder
 				foreach(var path in this.globalData.pathList) {
 					var fullPath = GLib.Path.build_filename(this.globalData.projectFolder,path,"CMakeLists.txt");
-					file = File.new_for_path(fullPath);
+					var file = File.new_for_path(fullPath);
 					if (file.query_exists()) {
 						file.delete();
 					}
-					dis = file.create(FileCreateFlags.NONE);
-					dataStream = new DataOutputStream(dis);
+					var dis = file.create(FileCreateFlags.NONE);
+					var dataStream = new DataOutputStream(dis);
 
 					error |= globalElement.generateCMakeHeader(dataStream);
 					foreach(var element in this.globalData.globalElements) {

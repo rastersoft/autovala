@@ -3,16 +3,16 @@ autovala_version: 7
 project_name: autovala
 vala_version: 0.20
 
-custom: data/cmake share/autovala
 custom: data/bash_completion/autovala /etc/bash_completion.d
+custom: data/cmake share/autovala
 
 vala_binary: src/autovala
 *version: 0.26.0
-vala_local_package: AutoVala
 *vala_package: posix
 *vala_check_package: gee-1.0
 *vala_check_package: gio-2.0
 *vala_check_package: glib-2.0
+vala_local_package: AutoVala
 *vala_source: autovala.vala
 
 vala_library: src/autovala_lib/autovala_lib
@@ -23,31 +23,31 @@ vala_library: src/autovala_lib/autovala_lib
 *vala_check_package: gio-2.0
 *vala_check_package: glib-2.0
 *vala_check_package: gtk+-3.0
-*vala_source: readPkgconfig.vala
-*vala_source: configuration.vala
-*vala_source: elementPixmap.vala
+*vala_source: autovalaLib.vala
 *vala_source: conditionalText.vala
+*vala_source: configuration.vala
+*vala_source: elementBase.vala
+*vala_source: elementBinary.vala
+*vala_source: elementCustom.vala
 *vala_source: elementDBus.vala
 *vala_source: elementData.vala
-*vala_source: genVapis.vala
-*vala_source: elementInclude.vala
-*vala_source: autovalaLib.vala
 *vala_source: elementDefine.vala
-*vala_source: elementManpage.vala
-*vala_source: elementGlade.vala
-*vala_source: elementCustom.vala
-*vala_source: elementValaBinary.vala
-*vala_source: elementIcon.vala
-*vala_source: elementEosPlug.vala
-*vala_source: elementPo.vala
-*vala_source: globals.vala
-*vala_source: elementDoc.vala
-*vala_source: elementBinary.vala
 *vala_source: elementDesktop.vala
-*vala_source: elementScheme.vala
+*vala_source: elementDoc.vala
+*vala_source: elementEosPlug.vala
+*vala_source: elementGlade.vala
 *vala_source: elementGlobal.vala
-*vala_source: elementBase.vala
+*vala_source: elementIcon.vala
 *vala_source: elementIgnore.vala
+*vala_source: elementInclude.vala
+*vala_source: elementManpage.vala
+*vala_source: elementPixmap.vala
+*vala_source: elementPo.vala
+*vala_source: elementScheme.vala
+*vala_source: elementValaBinary.vala
+*vala_source: genVapis.vala
+*vala_source: globals.vala
+*vala_source: readPkgconfig.vala
 
 *po: po
 

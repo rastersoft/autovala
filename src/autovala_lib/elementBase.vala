@@ -152,11 +152,16 @@ namespace AutoVala {
 		 * @param invertCondition When true, invert the condition (this is, the file is after the #else statement)
 		 * @return //true// if the file has been already processed
 		 */
-		public virtual bool configureElement(string fullPath, string? path, string? name, bool automatic, string? condition, bool invertCondition) {
+		public virtual bool configureElement(string fullPathP, string? path, string? name, bool automatic, string? condition, bool invertCondition) {
 
-			if (fullPath=="") {
+			if (fullPathP=="") {
 				ElementBase.globalData.addError(_("Error: trying to add an empty path: %s").printf(fullPath));
 				return true;
+			}
+
+			string fullPath=fullPathP;
+			if (fullPath.has_suffix(Path.DIR_SEPARATOR_S)) {
+				fullPath=fullPathP.substring(0,fullPathP.length-1);
 			}
 
 			if (ElementBase.globalData.checkExclude(fullPath)) {
@@ -165,14 +170,21 @@ namespace AutoVala {
 			}
 
 			this._fullPath = fullPath;
-			if (path==null) {
-				this._path = GLib.Path.get_dirname(fullPath);
+			if ((path==null)||(name==null)) {
+				var file = File.new_for_path(Path.build_filename(ElementBase.globalData.projectFolder,fullPath));
+				if (file.query_exists()==false) {
+					ElementBase.globalData.addWarning(_("Warning: file %s doesn't exists").printf(fullPath));
+					return false;
+				}
+				if (file.query_file_type(FileQueryInfoFlags.NONE)!=FileType.DIRECTORY) {
+					this._path = GLib.Path.get_dirname(fullPath);
+					this._name = GLib.Path.get_basename(fullPath);
+				} else {
+					this._path = fullPath;
+					this._name = "";
+				}
 			} else {
-				this._path=path;
-			}
-			if (name==null) {
-				this._name = GLib.Path.get_basename(fullPath);
-			} else {
+				this._path = path;
 				this._name = name;
 			}
 

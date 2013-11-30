@@ -32,7 +32,7 @@ pkg_check_modules(DEPS REQUIRED ${MODULES_TO_CHECK})
 
 add_subdirectory(doc)
 add_subdirectory(po)
-add_subdirectory(data)
+add_subdirectory(data/cmake)
 add_subdirectory(data/bash_completion)
 add_subdirectory(src/autovala_lib)
 add_subdirectory(src)

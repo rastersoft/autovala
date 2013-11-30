@@ -49,9 +49,6 @@ namespace AutoVala {
 			}
 			// The line starts with 'doc: '
 			var data=line.substring(5).strip();
-			if (data.has_suffix(Path.DIR_SEPARATOR_S)) {
-				data=data.substring(0,data.length-1);
-			}
 
 			return this.configureElement(data,null,null,automatic,condition,invertCondition);
 		}

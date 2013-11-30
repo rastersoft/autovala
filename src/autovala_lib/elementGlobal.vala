@@ -34,7 +34,8 @@ namespace AutoVala {
 
 		private void addFolderToMainCMakeLists(string element, DataOutputStream dataStream) {
 
-			var dirpath=File.new_for_path(Path.build_filename(ElementBase.globalData.projectFolder,element));
+			var path = Path.build_filename(ElementBase.globalData.projectFolder,element);
+			var dirpath=File.new_for_path(path);
 			if (dirpath.query_exists()==false) {
 				ElementBase.globalData.addError(_("Warning: directory %s doesn't exists").printf(element));
 				return;
