@@ -32,9 +32,9 @@ namespace AutoVala {
 			// checks for "po/" folder
 			var filePath = File.new_for_path(Path.build_filename(ElementBase.globalData.projectFolder,"po"));
 			// If the folder exists, create a PO element with it
-			if ((filePath.query_exists()) && (false==ElementBase.globalData.checkExclude("po/"))) {
+			if ((filePath.query_exists()) && (false==ElementBase.globalData.checkExclude("po"))) {
 				var element = new ElementPo();
-				return element.autoConfigure("po/");
+				return element.autoConfigure("po");
 			}
 			return false;
 		}
