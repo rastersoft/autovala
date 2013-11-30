@@ -23,7 +23,7 @@ using Posix;
 
 namespace AutoVala {
 
-	class ManageProject: GLib.Object {
+	public class ManageProject: GLib.Object {
 
 		private AutoVala.Configuration config;
 		private AutoVala.Globals globalData;

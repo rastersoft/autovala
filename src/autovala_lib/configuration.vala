@@ -48,7 +48,7 @@ namespace AutoVala {
 
 		public Configuration(string projectName="",bool init_gettext=true) {
 			if (init_gettext) {
-				Intl.bindtextdomain(Constants.GETTEXT_PACKAGE, Path.build_filename(Constants.DATADIR,"locale"));
+				Intl.bindtextdomain(AutoValaConstants.GETTEXT_PACKAGE, Path.build_filename(AutoValaConstants.DATADIR,"locale"));
 			}
 
 			this.current_version=7; // currently we support version 7 of the syntax

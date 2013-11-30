@@ -9,7 +9,6 @@ enable_testing ()
 
 option(ICON_UPDATE "Update the icon cache after installing" ON)
 option(BUILD_VALADOC "Build API documentation if Valadoc is available" OFF)
-option(PRUEBA2 "PRUEBA2" OFF)
 
 set(HAVE_VALADOC OFF)
 if(BUILD_VALADOC)
@@ -31,8 +30,9 @@ set(MODULES_TO_CHECK ${MODULES_TO_CHECK} gtk+-3.0)
 
 pkg_check_modules(DEPS REQUIRED ${MODULES_TO_CHECK})
 
-add_subdirectory(src)
 add_subdirectory(doc)
 add_subdirectory(po)
 add_subdirectory(data)
 add_subdirectory(data/bash_completion)
+add_subdirectory(src/autovala_lib)
+add_subdirectory(src)
