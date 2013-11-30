@@ -876,6 +876,27 @@ namespace AutoVala {
 				if (this.destination!=null) {
 					dataStream.put_string("destination: %s\n".printf(this.destination));
 				}
+
+				foreach(var element in this._packages) {
+					if (element.type == packageType.LOCAL) {
+						printConditions.printCondition(element.condition,element.invertCondition);
+						if (element.automatic) {
+							dataStream.put_string("*");
+						}
+						dataStream.put_string("vala_local_package: %s\n".printf(element.elementName));
+					}
+				}
+				printConditions.printTail();
+
+				foreach(var element in this._vapis) {
+					printConditions.printCondition(element.condition,element.invertCondition);
+					if (element.automatic) {
+						dataStream.put_string("*");
+					}
+					dataStream.put_string("vala_vapi: %s\n".printf(element.elementName));
+				}
+				printConditions.printTail();
+
 				foreach(var element in this._packages) {
 					if (element.type == packageType.NO_CHECK) {
 						printConditions.printCondition(element.condition,element.invertCondition);
@@ -898,17 +919,6 @@ namespace AutoVala {
 				}
 				printConditions.printTail();
 
-				foreach(var element in this._packages) {
-					if (element.type == packageType.LOCAL) {
-						printConditions.printCondition(element.condition,element.invertCondition);
-						if (element.automatic) {
-							dataStream.put_string("*");
-						}
-						dataStream.put_string("vala_local_package: %s\n".printf(element.elementName));
-					}
-				}
-				printConditions.printTail();
-
 				foreach(var element in this._sources) {
 					printConditions.printCondition(element.condition,element.invertCondition);
 					if (element.automatic) {
@@ -918,14 +928,6 @@ namespace AutoVala {
 				}
 				printConditions.printTail();
 
-				foreach(var element in this._vapis) {
-					printConditions.printCondition(element.condition,element.invertCondition);
-					if (element.automatic) {
-						dataStream.put_string("*");
-					}
-					dataStream.put_string("vala_vapi: %s\n".printf(element.elementName));
-				}
-				printConditions.printTail();
 			} catch (Error e) {
 				ElementBase.globalData.addError(_("Failed to store ': %s' at config").printf(this.fullPath));
 				return true;
