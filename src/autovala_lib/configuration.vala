@@ -174,22 +174,13 @@ namespace AutoVala {
 
 				this.lineNumber=0;
 				string line;
-
 				ElementBase element=null;
-				ElementBase lastElement=null;
-				string oldLine="";
 				bool automatic=false;
-				while((line = dis.read_line(null))!=null) {
 
+				while((line = dis.read_line(null))!=null) {
 					string ?cond=null;
 					bool invert=false;
 					this.getCurrentCondition(out cond,out invert);
-
-					if (element!=null) {
-						error|=element.configureLine(oldLine,automatic,cond,invert,lineNumber);
-						lastElement=element;
-						element=null;
-					}
 
 					this.lineNumber++;
 
@@ -206,69 +197,56 @@ namespace AutoVala {
 					} else {
 						automatic=false;
 					}
-					oldLine = line;
 
 					if (line.has_prefix("custom: ")) {
 						element = new ElementCustom();
-						continue;
-					}
-					if (line.has_prefix("binary: ")) {
+					} else if (line.has_prefix("binary: ")) {
 						element = new ElementBinary();
-						continue;
-					}
-					if (line.has_prefix("icon: ")) {
+					} else if (line.has_prefix("icon: ")) {
 						element = new ElementIcon();
-						continue;
-					}
-					if (line.has_prefix("manpage: ")) {
+					} else if (line.has_prefix("manpage: ")) {
 						element = new ElementManPage();
-						continue;
-					}
-					if (line.has_prefix("pixmap: ")) {
+					} else if (line.has_prefix("pixmap: ")) {
 						element = new ElementPixmap();
-						continue;
-					}
-					if (line.has_prefix("po: ")) {
+					} else if (line.has_prefix("po: ")) {
 						element = new ElementPo();
-						continue;
-					}
-					if (line.has_prefix("doc: ")) {
+					} else if (line.has_prefix("doc: ")) {
 						element = new ElementDoc();
-						continue;
-					}
-					if (line.has_prefix("dbus_service: ")) {
+					} else if (line.has_prefix("dbus_service: ")) {
 						element = new ElementDBusService();
-						continue;
-					}
-					if (line.has_prefix("desktop: ")) {
+					} else if (line.has_prefix("desktop: ")) {
 						element = new ElementDesktop();
-						continue;
-					}
-					if (line.has_prefix("autostart: ")) {
+					} else if (line.has_prefix("autostart: ")) {
 						element = new ElementDesktop();
-						continue;
-					}
-					if (line.has_prefix("eos_plug: ")) {
+					} else if (line.has_prefix("eos_plug: ")) {
 						element = new ElementEosPlug();
-						continue;
-					}
-					if (line.has_prefix("scheme: ")) {
+					} else if (line.has_prefix("scheme: ")) {
 						element = new ElementScheme();
-						continue;
-					}
-					if (line.has_prefix("glade: ")) {
+					} else if (line.has_prefix("glade: ")) {
 						element = new ElementGlade();
-						continue;
-					}
-					if (line.has_prefix("data: ")) {
+					} else if (line.has_prefix("data: ")) {
 						element = new ElementData();
-						continue;
-					}
-					if (line.has_prefix("ignore: ")) {
+					} else if (line.has_prefix("ignore: ")) {
 						element = new ElementIgnore();
-						continue;
-					}
-					if (line.has_prefix("if ")) {
+					} else if ((line.has_prefix("vala_binary: "))||(line.has_prefix("vala_library: "))) {
+						if (this.checkConditionals(cond)) {
+							error=true;
+							continue;
+						}
+						element = new ElementValaBinary();
+					} else if (line.has_prefix("include: ")) {
+						if (this.checkConditionals(cond)) {
+							error=true;
+							continue;
+						}
+						element = new ElementInclude();
+					} else if (line.has_prefix("define: ")) {
+						if (this.checkConditionals(cond)) {
+							error=true;
+							continue;
+						}
+						element = new ElementDefine();
+					} else if (line.has_prefix("if ")) {
 						error|=this.addCondition(line.substring(3).strip());
 						ifLineNumber=this.lineNumber;
 						continue;
@@ -310,40 +288,14 @@ namespace AutoVala {
 							this.globalData.valaVersionMinor=fMinor;
 						}
 						continue;
-					}
-					if ((line.has_prefix("vala_binary: "))||(line.has_prefix("vala_library: "))) {
-						if (this.checkConditionals(cond)) {
-							error=true;
-							continue;
-						}
-						element = new ElementValaBinary();
-						continue;
-					}
-					if (line.has_prefix("include: ")) {
-						if (this.checkConditionals(cond)) {
-							error=true;
-							continue;
-						}
-						element = new ElementInclude();
-						continue;
-					}
-					if (line.has_prefix("project_name: ")) {
+					} else if (line.has_prefix("project_name: ")) {
 						if (this.checkConditionals(cond)) {
 							error=true;
 							continue;
 						}
 						this.globalData.projectName=line.substring(14).strip();
 						continue;
-					}
-					if (line.has_prefix("define: ")) {
-						if (this.checkConditionals(cond)) {
-							error=true;
-							continue;
-						}
-						element = new ElementDefine();
-						continue;
-					}
-					if (line.has_prefix("autovala_version: ")) {
+					} else if (line.has_prefix("autovala_version: ")) {
 						if (this.checkConditionals(cond)) {
 							error=true;
 							continue;
@@ -358,7 +310,7 @@ namespace AutoVala {
 						}
 						continue;
 					}
-					error|=lastElement.configureLine(line,automatic,cond,invert,lineNumber);
+					error|=element.configureLine(line,automatic,cond,invert,lineNumber);
 				}
 			} catch (Error e) {
 				this.globalData.configFile="";
