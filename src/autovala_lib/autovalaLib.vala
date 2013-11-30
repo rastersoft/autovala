@@ -124,6 +124,16 @@ namespace AutoVala {
 
 			error|=ElementPo.autoGenerate();
 			error|=ElementIcon.autoGenerate();
+			error|=ElementPixmap.autoGenerate();
+			error|=ElementDesktop.autoGenerate();
+			error|=ElementDBusService.autoGenerate();
+			error|=ElementEosPlug.autoGenerate();
+			error|=ElementScheme.autoGenerate();
+			error|=ElementGlade.autoGenerate();
+			error|=ElementBinary.autoGenerate();
+			error|=ElementData.autoGenerate();
+			error|=ElementDoc.autoGenerate();
+			error|=ElementManPage.autoGenerate();
 
 			error|=config.saveConfiguration();
 

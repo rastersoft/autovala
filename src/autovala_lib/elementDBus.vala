@@ -31,6 +31,21 @@ namespace AutoVala {
 			this.command = "dbus_service";
 		}
 
+		public static bool autoGenerate() {
+
+			bool error=false;
+			var filePath = File.new_for_path(Path.build_filename(ElementBase.globalData.projectFolder,"data"));
+
+			if (filePath.query_exists()) {
+				var files = ElementBase.getFilesFromFolder("data",{".service"},false);
+				foreach (var file in files) {
+					var element = new ElementDBusService();
+					error|=element.autoConfigure(file);
+				}
+			}
+			return error;
+		}
+
 		public override bool generateCMakeHeader(DataOutputStream dataStream) {
 
 			if (ElementDBusService.addedDBusPrefix==false) {

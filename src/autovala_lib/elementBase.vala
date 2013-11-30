@@ -74,10 +74,15 @@ namespace AutoVala {
 		}
 
 		/**
-		 * Generates a list of files with the specified extensions and, if desired, recursively, avoiding the files and folders at EXCLUDE
+		 * Generates a list of files with the specified extensions, avoiding the files and folders listed at EXCLUDE list.
+		 * @param folder The folder where to search for files
+		 * @param extensions A list with all the file extensions to search (starting with a dot), or null to add all files
+		 * @param recursive If true, will add the files from the specified folder and its subfolders
+		 *
+		 * @returns A list with all the files with its relative path to the specified starting path
 		 */
 
-		public static string[] getFilesFromFolder(string folder, string[] extensions, bool recursive) {
+		public static string[] getFilesFromFolder(string folder, string[]? extensions, bool recursive) {
 			
 			string[] files = {};
 			if (ElementBase.globalData.checkExclude(folder)) {
@@ -108,10 +113,14 @@ namespace AutoVala {
 						continue;
 					}
 					if ((ftype==GLib.FileType.REGULAR)||(ftype==GLib.FileType.SYMBOLIC_LINK)) {
-						foreach(var extension in extensions) {
-							if (fname.has_suffix(extension)) {
-								files+=fname;
-								break;
+						if (extensions==null) {
+							files+=fname;
+						} else {
+							foreach(var extension in extensions) {
+								if (fname.has_suffix(extension)) {
+									files+=fname;
+									break;
+								}
 							}
 						}
 					}
@@ -133,9 +142,14 @@ namespace AutoVala {
 		 */
 		public virtual bool configureElement(string fullPath, string? path, string? file, bool automatic, string? condition, bool invertCondition) {
 
+			if (fullPath=="") {
+				ElementBase.globalData.addError(_("Error: trying to add an empty path: %s").printf(fullPath));
+				return true;
+			}
+
 			if (ElementBase.globalData.checkExclude(fullPath)) {
 				ElementBase.globalData.addWarning(_("Warning: trying to add twice the path %s").printf(fullPath));
-				return true;
+				return false;
 			}
 
 			this._fullPath = fullPath;

@@ -26,6 +26,21 @@ namespace AutoVala {
 		public ElementDesktop() {
 		}
 
+		public static bool autoGenerate() {
+
+			bool error=false;
+			var filePath = File.new_for_path(Path.build_filename(ElementBase.globalData.projectFolder,"data"));
+
+			if (filePath.query_exists()) {
+				var files = ElementBase.getFilesFromFolder("data",{".desktop"},false);
+				foreach (var file in files) {
+					var element = new ElementDesktop();
+					error|=element.autoConfigure(file);
+				}
+			}
+			return error;
+		}
+
 		public override bool configureLine(string line, bool automatic, string? condition, bool invertCondition, int lineNumber) {
 
 			// The line starts with 'binary: '

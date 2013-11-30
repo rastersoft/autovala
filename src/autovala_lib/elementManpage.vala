@@ -31,6 +31,38 @@ namespace AutoVala {
 			this.command = "manpage";
 		}
 
+		private static bool autoGenerateLocal(string extension) {
+			bool error=false;
+			var filePath = File.new_for_path(Path.build_filename(ElementBase.globalData.projectFolder,"data/man"));
+			if (filePath.query_exists()) {
+				string[] extensions = {".1"+extension,".2"+extension,".3"+extension,".4"+extension,".5"+extension,".6"+extension,".7"+extension,".8"+extension,".9"+extension};
+				var files = ElementBase.getFilesFromFolder("data/man",extensions,true);
+				foreach (var file in files) {
+					var element = new ElementManPage();
+					error|=element.autoConfigure(file);
+				}
+			}
+			return error;
+		}
+
+		public static bool autoGenerate() {
+
+			bool error=false;
+
+			error |= ElementManPage.autoGenerateLocal("");
+			error |= ElementManPage.autoGenerateLocal(".md");
+			error |= ElementManPage.autoGenerateLocal(".rst");
+			error |= ElementManPage.autoGenerateLocal(".htm");
+			error |= ElementManPage.autoGenerateLocal(".html");
+			error |= ElementManPage.autoGenerateLocal(".tex");
+			error |= ElementManPage.autoGenerateLocal(".json");
+			error |= ElementManPage.autoGenerateLocal(".rdoc");
+			error |= ElementManPage.autoGenerateLocal(".xml");
+			error |= ElementManPage.autoGenerateLocal(".txt");
+
+			return error;
+		}
+
 		public override bool configureLine(string line, bool automatic, string? condition, bool invertCondition, int lineNumber) {
 
 			if (false == line.has_prefix("manpage: ")) {
@@ -73,6 +105,35 @@ namespace AutoVala {
 			}
 
 			return this.configureElement(filename,null,null,automatic,condition,invertCondition);
+		}
+
+		public override bool autoConfigure(string path) {
+
+			var elements = path.split(Path.DIR_SEPARATOR_S);
+			var len = elements.length;
+
+			string pageName = elements[len-1];
+			this.language = null;
+			if (len>3) {
+				this.language = elements[2];
+			}
+
+			var fname=pageName.split(".");
+			len=fname.length-1;
+			string extension;
+			this.pageSection=1;
+			for(;len>0;len--) {
+				extension=fname[len];
+				if (extension.length!=1) {
+					continue;
+				}
+				if ((extension[0]<'1')||(extension[0]>'9')) {
+					continue;
+				}
+				this.pageSection=extension[0]-'0';
+				break;
+			}
+			return this.configureElement(pageName,null,null,true,null,false);
 		}
 
 		public override bool generateCMake(DataOutputStream dataStream) {

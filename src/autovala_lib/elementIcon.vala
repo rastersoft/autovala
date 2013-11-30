@@ -37,10 +37,10 @@ namespace AutoVala {
 		}
 
 		public static bool autoGenerate() {
+
 			bool error=false;
-			// checks for "data/icons" folder
 			var filePath = File.new_for_path(Path.build_filename(ElementBase.globalData.projectFolder,"data","icons"));
-			// If the folder exists, create a PO element with it
+
 			if (filePath.query_exists()) {
 				var files = ElementBase.getFilesFromFolder("data/icons",{".png",".svg"},true);
 				foreach (var file in files) {

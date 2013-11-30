@@ -28,6 +28,18 @@ namespace AutoVala {
 			this.command = "data";
 		}
 
+		public static bool autoGenerate() {
+
+			bool error=false;
+			var filePath = File.new_for_path(Path.build_filename(ElementBase.globalData.projectFolder,"data/local"));
+
+			if (filePath.query_exists()) {
+				var element = new ElementData();
+				error|=element.autoConfigure("data/local");
+			}
+			return error;
+		}
+
 		public override bool configureLine(string line, bool automatic, string? condition, bool invertCondition, int lineNumber) {
 
 			if (false == line.has_prefix("data: ")) {
@@ -37,8 +49,8 @@ namespace AutoVala {
 			}
 			// The line starts with 'data: '
 			var data=line.substring(6).strip();
-			if (false==data.has_suffix(Path.DIR_SEPARATOR_S)) {
-				data+=Path.DIR_SEPARATOR_S;
+			if (data.has_suffix(Path.DIR_SEPARATOR_S)) {
+				data=data.substring(0,data.length-1);
 			}
 			return this.configureElement(data,null,null,automatic,condition,invertCondition);
 		}

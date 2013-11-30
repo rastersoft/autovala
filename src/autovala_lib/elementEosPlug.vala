@@ -28,6 +28,21 @@ namespace AutoVala {
 			this.command = "eos_plug";
 		}
 
+		public static bool autoGenerate() {
+
+			bool error=false;
+			var filePath = File.new_for_path(Path.build_filename(ElementBase.globalData.projectFolder,"data"));
+
+			if (filePath.query_exists()) {
+				var files = ElementBase.getFilesFromFolder("data",{".plug"},false);
+				foreach (var file in files) {
+					var element = new ElementEosPlug();
+					error|=element.autoConfigure(file);
+				}
+			}
+			return error;
+		}
+
 		public override bool generateCMake(DataOutputStream dataStream) {
 
 			try {

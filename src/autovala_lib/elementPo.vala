@@ -49,8 +49,8 @@ namespace AutoVala {
 			// The line starts with 'po: '
 			var data=line.substring(4).strip();
 
-			if (false==data.has_suffix(Path.DIR_SEPARATOR_S)) {
-				data+=Path.DIR_SEPARATOR_S;
+			if (data.has_suffix(Path.DIR_SEPARATOR_S)) {
+				data=data.substring(0,data.length-1);
 			}
 			return this.configureElement(data,null,null,automatic,condition,invertCondition);
 		}
