@@ -140,6 +140,7 @@ namespace AutoVala {
 				error |= this.addSource(element,true,null,false,-1);
 				error |= this.processSource(element);
 			}
+			ElementBase.globalData.addExclude(this._path);
 			return error;
 		}
 

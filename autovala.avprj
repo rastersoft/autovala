@@ -7,34 +7,37 @@ custom: data/bash_completion/autovala /etc/bash_completion.d
 custom: data/cmake share/autovala
 
 *vala_binary: src/autovala
+*version: 0.26.0
+*vala_source: autovala.vala
+
+vala_library: src/autovala_lib/autovala_lib
 *version: 0.26
 *namespace: AutoVala
-*vala_source: autovala.vala
-*vala_source: autovala_lib/autovalaLib.vala
-*vala_source: autovala_lib/conditionalText.vala
-*vala_source: autovala_lib/configuration.vala
-*vala_source: autovala_lib/elementBase.vala
-*vala_source: autovala_lib/elementBinary.vala
-*vala_source: autovala_lib/elementCustom.vala
-*vala_source: autovala_lib/elementDBus.vala
-*vala_source: autovala_lib/elementData.vala
-*vala_source: autovala_lib/elementDefine.vala
-*vala_source: autovala_lib/elementDesktop.vala
-*vala_source: autovala_lib/elementDoc.vala
-*vala_source: autovala_lib/elementEosPlug.vala
-*vala_source: autovala_lib/elementGlade.vala
-*vala_source: autovala_lib/elementGlobal.vala
-*vala_source: autovala_lib/elementIcon.vala
-*vala_source: autovala_lib/elementIgnore.vala
-*vala_source: autovala_lib/elementInclude.vala
-*vala_source: autovala_lib/elementManpage.vala
-*vala_source: autovala_lib/elementPixmap.vala
-*vala_source: autovala_lib/elementPo.vala
-*vala_source: autovala_lib/elementScheme.vala
-*vala_source: autovala_lib/elementValaBinary.vala
-*vala_source: autovala_lib/gen_pkgconfig.vala
-*vala_source: autovala_lib/gen_vapis.vala
-*vala_source: autovala_lib/globals.vala
+*vala_source: autovalaLib.vala
+*vala_source: conditionalText.vala
+*vala_source: configuration.vala
+*vala_source: elementBase.vala
+*vala_source: elementBinary.vala
+*vala_source: elementCustom.vala
+*vala_source: elementDBus.vala
+*vala_source: elementData.vala
+*vala_source: elementDefine.vala
+*vala_source: elementDesktop.vala
+*vala_source: elementDoc.vala
+*vala_source: elementEosPlug.vala
+*vala_source: elementGlade.vala
+*vala_source: elementGlobal.vala
+*vala_source: elementIcon.vala
+*vala_source: elementIgnore.vala
+*vala_source: elementInclude.vala
+*vala_source: elementManpage.vala
+*vala_source: elementPixmap.vala
+*vala_source: elementPo.vala
+*vala_source: elementScheme.vala
+*vala_source: elementValaBinary.vala
+*vala_source: gen_pkgconfig.vala
+*vala_source: gen_vapis.vala
+*vala_source: globals.vala
 
 *po: po
 
