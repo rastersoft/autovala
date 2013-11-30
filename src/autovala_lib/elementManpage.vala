@@ -72,7 +72,7 @@ namespace AutoVala {
 			}
 			// The line starts with 'manpage: '
 			var data=line.substring(9).strip();
-
+			GLib.stdout.printf("Fichero2: %s\n",data);
 			string filename;
 
 			this.language = null;
@@ -103,7 +103,7 @@ namespace AutoVala {
 				}
 			break;
 			}
-
+			GLib.stdout.printf("Fichero: %s\n",filename);
 			return this.configureElement(filename,null,null,automatic,condition,invertCondition);
 		}
 
