@@ -157,6 +157,17 @@ namespace AutoVala {
 
 			return error;
 		}
+		public bool clear() {
 
+			var config=new AutoVala.Configuration();
+			var retval=config.readConfiguration();
+			config.showErrors();
+			if (retval) {
+				return true;
+			}
+			config.clearAutomatic();
+			config.saveConfiguration();
+			return false;
+		}
 	}
 }

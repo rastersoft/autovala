@@ -130,16 +130,13 @@ int main(string[] argv) {
 			help();
 			return -1;
 		}
-		var config=new AutoVala.Configuration();
-		retval=config.readConfiguration();
-		config.showErrors();
+		var gen = new AutoVala.ManageProject();
+		retval=gen.clear();
+		gen.showErrors();
 		if (retval) {
 			GLib.stdout.printf(_("Aborting\n"));
 			return -1;
 		}
-		config.clearAutomatic();
-		config.saveConfiguration();
-		config.showErrors();
 		GLib.stdout.printf(_("Done\n"));
 		break;
 	default:

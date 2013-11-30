@@ -24,7 +24,7 @@ using Posix;
 
 namespace AutoVala {
 
-	public class Configuration:GLib.Object {
+	private class Configuration:GLib.Object {
 
 		private Globals globalData = null;
 
