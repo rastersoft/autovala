@@ -46,7 +46,7 @@ namespace AutoVala {
 			return this.configureElement(data,data,data,automatic,condition,invertCondition);
 		}
 
-		public override bool autoConfigure(string path) {
+		public override bool autoConfigure(string? path=null) {
 
 			return false;
 		}

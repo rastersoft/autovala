@@ -122,6 +122,11 @@ namespace AutoVala {
 			ElementBase.globalData.clearAutomatic();
 			ElementBase.globalData.generateExtraData();
 
+			// refresh the automatic configuration for the manually-set elements 
+			foreach (var element in ElementBase.globalData.globalElements) {
+				element.autoConfigure();
+			}
+
 			error|=ElementPo.autoGenerate();
 			error|=ElementIcon.autoGenerate();
 			error|=ElementPixmap.autoGenerate();
@@ -134,8 +139,11 @@ namespace AutoVala {
 			error|=ElementData.autoGenerate();
 			error|=ElementDoc.autoGenerate();
 			error|=ElementManPage.autoGenerate();
+			error|=ElementValaBinary.autoGenerate();
 
-			error|=config.saveConfiguration();
+			if (error==false) {
+				error|=config.saveConfiguration();
+			}
 
 			return error;
 		}

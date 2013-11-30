@@ -107,7 +107,11 @@ namespace AutoVala {
 			return this.configureElement(filename,null,null,automatic,condition,invertCondition);
 		}
 
-		public override bool autoConfigure(string path) {
+		public override bool autoConfigure(string? path=null) {
+			
+			if (path==null) {
+				return false;
+			}
 
 			var elements = path.split(Path.DIR_SEPARATOR_S);
 			var len = elements.length;

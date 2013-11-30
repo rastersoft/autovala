@@ -78,13 +78,16 @@ namespace AutoVala {
 		 * @param folder The folder where to search for files
 		 * @param extensions A list with all the file extensions to search (starting with a dot), or null to add all files
 		 * @param recursive If true, will add the files from the specified folder and its subfolders
+		 * @param removeFolder If true, will not prefix the paths and filenames with FOLDER
+		 * @param masterFolder The current folder relative to the starting point (FOLDER) 
 		 *
 		 * @returns A list with all the files with its relative path to the specified starting path
 		 */
 
-		public static string[] getFilesFromFolder(string folder, string[]? extensions, bool recursive) {
+		public static string[] getFilesFromFolder(string folder, string[]? extensions, bool recursive,bool removeFolder=false, string ? masterFolder=null) {
 			
 			string[] files = {};
+
 			if (ElementBase.globalData.checkExclude(folder)) {
 				return files;
 			}
@@ -99,13 +102,23 @@ namespace AutoVala {
 				FileInfo file_info;
 				while ((file_info = enumerator.next_file ()) != null) {
 					var fname=Path.build_filename(folder,file_info.get_name());
+					string fname2;
+					if (removeFolder) {
+						if (masterFolder==null) {
+							fname2=file_info.get_name();
+						} else {
+							fname2=Path.build_filename(masterFolder,file_info.get_name());
+						}
+					} else {
+						fname2=fname;
+					}
 					if (ElementBase.globalData.checkExclude(fname)) {
 						continue;
 					}
 					var ftype=file_info.get_file_type();
 					if (ftype==GLib.FileType.DIRECTORY) {
 						if (recursive) {
-							var subDirs = ElementBase.getFilesFromFolder(fname,extensions,recursive);
+							var subDirs = ElementBase.getFilesFromFolder(fname,extensions,recursive, removeFolder, fname2);
 							foreach (var element in subDirs) {
 								files+=element;
 							}
@@ -114,11 +127,11 @@ namespace AutoVala {
 					}
 					if ((ftype==GLib.FileType.REGULAR)||(ftype==GLib.FileType.SYMBOLIC_LINK)) {
 						if (extensions==null) {
-							files+=fname;
+							files+=fname2;
 						} else {
 							foreach(var extension in extensions) {
 								if (fname.has_suffix(extension)) {
-									files+=fname;
+									files+=fname2;
 									break;
 								}
 							}
@@ -192,10 +205,15 @@ namespace AutoVala {
 
 		/**
 		 * Reads the file specified and adds automatically all its parameters
-		 * @param path The file path (relative to the project root)
+		 * @param path The file path (relative to the project root). If null, the object must reconfigure itself, taking into account the current values
+		 * (this is needed when refreshing a file with manually-added elements)
 		 * @return //true// if there was an error; //false// if not. The error texts can be obtained by calling to returnErrors()
 		 */
-		public virtual bool autoConfigure(string path) {
+		public virtual bool autoConfigure(string? path=null) {
+
+			if (path==null) {
+				return false;
+			}
 
 			return this.configureElement(path,null,null,true,null,false);
 		}

@@ -77,7 +77,10 @@ namespace AutoVala {
 		public Gee.List<SourceElement ?> sources {
 			get {return this._sources;}
 		}
-		private Gee.List<VapiElement ?> vapis;
+		private Gee.List<VapiElement ?> _vapis;
+
+		private Gee.List<string> usingList;
+		private Gee.List<string> defines;
 
 		private string? _currentNamespace;
 		public string ? currentNamespace {
@@ -97,12 +100,135 @@ namespace AutoVala {
 			this.versionAutomatic=true;
 			this.compileOptions="";
 			this._currentNamespace=null;
+			this.usingList=null;
+			this.defines=null;
 			this.namespaceAutomatic=true;
 			this.destination=null;
 			this._packages=new Gee.ArrayList<PackageElement ?>();
 			this._sources=new Gee.ArrayList<SourceElement ?>();
-			this.vapis=new Gee.ArrayList<VapiElement ?>();
+			this._vapis=new Gee.ArrayList<VapiElement ?>();
 			ElementValaBinary.addedValaBinaries = false;
+		}
+
+		public static bool autoGenerate() {
+
+			bool error=false;
+			var filePath = File.new_for_path(Path.build_filename(ElementBase.globalData.projectFolder,"src"));
+
+			if (filePath.query_exists()) {
+				var element = new ElementValaBinary();
+				error|=element.autoConfigure("src/"+ElementBase.globalData.projectName);
+			}
+			return error;
+		}
+
+		public override bool autoConfigure(string? path=null) {
+
+			bool error = false;
+			if (path != null) {
+				this._type = ConfigType.VALA_BINARY;
+				error |= this.configureElement(path,null,null,true,null,false);
+				if (error) {
+					return true;
+				}
+			}
+
+			this.usingList = new Gee.ArrayList<string>();
+			this.defines = new Gee.ArrayList<string>();
+			var files = ElementBase.getFilesFromFolder(this._path,{".vala"},true,true);
+			foreach (var element in files) {
+				error |= this.addSource(element,true,null,false,-1);
+				error |= this.processSource(element);
+			}
+			return error;
+		}
+
+		private bool processSource(string pathP) {
+
+			string line;
+			string? version=null;
+			int lineCounter=0;
+
+			string path = GLib.Path.build_filename(ElementBase.globalData.projectFolder,this._path,pathP);
+			try {
+				var file=File.new_for_path(path);
+				var dis = new DataInputStream (file.read ());
+				
+				while ((line = dis.read_line (null)) != null) {
+					if (version!=null) {
+						if ((this.versionSet) && (version!=this.version)) {
+							ElementBase.globalData.addWarning(_("Warning: file %s is overwritting the version number (line %d)").printf(pathP,lineCounter));
+						} else {
+							this.version=version;
+							this.versionSet=true;
+						}
+						version=null;
+					}
+					lineCounter++;
+					line=line.strip();
+					if (line.has_prefix("const string project_version=\"")) { // add the version (old, deprecated format)
+						ElementBase.globalData.addWarning(_("Warning: The contruction 'const string project_version=\"...\"' in file %s is deprecated. Replace it with '// project version=...'").printf(pathP));
+						var pos=line.index_of("\"",30);
+						if (pos!=-1) {
+							this.version=line.substring(30,pos-30);
+						}
+						continue;
+					}
+					if (line.has_prefix("// project version=")) { // add the version
+						version=line.strip().substring(19);
+						continue;
+					}
+					if (line.has_prefix("//project version=")) { // add the version
+						version=line.strip().substring(18);
+						continue;
+					}
+					// add the packages used by this source file
+					if ((line.has_prefix("using "))||(line.has_prefix("//using "))||(line.has_prefix("// using "))) {
+						var pos=line.index_of(";");
+						var pos2=line.index_of(" ",3);
+						if (pos==-1) {
+							if ((line.has_prefix("//using "))||(line.has_prefix("// using "))) {
+								pos=line.length; // allow to put //using without a ; at the end, but also accept with it
+							} else {
+								continue;
+							}
+						}
+						var namespaceFound=line.substring(pos2,pos-pos2).strip();
+						if (this.usingList.contains(namespaceFound)==false) {
+							this.usingList.add(namespaceFound);
+						}
+						continue;
+					}
+					if (line.has_prefix("namespace ")) {
+						var pos=line.index_of("{");
+						if (pos==-1) {
+							pos=line.length-1;
+						}
+						var namespaceFound=line.substring(10,pos-10).strip();
+						if ((this.currentNamespace!=null)&&(this.currentNamespace!=namespaceFound)) {
+							ElementBase.globalData.addWarning(_("Warning: file %s is overwritting the namespace (line %d)").printf(pathP,lineCounter));
+							continue;
+						}
+						this._currentNamespace=namespaceFound;
+						continue;
+					}
+					if ((line.has_prefix("#if ")) || (line.has_prefix("#elif "))) { // Add #defines
+						var pos=line.index_of(" ");
+						string element=line.substring(pos).strip();
+						// remove all logical elements to get a set of DEFINEs
+						string[] elements=element.replace("&&"," ").replace("||"," ").replace("=="," ").replace("!="," ").replace("!"," ").replace("("," ").replace(")"," ").split(" ");
+						foreach(var l in elements) {
+							if ((l!="")&&(l.ascii_casecmp("true")!=0)&&(l.ascii_casecmp("false")!=0)&&(this.defines.contains(l)==false)) {
+								this.defines.add(l);
+							}
+						}
+					}
+				}
+			} catch (Error e) {
+				ElementBase.globalData.addError(_("Error: Can't open for read the file %s").printf(pathP));
+				return true;
+			}
+			return false;
 		}
 
 		public override void clearAutomatic() {
@@ -129,14 +255,14 @@ namespace AutoVala {
 					sourcesTmp.add(e);
 				}
 			}
-			foreach (var e in this.vapis) {
+			foreach (var e in this._vapis) {
 				if (e.automatic==false) {
 					vapisTmp.add(e);
 				}
 			}
 			this._packages=packagesTmp;
 			this._sources=sourcesTmp;
-			this.vapis=vapisTmp;
+			this._vapis=vapisTmp;
 		}
 
 		public static int comparePackages (GenericElement? a, GenericElement? b) {
@@ -162,7 +288,7 @@ namespace AutoVala {
 		public override void sortElements() {
 			this._packages.sort(AutoVala.ElementValaBinary.comparePackages);
 			this._sources.sort(AutoVala.ElementValaBinary.comparePackages);
-			this.vapis.sort(AutoVala.ElementValaBinary.comparePackages);
+			this._vapis.sort(AutoVala.ElementValaBinary.comparePackages);
 		}
 
 		private void transformToNonAutomatic(bool automatic) {
@@ -199,7 +325,7 @@ namespace AutoVala {
 					this.namespaceAutomatic=false;
 				}
 			} else {
-				ElementBase.globalData.addWarning(_("Warning: ignoring duplicated VERSION command (line %d)").printf(lineNumber));
+				ElementBase.globalData.addWarning(_("Warning: ignoring duplicated NAMESPACE command (line %d)").printf(lineNumber));
 			}
 			return false;
 		}
@@ -277,13 +403,13 @@ namespace AutoVala {
 				this.transformToNonAutomatic(false);
 			}
 
-			foreach(var element in this.vapis) {
+			foreach(var element in this._vapis) {
 				if (element.elementName==vapiFile) {
 					return false;
 				}
 			}
 			var element=new VapiElement(vapiFile,automatic,condition, invertCondition);
-			this.vapis.add(element);
+			this._vapis.add(element);
 			return false;
 		}
 
@@ -494,8 +620,8 @@ namespace AutoVala {
 				dataStream.put_string("\n");
 
 				bool has_custom_VAPIs=false;
-				if ((this.vapis.size!=0)||(found_local==true)) {
-					foreach (var filename in this.vapis) {
+				if ((this._vapis.size!=0)||(found_local==true)) {
+					foreach (var filename in this._vapis) {
 						printConditions.printCondition(filename.condition,filename.invertCondition);
 						dataStream.put_string("set(CUSTOM_VAPIS_LIST ${CUSTOM_VAPIS_LIST} ${CMAKE_SOURCE_DIR}/%s)\n".printf(Path.build_filename(this._path,filename.elementName)));
 						has_custom_VAPIs=true;
@@ -743,7 +869,7 @@ namespace AutoVala {
 				}
 				printConditions.printTail();
 
-				foreach(var element in this.vapis) {
+				foreach(var element in this._vapis) {
 					printConditions.printCondition(element.condition,element.invertCondition);
 					if (element.automatic) {
 						dataStream.put_string("*");

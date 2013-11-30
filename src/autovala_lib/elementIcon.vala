@@ -75,7 +75,11 @@ namespace AutoVala {
 			return this.configureElement(data,null,null,automatic,condition,invertCondition);
 		}
 
-		public override bool autoConfigure(string path) {
+		public override bool autoConfigure(string? path=null) {
+
+			if (path == null) {
+				return false;
+			}
 
 			if (path.has_suffix("-symbolic.svg")) {
 				this.iconCathegory="status";

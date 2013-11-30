@@ -59,7 +59,14 @@ namespace AutoVala {
 			return this.configureElement(data,null,null,automatic,condition,invertCondition);
 		}
 
-		public override bool autoConfigure(string path) {
+		public override bool autoConfigure(string? pathP=null) {
+
+			string path;
+			if (pathP == null) {
+				path = this.fullPath;
+			} else {
+				path = pathP;
+			}
 
 			this._type = ConfigType.DESKTOP;
 			this.command = "desktop";
@@ -79,7 +86,11 @@ namespace AutoVala {
 				return true;
 			}
 
-			return this.configureElement(path,null,null,true,null,false);
+			if (pathP!=null) {
+				return this.configureElement(path,null,null,true,null,false);
+			} else {
+				return false;
+			}
 		}
 
 		public override bool generateCMake(DataOutputStream dataStream) {
