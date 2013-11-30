@@ -29,8 +29,6 @@ namespace AutoVala {
 		private AutoVala.Globals globalData;
 
 		public ManageProject() {
-			this.config = new AutoVala.Configuration();
-			this.globalData = ElementBase.globalData;
 		}
 
 		public bool init(string projectName) {
@@ -44,6 +42,9 @@ namespace AutoVala {
 		public bool cmake() {
 
 			bool error;
+
+			this.config = new AutoVala.Configuration();
+			this.globalData = ElementBase.globalData;
 
 			error=config.readConfiguration();
 			if (error) {
@@ -123,6 +124,9 @@ namespace AutoVala {
 		public bool refresh() {
 
 			bool error;
+
+			this.config = new AutoVala.Configuration();
+			this.globalData = ElementBase.globalData;
 
 			error=config.readConfiguration();
 			ElementBase.globalData.clearAutomatic();
