@@ -32,6 +32,8 @@ namespace AutoVala {
 
 		public int valaMajor; // Vala version currently installed in the system (major number)
 		public int valaMinor; // Vala version currently installed in the system (minor number)
+		public int valaVersionMajor; // Minimun Vala version needed to compile the project (major number)
+		public int valaVersionMinor; // Minimun Vala version needed to compile the project (minor number)
 
 		public string[] excludeFiles; // A list with all the files and paths that must be avoided when doing automatic detection
 		public Gee.List<ElementBase> globalElements; // The list of all elements
@@ -216,8 +218,8 @@ namespace AutoVala {
 			/*
 			 * Maybe a not very elegant way of doing it. I accept patches
 			 */
-			this.valaMajor=16;
-			this.valaMinor=0;
+			this.valaMajor=0;
+			this.valaMinor=16;
 
 			if (0!=Posix.system("valac --version > /var/tmp/current_vala_version")) {
 				return true;
@@ -238,6 +240,8 @@ namespace AutoVala {
 					}
 				}
 			} catch (Error e) {
+				this.valaMajor=0;
+				this.valaMinor=16;
 				return true;
 			}
 			return true;

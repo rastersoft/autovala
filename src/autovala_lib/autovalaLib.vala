@@ -140,7 +140,8 @@ namespace AutoVala {
 				ElementBase.globalData.addWarning(_("Can't create the initial source file"));
 			}
 
-			this.config.valaVersion="%d.%d".printf(this.config.globalData.valaMajor,this.config.globalData.valaMinor);
+			this.config.globalData.valaVersionMajor=this.config.globalData.valaMajor;
+			this.config.globalData.valaVersionMinor=this.config.globalData.valaMinor;
 			this.config.globalData.setConfigFilename(projectName+".avprj");
 			if (error==false) {
 				error |= this.config.saveConfiguration();

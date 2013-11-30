@@ -27,7 +27,6 @@ namespace AutoVala {
 		public Globals globalData = null;
 
 		public string basepath; // Contains the full path where the configuration file is stored
-		public string valaVersion; // Minimun Vala version needed to compile this
 
 		public int currentVersion; // Contains the version of the currently supported syntax
 		public Gee.List<string> conditionalElements;
@@ -55,7 +54,8 @@ namespace AutoVala {
 
 			this.globalData = new AutoVala.Globals(projectName);
 
-			this.valaVersion="0.16";
+			this.globalData.valaVersionMajor=0;
+			this.globalData.valaVersionMinor=16;
 			this.resetCondition();
 		}
 
@@ -306,7 +306,8 @@ namespace AutoVala {
 								error=true;
 								break;
 							}
-							this.valaVersion=version;
+							this.globalData.valaVersionMajor=fMajor;
+							this.globalData.valaVersionMinor=fMinor;
 						}
 						continue;
 					}
@@ -432,8 +433,12 @@ namespace AutoVala {
 				var data_stream = new DataOutputStream(dis);
 				data_stream.put_string("### AutoVala Project ###\n");
 				data_stream.put_string("autovala_version: %d\n".printf(this.currentVersion));
-				data_stream.put_string("project_name: "+this.globalData.projectName+"\n");
-				data_stream.put_string("vala_version: "+this.valaVersion+"\n\n");
+				data_stream.put_string("project_name: %s\n".printf(this.globalData.projectName));
+				if ((this.globalData.valaMajor>this.globalData.valaVersionMajor) || ((this.globalData.valaMajor==this.globalData.valaVersionMajor)&&(this.globalData.valaMinor>this.globalData.valaVersionMinor))) {
+					data_stream.put_string("vala_version: %d.%d\n\n".printf(this.globalData.valaMajor,this.globalData.valaMinor));
+				} else {
+					data_stream.put_string("vala_version: %d.%d\n\n".printf(this.globalData.valaVersionMajor,this.globalData.valaVersionMinor));
+				}
 				this.storeData(ConfigType.IGNORE,data_stream);
 				this.storeData(ConfigType.CUSTOM,data_stream);
 				this.storeData(ConfigType.DEFINE,data_stream);

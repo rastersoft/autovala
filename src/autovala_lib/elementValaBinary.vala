@@ -642,7 +642,7 @@ namespace AutoVala {
 				dataStream.put_string(")\n");
 				dataStream.put_string("find_package(Vala REQUIRED)\n");
 				dataStream.put_string("include(ValaVersion)\n");
-				dataStream.put_string("ensure_vala_version(\"%d.%d\" MINIMUM)\n".printf(ElementBase.globalData.valaMajor,ElementBase.globalData.valaMinor));
+				dataStream.put_string("ensure_vala_version(\"%d.%d\" MINIMUM)\n".printf(ElementBase.globalData.valaVersionMajor,ElementBase.globalData.valaVersionMinor));
 				dataStream.put_string("include(ValaPrecompile)\n\n");
 
 				var printConditions=new ConditionalText(dataStream,true);
