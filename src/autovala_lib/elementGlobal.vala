@@ -37,7 +37,7 @@ namespace AutoVala {
 			var path = Path.build_filename(ElementBase.globalData.projectFolder,element);
 			var dirpath=File.new_for_path(path);
 			if (dirpath.query_exists()==false) {
-				ElementBase.globalData.addError(_("Warning: directory %s doesn't exists").printf(element));
+				ElementBase.globalData.addWarning(_("Directory %s doesn't exists").printf(element));
 				return;
 			} else {
 				if (element!="src") {
@@ -58,7 +58,7 @@ namespace AutoVala {
 							break;
 						}
 					} catch (Error e) {
-						ElementBase.globalData.addError(_("Warning: can't access folder %s").printf(element));
+						ElementBase.globalData.addWarning(_("Can't access folder %s").printf(element));
 						return;
 					}
 					if (hasChildrens==false) {
@@ -68,7 +68,7 @@ namespace AutoVala {
 				try {
 					dataStream.put_string("add_subdirectory("+element+")\n");
 				} catch (Error e) {
-					ElementBase.globalData.addError(_("Warning: can't add subdirectory %s").printf(element));
+					ElementBase.globalData.addWarning(_("Can't add subdirectory %s").printf(element));
 				}
 			}
 

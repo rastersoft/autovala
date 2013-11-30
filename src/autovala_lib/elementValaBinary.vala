@@ -206,7 +206,7 @@ namespace AutoVala {
 				while ((line = dis.read_line (null)) != null) {
 					if (version!=null) {
 						if ((this.versionSet) && (version!=this.version)) {
-							ElementBase.globalData.addWarning(_("Warning: file %s is overwritting the version number (line %d)").printf(pathP,lineCounter));
+							ElementBase.globalData.addWarning(_("File %s is overwritting the version number (line %d)").printf(pathP,lineCounter));
 						} else {
 							this.version=version;
 							this.versionSet=true;
@@ -216,7 +216,7 @@ namespace AutoVala {
 					lineCounter++;
 					line=line.strip();
 					if (line.has_prefix("const string project_version=\"")) { // add the version (old, deprecated format)
-						ElementBase.globalData.addWarning(_("Warning: The contruction 'const string project_version=\"...\"' in file %s is deprecated. Replace it with '// project version=...'").printf(pathP));
+						ElementBase.globalData.addWarning(_("The contruction 'const string project_version=\"...\"' in file %s is deprecated. Replace it with '// project version=...'").printf(pathP));
 						var pos=line.index_of("\"",30);
 						if (pos!=-1) {
 							this.version=line.substring(30,pos-30);
@@ -255,7 +255,7 @@ namespace AutoVala {
 						}
 						var namespaceFound=line.substring(10,pos-10).strip();
 						if ((this.currentNamespace!=null)&&(this.currentNamespace!=namespaceFound)) {
-							ElementBase.globalData.addWarning(_("Warning: file %s is overwritting the namespace (line %d)").printf(pathP,lineCounter));
+							ElementBase.globalData.addWarning(_("File %s is overwritting the namespace (line %d)").printf(pathP,lineCounter));
 							continue;
 						}
 						this._currentNamespace=namespaceFound;
@@ -275,7 +275,7 @@ namespace AutoVala {
 					}
 				}
 			} catch (Error e) {
-				ElementBase.globalData.addError(_("Error: Can't open for read the file %s").printf(pathP));
+				ElementBase.globalData.addError(_("Can't open for read the file %s").printf(pathP));
 				return true;
 			}
 			return false;
@@ -363,7 +363,7 @@ namespace AutoVala {
 				this.transformToNonAutomatic(automatic);
 				return false;
 			} else {
-				ElementBase.globalData.addError(_("Error: syntax error in VERSION statement (line %d)").printf(lineNumber));
+				ElementBase.globalData.addError(_("Syntax error in VERSION statement (line %d)").printf(lineNumber));
 				return true;
 			}
 		}
@@ -375,7 +375,7 @@ namespace AutoVala {
 					this.namespaceAutomatic=false;
 				}
 			} else {
-				ElementBase.globalData.addWarning(_("Warning: ignoring duplicated NAMESPACE command (line %d)").printf(lineNumber));
+				ElementBase.globalData.addWarning(_("Ignoring duplicated NAMESPACE command (line %d)").printf(lineNumber));
 			}
 			return false;
 		}
@@ -384,7 +384,7 @@ namespace AutoVala {
 			if (this.compileOptions==null) {
 				this.compileOptions=options;
 			} else {
-				ElementBase.globalData.addWarning(_("Warning: ignoring duplicated OPTIONS command (line %d)").printf(lineNumber));
+				ElementBase.globalData.addWarning(_("Ignoring duplicated OPTIONS command (line %d)").printf(lineNumber));
 			}
 			return false;
 		}
@@ -393,7 +393,7 @@ namespace AutoVala {
 			if (this.destination==null) {
 				this.destination=destination;
 			} else {
-				ElementBase.globalData.addWarning(_("Warning: ignoring duplicated DESTINATION command (line %d)").printf(lineNumber));
+				ElementBase.globalData.addWarning(_("Ignoring duplicated DESTINATION command (line %d)").printf(lineNumber));
 			}
 			return false;
 		}
@@ -491,7 +491,7 @@ namespace AutoVala {
 				return this.addVapi(line.substring(11).strip(),automatic,condition,invertCondition,lineNumber);
 			} else {
 				var badCommand = line.split(": ")[0];
-				ElementBase.globalData.addError(_("Error: invalid command %s after command %s (line %d)").printf(badCommand,this.command, lineNumber));
+				ElementBase.globalData.addError(_("Invalid command %s after command %s (line %d)").printf(badCommand,this.command, lineNumber));
 				return true;
 			}
 
@@ -618,7 +618,7 @@ namespace AutoVala {
 							}
 							dataStream.put_string("${CMAKE_BINARY_DIR}/"+ElementBase.globalData.localModules.get(module.elementName)+" ");
 						} else {
-							ElementBase.globalData.addWarning(_("Warning: Can't set package %s for binary %s").printf(module.elementName,this.name));
+							ElementBase.globalData.addWarning(_("Can't set package %s for binary %s").printf(module.elementName,this.name));
 						}
 					}
 				}
@@ -723,7 +723,7 @@ namespace AutoVala {
 					if (girFilename!="") {
 						final_options+=" --gir "+girFilename;
 					} else {
-						ElementBase.globalData.addWarning(_("Warning: no namespace specified in library %s; GIR file will not be generated").printf(this.name));
+						ElementBase.globalData.addWarning(_("No namespace specified in library %s; GIR file will not be generated").printf(this.name));
 					}
 					final_options+=" "+this.compileOptions;
 				}

@@ -34,13 +34,13 @@ namespace AutoVala {
 
 			if (false == line.has_prefix("custom: ")) {
 				var badCommand = line.split(": ")[0];
-				ElementBase.globalData.addError(_("Error: invalid command %s after command %s (line %d)").printf(badCommand,this.command, lineNumber));
+				ElementBase.globalData.addError(_("Invalid command %s after command %s (line %d)").printf(badCommand,this.command, lineNumber));
 				return true;
 			}
 			// The line starts with 'custom: '
 			var data=line.substring(8).strip().split(" ");
 			if (data.length!=2) {
-				ElementBase.globalData.addError(_("custom command needs two parameters (line %d)").printf(lineNumber));
+				ElementBase.globalData.addError(_("Custom command needs two parameters (line %d)").printf(lineNumber));
 				return true;
 			}
 			var file = data[0];

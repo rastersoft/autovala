@@ -253,7 +253,7 @@ namespace AutoVala {
 		 */
 		public void addError(string errorMsg) {
 			this.error = true;
-			this.errorList += errorMsg;
+			this.errorList += "Error: %s".printf(errorMsg);
 		}
 
 		/**
@@ -262,7 +262,7 @@ namespace AutoVala {
 		 */
 		public void addWarning(string warningMsg) {
 			this.warning = true;
-			this.errorList += warningMsg;
+			this.errorList += "Warning: %s".printf(warningMsg);
 		}
 
 		/**

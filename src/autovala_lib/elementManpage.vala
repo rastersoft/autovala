@@ -67,7 +67,7 @@ namespace AutoVala {
 
 			if (false == line.has_prefix("manpage: ")) {
 				var badCommand = line.split(": ")[0];
-				ElementBase.globalData.addError(_("Error: invalid command %s after command %s (line %d)").printf(badCommand,this.command, lineNumber));
+				ElementBase.globalData.addError(_("Invalid command %s after command %s (line %d)").printf(badCommand,this.command, lineNumber));
 				return true;
 			}
 			// The line starts with 'manpage: '
@@ -80,7 +80,7 @@ namespace AutoVala {
 			var elements=data.split(" ");
 			switch (elements.length) {
 			default:
-				ElementBase.globalData.addError(_("manpage command needs one, two or three parameters (line %d)").printf(lineNumber));
+				ElementBase.globalData.addError(_("Manpage command needs one, two or three parameters (line %d)").printf(lineNumber));
 				return true;
 			case 1: // manpage in default language, section 1
 				filename=elements[0];

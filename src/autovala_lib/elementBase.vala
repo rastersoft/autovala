@@ -90,7 +90,7 @@ namespace AutoVala {
 
 			var dirPath=File.new_for_path(Path.build_filename(ElementBase.globalData.projectFolder,folder));
 			if (dirPath.query_exists()==false) {
-				ElementBase.globalData.addWarning(_("Warning: directory %s doesn't exists").printf(folder));
+				ElementBase.globalData.addWarning(_("Directory %s doesn't exists").printf(folder));
 				return files;
 			}
 
@@ -136,7 +136,7 @@ namespace AutoVala {
 					}
 				}
 			} catch (Error e) {
-				ElementBase.globalData.addWarning(_("Warning: can't access folder %s").printf(folder));
+				ElementBase.globalData.addWarning(_("Can't access folder %s").printf(folder));
 				return files;
 			}
 			return files;
@@ -155,7 +155,7 @@ namespace AutoVala {
 		public virtual bool configureElement(string fullPathP, string? path, string? name, bool automatic, string? condition, bool invertCondition) {
 
 			if (fullPathP=="") {
-				ElementBase.globalData.addError(_("Error: trying to add an empty path: %s").printf(fullPath));
+				ElementBase.globalData.addError(_("Trying to add an empty path: %s").printf(fullPath));
 				return true;
 			}
 
@@ -165,7 +165,7 @@ namespace AutoVala {
 			}
 
 			if (ElementBase.globalData.checkExclude(fullPath)) {
-				ElementBase.globalData.addWarning(_("Warning: trying to add twice the path %s").printf(fullPath));
+				ElementBase.globalData.addWarning(_("Trying to add twice the path %s").printf(fullPath));
 				return false;
 			}
 
@@ -173,7 +173,7 @@ namespace AutoVala {
 			if ((path==null)||(name==null)) {
 				var file = File.new_for_path(Path.build_filename(ElementBase.globalData.projectFolder,fullPath));
 				if (file.query_exists()==false) {
-					ElementBase.globalData.addWarning(_("Warning: file %s doesn't exists").printf(fullPath));
+					ElementBase.globalData.addWarning(_("File %s doesn't exists").printf(fullPath));
 					return false;
 				}
 				if (file.query_file_type(FileQueryInfoFlags.NONE)!=FileType.DIRECTORY) {
@@ -208,7 +208,7 @@ namespace AutoVala {
 
 			if (false == line.has_prefix(this.command+": ")) {
 				var badCommand = line.split(": ")[0];
-				ElementBase.globalData.addError(_("Error: invalid command %s after command %s (line %d)").printf(badCommand,this.command, lineNumber));
+				ElementBase.globalData.addError(_("Invalid command %s after command %s (line %d)").printf(badCommand,this.command, lineNumber));
 				return true;
 			}
 			var data=line.substring(2+this.command.length).strip();

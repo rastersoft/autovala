@@ -52,7 +52,7 @@ namespace AutoVala {
 				this.command = "autostart";
 			} else {
 				var badCommand = line.split(": ")[0];
-				ElementBase.globalData.addError(_("Error: invalid command %s after command %s (line %d)").printf(badCommand,this.command, lineNumber));
+				ElementBase.globalData.addError(_("Invalid command %s after command %s (line %d)").printf(badCommand,this.command, lineNumber));
 				return true;
 			}
 			var data=line.substring(2+this.command.length).strip();

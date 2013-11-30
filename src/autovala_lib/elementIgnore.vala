@@ -32,7 +32,7 @@ namespace AutoVala {
 
 			if (false == line.has_prefix("ignore: ")) {
 				var badCommand = line.split(": ")[0];
-				ElementBase.globalData.addError(_("Error: invalid command %s after command %s (line %d)").printf(badCommand,this.command, lineNumber));
+				ElementBase.globalData.addError(_("Invalid command %s after command %s (line %d)").printf(badCommand,this.command, lineNumber));
 				return true;
 			}
 			// The line starts with 'ignore: '
