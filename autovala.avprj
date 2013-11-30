@@ -55,8 +55,8 @@ vala_library: src/autovala_lib/autovala_lib
 
 *doc: doc
 
-manpage: wiki/autovala.1.md
-manpage: wiki/autovala-rules.7.md default 7
 manpage: wiki/autovala-fileformat.5.md default 5
+manpage: wiki/autovala-rules.7.md default 7
 manpage: wiki/autovala-tricks.7.md default 7
+manpage: wiki/autovala.1.md
 manpage: wiki/autovala-keep-changes.7.md default 7
