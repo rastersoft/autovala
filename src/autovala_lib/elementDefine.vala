@@ -37,17 +37,20 @@ namespace AutoVala {
 			}
 			// The line starts with 'define: '
 			var data=line.substring(8).strip();
+			return this.addNewDefine(data,automatic);
+		}
+
+		public bool addNewDefine(string data,bool automatic=true) {
+
 			foreach (var element in ElementBase.globalData.globalElements) {
 				if (element.name==data) {
 					return false; // this DEFINE already exists
 				}
 			}
-
-			return this.configureElement(data,data,data,automatic,condition,invertCondition);
+			return this.configureElement(data,data,data,automatic,null,false);			
 		}
 
 		public override bool autoConfigure(string? path=null) {
-
 			return false;
 		}
 	}

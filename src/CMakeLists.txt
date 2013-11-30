@@ -48,18 +48,18 @@ set (VALA_PACKAGES ${VALA_PACKAGES} glib-2.0)
 set (VALA_PACKAGES ${VALA_PACKAGES} gtk+-3.0)
 
 set (APP_SOURCES ${APP_SOURCES} ${CMAKE_CURRENT_BINARY_DIR}/Config.vala)
-set (APP_SOURCES ${APP_SOURCES} autovala_lib/autovalaLib.vala)
 set (APP_SOURCES ${APP_SOURCES} autovala_lib/elementIgnore.vala)
 set (APP_SOURCES ${APP_SOURCES} autovala_lib/elementInclude.vala)
+set (APP_SOURCES ${APP_SOURCES} autovala_lib/autovalaLib.vala)
 set (APP_SOURCES ${APP_SOURCES} autovala_lib/elementBase.vala)
+set (APP_SOURCES ${APP_SOURCES} autovala_lib/readPkgconfig.vala)
 set (APP_SOURCES ${APP_SOURCES} autovala_lib/elementGlade.vala)
 set (APP_SOURCES ${APP_SOURCES} autovala_lib/elementPixmap.vala)
 set (APP_SOURCES ${APP_SOURCES} autovala_lib/elementDoc.vala)
 set (APP_SOURCES ${APP_SOURCES} autovala_lib/globals.vala)
-set (APP_SOURCES ${APP_SOURCES} autovala_lib/gen_pkgconfig.vala)
 set (APP_SOURCES ${APP_SOURCES} autovala_lib/elementValaBinary.vala)
+set (APP_SOURCES ${APP_SOURCES} autovala_lib/genVapis.vala)
 set (APP_SOURCES ${APP_SOURCES} autovala_lib/elementDBus.vala)
-set (APP_SOURCES ${APP_SOURCES} autovala_lib/gen_vapis.vala)
 set (APP_SOURCES ${APP_SOURCES} autovala_lib/elementDefine.vala)
 set (APP_SOURCES ${APP_SOURCES} autovala_lib/elementGlobal.vala)
 set (APP_SOURCES ${APP_SOURCES} autovala_lib/elementCustom.vala)
@@ -72,13 +72,19 @@ set (APP_SOURCES ${APP_SOURCES} autovala.vala)
 set (APP_SOURCES ${APP_SOURCES} autovala_lib/elementEosPlug.vala)
 set (APP_SOURCES ${APP_SOURCES} autovala_lib/configuration.vala)
 set (APP_SOURCES ${APP_SOURCES} autovala_lib/elementScheme.vala)
-set (APP_SOURCES ${APP_SOURCES} autovala_lib/elementDesktop.vala)
 set (APP_SOURCES ${APP_SOURCES} autovala_lib/elementData.vala)
+set (APP_SOURCES ${APP_SOURCES} autovala_lib/elementDesktop.vala)
+
+IF (PRUEBA2)
+	SET(OPTION_DEFINES ${OPTION_DEFINES} -D PRUEBA2)
+ENDIF()
 
 vala_precompile(VALA_C autovala
 	${APP_SOURCES}
 PACKAGES
 	${VALA_PACKAGES}
+OPTIONS
+	 ${OPTION_DEFINES}
 )
 
 add_executable(autovala ${VALA_C})

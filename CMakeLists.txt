@@ -9,6 +9,7 @@ enable_testing ()
 
 option(ICON_UPDATE "Update the icon cache after installing" ON)
 option(BUILD_VALADOC "Build API documentation if Valadoc is available" OFF)
+option(PRUEBA2 "PRUEBA2" OFF)
 
 set(HAVE_VALADOC OFF)
 if(BUILD_VALADOC)

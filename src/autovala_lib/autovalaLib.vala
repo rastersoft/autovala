@@ -122,7 +122,7 @@ namespace AutoVala {
 			ElementBase.globalData.clearAutomatic();
 			ElementBase.globalData.generateExtraData();
 
-			// refresh the automatic configuration for the manually-set elements 
+			// refresh the automatic configuration for the manually set elements 
 			foreach (var element in ElementBase.globalData.globalElements) {
 				element.autoConfigure();
 			}

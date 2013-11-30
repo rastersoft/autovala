@@ -23,14 +23,14 @@ namespace AutoVala {
 
 	public enum packageType {NO_CHECK, DO_CHECK, LOCAL}
 
-	public class GenericElement:GLib.Object {
+	private class GenericElement:GLib.Object {
 		public string elementName;
 		public string? condition;
 		public bool invertCondition;
 		public bool automatic;
 	}
 
-	public class PackageElement:GenericElement {
+	private class PackageElement:GenericElement {
 
 		public packageType type;
 
@@ -43,7 +43,7 @@ namespace AutoVala {
 		}
 	}
 
-	public class SourceElement:GenericElement {
+	private class SourceElement:GenericElement {
 
 		public SourceElement(string source, bool automatic, string? condition, bool inverted) {
 			this.elementName=source;
@@ -53,7 +53,7 @@ namespace AutoVala {
 		}
 	}
 
-	public class VapiElement:GenericElement {
+	private class VapiElement:GenericElement {
 
 		public VapiElement(string vapi, bool automatic, string? condition, bool inverted) {
 			this.elementName=vapi;
@@ -63,7 +63,7 @@ namespace AutoVala {
 		}
 	}
 
-	class ElementValaBinary : ElementBase {
+	private class ElementValaBinary : ElementBase {
 
 		private string version;
 		private bool versionSet;
@@ -113,11 +113,20 @@ namespace AutoVala {
 		public static bool autoGenerate() {
 
 			bool error=false;
-			var filePath = File.new_for_path(Path.build_filename(ElementBase.globalData.projectFolder,"src"));
+			ElementBase.globalData.generateExtraData();
+			if (false==ElementBase.globalData.checkExclude("src")) {
+				var filePath = File.new_for_path(Path.build_filename(ElementBase.globalData.projectFolder,"src"));
 
-			if (filePath.query_exists()) {
-				var element = new ElementValaBinary();
-				error|=element.autoConfigure("src/"+ElementBase.globalData.projectName);
+				if (filePath.query_exists()) {
+					var element = new ElementValaBinary();
+					error|=element.autoConfigure("src/"+ElementBase.globalData.projectName);
+				}
+			}
+			foreach(var element in ElementBase.globalData.globalElements) {
+				if ((element.eType==ConfigType.VALA_BINARY)||(element.eType==ConfigType.VALA_LIBRARY)) {
+					var elementBinary = element as ElementValaBinary;
+					elementBinary.checkDependencies();
+				}
 			}
 			return error;
 		}
@@ -135,6 +144,16 @@ namespace AutoVala {
 
 			this.usingList = new Gee.ArrayList<string>();
 			this.defines = new Gee.ArrayList<string>();
+			
+			foreach(var element in this._packages) {
+				if (element.type!=packageType.LOCAL) {
+					continue;
+				}
+				if (this.usingList.contains(element.elementName)==false) {
+					this.usingList.add(element.elementName);
+				}
+			}
+
 			var files = ElementBase.getFilesFromFolder(this._path,{".vala"},true,true);
 			foreach (var element in files) {
 				error |= this.addSource(element,true,null,false,-1);
@@ -142,6 +161,34 @@ namespace AutoVala {
 			}
 			ElementBase.globalData.addExclude(this._path);
 			return error;
+		}
+
+		private bool checkDependencies() {
+
+			// Check which dependencies are resolved by local libraries
+			foreach(var element in ElementBase.globalData.localModules.keys) {
+				if (this.usingList.contains(element)) {
+					this.usingList.remove(element);
+				}
+			}
+			// Check which dependencies are already resolved by manually added packages
+			foreach(var element in this._packages) {
+				var namespaceP = ElementBase.globalData.vapiList.getNamespaceFromPackage(element.elementName);
+				if ((namespaceP!=null)&&(this.usingList.contains(namespaceP))) {
+					this.usingList.remove(namespaceP);
+				}
+			}
+
+			// Finally, add the dependencies not resolved yet
+			foreach(var element in ElementBase.globalData.vapiList.getNamespaces()) {
+				if (this.usingList.contains(element)) {
+					bool isCheckable=false;
+					this.usingList.remove(element);
+					var filename = ElementBase.globalData.vapiList.getPackageFromNamespace(element, out isCheckable);
+					this.addPackage(filename,isCheckable ? packageType.DO_CHECK : packageType.NO_CHECK, true, null, false, -1);
+				}
+			}
+			return false;
 		}
 
 		private bool processSource(string pathP) {
@@ -220,7 +267,8 @@ namespace AutoVala {
 						string[] elements=element.replace("&&"," ").replace("||"," ").replace("=="," ").replace("!="," ").replace("!"," ").replace("("," ").replace(")"," ").split(" ");
 						foreach(var l in elements) {
 							if ((l!="")&&(l.ascii_casecmp("true")!=0)&&(l.ascii_casecmp("false")!=0)&&(this.defines.contains(l)==false)) {
-								this.defines.add(l);
+								var define=new ElementDefine();
+								define.addNewDefine(l);
 							}
 						}
 					}
@@ -447,7 +495,7 @@ namespace AutoVala {
 			}
 
 			var data=line.substring(2+this.command.length).strip();
-			return this.configureElement(data,null,null,automatic,condition,invertCondition);
+			return this.configureElement(GLib.Path.get_dirname(data),GLib.Path.get_dirname(data),GLib.Path.get_basename(data),automatic,condition,invertCondition);
 		}
 
 		public override void endedCMakeFile() {
@@ -806,9 +854,9 @@ namespace AutoVala {
 					dataStream.put_string("*");
 				}
 				if (this._type == ConfigType.VALA_BINARY) {
-					dataStream.put_string("vala_binary: %s\n".printf(this.fullPath));
+					dataStream.put_string("vala_binary: %s\n".printf(Path.build_filename(this._path,this._name)));
 				} else {
-					dataStream.put_string("vala_library: %s\n".printf(this.fullPath));
+					dataStream.put_string("vala_library: %s\n".printf(Path.build_filename(this._path,this._name)));
 				}
 				if (this.versionSet) {
 					if (this.versionAutomatic) {
@@ -816,7 +864,7 @@ namespace AutoVala {
 					}
 					dataStream.put_string("version: %s\n".printf(this.version));
 				}
-				if (this._currentNamespace!=null) {
+				if ((this._currentNamespace!=null)&&(this._type==ConfigType.VALA_LIBRARY)) {
 					if (this.namespaceAutomatic) {
 						dataStream.put_string("*");
 					}

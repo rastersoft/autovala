@@ -152,17 +152,10 @@ namespace AutoVala {
 
 				dataStream.put_string("pkg_check_modules(DEPS REQUIRED ${MODULES_TO_CHECK})\n\n");
 
-				var localModules=new Gee.HashMap<string,string>();
 				var ignoreList=new Gee.HashSet<string>();
 				foreach(var element in ElementBase.globalData.globalElements) {
 					if ((element.eType==ConfigType.IGNORE)&&(ignoreList.contains(element.path)==false)) {
 						ignoreList.add(element.path);
-					}
-					if (element.eType==ConfigType.VALA_LIBRARY) {
-						var binElement = element as ElementValaBinary;
-						if ((binElement.currentNamespace!="")&&(localModules.has_key(binElement.currentNamespace)==false)) {
-							localModules.set(binElement.currentNamespace,binElement.path);
-						}
 					}
 				}
 

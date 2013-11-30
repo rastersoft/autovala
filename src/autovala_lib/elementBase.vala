@@ -88,9 +88,6 @@ namespace AutoVala {
 			
 			string[] files = {};
 
-			if (ElementBase.globalData.checkExclude(folder)) {
-				return files;
-			}
 			var dirPath=File.new_for_path(Path.build_filename(ElementBase.globalData.projectFolder,folder));
 			if (dirPath.query_exists()==false) {
 				ElementBase.globalData.addWarning(_("Warning: directory %s doesn't exists").printf(folder));
@@ -147,13 +144,15 @@ namespace AutoVala {
 
 		/**
 		 * Configures the common file parameters
-		 * @param path The file path, relative to the project's root
+		 * @param fullPath The file path and file name, relative to the project's root
+		 * @param path Only the file path, or null if it must be derived from fullPath
+		 * @param name Only the file name, or null if it must be derived from fullPath
 		 * @param automatic //true// if this file has been processed automatically; //false// if the user modified something manually in the configuration file
 		 * @param condition The condition (#if / #else / #endif) for this file (or null if there is no compilation condition)
 		 * @param invertCondition When true, invert the condition (this is, the file is after the #else statement)
 		 * @return //true// if the file has been already processed
 		 */
-		public virtual bool configureElement(string fullPath, string? path, string? file, bool automatic, string? condition, bool invertCondition) {
+		public virtual bool configureElement(string fullPath, string? path, string? name, bool automatic, string? condition, bool invertCondition) {
 
 			if (fullPath=="") {
 				ElementBase.globalData.addError(_("Error: trying to add an empty path: %s").printf(fullPath));
@@ -171,8 +170,10 @@ namespace AutoVala {
 			} else {
 				this._path=path;
 			}
-			if (file==null) {
+			if (name==null) {
 				this._name = GLib.Path.get_basename(fullPath);
+			} else {
+				this._name = name;
 			}
 
 			ElementBase.globalData.addElement(this);

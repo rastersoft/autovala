@@ -43,6 +43,8 @@ namespace AutoVala {
 		public Gee.Map<string,string> localModules;
 		public Gee.Set<string> pathList;
 
+		public ReadVapis vapiList;
+
 		public Globals(string projectName) {
 
 			ElementBase.globalData = this;
@@ -56,6 +58,7 @@ namespace AutoVala {
 			this.globalElements = new Gee.ArrayList<ElementBase>();
 			this.excludeFiles = {};
 			this.getValaVersion();
+			this.vapiList = new ReadVapis(this.valaMajor,this.valaMinor);
 
 			var basePath=GLib.Environment.get_current_dir().split(Path.DIR_SEPARATOR_S);
 			var len=basePath.length;
