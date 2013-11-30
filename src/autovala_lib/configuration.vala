@@ -20,19 +20,17 @@ using GLib;
 using Gee;
 using Posix;
 
-// project version=0.26
-
 namespace AutoVala {
 
 	private class Configuration:GLib.Object {
 
-		private Globals globalData = null;
+		public Globals globalData = null;
 
 		public string basepath; // Contains the full path where the configuration file is stored
-		public string vala_version; // Minimun Vala version needed to compile this
+		public string valaVersion; // Minimun Vala version needed to compile this
 
-		public int current_version; // Contains the version of the currently supported syntax
-		public Gee.List<string> conditional_elements;
+		public int currentVersion; // Contains the version of the currently supported syntax
+		public Gee.List<string> conditionalElements;
 
 
 		private int version;
@@ -51,13 +49,13 @@ namespace AutoVala {
 				Intl.bindtextdomain(AutoValaConstants.GETTEXT_PACKAGE, Path.build_filename(AutoValaConstants.DATADIR,"locale"));
 			}
 
-			this.current_version=7; // currently we support version 7 of the syntax
-			this.conditional_elements=new Gee.ArrayList<string>();
+			this.currentVersion=7; // currently we support version 7 of the syntax
+			this.conditionalElements=new Gee.ArrayList<string>();
 			this.version=0;
 
 			this.globalData = new AutoVala.Globals(projectName);
 
-			this.vala_version="0.16";
+			this.valaVersion="0.16";
 			this.resetCondition();
 		}
 
@@ -112,10 +110,10 @@ namespace AutoVala {
 					if (l=="") {
 						continue;
 					}
-					if (this.conditional_elements.contains(l)) {
+					if (this.conditionalElements.contains(l)) {
 						continue;
 					}
-					this.conditional_elements.add(l);
+					this.conditionalElements.add(l);
 				}
 				return false;
 			}
@@ -296,19 +294,19 @@ namespace AutoVala {
 						} else {
 							var version_elements=version.split(".");
 
-							int f_major;
-							int f_minor;
+							int fMajor;
+							int fMinor;
 
-							f_major=int.parse(version_elements[0]);
-							f_minor=int.parse(version_elements[1]);
-							if ((f_major>this.globalData.valaMajor)||((f_major==this.globalData.valaMajor)&&(f_minor>this.globalData.valaMinor))) {
+							fMajor=int.parse(version_elements[0]);
+							fMinor=int.parse(version_elements[1]);
+							if ((fMajor>this.globalData.valaMajor)||((fMajor==this.globalData.valaMajor)&&(fMinor>this.globalData.valaMinor))) {
 								this.globalData.configFile="";
 								this.resetCondition();
 								this.globalData.addError(_("This project needs Vala version %s or greater, but you have version %d.%d. Can't open it.").printf(version,this.globalData.valaMajor,this.globalData.valaMinor));
 								error=true;
 								break;
 							}
-							this.vala_version=version;
+							this.valaVersion=version;
 						}
 						continue;
 					}
@@ -350,7 +348,7 @@ namespace AutoVala {
 							continue;
 						}
 						this.version=int.parse(line.substring(18).strip());
-						if (this.version>this.current_version) {
+						if (this.version>this.currentVersion) {
 							this.globalData.configFile="";
 							this.resetCondition();
 							this.globalData.addError(_("This project was created with a newer version of Autovala. Can't open it."));
@@ -433,9 +431,9 @@ namespace AutoVala {
 				var dis = file.create(FileCreateFlags.NONE);
 				var data_stream = new DataOutputStream(dis);
 				data_stream.put_string("### AutoVala Project ###\n");
-				data_stream.put_string("autovala_version: %d\n".printf(this.current_version));
+				data_stream.put_string("autovala_version: %d\n".printf(this.currentVersion));
 				data_stream.put_string("project_name: "+this.globalData.projectName+"\n");
-				data_stream.put_string("vala_version: "+this.vala_version+"\n\n");
+				data_stream.put_string("vala_version: "+this.valaVersion+"\n\n");
 				this.storeData(ConfigType.IGNORE,data_stream);
 				this.storeData(ConfigType.CUSTOM,data_stream);
 				this.storeData(ConfigType.DEFINE,data_stream);

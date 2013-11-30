@@ -136,7 +136,8 @@ namespace AutoVala {
 			bool error = false;
 			if (path != null) {
 				this._type = ConfigType.VALA_BINARY;
-				error |= this.configureElement(path,null,null,true,null,false);
+				error |= this.configureElement(GLib.Path.get_dirname(path),
+							GLib.Path.get_dirname(path),GLib.Path.get_basename(path),true,null,false);
 				if (error) {
 					return true;
 				}

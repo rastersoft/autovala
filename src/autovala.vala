@@ -35,18 +35,6 @@ int main(string[] argv) {
 	Intl.textdomain(Constants.GETTEXT_PACKAGE);
 	Intl.bind_textdomain_codeset(Constants.GETTEXT_PACKAGE, "utf-8" );
 
-/*	var config = new AutoVala.Configuration();
-	if (config.readConfiguration()) {
-		config.showErrors();
-	} else {
-		config.saveConfiguration();
-		config.showErrors();
-		config.globalData.generateExtraData();
-		foreach(var path in config.globalData.pathList) {
-			GLib.stdout.printf("Path: %s\n",path);
-		}
-	}*/
-
 	if (argv.length==1) {
 		help();
 		return 0;
