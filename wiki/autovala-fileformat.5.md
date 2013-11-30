@@ -56,7 +56,7 @@ After that, it comes several commands, some of them repeated several times, to s
 
                 compile_options: -X -O2
 
-   * **destination**: specifies a custom path where to install this library or binary. If the path is given in relative format (this is, if it doesn't start with an slash) the file will be installed relative to the PREFIX (**/usr** or **/usr/local**); but if it is given in absolute format (this is, the path starts with a slash) the file will be installed in that precise folder.
+   * **vala_destination**: specifies a custom path where to install this library or binary. If the path is given in relative format (this is, if it doesn't start with an slash) the file will be installed relative to the PREFIX (**/usr** or **/usr/local**); but if it is given in absolute format (this is, the path starts with a slash) the file will be installed in that precise folder.
 
    * **vala_package**: specify a package that must be added with **--pkg=...** to the vala compiler. These are automatically found by Autovala by reading the sources and processing the **Using** directives
 
