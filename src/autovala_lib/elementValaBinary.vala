@@ -215,8 +215,9 @@ namespace AutoVala {
 					}
 					lineCounter++;
 					line=line.strip();
-					if (line.has_prefix("const string project_version=\"")) { // add the version (old, deprecated format)
-						ElementBase.globalData.addWarning(_("The contruction 'const string project_version=\"...\"' in file %s is deprecated. Replace it with '// project version=...'").printf(pathP));
+					 // add the version (old, deprecated format)
+					if (line.has_prefix("const string project_version=\"")) {
+						ElementBase.globalData.addWarning(_("The contruction 'const string project_version=...' in file %s is deprecated. Replace it with '// project version=...'").printf(pathP));
 						var pos=line.index_of("\"",30);
 						if (pos!=-1) {
 							this.version=line.substring(30,pos-30);
