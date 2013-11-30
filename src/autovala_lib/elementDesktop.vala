@@ -67,12 +67,11 @@ namespace AutoVala {
 			} else {
 				path = pathP;
 			}
-
 			this._type = ConfigType.DESKTOP;
 			this.command = "desktop";
 
 			try {
-				var dis = new DataInputStream (File.new_for_path(path).read());
+				var dis = new DataInputStream (File.new_for_path(Path.build_filename(ElementBase.globalData.projectFolder,path)).read());
 				string line;
 				while ((line = dis.read_line (null)) != null) {
 					if (line.has_prefix("X-GNOME-Autostart-enabled=")) {
@@ -82,7 +81,7 @@ namespace AutoVala {
 					}
 				}
 			} catch(Error e) {
-				ElementBase.globalData.addError(_("Failed to check if file %s is a GNome autostart file").printf(this.name));
+				ElementBase.globalData.addError(_("Failed to check if file %s is a GNome autostart file").printf(path));
 				return true;
 			}
 
