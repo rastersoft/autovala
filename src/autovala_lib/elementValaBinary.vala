@@ -478,8 +478,8 @@ namespace AutoVala {
 				return this.setNamespace(line.substring(11).strip(),automatic,lineNumber);
 			} else if (line.has_prefix("compile_options: ")) {
 				return this.setCompileOptions(line.substring(17).strip(),lineNumber);
-			} else if (line.has_prefix("destination: ")) {
-				return this.setDestination(line.substring(13).strip(),lineNumber);
+			} else if (line.has_prefix("vala_destination: ")) {
+				return this.setDestination(line.substring(18).strip(),lineNumber);
 			} else if (line.has_prefix("vala_package: ")) {
 				return this.addPackage(line.substring(14).strip(),packageType.NO_CHECK,automatic,condition,invertCondition,lineNumber);
 			} else if (line.has_prefix("vala_check_package: ")) {
@@ -876,7 +876,7 @@ namespace AutoVala {
 					dataStream.put_string("compile_options: %s\n".printf(this.compileOptions));
 				}
 				if (this.destination!=null) {
-					dataStream.put_string("destination: %s\n".printf(this.destination));
+					dataStream.put_string("vala_destination: %s\n".printf(this.destination));
 				}
 
 				foreach(var element in this._packages) {
