@@ -27,13 +27,13 @@ set (GETTEXT_PACKAGE "autovala")
 set (RELEASE_NAME "autovala")
 set (CMAKE_C_FLAGS "")
 set (PREFIX ${CMAKE_INSTALL_PREFIX})
-set (VERSION "0.24")
+set (VERSION "0.27")
 set (DOLLAR "$")
 
 configure_file (${CMAKE_SOURCE_DIR}/src/Config.vala.cmake ${CMAKE_BINARY_DIR}/src/Config.vala)
 add_definitions(-DGETTEXT_PACKAGE=\"${GETTEXT_PACKAGE}\")
 configure_file (${CMAKE_CURRENT_SOURCE_DIR}/AutoVala_gedit.pc ${CMAKE_CURRENT_BINARY_DIR}/AutoVala_gedit.pc)
-set (VERSION "0.24")
+set (VERSION "0.27")
 add_definitions(${DEPS_CFLAGS})
 link_libraries( ${DEPS_LIBRARIES} )
 link_directories( ${DEPS_LIBRARY_DIRS} )
@@ -43,12 +43,12 @@ ensure_vala_version("0.20" MINIMUM)
 include(ValaPrecompile)
 
 set (VALA_PACKAGES ${VALA_PACKAGES} PeasGtk-1.0)
-set (VALA_PACKAGES ${VALA_PACKAGES} libpeas-1.0)
-set (VALA_PACKAGES ${VALA_PACKAGES} gee-1.0)
 set (VALA_PACKAGES ${VALA_PACKAGES} AutoVala)
-set (VALA_PACKAGES ${VALA_PACKAGES} glib-2.0)
 set (VALA_PACKAGES ${VALA_PACKAGES} gedit)
+set (VALA_PACKAGES ${VALA_PACKAGES} gee-1.0)
+set (VALA_PACKAGES ${VALA_PACKAGES} glib-2.0)
 set (VALA_PACKAGES ${VALA_PACKAGES} gtk+-3.0)
+set (VALA_PACKAGES ${VALA_PACKAGES} libpeas-1.0)
 
 set (APP_SOURCES ${APP_SOURCES} ${CMAKE_CURRENT_BINARY_DIR}/Config.vala)
 set (APP_SOURCES ${APP_SOURCES} autovala_gedit.vala)
@@ -69,7 +69,7 @@ add_library(AutoVala_gedit SHARED ${VALA_C})
 
 set_target_properties( AutoVala_gedit PROPERTIES
 VERSION
-	0.24
+	0.27
 SOVERSION
 	0 )
 

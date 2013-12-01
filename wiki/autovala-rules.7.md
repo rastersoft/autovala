@@ -22,7 +22,7 @@ The rules followed by Autovala are the following:
 
 * Each **.desktop** file in **data/** will be copied to **share/desktop/**, unless it contains the line **X-GNOME-Autostart-enabled=**, in which case it will be copied to **/etc/xdg/autostart**.
 
-* Each **.service** file in **data/** will be presumed to be a D-Bus service, and will be preprocessed to put the right binary folder ( **bin/** or **local/bin/** )
+* Each **.service** and **.service.base** files in **data/** will be presumed to be a D-Bus service, and will be preprocessed to put the right binary folder ( **bin/** or **local/bin/** )
 
 * Each **.plug** file in **data/** will be presumed to be an ElementaryOS PLUG file
 

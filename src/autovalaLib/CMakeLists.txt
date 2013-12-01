@@ -27,13 +27,13 @@ set (GETTEXT_PACKAGE "autovala")
 set (RELEASE_NAME "autovala")
 set (CMAKE_C_FLAGS "")
 set (PREFIX ${CMAKE_INSTALL_PREFIX})
-set (VERSION "0.26")
+set (VERSION "0.27")
 set (DOLLAR "$")
 
-configure_file (${CMAKE_SOURCE_DIR}/src/autovala_lib/Config.vala.cmake ${CMAKE_BINARY_DIR}/src/autovala_lib/Config.vala)
+configure_file (${CMAKE_SOURCE_DIR}/src/autovalaLib/Config.vala.cmake ${CMAKE_BINARY_DIR}/src/autovalaLib/Config.vala)
 add_definitions(-DGETTEXT_PACKAGE=\"${GETTEXT_PACKAGE}\")
 configure_file (${CMAKE_CURRENT_SOURCE_DIR}/AutoVala.pc ${CMAKE_CURRENT_BINARY_DIR}/AutoVala.pc)
-set (VERSION "0.26")
+set (VERSION "0.27")
 add_definitions(${DEPS_CFLAGS})
 link_libraries( ${DEPS_LIBRARIES} )
 link_directories( ${DEPS_LIBRARY_DIRS} )
@@ -44,14 +44,36 @@ include(ValaPrecompile)
 
 set (VALA_PACKAGES ${VALA_PACKAGES} posix)
 set (VALA_PACKAGES ${VALA_PACKAGES} gee-1.0)
+set (VALA_PACKAGES ${VALA_PACKAGES} gio-2.0)
 set (VALA_PACKAGES ${VALA_PACKAGES} glib-2.0)
 set (VALA_PACKAGES ${VALA_PACKAGES} gtk+-3.0)
 
 set (APP_SOURCES ${APP_SOURCES} ${CMAKE_CURRENT_BINARY_DIR}/Config.vala)
+set (APP_SOURCES ${APP_SOURCES} autovalaLib.vala)
+set (APP_SOURCES ${APP_SOURCES} conditionalText.vala)
 set (APP_SOURCES ${APP_SOURCES} configuration.vala)
-set (APP_SOURCES ${APP_SOURCES} conditional_text.vala)
-set (APP_SOURCES ${APP_SOURCES} cmake.vala)
-set (APP_SOURCES ${APP_SOURCES} generate.vala)
+set (APP_SOURCES ${APP_SOURCES} elementBase.vala)
+set (APP_SOURCES ${APP_SOURCES} elementBinary.vala)
+set (APP_SOURCES ${APP_SOURCES} elementCustom.vala)
+set (APP_SOURCES ${APP_SOURCES} elementDBus.vala)
+set (APP_SOURCES ${APP_SOURCES} elementData.vala)
+set (APP_SOURCES ${APP_SOURCES} elementDefine.vala)
+set (APP_SOURCES ${APP_SOURCES} elementDesktop.vala)
+set (APP_SOURCES ${APP_SOURCES} elementDoc.vala)
+set (APP_SOURCES ${APP_SOURCES} elementEosPlug.vala)
+set (APP_SOURCES ${APP_SOURCES} elementGlade.vala)
+set (APP_SOURCES ${APP_SOURCES} elementGlobal.vala)
+set (APP_SOURCES ${APP_SOURCES} elementIcon.vala)
+set (APP_SOURCES ${APP_SOURCES} elementIgnore.vala)
+set (APP_SOURCES ${APP_SOURCES} elementInclude.vala)
+set (APP_SOURCES ${APP_SOURCES} elementManpage.vala)
+set (APP_SOURCES ${APP_SOURCES} elementPixmap.vala)
+set (APP_SOURCES ${APP_SOURCES} elementPo.vala)
+set (APP_SOURCES ${APP_SOURCES} elementScheme.vala)
+set (APP_SOURCES ${APP_SOURCES} elementValaBinary.vala)
+set (APP_SOURCES ${APP_SOURCES} genVapis.vala)
+set (APP_SOURCES ${APP_SOURCES} globals.vala)
+set (APP_SOURCES ${APP_SOURCES} readPkgconfig.vala)
 
 vala_precompile(VALA_C AutoVala
 	${APP_SOURCES}
@@ -69,7 +91,7 @@ add_library(AutoVala SHARED ${VALA_C})
 
 set_target_properties( AutoVala PROPERTIES
 VERSION
-	0.26
+	0.27
 SOVERSION
 	0 )
 

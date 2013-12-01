@@ -21,4 +21,17 @@ FOREACH(element ${AUTOVALA_PATH_LIST})
 	ENDIF()
 ENDFOREACH()
 
-install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/ask_to_continue.ui DESTINATION share/autovala/ )
+IF(IS_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/)
+	install(DIRECTORY
+		${CMAKE_CURRENT_SOURCE_DIR}/
+	DESTINATION
+		share/autovala
+	)
+ELSE()
+	install(FILES
+		${CMAKE_CURRENT_SOURCE_DIR}/
+	DESTINATION
+		share/autovala
+	)
+ENDIF()
+

@@ -19,6 +19,7 @@
 using GLib;
 using Gee;
 using Posix;
+//using GIO
 
 // project version=0.26.0
 
@@ -52,9 +53,9 @@ int main(string[] argv) {
 			help();
 			return -1;
 		}
-		var gen = new AutoVala.manage_project();
+		var gen = new AutoVala.ManageProject();
 		retval=gen.init(argv[2]);
-		gen.show_errors();
+		gen.showErrors();
 		if (retval) {
 			GLib.stdout.printf(_("Aborting\n"));
 			return -1;
@@ -66,9 +67,9 @@ int main(string[] argv) {
 			help();
 			return -1;
 		}
-		var gen = new AutoVala.manage_project();
+		var gen = new AutoVala.ManageProject();
 		retval=gen.cmake();
-		gen.show_errors();
+		gen.showErrors();
 		if (retval) {
 			GLib.stdout.printf(_("Aborting\n"));
 			return -1;
@@ -80,17 +81,17 @@ int main(string[] argv) {
 			help();
 			return -1;
 		}
-		var gen = new AutoVala.manage_project();
+		var gen = new AutoVala.ManageProject();
 		GLib.stdout.printf(_("Updating project file\n"));
 		retval=gen.refresh();
-		gen.show_errors();
+		gen.showErrors();
 		if (retval) {
 			GLib.stdout.printf(_("Aborting\n"));
 			return -1;
 		} else {
 			GLib.stdout.printf(_("Updating CMake files\n"));
 			retval=gen.cmake();
-			gen.show_errors();
+			gen.showErrors();
 			if (retval) {
 				GLib.stdout.printf(_("Aborting\n"));
 				return -1;
@@ -103,9 +104,9 @@ int main(string[] argv) {
 			help();
 			return -1;
 		}
-		var gen = new AutoVala.manage_project();
+		var gen = new AutoVala.ManageProject();
 		retval=gen.refresh();
-		gen.show_errors();
+		gen.showErrors();
 		if (retval) {
 			GLib.stdout.printf(_("Aborting\n"));
 			return -1;
@@ -117,16 +118,13 @@ int main(string[] argv) {
 			help();
 			return -1;
 		}
-		var config=new AutoVala.configuration();
-		retval=config.read_configuration();
-		config.show_errors();
+		var gen = new AutoVala.ManageProject();
+		retval=gen.clear();
+		gen.showErrors();
 		if (retval) {
 			GLib.stdout.printf(_("Aborting\n"));
 			return -1;
 		}
-		config.clear_automatic();
-		config.save_configuration();
-		config.show_errors();
 		GLib.stdout.printf(_("Done\n"));
 		break;
 	default:

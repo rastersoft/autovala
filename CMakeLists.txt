@@ -24,6 +24,7 @@ endif()
 find_package(PkgConfig)
 
 set(MODULES_TO_CHECK ${MODULES_TO_CHECK} gee-1.0)
+set(MODULES_TO_CHECK ${MODULES_TO_CHECK} gio-2.0)
 set(MODULES_TO_CHECK ${MODULES_TO_CHECK} glib-2.0)
 set(MODULES_TO_CHECK ${MODULES_TO_CHECK} gtk+-3.0)
 
@@ -36,8 +37,8 @@ endif()
 
 add_subdirectory(doc)
 add_subdirectory(po)
+add_subdirectory(src/autovalaLib)
 add_subdirectory(wiki)
-add_subdirectory(data)
+add_subdirectory(data/cmake)
 add_subdirectory(data/bash_completion)
-add_subdirectory(src/autovala_lib)
 add_subdirectory(src)

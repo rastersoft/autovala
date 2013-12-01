@@ -23,7 +23,7 @@ using Gee;
 using Gtk;
 using AutoVala;
 
-// project version=0.25
+// project version=0.27
 
 namespace AutoVala_gedit {
 
