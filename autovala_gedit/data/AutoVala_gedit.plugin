@@ -1,8 +1,0 @@
-[Plugin]
-Module=AutoVala_gedit.so
-IAge=2
-Name=AutoVala Plugin for GEdit
-Description=Allows to work with AutoVala directly from GEdit
-Authors=Sergio Costas <raster@rastersoft.com>
-Copyright=Copyright © 2013 Raster Software Vigo
-Website=https://github.com/rastersoft/autovala
