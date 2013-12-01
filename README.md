@@ -30,7 +30,9 @@ and enjoy.
 
 
 ## History of versions ##
-
+* version 0.28.0 (2013-12-01)
+    * Supports the use of conditionals with COMPILE_OPTIONS statement
+    * Allows to use several COMPILE_OPTIONS in the same binary/library
 * version 0.27.0 (2013-12-01)
     * Full refactorization to simplify future maintenance and improvements
     * Removed the Gedit plugin (until having spare time to fix it)

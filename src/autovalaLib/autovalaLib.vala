@@ -21,7 +21,7 @@ using Gee;
 using Posix;
 //using GIO
 
-// project version=0.27
+// project version=0.28
 
 namespace AutoVala {
 
