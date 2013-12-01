@@ -6,6 +6,11 @@
 <div class="main_frame">
 <p><a href="index.html">Home</a></p>
 <ul>
+<li>version 0.27.0 (2013-12-01)
+<ul>
+<li>Full refactorization to simplify future maintenance and improvements<br /></li>
+<li>Removed the Gedit plugin (until having spare time to fix it)<br /></li>
+</ul></li>
 <li>version 0.26.0 (2013-11-17)
 <ul>
 <li>Added support for more input formats when creating man pages<br /></li>

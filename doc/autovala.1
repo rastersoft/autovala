@@ -64,17 +64,6 @@
 <p>If you want to remove all the automatically added lines in the project file, leaving only the manually added ones, you can use:</p>
 <pre><code>    autovala clear</code></pre>
 <p>These commands can be called from any of the folders or subfolders of the project, because it will search for the first <strong>.avprj</strong> file located in the current folder or upstream.</p>
-<p>You can also use the Gedit plugin. With it, an <strong>Autovala</strong> entry will be added to the menu, with the following options:</p>
-<ul>
-<li>Open project file: this option will open the project file (<strong>.avprj</strong>) for the currently active source file.<br /></li>
-<li>Update project: is the same than <strong>autovala update</strong><br /></li>
-<li>Run CMake: runs <strong>cmake ..</strong> in the folder <strong>install</strong> of the current source file's project<br /></li>
-<li>Build project: runs <strong>make</strong> in the folder <strong>install</strong> of the current source file's project<br /></li>
-<li>Make clean: runs <strong>make clean</strong> in the folder <strong>install</strong> of the current source file's project<br /></li>
-<li>Full clean: deletes all the content in the <strong>install</strong> folder. Needed when the number of files in the project, or the <strong>.avprj</strong> file is modified<br /></li>
-<li>Full build: deletes the content in the <strong>install</strong> folder, updates the <strong>.avprj</strong> and <strong>CMakeList.txt</strong> files, and runs <strong>cmake ..</strong> and <strong>make</strong> in the folder <strong>install</strong>, all in one step</li>
-</ul>
-<p>Usually you should use <strong>Build project</strong> each time you modify the code, or <strong>Full build</strong> each time you add, remove or rename a file to the project, or modify the <strong>.avprj</strong> file.</p>
 <h1>OPTIONS</h1>
 <p><strong>autovala init PROJECT_NAME</strong><br /> Creates a new project called PROJECT_NAME, and initializates the basic directory tree.</p>
 <p><strong>autovala clear</strong><br /> Deletes the <strong>.avprj</strong> file.</p>

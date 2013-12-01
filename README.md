@@ -31,6 +31,9 @@ and enjoy.
 
 ## History of versions ##
 
+* version 0.27.0 (2013-12-01)
+    * Full refactorization to simplify future maintenance and improvements
+    * Removed the Gedit plugin (until having spare time to fix it)
 * version 0.26.0 (2013-11-17)
     * Added support for more input formats when creating man pages
     * Now MarkDown format is github format

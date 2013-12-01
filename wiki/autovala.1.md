@@ -95,18 +95,6 @@ If you want to remove all the automatically added lines in the project file, lea
 
 These commands can be called from any of the folders or subfolders of the project, because it will search for the first **.avprj** file located in the current folder or upstream.
 
-You can also use the Gedit plugin. With it, an **Autovala** entry will be added to the menu, with the following options:
-
- * Open project file: this option will open the project file (**.avprj**) for the currently active source file.
- * Update project: is the same than **autovala update**
- * Run CMake: runs **cmake ..** in the folder **install** of the current source file's project
- * Build project: runs **make** in the folder **install** of the current source file's project
- * Make clean: runs **make clean** in the folder **install** of the current source file's project
- * Full clean: deletes all the content in the **install** folder. Needed when the number of files in the project, or the **.avprj** file is modified
- * Full build: deletes the content in the **install** folder, updates the **.avprj** and **CMakeList.txt** files, and runs **cmake ..** and **make** in the folder **install**, all in one step
-
-Usually you should use **Build project** each time you modify the code, or **Full build** each time you add, remove or rename a file to the project, or modify the **.avprj** file.
-
 # OPTIONS
 
 **autovala init PROJECT_NAME**
