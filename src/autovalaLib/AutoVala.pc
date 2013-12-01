@@ -6,6 +6,6 @@ includedir=@DOLLAR@{exec_prefix}/include
 
 Name: AutoVala
 Description: AutoVala
-Version: 0.27
+Version: 0.28
 Libs: -L@DOLLAR@{libdir} -lAutoVala
 Cflags: -I@DOLLAR@{includedir}
