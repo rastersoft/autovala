@@ -63,6 +63,15 @@ namespace AutoVala {
 		}
 	}
 
+	private class CompileElement:GenericElement {
+		public CompileElement(string options, bool automatic, string? condition, bool inverted) {
+			this.elementName=options;
+			this.automatic=automatic;
+			this.condition=condition;
+			this.invertCondition=inverted;
+		}
+	}
+
 	private class ElementValaBinary : ElementBase {
 
 		private string version;
@@ -78,6 +87,7 @@ namespace AutoVala {
 			get {return this._sources;}
 		}
 		private Gee.List<VapiElement ?> _vapis;
+		private Gee.List<CompileElement ?> _compileOptions;
 
 		private Gee.List<string> usingList;
 		private Gee.List<string> defines;
@@ -87,8 +97,6 @@ namespace AutoVala {
 			get {return this._currentNamespace;}
 		}
 		private bool namespaceAutomatic;
-
-		private string? compileOptions;
 		private string? destination;
 
 		private static bool addedValaBinaries;
@@ -98,7 +106,6 @@ namespace AutoVala {
 			this.version="1.0.0";
 			this.versionSet=false;
 			this.versionAutomatic=true;
-			this.compileOptions="";
 			this._currentNamespace=null;
 			this.usingList=null;
 			this.defines=null;
@@ -107,6 +114,7 @@ namespace AutoVala {
 			this._packages=new Gee.ArrayList<PackageElement ?>();
 			this._sources=new Gee.ArrayList<SourceElement ?>();
 			this._vapis=new Gee.ArrayList<VapiElement ?>();
+			this._compileOptions=new Gee.ArrayList<CompileElement ?>();
 			ElementValaBinary.addedValaBinaries = false;
 		}
 
@@ -296,6 +304,7 @@ namespace AutoVala {
 			var packagesTmp=new Gee.ArrayList<PackageElement ?>();
 			var sourcesTmp=new Gee.ArrayList<SourceElement ?>();
 			var vapisTmp=new Gee.ArrayList<VapiElement ?>();
+			var compileTmp=new Gee.ArrayList<CompileElement ?>();
 			foreach (var e in this._packages) {
 				if (e.automatic==false) {
 					packagesTmp.add(e);
@@ -311,9 +320,15 @@ namespace AutoVala {
 					vapisTmp.add(e);
 				}
 			}
+			foreach (var e in this._compileOptions) {
+				if (e.automatic==false) {
+					compileTmp.add(e);
+				}
+			}
 			this._packages=packagesTmp;
 			this._sources=sourcesTmp;
 			this._vapis=vapisTmp;
+			this._compileOptions=compileTmp;
 		}
 
 		public static int comparePackages (GenericElement? a, GenericElement? b) {
@@ -340,6 +355,7 @@ namespace AutoVala {
 			this._packages.sort(AutoVala.ElementValaBinary.comparePackages);
 			this._sources.sort(AutoVala.ElementValaBinary.comparePackages);
 			this._vapis.sort(AutoVala.ElementValaBinary.comparePackages);
+			this._compileOptions.sort(AutoVala.ElementValaBinary.comparePackages);
 		}
 
 		private void transformToNonAutomatic(bool automatic) {
@@ -381,12 +397,20 @@ namespace AutoVala {
 			return false;
 		}
 
-		private bool setCompileOptions(string options, int lineNumber) {
-			if (this.compileOptions==null) {
-				this.compileOptions=options;
-			} else {
-				ElementBase.globalData.addWarning(_("Ignoring duplicated OPTIONS command (line %d)").printf(lineNumber));
+		private bool setCompileOptions(string options,  bool automatic, string? condition, bool invertCondition, int lineNumber) {
+			// if it is conditional, it MUST be manual, because conditions are not added automatically
+			if (condition!=null) {
+				automatic=false;
 			}
+
+			// adding a non-automatic option to an automatic binary transforms this binary to non-automatic
+			if ((automatic==false)&&(this._automatic==true)) {
+				this.transformToNonAutomatic(false);
+			}
+
+			var element=new CompileElement(options,automatic,condition,invertCondition);
+			this._compileOptions.add(element);
+
 			return false;
 		}
 
@@ -477,7 +501,7 @@ namespace AutoVala {
 			} else if (line.has_prefix("namespace: ")) {
 				return this.setNamespace(line.substring(11).strip(),automatic,lineNumber);
 			} else if (line.has_prefix("compile_options: ")) {
-				return this.setCompileOptions(line.substring(17).strip(),lineNumber);
+				return this.setCompileOptions(line.substring(17).strip(),automatic, condition, invertCondition, lineNumber);
 			} else if (line.has_prefix("vala_destination: ")) {
 				return this.setDestination(line.substring(18).strip(),lineNumber);
 			} else if (line.has_prefix("vala_package: ")) {
@@ -607,14 +631,14 @@ namespace AutoVala {
 
 				dataStream.put_string("set (VERSION \""+this.version+"\")\n");
 
-				dataStream.put_string("add_definitions(${DEPS_CFLAGS})\n");
+				dataStream.put_string("add_definitions (${DEPS_CFLAGS})\n");
 
 				bool addedPrefix=false;
 				foreach(var module in this._packages) {
 					if (module.type==packageType.LOCAL) {
 						if (ElementBase.globalData.localModules.has_key(module.elementName)) {
 							if (addedPrefix==false) {
-								dataStream.put_string("include_directories( ");
+								dataStream.put_string("include_directories ( ");
 								addedPrefix=true;
 							}
 							dataStream.put_string("${CMAKE_BINARY_DIR}/"+ElementBase.globalData.localModules.get(module.elementName)+" ");
@@ -627,24 +651,24 @@ namespace AutoVala {
 					dataStream.put_string(")\n");
 				}
 
-				dataStream.put_string("link_libraries( ${DEPS_LIBRARIES} ");
+				dataStream.put_string("link_libraries ( ${DEPS_LIBRARIES} ");
 				foreach(var module in this._packages) {
 					if ((module.type==packageType.LOCAL)&&(ElementBase.globalData.localModules.has_key(module.elementName))) {
 						dataStream.put_string("-l"+module.elementName+" ");
 					}
 				}
 				dataStream.put_string(")\n");
-				dataStream.put_string("link_directories( ${DEPS_LIBRARY_DIRS} ");
+				dataStream.put_string("link_directories ( ${DEPS_LIBRARY_DIRS} ");
 				foreach(var module in this._packages) {
 					if ((module.type==packageType.LOCAL)&&(ElementBase.globalData.localModules.has_key(module.elementName))) {
 						dataStream.put_string("${CMAKE_BINARY_DIR}/"+ElementBase.globalData.localModules.get(module.elementName)+" ");
 					}
 				}
 				dataStream.put_string(")\n");
-				dataStream.put_string("find_package(Vala REQUIRED)\n");
-				dataStream.put_string("include(ValaVersion)\n");
-				dataStream.put_string("ensure_vala_version(\"%d.%d\" MINIMUM)\n".printf(ElementBase.globalData.valaVersionMajor,ElementBase.globalData.valaVersionMinor));
-				dataStream.put_string("include(ValaPrecompile)\n\n");
+				dataStream.put_string("find_package (Vala REQUIRED)\n");
+				dataStream.put_string("include (ValaVersion)\n");
+				dataStream.put_string("ensure_vala_version (\"%d.%d\" MINIMUM)\n".printf(ElementBase.globalData.valaVersionMajor,ElementBase.globalData.valaVersionMinor));
+				dataStream.put_string("include (ValaPrecompile)\n\n");
 
 				var printConditions=new ConditionalText(dataStream,true);
 
@@ -674,7 +698,7 @@ namespace AutoVala {
 				if ((this._vapis.size!=0)||(found_local==true)) {
 					foreach (var filename in this._vapis) {
 						printConditions.printCondition(filename.condition,filename.invertCondition);
-						dataStream.put_string("set(CUSTOM_VAPIS_LIST ${CUSTOM_VAPIS_LIST} ${CMAKE_SOURCE_DIR}/%s)\n".printf(Path.build_filename(this._path,filename.elementName)));
+						dataStream.put_string("set (CUSTOM_VAPIS_LIST ${CUSTOM_VAPIS_LIST} ${CMAKE_SOURCE_DIR}/%s)\n".printf(Path.build_filename(this._path,filename.elementName)));
 						has_custom_VAPIs=true;
 					}
 					printConditions.printTail();
@@ -682,7 +706,7 @@ namespace AutoVala {
 						if (module.type==packageType.LOCAL) {
 							if (ElementBase.globalData.localModules.has_key(module.elementName)) {
 								printConditions.printCondition(module.condition,module.invertCondition);
-								dataStream.put_string("set(CUSTOM_VAPIS_LIST ${CUSTOM_VAPIS_LIST} ${CMAKE_BINARY_DIR}/%s)\n".printf(Path.build_filename(ElementBase.globalData.localModules.get(module.elementName), module.elementName +".vapi")));
+								dataStream.put_string("set (CUSTOM_VAPIS_LIST ${CUSTOM_VAPIS_LIST} ${CMAKE_BINARY_DIR}/%s)\n".printf(Path.build_filename(ElementBase.globalData.localModules.get(module.elementName), module.elementName +".vapi")));
 								has_custom_VAPIs=true;
 							}
 						}
@@ -692,19 +716,36 @@ namespace AutoVala {
 				}
 
 				// Add all the DEFINEs set both in the code and the configuration file
-				bool addedDefines=false;
+				bool addDefines=false;
 				foreach(var element in ElementBase.globalData.globalElements) {
 					if (element.eType==ConfigType.DEFINE) {
-						if (addedDefines==false) {
-							addedDefines=true;
-							this.compileOptions+=" ${OPTION_DEFINES}";
-						}
-						dataStream.put_string("IF (%s)\n".printf(element.path));
-						dataStream.put_string("\tSET(OPTION_DEFINES ${OPTION_DEFINES} -D %s)\n".printf(element.path));
-						dataStream.put_string("ENDIF()\n");
+						addDefines=true;
+						dataStream.put_string("if (%s)\n".printf(element.path));
+						dataStream.put_string("\tset (COMPILE_OPTIONS ${COMPILE_OPTIONS} -D %s)\n".printf(element.path));
+						dataStream.put_string("endif ()\n");
 					}
 				}
-				if (addedDefines) {
+
+				if (this._type == ConfigType.VALA_LIBRARY) {
+					addDefines=true;
+					// If it is a library, generate the Gobject Introspection file
+					var finalOptions="--library="+libFilename;
+					if (girFilename!="") {
+						finalOptions+=" --gir "+girFilename;
+					} else {
+						ElementBase.globalData.addWarning(_("No namespace specified in library %s; GIR file will not be generated").printf(this.name));
+					}
+					dataStream.put_string("set (COMPILE_OPTIONS ${COMPILE_OPTIONS} %s )\n".printf(finalOptions));
+				}
+
+				foreach(var element in this._compileOptions) {
+					addDefines=true;
+					printConditions.printCondition(element.condition,element.invertCondition);
+					dataStream.put_string("set (COMPILE_OPTIONS ${COMPILE_OPTIONS} %s )\n".printf(element.elementName));
+				}
+				printConditions.printTail();
+
+				if (addDefines) {
 					dataStream.put_string("\n");
 				}
 
@@ -717,21 +758,9 @@ namespace AutoVala {
 					dataStream.put_string("\t${CUSTOM_VAPIS_LIST}\n");
 				}
 
-				var final_options=this.compileOptions;
-				if (this._type == ConfigType.VALA_LIBRARY) {
-					// If it is a library, generate the Gobject Introspection file
-					final_options="--library="+libFilename;
-					if (girFilename!="") {
-						final_options+=" --gir "+girFilename;
-					} else {
-						ElementBase.globalData.addWarning(_("No namespace specified in library %s; GIR file will not be generated").printf(this.name));
-					}
-					final_options+=" "+this.compileOptions;
-				}
-
-				if (final_options!="") {
+				if (addDefines) {
 					dataStream.put_string("OPTIONS\n");
-					dataStream.put_string("\t"+final_options+"\n");
+					dataStream.put_string("\t${COMPILE_OPTIONS}\n");
 				}
 
 				if (this._type == ConfigType.VALA_LIBRARY) {
@@ -872,12 +901,18 @@ namespace AutoVala {
 					}
 					dataStream.put_string("namespace: %s\n".printf(this._currentNamespace));
 				}
-				if (this.compileOptions!="") {
-					dataStream.put_string("compile_options: %s\n".printf(this.compileOptions));
-				}
 				if (this.destination!=null) {
 					dataStream.put_string("vala_destination: %s\n".printf(this.destination));
 				}
+
+				foreach(var element in this._compileOptions) {
+					printConditions.printCondition(element.condition,element.invertCondition);
+					if (element.automatic) {
+						dataStream.put_string("*");
+					}
+					dataStream.put_string("compile_options: %s\n".printf(element.elementName));
+				}
+				printConditions.printTail();
 
 				foreach(var element in this._packages) {
 					if (element.type == packageType.LOCAL) {

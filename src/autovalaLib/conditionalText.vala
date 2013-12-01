@@ -47,7 +47,7 @@ namespace AutoVala {
 				if ((condition!=null) && (inverted!=this.invertedCondition)) {
 					try {
 						if (this.cmakeFormat) {
-							this.dataStream.put_string("ELSE()\n");
+							this.dataStream.put_string("else ()\n\t");
 						} else {
 							this.dataStream.put_string("else\n");
 						}
@@ -61,7 +61,7 @@ namespace AutoVala {
 				if(this.currentCondition!=null) {
 					try {
 						if (this.cmakeFormat) {
-							this.dataStream.put_string("ENDIF()\n");
+							this.dataStream.put_string("endif ()\n");
 						} else {
 							this.dataStream.put_string("end\n");
 						}
@@ -73,7 +73,7 @@ namespace AutoVala {
 					if (inverted==false) {
 						try {
 							if (this.cmakeFormat) {
-								this.dataStream.put_string("IF (%s)\n".printf(condition));
+								this.dataStream.put_string("if (%s)\n\t".printf(condition));
 							} else {
 								this.dataStream.put_string("if %s\n".printf(condition));
 							}
@@ -83,7 +83,7 @@ namespace AutoVala {
 					} else {
 						try {
 							if (this.cmakeFormat) {
-								this.dataStream.put_string("IF (NOT(%s))\n".printf(condition));
+								this.dataStream.put_string("if (NOT(%s))\n\t".printf(condition));
 							} else {
 								this.dataStream.put_string("if %s\nelse\n".printf(condition));
 							}
@@ -101,7 +101,7 @@ namespace AutoVala {
 			if (this.currentCondition!=null) {
 				try {
 					if (this.cmakeFormat) {
-						this.dataStream.put_string("ENDIF()\n\n");
+						this.dataStream.put_string("endif ()\n\n");
 					} else {
 						this.dataStream.put_string("end\n");
 					}

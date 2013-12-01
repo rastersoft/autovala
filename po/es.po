@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-12-01 00:23+0100\n"
+"POT-Creation-Date: 2013-12-01 12:43+0100\n"
 "PO-Revision-Date: 2013-12-01 00:23+0100\n"
 "Last-Translator: Sergio Costas <raster@rastersoft.com>\n"
 "Language-Team: American English <kde-i18n-doc@kde.org>\n"
@@ -69,94 +69,94 @@ msgstr "Actualizando el fichero de proyecto\n"
 msgid "Updating CMake files\n"
 msgstr "Actualizando los ficheros de CMake\n"
 
-#: ../src/autovala_lib/autovalaLib.vala:50
+#: ../src/autovalaLib/autovalaLib.vala:50
 #, c-format
 msgid "Failed when creating folder %s"
 msgstr "Incapaz de crear el fichero %s"
 
-#: ../src/autovala_lib/autovalaLib.vala:64
+#: ../src/autovalaLib/autovalaLib.vala:64
 #, c-format
 msgid "Failed when copying recursively the folder %s to %s"
 msgstr "Ha fallado la copia recursiva del directorio %s a %s"
 
-#: ../src/autovala_lib/autovalaLib.vala:71
+#: ../src/autovalaLib/autovalaLib.vala:71
 #, c-format
 msgid "Failed when copying the file %s to %s"
 msgstr "Incapaz de copiar el fichero %s a %s"
 
-#: ../src/autovala_lib/autovalaLib.vala:82
+#: ../src/autovalaLib/autovalaLib.vala:82
 #, c-format
 msgid "The folder '%s' already exists"
 msgstr "El directorio %s ya existe"
 
-#: ../src/autovala_lib/autovalaLib.vala:87
+#: ../src/autovalaLib/autovalaLib.vala:87
 #, c-format
 msgid "Can't create the folder '%s'"
 msgstr "No se ha podido crear el directorio %s"
 
-#: ../src/autovala_lib/autovalaLib.vala:106
+#: ../src/autovalaLib/autovalaLib.vala:106
 #, c-format
 msgid "There's already a project in folder %s"
 msgstr "Ya existe un proyecto en el directorio %s"
 
-#: ../src/autovala_lib/autovalaLib.vala:111
+#: ../src/autovalaLib/autovalaLib.vala:111
 #, c-format
 msgid "Failed to list path %s"
 msgstr "Incapaz de listar el directorio %s"
 
-#: ../src/autovala_lib/autovalaLib.vala:118
+#: ../src/autovalaLib/autovalaLib.vala:118
 msgid "The 'cmake' folder already exists"
 msgstr "El directorio 'cmake' ya existe"
 
-#: ../src/autovala_lib/autovalaLib.vala:140
+#: ../src/autovalaLib/autovalaLib.vala:140
 msgid "Can't create the initial source file"
 msgstr "No se ha podido crear el fichero fuente inicial"
 
-#: ../src/autovala_lib/autovalaLib.vala:176
+#: ../src/autovalaLib/autovalaLib.vala:176
 msgid "Failed while generating the main CMakeLists.txt file"
 msgstr "Falló la creación del fichero CMakeLists.txt principal"
 
-#: ../src/autovala_lib/autovalaLib.vala:228
+#: ../src/autovalaLib/autovalaLib.vala:228
 msgid "Failed while generating the CMakeLists.txt files"
 msgstr "Falló la creación de los ficheros CMakeLists.txt"
 
-#: ../src/autovala_lib/conditionalText.vala:55
+#: ../src/autovalaLib/conditionalText.vala:55
 msgid "Failed to store ELSE condition at config"
 msgstr "Incapaz de almacenar una condición ELSE en la configuracion"
 
-#: ../src/autovala_lib/conditionalText.vala:69
+#: ../src/autovalaLib/conditionalText.vala:69
 msgid "Failed to store ENDIF condition at config"
 msgstr "Incapaz de almacenar una condición ENDIF en la configuracion"
 
-#: ../src/autovala_lib/conditionalText.vala:81
+#: ../src/autovalaLib/conditionalText.vala:81
 msgid "Failed to store IF at config"
 msgstr "Incapaz de almacenar IF en la configuración"
 
-#: ../src/autovala_lib/conditionalText.vala:91
+#: ../src/autovalaLib/conditionalText.vala:91
 msgid "Failed to store IF NOT/ELSE at config"
 msgstr "Incapaz de almacenar IF NOT/ELSE en la configuracion"
 
-#: ../src/autovala_lib/conditionalText.vala:109
+#: ../src/autovalaLib/conditionalText.vala:109
 msgid "Failed to store TAIL at config"
 msgstr "Incapaz de almacenar TAIL en la configuración"
 
-#: ../src/autovala_lib/configuration.vala:102
+#: ../src/autovalaLib/configuration.vala:102
 #, c-format
 msgid "Nested IFs not allowed (line %d)"
 msgstr "No se permiten IFs anidados (linea %d)"
 
-#: ../src/autovala_lib/configuration.vala:124
+#: ../src/autovalaLib/configuration.vala:124
 #, c-format
 msgid "Mismatched END (line %d)"
 msgstr "END sin IF (linea %d)"
 
-#: ../src/autovala_lib/configuration.vala:134
-#: ../src/autovala_lib/configuration.vala:138
+#: ../src/autovalaLib/configuration.vala:134
+#: ../src/autovalaLib/configuration.vala:138
 #, c-format
 msgid "Mismatched ELSE (line %d)"
 msgstr "ELSE sin IF (linea %d)"
 
-#: ../src/autovala_lib/configuration.vala:292
+#: ../src/autovalaLib/configuration.vala:270
 #, c-format
 msgid ""
 "Vala version string not valid. It must be in the form N.N or N.N.N (line %d)"
@@ -164,7 +164,7 @@ msgstr ""
 "La cadena de versión de Vala no es válida. Tiene que ser de la forma N.N o N."
 "N.N (línea %d)"
 
-#: ../src/autovala_lib/configuration.vala:305
+#: ../src/autovalaLib/configuration.vala:283
 #, c-format
 msgid ""
 "This project needs Vala version %s or greater, but you have version %d.%d. "
@@ -173,173 +173,173 @@ msgstr ""
 "Este proyecto necesita la versión %s o superior de Vala, pero está instalada "
 "la versión %d.%d. No es posible abrirlo."
 
-#: ../src/autovala_lib/configuration.vala:355
+#: ../src/autovalaLib/configuration.vala:307
 msgid ""
 "This project was created with a newer version of Autovala. Can't open it."
 msgstr ""
 "Este proyecto se creó con una versión de Autovala más reciente. No es "
 "posible abrirlo."
 
-#: ../src/autovala_lib/configuration.vala:366
+#: ../src/autovalaLib/configuration.vala:318
 msgid "Can't open configuration file"
 msgstr "No se ha podido abrir el fichero de configuración"
 
-#: ../src/autovala_lib/configuration.vala:373
+#: ../src/autovalaLib/configuration.vala:325
 #, c-format
 msgid "IF without END in line %d"
 msgstr "IF sin END en la línea %d"
 
-#: ../src/autovala_lib/configuration.vala:382
+#: ../src/autovalaLib/configuration.vala:334
 #, c-format
 msgid "Conditionals are not supported in this statement (line %d)"
 msgstr "No se admiten condicionales en este comando (linea %d)"
 
-#: ../src/autovala_lib/configuration.vala:404
+#: ../src/autovalaLib/configuration.vala:356
 msgid "Can't store the configuration. Project name not defined."
 msgstr ""
 "No se puede guardar la configuración. No se ha especificado un nombre de "
 "proyecto."
 
-#: ../src/autovala_lib/configuration.vala:409
+#: ../src/autovalaLib/configuration.vala:361
 msgid "Can't store the configuration. Path not defined."
 msgstr "No se puede guardar la configuración. No se ha definido una ruta."
 
-#: ../src/autovala_lib/configuration.vala:425
+#: ../src/autovalaLib/configuration.vala:377
 #, c-format
 msgid "Failed to delete the old config file %s"
 msgstr "No se ha podido borrar el viejo fichero de configuración %s"
 
-#: ../src/autovala_lib/configuration.vala:429
+#: ../src/autovalaLib/configuration.vala:381
 #, c-format
 msgid "Storing configuration in file %s"
 msgstr "Almacenando la configuración en el fichero %s"
 
-#: ../src/autovala_lib/configuration.vala:462
+#: ../src/autovalaLib/configuration.vala:414
 #, c-format
 msgid "Can't create the config file %s"
 msgstr "No se ha podido crear el fichero de configuración %s"
 
-#: ../src/autovala_lib/configuration.vala:483
+#: ../src/autovalaLib/configuration.vala:435
 msgid "Error while storing the data"
 msgstr "Ha fallado el almacenamiento de los datos"
 
-#: ../src/autovala_lib/elementBase.vala:93
-#: ../src/autovala_lib/elementGlobal.vala:40
+#: ../src/autovalaLib/elementBase.vala:93
+#: ../src/autovalaLib/elementGlobal.vala:40
 #, c-format
 msgid "Directory %s doesn't exists"
 msgstr "El directorio %s no existe"
 
-#: ../src/autovala_lib/elementBase.vala:139
-#: ../src/autovala_lib/elementGlobal.vala:61
+#: ../src/autovalaLib/elementBase.vala:139
+#: ../src/autovalaLib/elementGlobal.vala:61
 #, c-format
 msgid "Can't access folder %s"
 msgstr "No ha sido posible acceder al directorio %s"
 
-#: ../src/autovala_lib/elementBase.vala:158
+#: ../src/autovalaLib/elementBase.vala:158
 #, c-format
 msgid "Trying to add an empty path: %s"
 msgstr "Intentando añadir una ruta vacía: %s"
 
-#: ../src/autovala_lib/elementBase.vala:168
+#: ../src/autovalaLib/elementBase.vala:168
 #, c-format
 msgid "Trying to add twice the path %s"
 msgstr "Intentando añadir dos veces la ruta %s"
 
-#: ../src/autovala_lib/elementBase.vala:176
+#: ../src/autovalaLib/elementBase.vala:176
 #, c-format
 msgid "File %s doesn't exists"
 msgstr "El fichero %s no existe "
 
-#: ../src/autovala_lib/elementBase.vala:211
-#: ../src/autovala_lib/elementCustom.vala:37
-#: ../src/autovala_lib/elementDefine.vala:35
-#: ../src/autovala_lib/elementDesktop.vala:55
-#: ../src/autovala_lib/elementIcon.vala:58
-#: ../src/autovala_lib/elementIgnore.vala:35
-#: ../src/autovala_lib/elementManpage.vala:70
-#: ../src/autovala_lib/elementValaBinary.vala:495
+#: ../src/autovalaLib/elementBase.vala:211
+#: ../src/autovalaLib/elementCustom.vala:37
+#: ../src/autovalaLib/elementDefine.vala:35
+#: ../src/autovalaLib/elementDesktop.vala:55
+#: ../src/autovalaLib/elementIcon.vala:58
+#: ../src/autovalaLib/elementIgnore.vala:35
+#: ../src/autovalaLib/elementManpage.vala:70
+#: ../src/autovalaLib/elementValaBinary.vala:495
 #, c-format
 msgid "Invalid command %s after command %s (line %d)"
 msgstr "El comando %s no es válido tras el comando %s (linea %d)"
 
-#: ../src/autovala_lib/elementBase.vala:295
+#: ../src/autovalaLib/elementBase.vala:295
 #, c-format
 msgid "Failed to store '%s: %s' at config"
 msgstr "No se ha podido almacenar '%s: %s' en la configuración"
 
-#: ../src/autovala_lib/elementBinary.vala:51
+#: ../src/autovalaLib/elementBinary.vala:51
 #, c-format
 msgid "Failed to add binary %s"
 msgstr "Incapaz de añadir el binario %s"
 
-#: ../src/autovala_lib/elementCustom.vala:43
+#: ../src/autovalaLib/elementCustom.vala:43
 #, c-format
 msgid "Custom command needs two parameters (line %d)"
 msgstr "El comando CUSTOM necesita dos parámetros (line %d)"
 
-#: ../src/autovala_lib/elementCustom.vala:75
+#: ../src/autovalaLib/elementCustom.vala:75
 #, c-format
 msgid "Failed to write the CMakeLists file for custom file %s"
 msgstr ""
 "Incapaz de escribir el fichero CMakeLists para el fichero personalizado "
 "(custom) %s"
 
-#: ../src/autovala_lib/elementCustom.vala:89
+#: ../src/autovalaLib/elementCustom.vala:89
 #, c-format
 msgid "Failed to store 'custom: %s %s' at config"
 msgstr "No se ha podido almacenar 'custom: %s %s' en la configuración"
 
-#: ../src/autovala_lib/elementDBus.vala:56
+#: ../src/autovalaLib/elementDBus.vala:56
 #, c-format
 msgid "Can't append DBUS data to the header CMakeLists file at %s"
 msgstr ""
 "Incapaz de añadir los datos de DBUS en la cabecera del fichero CMakeLists en "
 "%s"
 
-#: ../src/autovala_lib/elementDBus.vala:70
-#: ../src/autovala_lib/elementInclude.vala:36
+#: ../src/autovalaLib/elementDBus.vala:70
+#: ../src/autovalaLib/elementInclude.vala:36
 #, c-format
 msgid "Failed to write the CMakeLists file for %s"
 msgstr "Incapaz de escribir el fichero CMakeLists de %s"
 
-#: ../src/autovala_lib/elementData.vala:64
+#: ../src/autovalaLib/elementData.vala:64
 #, c-format
 msgid "Failed to install local files at %s"
 msgstr "Incapaz de instalar los ficheros locales de %s"
 
-#: ../src/autovala_lib/elementDesktop.vala:84
+#: ../src/autovalaLib/elementDesktop.vala:84
 #, c-format
 msgid "Failed to check if file %s is a GNome autostart file"
 msgstr ""
 "No se ha podido comprobar si el fichero %s es un fichero de autoarranque de "
 "GNome"
 
-#: ../src/autovala_lib/elementDesktop.vala:104
-#: ../src/autovala_lib/elementEosPlug.vala:52
+#: ../src/autovalaLib/elementDesktop.vala:104
+#: ../src/autovalaLib/elementEosPlug.vala:52
 #, c-format
 msgid "Failed to add file %s"
 msgstr "Incapaz de añadir el fichero %s"
 
-#: ../src/autovala_lib/elementDoc.vala:64
+#: ../src/autovalaLib/elementDoc.vala:64
 #, c-format
 msgid "Failed to install document files at %s"
 msgstr "Incapaz de instalar los ficheros de documentación de %s"
 
-#: ../src/autovala_lib/elementGlade.vala:51
+#: ../src/autovalaLib/elementGlade.vala:51
 #, c-format
 msgid "Failed to add glade %s"
 msgstr "Incapaz de añadir el fichero glade %s"
 
-#: ../src/autovala_lib/elementGlobal.vala:71
+#: ../src/autovalaLib/elementGlobal.vala:71
 #, c-format
 msgid "Can't add subdirectory %s"
 msgstr "No ha sido posible añadir el subdirectorio %s"
 
-#: ../src/autovala_lib/elementGlobal.vala:232
+#: ../src/autovalaLib/elementGlobal.vala:232
 msgid "The following local dependencies cannot be satisfied:"
 msgstr "No se han podido satisfacer las siguientes dependencias locales:"
 
-#: ../src/autovala_lib/elementGlobal.vala:239
+#: ../src/autovalaLib/elementGlobal.vala:239
 #, c-format
 msgid ""
 "\n"
@@ -348,7 +348,7 @@ msgstr ""
 "\n"
 "\tBiblioteca %s, paquetes:"
 
-#: ../src/autovala_lib/elementGlobal.vala:241
+#: ../src/autovalaLib/elementGlobal.vala:241
 #, c-format
 msgid ""
 "\n"
@@ -357,89 +357,89 @@ msgstr ""
 "\n"
 "\tBinario %s, paquetes:"
 
-#: ../src/autovala_lib/elementGlobal.vala:255
+#: ../src/autovalaLib/elementGlobal.vala:255
 msgid "Failed to generate the main CMakeLists.txt file"
 msgstr "Falló la creación del fichero CMakeLists principal"
 
-#: ../src/autovala_lib/elementGlobal.vala:282
+#: ../src/autovalaLib/elementGlobal.vala:282
 msgid "Failed to store a header"
 msgstr "No se ha podido almacenar una cabecera"
 
-#: ../src/autovala_lib/elementIcon.vala:112
+#: ../src/autovalaLib/elementIcon.vala:112
 #, c-format
 msgid "Can't get the size for icon %s"
 msgstr "Incapaz de obtener el tamaño del icono %s"
 
-#: ../src/autovala_lib/elementIcon.vala:118
-#: ../src/autovala_lib/elementIcon.vala:125
+#: ../src/autovalaLib/elementIcon.vala:118
+#: ../src/autovalaLib/elementIcon.vala:125
 #, c-format
 msgid "Failed to write the CMakeLists file for icon %s"
 msgstr "Incapaz de escribir el fichero CMakeLists para el icono %s"
 
-#: ../src/autovala_lib/elementIcon.vala:129
+#: ../src/autovalaLib/elementIcon.vala:129
 #, c-format
 msgid "Unknown icon type %s. Must be .png or .svg (in lowercase)"
 msgstr ""
 "Tipo de icono %s desconocido. Tiene que ser .png or .svg (en minúsculas)"
 
-#: ../src/autovala_lib/elementIcon.vala:146
+#: ../src/autovalaLib/elementIcon.vala:146
 #, c-format
 msgid "Failed to write the PostData for icons at %s"
 msgstr "Incapaz de escribir la PostData para los iconos en %s"
 
-#: ../src/autovala_lib/elementIcon.vala:165
+#: ../src/autovalaLib/elementIcon.vala:165
 #, c-format
 msgid "Failed to store 'icon: %s' at config"
 msgstr "No se ha podido almacenar 'icon: %s' en la configuración"
 
-#: ../src/autovala_lib/elementManpage.vala:83
+#: ../src/autovalaLib/elementManpage.vala:82
 #, c-format
 msgid "Manpage command needs one, two or three parameters (line %d)"
 msgstr "El comando Manpage necesita uno, dos o tres parámetros (línea %d)"
 
-#: ../src/autovala_lib/elementManpage.vala:101
+#: ../src/autovalaLib/elementManpage.vala:100
 #, c-format
 msgid "Man page section must be a number between 1 and 9 (line %d)"
 msgstr ""
 "La sección de una página de manual tiene que ser un número entre 1 y 9 "
 "(linea %d)"
 
-#: ../src/autovala_lib/elementManpage.vala:193
+#: ../src/autovalaLib/elementManpage.vala:191
 #, c-format
 msgid "Failed to install MANpages at %s"
 msgstr "Incapaz de instalar las páginas de manual en %s"
 
-#: ../src/autovala_lib/elementManpage.vala:219
+#: ../src/autovalaLib/elementManpage.vala:217
 #, c-format
 msgid "Failed to store 'manpage: %s' at config"
 msgstr "No se ha podido almacenar 'manpage: %s' en la configuración"
 
-#: ../src/autovala_lib/elementPixmap.vala:52
+#: ../src/autovalaLib/elementPixmap.vala:52
 #, c-format
 msgid "Failed to add pixmap %s"
 msgstr "Incapaz de añadir el pixmap %s"
 
-#: ../src/autovala_lib/elementPo.vala:50
+#: ../src/autovalaLib/elementPo.vala:50
 #, c-format
 msgid "Failed to delete the old POTFILES.in file at %s"
 msgstr "Incapaz de borrar el viejo fichero POTFILES.in en %s"
 
-#: ../src/autovala_lib/elementPo.vala:116
+#: ../src/autovalaLib/elementPo.vala:116
 msgid "Failed to create the PO files"
 msgstr "Falló la creación de los ficheros PO"
 
-#: ../src/autovala_lib/elementScheme.vala:58
+#: ../src/autovalaLib/elementScheme.vala:58
 #, c-format
 msgid "Failed to add schema %s"
 msgstr "Incapaz de añadir el schema %s"
 
-#: ../src/autovala_lib/elementValaBinary.vala:209
+#: ../src/autovalaLib/elementValaBinary.vala:209
 #, c-format
 msgid "File %s is overwritting the version number (line %d)"
 msgstr ""
 "Aviso: el fichero %s está sobreescribiendo el número de versión (línea %d)"
 
-#: ../src/autovala_lib/elementValaBinary.vala:220
+#: ../src/autovalaLib/elementValaBinary.vala:220
 #, c-format
 msgid ""
 "The contruction 'const string project_version=...' in file %s is deprecated. "
@@ -448,82 +448,82 @@ msgstr ""
 "La construcción 'const string project_version=...' está obsoleta. Debe "
 "sustituirse por '// project version=...'"
 
-#: ../src/autovala_lib/elementValaBinary.vala:259
+#: ../src/autovalaLib/elementValaBinary.vala:259
 #, c-format
 msgid "File %s is overwritting the namespace (line %d)"
 msgstr "El fichero %s está sobreescribiendo el namespace (línea %d)"
 
-#: ../src/autovala_lib/elementValaBinary.vala:279
+#: ../src/autovalaLib/elementValaBinary.vala:279
 #, c-format
 msgid "Can't open for read the file %s"
 msgstr "No se ha podido abrir el fichero %s para lectura"
 
-#: ../src/autovala_lib/elementValaBinary.vala:367
+#: ../src/autovalaLib/elementValaBinary.vala:367
 #, c-format
 msgid "Syntax error in VERSION statement (line %d)"
 msgstr "Error de sintaxis en el comando VERSION (línea %d)"
 
-#: ../src/autovala_lib/elementValaBinary.vala:379
+#: ../src/autovalaLib/elementValaBinary.vala:379
 #, c-format
 msgid "Ignoring duplicated NAMESPACE command (line %d)"
 msgstr "Ignorando comando NAMESPACE duplicado (línea %d)"
 
-#: ../src/autovala_lib/elementValaBinary.vala:388
+#: ../src/autovalaLib/elementValaBinary.vala:388
 #, c-format
 msgid "Ignoring duplicated OPTIONS command (line %d)"
 msgstr "Ignorando comando OPTIONS duplicado (línea %d)"
 
-#: ../src/autovala_lib/elementValaBinary.vala:397
+#: ../src/autovalaLib/elementValaBinary.vala:397
 #, c-format
 msgid "Ignoring duplicated DESTINATION command (line %d)"
 msgstr "Ignorando comando DESTINATION duplicado (línea %d)"
 
-#: ../src/autovala_lib/elementValaBinary.vala:528
+#: ../src/autovalaLib/elementValaBinary.vala:528
 #, c-format
 msgid "Failed to write the header for binary file %s"
 msgstr "Incapaz de escribir la cabecera para el fichero binario %s"
 
-#: ../src/autovala_lib/elementValaBinary.vala:575
-#: ../src/autovala_lib/elementValaBinary.vala:602
+#: ../src/autovalaLib/elementValaBinary.vala:575
+#: ../src/autovalaLib/elementValaBinary.vala:602
 msgid "Failed to create the Config.vala.cmake file"
 msgstr "Falló la creación del fichero Config.vala.cmake"
 
-#: ../src/autovala_lib/elementValaBinary.vala:622
+#: ../src/autovalaLib/elementValaBinary.vala:622
 #, c-format
 msgid "Can't set package %s for binary %s"
 msgstr "No ha sido posible asignar el paquete %s para el binario %s"
 
-#: ../src/autovala_lib/elementValaBinary.vala:727
+#: ../src/autovalaLib/elementValaBinary.vala:727
 #, c-format
 msgid "No namespace specified in library %s; GIR file will not be generated"
 msgstr ""
 "No se ha especificado un namespace en la biblioteca %s; no se creará el "
 "fichero GIR"
 
-#: ../src/autovala_lib/elementValaBinary.vala:845
+#: ../src/autovalaLib/elementValaBinary.vala:845
 #, c-format
 msgid "Failed to write the CMakeLists file for binary %s"
 msgstr "Incapaz de escribir el fichero CMakeLists del binario %s"
 
-#: ../src/autovala_lib/elementValaBinary.vala:934
+#: ../src/autovalaLib/elementValaBinary.vala:934
 #, c-format
 msgid "Failed to store ': %s' at config"
 msgstr "Incapaz de almacenar ':%s' en la configuración"
 
-#: ../src/autovala_lib/genVapis.vala:191
+#: ../src/autovalaLib/genVapis.vala:191
 #, c-format
 msgid "Unknown file %s uses namespace GLib. Contact the author."
 msgstr ""
 "El fichero desconocido %s utiliza el namespace GLib. Contacte con el autor."
 
 #. Shows an Error message
-#: ../src/autovala_lib/globals.vala:257
+#: ../src/autovalaLib/globals.vala:257
 #, c-format
 msgid "Error: %s"
 msgstr "Error: %s"
 
 #. Shows a Warning message
-#: ../src/autovala_lib/globals.vala:267
+#: ../src/autovalaLib/globals.vala:267
 #, c-format
 msgid "Warning: %s"
 msgstr "Aviso: %s"

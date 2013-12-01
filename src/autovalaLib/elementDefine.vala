@@ -43,7 +43,7 @@ namespace AutoVala {
 		public bool addNewDefine(string data,bool automatic=true) {
 
 			foreach (var element in ElementBase.globalData.globalElements) {
-				if (element.name==data) {
+				if (element.name == data) {
 					return false; // this DEFINE already exists
 				}
 			}

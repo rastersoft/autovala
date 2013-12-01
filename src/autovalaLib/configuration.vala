@@ -29,8 +29,6 @@ namespace AutoVala {
 		public string basepath; // Contains the full path where the configuration file is stored
 
 		public int currentVersion; // Contains the version of the currently supported syntax
-		public Gee.List<string> conditionalElements;
-
 
 		private int version;
 		private int lineNumber;
@@ -49,7 +47,6 @@ namespace AutoVala {
 			}
 
 			this.currentVersion=7; // currently we support version 7 of the syntax
-			this.conditionalElements=new Gee.ArrayList<string>();
 			this.version=0;
 
 			this.globalData = new AutoVala.Globals(projectName);
@@ -104,16 +101,13 @@ namespace AutoVala {
 			} else {
 				this.currentCondition=condition;
 				this.conditionInverted=false;
-				var new_condition=" "+(condition.replace("("," ").replace(")"," "))+" ";
-				var list_conditions=new_condition.replace(" AND "," ").replace(" and "," ").replace(" And "," ").replace(" OR "," ").replace(" or "," ").replace(" Or "," ").replace(" NOT "," ").replace(" not "," ").replace(" Not "," ").split(" ");
-				foreach(var l in list_conditions) {
-					if (l=="") {
-						continue;
+				var newCondition=" "+(condition.replace("("," ").replace(")"," "))+" ";
+				var listConditions=newCondition.replace(" AND "," ").replace(" and "," ").replace(" And "," ").replace(" OR "," ").replace(" or "," ").replace(" Or "," ").replace(" NOT "," ").replace(" not "," ").replace(" Not "," ").split(" ");
+				foreach(var l in listConditions) {
+					if ((l!="")&&(l.ascii_casecmp("true")!=0)&&(l.ascii_casecmp("false")!=0)) {
+						var define=new ElementDefine();
+						define.addNewDefine(l);
 					}
-					if (this.conditionalElements.contains(l)) {
-						continue;
-					}
-					this.conditionalElements.add(l);
 				}
 				return false;
 			}
@@ -247,7 +241,7 @@ namespace AutoVala {
 						}
 						element = new ElementDefine();
 					} else if (line.has_prefix("if ")) {
-						error|=this.addCondition(line.substring(3).strip());
+						error |= this.addCondition(line.substring(3).strip());
 						ifLineNumber=this.lineNumber;
 						continue;
 					}

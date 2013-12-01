@@ -34,13 +34,13 @@ configure_file (${CMAKE_SOURCE_DIR}/src/autovalaLib/Config.vala.cmake ${CMAKE_BI
 add_definitions(-DGETTEXT_PACKAGE=\"${GETTEXT_PACKAGE}\")
 configure_file (${CMAKE_CURRENT_SOURCE_DIR}/AutoVala.pc ${CMAKE_CURRENT_BINARY_DIR}/AutoVala.pc)
 set (VERSION "0.27")
-add_definitions(${DEPS_CFLAGS})
-link_libraries( ${DEPS_LIBRARIES} )
-link_directories( ${DEPS_LIBRARY_DIRS} )
-find_package(Vala REQUIRED)
-include(ValaVersion)
-ensure_vala_version("0.20" MINIMUM)
-include(ValaPrecompile)
+add_definitions (${DEPS_CFLAGS})
+link_libraries ( ${DEPS_LIBRARIES} )
+link_directories ( ${DEPS_LIBRARY_DIRS} )
+find_package (Vala REQUIRED)
+include (ValaVersion)
+ensure_vala_version ("0.20" MINIMUM)
+include (ValaPrecompile)
 
 set (VALA_PACKAGES ${VALA_PACKAGES} posix)
 set (VALA_PACKAGES ${VALA_PACKAGES} gee-1.0)
@@ -75,12 +75,22 @@ set (APP_SOURCES ${APP_SOURCES} genVapis.vala)
 set (APP_SOURCES ${APP_SOURCES} globals.vala)
 set (APP_SOURCES ${APP_SOURCES} readPkgconfig.vala)
 
+if (DEBUG)
+	set (COMPILE_OPTIONS ${COMPILE_OPTIONS} -D DEBUG)
+endif ()
+set (COMPILE_OPTIONS ${COMPILE_OPTIONS} --library=AutoVala --gir AutoVala-0.0.gir )
+set (COMPILE_OPTIONS ${COMPILE_OPTIONS} -X -O2 )
+if (DEBUG)
+	set (COMPILE_OPTIONS ${COMPILE_OPTIONS} -g )
+endif ()
+
+
 vala_precompile(VALA_C AutoVala
 	${APP_SOURCES}
 PACKAGES
 	${VALA_PACKAGES}
 OPTIONS
-	--library=AutoVala --gir AutoVala-0.0.gir 
+	${COMPILE_OPTIONS}
 GENERATE_VAPI
 	AutoVala
 GENERATE_HEADER
