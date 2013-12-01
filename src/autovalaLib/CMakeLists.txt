@@ -30,7 +30,7 @@ set (PREFIX ${CMAKE_INSTALL_PREFIX})
 set (VERSION "0.27")
 set (DOLLAR "$")
 
-configure_file (${CMAKE_SOURCE_DIR}/src/autovala_lib/Config.vala.cmake ${CMAKE_BINARY_DIR}/src/autovala_lib/Config.vala)
+configure_file (${CMAKE_SOURCE_DIR}/src/autovalaLib/Config.vala.cmake ${CMAKE_BINARY_DIR}/src/autovalaLib/Config.vala)
 add_definitions(-DGETTEXT_PACKAGE=\"${GETTEXT_PACKAGE}\")
 configure_file (${CMAKE_CURRENT_SOURCE_DIR}/AutoVala.pc ${CMAKE_CURRENT_BINARY_DIR}/AutoVala.pc)
 set (VERSION "0.27")
