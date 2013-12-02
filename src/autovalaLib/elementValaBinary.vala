@@ -120,7 +120,7 @@ namespace AutoVala {
 			ElementValaBinary.addedValaBinaries = false;
 			try {
 				this.regexVersion = new GLib.Regex("^[ \t]*// *project +version *= *[0-9]+.[0-9]+(.[0-9]+)?;?$");
-				this.regexPackages = new GLib.Regex("^([ \t]*// *)?[Uu]sing +");
+				this.regexPackages = new GLib.Regex("^([ \t]*// *)?[Uu]sing +[^;]+;?");
 			} catch (Error e) {
 				ElementBase.globalData.addError(_("Can't generate the Regexps"));
 			}
