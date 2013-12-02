@@ -1,3 +1,6 @@
+* version 0.29.0 (2013-12-02)
+    * Now uses regular expressions for processing the USING and PROJECT VERSION strings, which gives more flexibility to the user
+    * Now can autodetect in some cases when to add the gio package
 * version 0.28.0 (2013-12-01)
     * Supports the use of conditionals with COMPILE_OPTIONS statement
     * Allows to use several COMPILE_OPTIONS in the same binary/library
