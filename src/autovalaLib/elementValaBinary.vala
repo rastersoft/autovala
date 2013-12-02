@@ -234,9 +234,13 @@ namespace AutoVala {
 						continue;
 					}
 					// add the version
-					if (Regex.match_simple("^[ \t]*// *project +version *= *[0-9]+.[0-9]+(.[0-9]+)?$",line)) {
+					if (Regex.match_simple("^[ \t]*// *project +version *= *[0-9]+.[0-9]+(.[0-9]+)?;?$",line)) {
 						var pos = line.index_of("=");
-						version=line.strip().substring(pos);
+						var pos2 = line.index_of(";");
+						if (pos2==-1) {
+							pos2 = line.length;
+						}
+						version=line.substring(pos+1,pos2-pos-1).strip();
 						continue;
 					}
 					// add the packages used by this source file
