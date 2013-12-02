@@ -17,7 +17,6 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 
 using GLib;
-//using GIO;
 
 namespace AutoVala {
 
@@ -255,6 +254,18 @@ namespace AutoVala {
 							this.usingList.add(namespaceFound);
 						}
 						continue;
+					}
+					/* Check for these words to automatically add the gio package.
+					 * Of course, this is NOT an exhaustive list, just the most common, to simplify the use.
+					 * In case of needing the Gio package, and not using any of these words in your source, just
+					 * add "//using GIO" */
+					if ((-1!=line.index_of("FileInfo"))||(-1!=line.index_of("FileType"))||(-1!=line.index_of("FileEnumerator"))||
+								(-1!=line.index_of("DataInputStream"))||(-1!=line.index_of("DataOutputStream"))||
+								(-1!=line.index_of("FileInputStream"))||(-1!=line.index_of("FileOutputStream"))||
+								(-1!=line.index_of("DBus"))||(-1!=line.index_of("Socket"))) {
+						if (this.usingList.contains("GIO")==false) {
+							this.usingList.add("GIO");
+						}
 					}
 					if (line.has_prefix("namespace ")) {
 						var pos=line.index_of("{");

@@ -7,7 +7,7 @@ custom: data/bash_completion/autovala /etc/bash_completion.d
 custom: data/cmake share/autovala
 
 vala_binary: src/autovala
-*version: 0.28.0
+*version: 0.29.0
 compile_options: -X -O2
 if DEBUG
 compile_options: -g
@@ -15,22 +15,21 @@ end
 vala_local_package: AutoVala
 *vala_package: posix
 *vala_check_package: gee-1.0
-*vala_check_package: gio-2.0
 *vala_check_package: glib-2.0
 *vala_source: autovala.vala
 
 vala_library: src/autovalaLib/autovalaLib
-*version: 0.28
+*version: 0.29
 *namespace: AutoVala
 compile_options: -X -O2
 if DEBUG
 compile_options: -g
 end
 *vala_package: posix
+*vala_check_package: gdk-3.0
 *vala_check_package: gee-1.0
 *vala_check_package: gio-2.0
 *vala_check_package: glib-2.0
-*vala_check_package: gtk+-3.0
 *vala_source: autovalaLib.vala
 *vala_source: conditionalText.vala
 *vala_source: configuration.vala

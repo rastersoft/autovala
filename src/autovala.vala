@@ -19,9 +19,8 @@
 using GLib;
 using Gee;
 using Posix;
-//using GIO
 
-//project version = 0.28.0
+//project version = 0.29.0
 
 void help() {
 

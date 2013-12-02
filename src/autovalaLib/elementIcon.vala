@@ -17,8 +17,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 
 using GLib;
-using Gtk;
-//using GIO;
+using Gdk;
 
 namespace AutoVala {
 
