@@ -100,6 +100,9 @@ namespace AutoVala {
 
 		private static bool addedValaBinaries;
 
+		private GLib.Regex regexVersion;
+		private GLib.Regex regexPackages;
+
 		public ElementValaBinary() {
 			this.command = "";
 			this.version="1.0.0";
@@ -115,6 +118,12 @@ namespace AutoVala {
 			this._vapis=new Gee.ArrayList<VapiElement ?>();
 			this._compileOptions=new Gee.ArrayList<CompileElement ?>();
 			ElementValaBinary.addedValaBinaries = false;
+			try {
+				this.regexVersion = new GLib.Regex("^[ \t]*// *project +version *= *[0-9]+.[0-9]+(.[0-9]+)?;?$");
+				this.regexPackages = new GLib.Regex("^([ \t]*// *)?[Uu]sing +");
+			} catch (Error e) {
+				ElementBase.globalData.addError(_("Can't generate the Regexps"));
+			}
 		}
 
 		public static bool autoGenerate() {
@@ -205,6 +214,8 @@ namespace AutoVala {
 			string line;
 			string? version=null;
 			int lineCounter=0;
+			string regexString;
+			MatchInfo regexMatch;
 
 			string path = GLib.Path.build_filename(ElementBase.globalData.projectFolder,this._path,pathP);
 			try {
@@ -233,23 +244,25 @@ namespace AutoVala {
 						continue;
 					}
 					// add the version
-					if (Regex.match_simple("^[ \t]*// *project +version *= *[0-9]+.[0-9]+(.[0-9]+)?;?$",line)) {
-						var pos = line.index_of("=");
-						var pos2 = line.index_of(";");
+					if (this.regexVersion.match(line,0, out regexMatch)) {
+						regexString = regexMatch.fetch(0);
+						var pos = regexString.index_of("=");
+						var pos2 = regexString.index_of(";");
 						if (pos2==-1) {
-							pos2 = line.length;
+							pos2 = regexString.length;
 						}
-						version=line.substring(pos+1,pos2-pos-1).strip();
+						version=regexString.substring(pos+1,pos2-pos-1).strip();
 						continue;
 					}
 					// add the packages used by this source file
-					if (Regex.match_simple("^([ \t]*// *)?[Uu]sing +",line)) {
-						var pos=line.index_of(";");
-						var pos2=line.index_of("g ");
+					if (this.regexPackages.match(line,0, out regexMatch)) {
+						regexString = regexMatch.fetch(0);
+						var pos=regexString.index_of(";");
+						var pos2=regexString.index_of("g ");
 						if (pos==-1) {
-							pos=line.length; // allow to put //using without a ; at the end, but also accept with it
+							pos=regexString.length; // allow to put //using without a ; at the end, but also accept with it
 						}
-						var namespaceFound=line.substring(pos2+2,pos-pos2-2).strip();
+						var namespaceFound=regexString.substring(pos2+2,pos-pos2-2).strip();
 						if (this.usingList.contains(namespaceFound)==false) {
 							this.usingList.add(namespaceFound);
 						}
