@@ -200,6 +200,7 @@ namespace AutoVala {
 			return false;
 		}
 
+		// Read a source file and extract all the data about it, like packages, program version, namespaces...
 		private bool processSource(string pathP) {
 
 			string line;
@@ -241,17 +242,14 @@ namespace AutoVala {
 						continue;
 					}
 					// add the packages used by this source file
-					if ((line.has_prefix("using "))||(line.has_prefix("//using "))||(line.has_prefix("// using "))) {
+					if (Regex.match_simple("^( *// *)?[uU]sing +",line)) {
 						var pos=line.index_of(";");
-						var pos2=line.index_of(" ",3);
+						var pos2=line.index_of("g ");
 						if (pos==-1) {
-							if ((line.has_prefix("//using "))||(line.has_prefix("// using "))) {
-								pos=line.length; // allow to put //using without a ; at the end, but also accept with it
-							} else {
-								continue;
-							}
+							pos=line.length; // allow to put //using without a ; at the end, but also accept with it
 						}
-						var namespaceFound=line.substring(pos2,pos-pos2).strip();
+						var namespaceFound=line.substring(pos2+2,pos-pos2-2).strip();
+						GLib.stdout.printf("Encontrado %s en %s\n",namespaceFound,pathP);
 						if (this.usingList.contains(namespaceFound)==false) {
 							this.usingList.add(namespaceFound);
 						}
