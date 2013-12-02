@@ -259,7 +259,7 @@ namespace AutoVala {
 					if (line.has_prefix("namespace ")) {
 						var pos=line.index_of("{");
 						if (pos==-1) {
-							pos=line.length-1;
+							pos=line.length;
 						}
 						var namespaceFound=line.substring(10,pos-10).strip();
 						if ((this.currentNamespace!=null)&&(this.currentNamespace!=namespaceFound)) {
