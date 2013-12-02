@@ -6,6 +6,16 @@
 <div class="main_frame">
 <p><a href="index.html">Home</a></p>
 <ul>
+<li>version 0.29.0 (2013-12-02)
+<ul>
+<li>Now uses regular expressions for processing the USING and PROJECT VERSION strings, which gives more flexibility to the user<br /></li>
+<li>Now can autodetect in some cases when to add the gio package<br /></li>
+</ul></li>
+<li>version 0.28.0 (2013-12-01)
+<ul>
+<li>Supports the use of conditionals with COMPILE_OPTIONS statement<br /></li>
+<li>Allows to use several COMPILE_OPTIONS in the same binary/library<br /></li>
+</ul></li>
 <li>version 0.27.0 (2013-12-01)
 <ul>
 <li>Full refactorization to simplify future maintenance and improvements<br /></li>
