@@ -233,23 +233,20 @@ namespace AutoVala {
 						}
 						continue;
 					}
-					if (line.has_prefix("// project version=")) { // add the version
-						version=line.strip().substring(19);
-						continue;
-					}
-					if (line.has_prefix("//project version=")) { // add the version
-						version=line.strip().substring(18);
+					// add the version
+					if (Regex.match_simple("^[ \t]*// *project +version *= *[0-9]+.[0-9]+(.[0-9]+)?$",line)) {
+						var pos = line.index_of("=");
+						version=line.strip().substring(pos);
 						continue;
 					}
 					// add the packages used by this source file
-					if (Regex.match_simple("^( *// *)?[uU]sing +",line)) {
+					if (Regex.match_simple("^([ \t]*// *)?[Uu]sing +",line)) {
 						var pos=line.index_of(";");
 						var pos2=line.index_of("g ");
 						if (pos==-1) {
 							pos=line.length; // allow to put //using without a ; at the end, but also accept with it
 						}
 						var namespaceFound=line.substring(pos2+2,pos-pos2-2).strip();
-						GLib.stdout.printf("Encontrado %s en %s\n",namespaceFound,pathP);
 						if (this.usingList.contains(namespaceFound)==false) {
 							this.usingList.add(namespaceFound);
 						}
