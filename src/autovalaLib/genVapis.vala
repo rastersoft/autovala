@@ -49,6 +49,9 @@ namespace AutoVala {
 		private string[] errorList;
 		private Gee.Map<string,namespacesElement?> ?namespaces;
 		private ReadPkgConfig pkgConfigs;
+		private GLib.Regex regexGirVersion;
+		private GLib.Regex regexVersion;
+		private GLib.Regex regexNamespace;
 
 		/**
 		 * @param major Major number of the version of Vala compiler currently installed
@@ -57,6 +60,14 @@ namespace AutoVala {
 		public ReadVapis(int major, int minor) {
 
 			this.errorList={};
+			try {
+				this.regexGirVersion=new GLib.Regex("gir_version( )*=( )*\"[0-9]+(.[0-9]+)?\"");
+				this.regexVersion=new GLib.Regex("[0-9]+(.[0-9]+)?");
+				this.regexNamespace=new GLib.Regex("^[ \t]*namespace[ ]+[^ \\{]+[ ]*");
+			} catch (Error e) {
+				ElementBase.globalData.addError(_("Can't generate the regular expressions to read the VAPI files."));
+			}
+
 			this.namespaces=new Gee.HashMap<string,namespacesElement?>();
 			this.pkgConfigs=new ReadPkgConfig();
 
@@ -93,7 +104,8 @@ namespace AutoVala {
 		}
 
 		/**
-		 * For a given package, returns which namespace(s) it contains.
+		 * For a given package, returns which namespace(s) it contains. It is useful when the user adds
+		 * a package manually and Autovala needs to know which namespaces are covered by it
 		 * @param package The package to check
 		 * @return A list with all the namespaces inside that package
 		 */
@@ -109,6 +121,14 @@ namespace AutoVala {
 			return retVal;
 		}
 
+		/**
+		 * Each time a VAPI file is found, it is called this function to add it to the namespacesElement with
+		 * one of its namespaces (several VAPI files can offer the same namespace, like gtk-2.0 and gtk-3.0)
+		 * @param element The namespacesElement to wich append this VAPI file
+		 * @param filename The VAPI filename
+		 * @param girMajor The major version of this VAPI GIR
+		 * @param girMinor The minor version of this VAPI GIR
+		 */
 		private void addFile(namespacesElement element, string filename, int girMajor, int girMinor) {
 
 			int cMajor;
@@ -144,7 +164,8 @@ namespace AutoVala {
 				}
 			}
 
-			if ((element.currentFile==null)||(newfile.length<element.currentFile.length)) { // always take the shortest filename
+			// always take the shortest filename
+			if ((element.currentFile==null)||(newfile.length<element.currentFile.length)) {
 				element.currentFile=newfile;
 				element.filename=file;
 				element.major=cMajor;
@@ -152,7 +173,8 @@ namespace AutoVala {
 				element.checkable=pkgConfigs.contains(file);
 				return;
 			}
-			if (element.currentFile==newfile) { // for the same filename, take always the greatest version
+			if (element.currentFile==newfile) {
+				// for the same filename, take always the greatest version
 				if((cMajor>element.major)||((cMajor==element.major)&&(cMinor>element.minor))) {
 					element.major=cMajor;
 					element.minor=cMinor;
@@ -163,11 +185,13 @@ namespace AutoVala {
 			}
 		}
 
+		/*
+		 * This method checks the namespaces provided by a VAPI file and adds it to the corresponding elements
+		 * in this.namespaces
+		 * @param basepath The full path and filename to check
+		 * @param fileP The filename alone
+		 */
 		private void checkVapiFile(string basepath, string fileP) {
-
-			/*
-			 * This method checks the namespaces provided by a .vapi file
-			 */
 
 			string file=fileP;
 			if (file.has_suffix(".vapi")==false) {
@@ -181,15 +205,15 @@ namespace AutoVala {
 			MatchInfo foundString;
 			MatchInfo foundVersion;
 			try {
-				var reg_expression=new GLib.Regex("gir_version( )*=( )*\"[0-9]+(.[0-9]+)?\"");
-				var reg_expression2=new GLib.Regex("[0-9]+(.[0-9]+)?");
 				var dis = new DataInputStream (file_f.read ());
 				string line;
+				string[] namespaceQueue = {};
+				string lastNamespace="";
 				while ((line = dis.read_line (null)) != null) {
 					// Search for "gir_version" string
-					if (reg_expression.match(line,0,out foundString)) {
+					if (regexGirVersion.match(line,0,out foundString)) {
 						var girVersionString = foundString.fetch(0);
-						if (reg_expression2.match(girVersionString,0, out foundVersion)) {
+						if (regexVersion.match(girVersionString,0, out foundVersion)) {
 							var version=foundVersion.fetch(0);
 							var pos=version.index_of(".");
 							if (pos==-1) { // single number
@@ -202,34 +226,84 @@ namespace AutoVala {
 							}
 						}
 					}
-					// Search for namespaces
-					if (line.has_prefix("namespace ")) {
-						var namespaceS=line.split(" ")[1];
-						if (namespaceS=="GLib") { // GLib needs several tricks
-							if (fileP.has_prefix("glib-")) {
-							} else if (fileP.has_prefix("gio-unix-")) {
-								namespaceS="GIO-unix";
-							} else if (fileP.has_prefix("gio")) {
-								namespaceS="GIO";
-							} else if (fileP.has_prefix("gmodule-")) {
-								namespaceS="GModule";
-							} else if (fileP.has_prefix("gobject-")) {
-								namespaceS="GObject";
-							} else {
-								ElementBase.globalData.addWarning(_("Unknown file %s uses namespace GLib. Contact the author.").printf(fileP));
-								namespaceS="";
+					/* Search for namespaces. We have to do this complex thing to allow to find
+					 * nested, multilevel namespaces inside a VAPI file
+					 *
+					 * If this line contains a namespace, read and store it in lastNamespace
+					 * It will be added to the list when we find the '{' character that belongs to it
+					 */
+					if (regexNamespace.match(line,0,out foundString)) {
+						var elements = foundString.fetch(0).strip().split(" ");
+						lastNamespace="";
+						for(int c=1;c<elements.length;c++) {
+							// Just in case there are more than one space between 'namespace' and the namespace
+							if (elements[c]!="") {
+								lastNamespace=elements[c];
+								break;
 							}
 						}
-
-						if (namespaceS!="") {
-							namespacesElement element;
-							if (this.namespaces.has_key(namespaceS)) {
-								element=this.namespaces.get(namespaceS);
+						if (lastNamespace=="GLib") { // GLib needs several tricks
+							if (fileP.has_prefix("glib-")) {
+							} else if (fileP.has_prefix("gio-unix-")) {
+								lastNamespace="GIO-unix";
+							} else if (fileP.has_prefix("gio")) {
+								lastNamespace="GIO";
+							} else if (fileP.has_prefix("gmodule-")) {
+								lastNamespace="GModule";
+							} else if (fileP.has_prefix("gobject-")) {
+								lastNamespace="GObject";
 							} else {
-								element=new namespacesElement(namespaceS);
-								this.namespaces.set(namespaceS,element);
+								ElementBase.globalData.addWarning(_("Unknown file %s uses namespace GLib. Contact the author.").printf(fileP));
+								lastNamespace="";
 							}
-							this.addFile(element,fileP,girMajor,girMinor);
+						}
+					}
+
+					var len = line.length;
+					for (int l=0;l<len;l++) {
+						/* each time we find a '{' character, we add another level;
+						 * If we found previously a namespace then this '{' belongs to it,
+						 * so add that namespace to the current level
+						 */
+						if (line[l] == '{') {
+							namespaceQueue += lastNamespace;
+							if (lastNamespace!="") {
+								lastNamespace="";
+								bool noFirst=false;
+								string finalNamespace="";
+								// Compose a namespace with all the namespaces up to the current level
+								foreach(var element in namespaceQueue) {
+									if (element!="") {
+										if (noFirst) {
+											finalNamespace+="."+element;
+										} else {
+											finalNamespace+=element;
+											noFirst=true;
+										}
+									}
+								}
+								namespacesElement element;
+								if (this.namespaces.has_key(finalNamespace)) {
+									element=this.namespaces.get(finalNamespace);
+								} else {
+									element=new namespacesElement(finalNamespace);
+									this.namespaces.set(finalNamespace,element);
+								}
+								this.addFile(element,fileP,girMajor,girMinor);
+							}
+						// When we find a '}' character, we remove the last level
+						} else if (line[l]=='}') {
+							var len2=namespaceQueue.length;
+							if (len2>1) {
+								len2--;
+								string[] tmpQueue = {};
+								for(int p=0;p<len2;p++) {
+									tmpQueue+=namespaceQueue[p];
+								}
+								namespaceQueue=tmpQueue;
+							} else {
+								namespaceQueue = {};
+							}
 						}
 					}
 				}
@@ -238,12 +312,13 @@ namespace AutoVala {
 			}
 		}
 
+		/*
+		 * Fills the NAMESPACES hashmap with a list of each namespace and the files that provides it, and also
+		 * the "best" one (bigger version)
+		 * @param basepath The path where to find VAPI files
+		 */
 		private void fillNamespaces(string basepath) {
 
-			/*
-			 * Fills the NAMESPACES hashmap with a list of each namespace and the files that provides it, and also the "best" one
-			 * (bigger version)
-			 */
 			var newpath=File.new_for_path(Path.build_filename(basepath,"vapi"));
 			if (newpath.query_exists()==false) {
 				return;

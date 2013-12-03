@@ -22,7 +22,11 @@ using Posix;
 
 namespace AutoVala {
 
-	class ConditionalText: GLib.Object {
+	/**
+	 * This class manages the conditional texts in the configuration and CMakeLists.txt files
+	 * It decides when to write an 'if', an 'else' and an 'end'
+	 */
+	private class ConditionalText: GLib.Object {
 
 		string? currentCondition;
 		bool invertedCondition;
@@ -31,21 +35,37 @@ namespace AutoVala {
 
 		public static Globals globalData = null;
 
+		/**
+		 * @param stream The file stream to which write the statements
+		 * @param cmake //true// if we are writting to a CMakeLists.txt file; //false// if it is a .avprj file
+		 */
 		public ConditionalText(DataOutputStream stream,bool cmake) {
 			this.dataStream=stream;
 			this.cmakeFormat=cmake;
 			this.reset();
 		}
 
+		/**
+		 * Erases all the conditions and starts from scratch
+		 */
 		public void reset() {
 			this.currentCondition=null;
 			invertedCondition=false;
 		}
 
+		/**
+		 * Prints, if needed, the current condition.
+		 * @param condition The condition for the next statement to add to the file
+		 * @param inverted Wether the condition is inverted (this is, the statement is after an 'else')
+		 */
 		public void printCondition(string? condition, bool inverted) {
 			if (condition==this.currentCondition) {
 				try {
 					if (condition!=null) {
+						/* if the condition for the next statement is the same than the condition of the
+						 * previous statement, but the 'inverted' flag is different, we have to put an else
+						 * to reverse the condition
+						 */
 						if (inverted!=this.invertedCondition) {
 							if (this.cmakeFormat) {
 								this.dataStream.put_string("else ()\n");
@@ -63,6 +83,9 @@ namespace AutoVala {
 				}
 			} else {
 				this.invertedCondition=false;
+				/* If the condition for the next statement is different than the condition of the previous
+				 * statement, and the previous statement was conditional, we have to close the previous if
+				 */
 				if(this.currentCondition!=null) {
 					try {
 						if (this.cmakeFormat) {
@@ -74,6 +97,8 @@ namespace AutoVala {
 						ElementBase.globalData.addError(_("Failed to store ENDIF condition at config"));
 					}
 				}
+				/* Now, if the next statement is conditional, we must start a new condition
+				 */
 				if(condition!=null) {
 					if (inverted==false) {
 						try {
@@ -102,6 +127,7 @@ namespace AutoVala {
 			}
 		}
 
+		/* After printing all statements, we must close any possible condition previously opened */
 		public void printTail() {
 			if (this.currentCondition!=null) {
 				try {

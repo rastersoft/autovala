@@ -94,6 +94,9 @@ namespace AutoVala {
 			bool error=false;
 
 			this.config=new AutoVala.Configuration(projectName,false);
+			if(this.config.globalData.error) {
+				return true; // if there was at least one error during initialization, return
+			}
 			string configPath=Posix.realpath(GLib.Environment.get_current_dir());
 			var directory=File.new_for_path(configPath);
 
@@ -153,6 +156,9 @@ namespace AutoVala {
 			bool error;
 
 			this.config = new AutoVala.Configuration();
+			if(this.config.globalData.error) {
+				return true; // if there was at least one error during initialization, return
+			}
 			var globalData = ElementBase.globalData;
 
 			error=config.readConfiguration();
@@ -235,6 +241,9 @@ namespace AutoVala {
 			bool error;
 
 			this.config = new AutoVala.Configuration();
+			if(this.config.globalData.error) {
+				return true; // if there was at least one error during initialization, return
+			}
 
 			error=config.readConfiguration();
 			ElementBase.globalData.clearAutomatic();
@@ -268,6 +277,9 @@ namespace AutoVala {
 		public bool clear() {
 
 			var config=new AutoVala.Configuration();
+			if(this.config.globalData.error) {
+				return true; // if there was at least one error during initialization, return
+			}
 			var retval=config.readConfiguration();
 			config.showErrors();
 			if (retval) {
