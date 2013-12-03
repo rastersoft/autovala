@@ -1,4 +1,4 @@
-* version 0.30.0 (2013-12-03)
+* version 0.30.0 (2013-12-04)
     * Now shows a warning message when it can't find a package from a Using statement
     * Now supports packages that contains more than one namespace when the user sets manually that package
     * Now adds a tabulator inside conditionals in the CMakeLists.files

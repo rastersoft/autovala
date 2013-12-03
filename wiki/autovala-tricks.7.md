@@ -121,7 +121,7 @@ To get the sources, just use
 
         git clone http://git.gnome.org/browse/valadoc
 
-Then, don't forget to uninstall the **valadoc** and **libvaladoc1** packages, install the packages **libgee-0.8-dev** and **libgraphviz-dev**, and then just run
+Then, don't forget to uninstall the **valadoc** and **libvaladoc1** packages, install the packages **autoconf**, **libgee-0.8-dev** and **libgraphviz-dev**, and then just run
 
         ./autogen.sh
         make
