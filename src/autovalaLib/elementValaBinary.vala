@@ -362,6 +362,9 @@ namespace AutoVala {
 		}
 
 		public static int comparePackages (GenericElement? a, GenericElement? b) {
+			if (a.automatic!=b.automatic) {
+				return (a.automatic ? 1 : -1); // put the manual ones first
+			}
 			if ((a.condition==null)&&(b.condition==null)) {
 				return Posix.strcmp(a.elementName,b.elementName);
 			}

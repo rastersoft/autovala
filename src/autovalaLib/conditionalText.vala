@@ -44,17 +44,22 @@ namespace AutoVala {
 
 		public void printCondition(string? condition, bool inverted) {
 			if (condition==this.currentCondition) {
-				if ((condition!=null) && (inverted!=this.invertedCondition)) {
-					try {
-						if (this.cmakeFormat) {
-							this.dataStream.put_string("else ()\n\t");
-						} else {
-							this.dataStream.put_string("else\n");
+				try {
+					if (condition!=null) {
+						if (inverted!=this.invertedCondition) {
+							if (this.cmakeFormat) {
+								this.dataStream.put_string("else ()\n");
+							} else {
+								this.dataStream.put_string("else\n");
+							}
+							this.invertedCondition=inverted;
 						}
-					} catch (Error e) {
-						ElementBase.globalData.addError(_("Failed to store ELSE condition at config"));
+						if (this.cmakeFormat) {
+							this.dataStream.put_string("\t");
+						}
 					}
-					this.invertedCondition=inverted;
+				} catch (Error e) {
+					ElementBase.globalData.addError(_("Failed to store ELSE condition at config"));
 				}
 			} else {
 				this.invertedCondition=false;
