@@ -190,9 +190,11 @@ namespace AutoVala {
 			}
 			// Check which dependencies are already resolved by manually added packages
 			foreach(var element in this._packages) {
-				var namespaceP = ElementBase.globalData.vapiList.getNamespaceFromPackage(element.elementName);
-				if ((namespaceP!=null)&&(this.usingList.contains(namespaceP))) {
-					this.usingList.remove(namespaceP);
+				var namespaces = ElementBase.globalData.vapiList.getNamespaceFromPackage(element.elementName);
+				foreach (var namespaceP in namespaces) {
+					if ((namespaceP!=null)&&(this.usingList.contains(namespaceP))) {
+						this.usingList.remove(namespaceP);
+					}
 				}
 			}
 
@@ -204,6 +206,11 @@ namespace AutoVala {
 					var filename = ElementBase.globalData.vapiList.getPackageFromNamespace(element, out isCheckable);
 					this.addPackage(filename,isCheckable ? packageType.DO_CHECK : packageType.NO_CHECK, true, null, false, -1);
 				}
+			}
+			
+			// If there are dependencies not resolved, show a warning message for each one
+			foreach(var element in this.usingList) {
+				ElementBase.globalData.addWarning(_("Can't resolve Using %s").printf(element));
 			}
 			return false;
 		}
@@ -254,7 +261,7 @@ namespace AutoVala {
 						version=regexString.substring(pos+1,pos2-pos-1).strip();
 						continue;
 					}
-					// add the packages used by this source file
+					// add the packages used by this source file ("using" statement)
 					if (this.regexPackages.match(line,0, out regexMatch)) {
 						regexString = regexMatch.fetch(0);
 						var pos=regexString.index_of(";");

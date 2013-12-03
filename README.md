@@ -30,6 +30,8 @@ and enjoy.
 
 
 ## History of versions ##
+* version 0.30.0 (2013-12-03)
+    * Now shows a warning message when it can't find a package from a Using statement
 * version 0.29.0 (2013-12-02)
     * Now uses regular expressions for processing the USING and PROJECT VERSION strings, which gives more flexibility to the user
     * Now can autodetect in some cases when to add the gio package

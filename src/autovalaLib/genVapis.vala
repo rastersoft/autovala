@@ -40,12 +40,20 @@ namespace AutoVala {
 		}
 	}
 
+	/**
+	 * Reads all the VAPI files in the system and generates a list of the namespaces contained in each one.
+	 * This allows to know which package add for each USING statement in the source code.
+	 */
 	private class ReadVapis:GLib.Object {
 
 		private string[] errorList;
 		private Gee.Map<string,namespacesElement?> ?namespaces;
 		private ReadPkgConfig pkgConfigs;
 
+		/**
+		 * @param major Major number of the version of Vala compiler currently installed
+		 * @param minor Minor number of the version of Vala compiler currently installed
+		 */
 		public ReadVapis(int major, int minor) {
 
 			this.errorList={};
@@ -58,10 +66,21 @@ namespace AutoVala {
 			this.fillNamespaces("/usr/local/share/vala-%d.%d".printf(major,minor));
 		}
 
+		/**
+		 * Returns all the namespaces found in the system
+		 * @return a set with all the namespaces found
+		 */
 		public Gee.Set<string>getNamespaces() {
 			return this.namespaces.keys;
 		}
 
+		/**
+		 * For a given namespace, returns the package that provides it, and also if it is a library with
+		 * a pkgconfig file.
+		 * @param namespaceP The namespace to find
+		 * @param checkable If //true//, the package has a pkgconfig file (like //Gtk//) and can be checked by CMake; if false, it is an //internal// package (like //Posix// or //Gio//)
+		 * @return the greatest package version that implements that namespace, or //null// if no package implements it
+		 */
 		public string ? getPackageFromNamespace(string namespaceP, out bool checkable) {
 			
 			if (false == this.namespaces.has_key(namespaceP)) {
@@ -72,15 +91,22 @@ namespace AutoVala {
 			checkable = element.checkable;
 			return element.filename;
 		}
-		
-		public string ? getNamespaceFromPackage(string package) {
+
+		/**
+		 * For a given package, returns which namespace(s) it contains.
+		 * @param package The package to check
+		 * @return A list with all the namespaces inside that package
+		 */
+		public string[] getNamespaceFromPackage(string package) {
+			
+			string[] retVal = {};
 			foreach (var element in this.namespaces.keys) {
 				var ns = this.namespaces.get(element);
 				if (ns.filenames.contains(package)) {
-					return ns.namespaceS;
+					retVal += ns.namespaceS;
 				}
 			}
-			return null;
+			return retVal;
 		}
 
 		private void addFile(namespacesElement element, string filename, int girMajor, int girMinor) {
@@ -160,6 +186,7 @@ namespace AutoVala {
 				var dis = new DataInputStream (file_f.read ());
 				string line;
 				while ((line = dis.read_line (null)) != null) {
+					// Search for "gir_version" string
 					if (reg_expression.match(line,0,out foundString)) {
 						var girVersionString = foundString.fetch(0);
 						if (reg_expression2.match(girVersionString,0, out foundVersion)) {
@@ -175,6 +202,7 @@ namespace AutoVala {
 							}
 						}
 					}
+					// Search for namespaces
 					if (line.has_prefix("namespace ")) {
 						var namespaceS=line.split(" ")[1];
 						if (namespaceS=="GLib") { // GLib needs several tricks
