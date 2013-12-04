@@ -233,15 +233,13 @@ namespace AutoVala {
 					 * It will be added to the list when we find the '{' character that belongs to it
 					 */
 					if (regexNamespace.match(line,0,out foundString)) {
-						var elements = foundString.fetch(0).strip().split(" ");
-						lastNamespace="";
-						for(int c=1;c<elements.length;c++) {
-							// Just in case there are more than one space between 'namespace' and the namespace
-							if (elements[c]!="") {
-								lastNamespace=elements[c];
-								break;
-							}
-						}
+						// Take the regular expression found
+						// Remove all prefix spaces and tabs
+						// Take everything after "namespace" statement
+						// remove all prefix spaces
+						// split the string in statements (there can be an space and a '{' after the namespace)
+						// the first one is the namespace
+						lastNamespace = foundString.fetch(0).strip().substring(9).strip().split(" ")[0];
 						if (lastNamespace=="GLib") { // GLib needs several tricks
 							if (fileP.has_prefix("glib-")) {
 							} else if (fileP.has_prefix("gio-unix-")) {
