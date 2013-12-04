@@ -86,7 +86,7 @@
 <p>At the time of writing this, the version of Valadoc shipped with Ubuntu 12.10 has a bug and sometimes fails. The solution is to manually compile it from the sources.</p>
 <p>To get the sources, just use</p>
 <pre><code>    git clone http://git.gnome.org/browse/valadoc</code></pre>
-<p>Then, don't forget to uninstall the <strong>valadoc</strong> and <strong>libvaladoc1</strong> packages, install the packages <strong>libgee-0.8-dev</strong> and <strong>libgraphviz-dev</strong>, and then just run</p>
+<p>Then, don't forget to uninstall the <strong>valadoc</strong> and <strong>libvaladoc1</strong> packages, install the packages <strong>autoconf</strong>, <strong>libgee-0.8-dev</strong> and <strong>libgraphviz-dev</strong>, and then just run</p>
 <pre><code>    ./autogen.sh
     make
     sudo make install
@@ -100,9 +100,17 @@
         Name=com.rastersoft.cronopete
         Exec=@DBUS_PREFIX@/bin/cronopete</code></pre>
 <p>In this file, the <strong>com.rastersoft.cronopete</strong> service is provided by the binary <strong>cronopete</strong>. The specific folder ( <strong>local</strong> or not <strong>local</strong> ) will be determined automatically by Autovala.</p>
-<h2>Special variables in CMAKE</h2>
-<p>Several variables are defined in CMake files that can be useful. The first one is <strong>AUTOVALA_INSTALL_PREFIX</strong>. This variable can contain <strong>/usr</strong> or <strong>/usr/local</strong>, based on the PREFIX passed to CMake. The advantage is that it will detect the <strong>final</strong> installation path, not the current one, which is useful when creating <strong>.deb</strong> or <strong>.rpm</strong> packages, because those are first built in a different path.</p>
-<p>Also is available the variable <strong>FINAL_AUTOVALA_PATH</strong>. This variable allows to append an absolute path, and will convert it to a relative path. An example: if the <strong>CMAKE_INSTALL_PREFIX</strong> is <strong>../debian/tmp/usr</strong>, then <strong>FINAL_AUTOVALA_PATH</strong> will be <strong>../debian/tmp/usr/..</strong>, which allows to install files in the <strong>root folder</strong> of the package.</p>
+<h2>Installing a project in a different final folder</h2>
+<p>You can set the <strong>CMAKE_INSTALL_PREFIX</strong> variable to define where to install the project. So, if you run</p>
+<pre><code>        cmake .. -DCMAKE_INSTALL_PREFIX=/usr</code></pre>
+<p>the project will be installed in <strong>/usr</strong> instead of <strong>/usr/local</strong>. Also, if you run</p>
+<pre><code>        cmake .. -DCMAKE_INSTALL_PREFIX=$HOME/tmp</code></pre>
+<p>the project will be installed in your personal directory.</p>
+<h2>Creating packages for a Linux distro</h2>
+<p>To create packages, you must set the install prefix to <strong>/usr</strong> like in the previous entry, and also specify to install everything in a temporal folder. This is made with the <strong>DESTDIR</strong> statement when running <strong>make install</strong>. For example, to create a package in the folder <strong>$HOME/tmpfolder</strong>, you should do:</p>
+<pre><code>        cmake .. -DCMAKE_INSTALL_PREFIX=/usr
+        make
+        make install DESTDIR=$HOME/tmpfolder</code></pre>
 <h2>Using GIO, GIO-unix, GObject or GModule packages</h2>
 <p>There are some exceptions for <strong>using</strong> and package autodetection. Since the packages <strong>GIO</strong>, <strong>GIO-unix</strong>, <strong>GObject</strong> and <strong>GModule</strong> are included inside the <strong>GLib</strong> namespace, Autovala requires them to be manually marked by adding <strong>//using [package name]</strong>. Since it is a comment, it won't be processed by Valac, but will be understood by Autovala and add the required <strong>-pkg</strong> command.</p>
 <h2>Using conditional compilation to allow to use GTK2 and GTK3</h2>

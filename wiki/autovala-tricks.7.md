@@ -144,11 +144,25 @@ An example (extracted from Cronopete):
 
 In this file, the **com.rastersoft.cronopete** service is provided by the binary **cronopete**. The specific folder ( **local** or not **local** ) will be determined automatically by Autovala.
 
-## Special variables in CMAKE
+## Installing a project in a different final folder
 
-Several variables are defined in CMake files that can be useful. The first one is **AUTOVALA_INSTALL_PREFIX**. This variable can contain **/usr** or **/usr/local**, based on the PREFIX passed to CMake. The advantage is that it will detect the **final** installation path, not the current one, which is useful when creating **.deb** or **.rpm** packages, because those are first built in a different path.
+You can set the **CMAKE_INSTALL_PREFIX** variable to define where to install the project. So, if you run
 
-Also is available the variable **FINAL_AUTOVALA_PATH**. This variable allows to append an absolute path, and will convert it to a relative path. An example: if the **CMAKE_INSTALL_PREFIX** is **../debian/tmp/usr**, then **FINAL_AUTOVALA_PATH** will be **../debian/tmp/usr/..**, which allows to install files in the **root folder** of the package.
+            cmake .. -DCMAKE_INSTALL_PREFIX=/usr
+
+the project will be installed in **/usr** instead of **/usr/local**. Also, if you run
+
+            cmake .. -DCMAKE_INSTALL_PREFIX=$HOME/tmp
+
+the project will be installed in your personal directory.
+
+## Creating packages for a Linux distro
+
+To create packages, you must set the install prefix to **/usr** like in the previous entry, and also specify to install everything in a temporal folder. This is made with the **DESTDIR** statement when running **make install**. For example, to create a package in the folder **$HOME/tmpfolder**, you should do:
+
+            cmake .. -DCMAKE_INSTALL_PREFIX=/usr
+            make
+            make install DESTDIR=$HOME/tmpfolder
 
 ## Using GIO, GIO-unix, GObject or GModule packages
 

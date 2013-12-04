@@ -97,7 +97,7 @@ namespace AutoVala {
 				if (this._type == ConfigType.DESKTOP) {
 					dataStream.put_string("install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/"+this.name+" DESTINATION share/applications/ )\n");
 				} else {
-					dataStream.put_string("install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/"+this.name+" DESTINATION ${FINAL_AUTOVALA_PATH}/etc/xdg/autostart/ )\n");
+					dataStream.put_string("install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/"+this.name+" DESTINATION /etc/xdg/autostart/ )\n");
 				}
 			} catch (Error e) {
 				ElementBase.globalData.addError(_("Failed to add file %s").printf(this.name));

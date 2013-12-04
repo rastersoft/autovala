@@ -565,7 +565,7 @@ namespace AutoVala {
 
 			try {
 				if (ElementValaBinary.addedValaBinaries==false) {
-					dataStream.put_string("set (DATADIR \"${AUTOVALA_INSTALL_PREFIX}/share\")\n");
+					dataStream.put_string("set (DATADIR \"${CMAKE_INSTALL_PREFIX}/share\")\n");
 					dataStream.put_string("set (PKGDATADIR \"${DATADIR}/"+ElementBase.globalData.projectName+"\")\n");
 					dataStream.put_string("set (GETTEXT_PACKAGE \""+ElementBase.globalData.projectName+"\")\n");
 					dataStream.put_string("set (RELEASE_NAME \""+ElementBase.globalData.projectName+"\")\n");
@@ -596,17 +596,6 @@ namespace AutoVala {
 				// Build the GIR filename
 				girFilename=this._currentNamespace+"-"+this.version.split(".")[0]+".0.gir";
 				libFilename=this._currentNamespace;
-			}
-
-			string ?destination;
-			if (this.destination==null) {
-				destination=null;
-			} else {
-				if (this.destination[0]!='/') {
-					destination=this.destination;
-				} else {
-					destination="${FINAL_AUTOVALA_PATH}%s".printf(this.destination);
-				}
 			}
 
 			var fname=File.new_for_path(Path.build_filename(ElementBase.globalData.projectFolder,this._path,"Config.vala.cmake"));
@@ -644,7 +633,7 @@ namespace AutoVala {
 					try {
 						var dis = fname.create(FileCreateFlags.NONE);
 						var dataStream2 = new DataOutputStream(dis);
-						dataStream2.put_string("prefix=@AUTOVALA_INSTALL_PREFIX@\n");
+						dataStream2.put_string("prefix=@CMAKE_INSTALL_PREFIX@\n");
 						dataStream2.put_string("real_prefix=@CMAKE_INSTALL_PREFIX@\n");
 						dataStream2.put_string("exec_prefix=@DOLLAR@{prefix}\n");
 						dataStream2.put_string("libdir=@DOLLAR@{exec_prefix}/lib\n");
@@ -819,10 +808,10 @@ namespace AutoVala {
 					dataStream.put_string("install(TARGETS\n");
 					dataStream.put_string("\t"+libFilename+"\n");
 					dataStream.put_string("LIBRARY DESTINATION\n");
-					if (destination==null) {
+					if (this.destination==null) {
 						dataStream.put_string("\tlib/\n");
 					} else {
-						dataStream.put_string("\t%s\n".printf(destination));
+						dataStream.put_string("\t%s\n".printf(this.destination));
 					}
 					dataStream.put_string(")\n");
 
@@ -830,10 +819,10 @@ namespace AutoVala {
 					dataStream.put_string("install(FILES\n");
 					dataStream.put_string("\t${CMAKE_CURRENT_BINARY_DIR}/"+libFilename+".h\n");
 					dataStream.put_string("DESTINATION\n");
-					if (destination==null) {
+					if (this.destination==null) {
 						dataStream.put_string("\tinclude/\n");
 					} else {
-						dataStream.put_string("\t%s\n".printf(destination));
+						dataStream.put_string("\t%s\n".printf(this.destination));
 					}
 					dataStream.put_string(")\n");
 
@@ -841,10 +830,10 @@ namespace AutoVala {
 					dataStream.put_string("install(FILES\n");
 					dataStream.put_string("\t${CMAKE_CURRENT_BINARY_DIR}/"+libFilename+".vapi\n");
 					dataStream.put_string("DESTINATION\n");
-					if (destination==null) {
+					if (this.destination==null) {
 						dataStream.put_string("\tshare/vala/vapi/\n");
 					} else {
-						dataStream.put_string("\t%s\n".printf(destination));
+						dataStream.put_string("\t%s\n".printf(this.destination));
 					}
 					dataStream.put_string(")\n");
 
@@ -853,10 +842,10 @@ namespace AutoVala {
 						dataStream.put_string("install(FILES\n");
 						dataStream.put_string("\t${CMAKE_CURRENT_BINARY_DIR}/"+girFilename+"\n");
 						dataStream.put_string("DESTINATION\n");
-					if (destination==null) {
+					if (this.destination==null) {
 						dataStream.put_string("\tshare/gir-1.0/\n");
 					} else {
-						dataStream.put_string("\t%s\n".printf(destination));
+						dataStream.put_string("\t%s\n".printf(this.destination));
 					}
 						dataStream.put_string(")\n");
 					}
@@ -865,10 +854,10 @@ namespace AutoVala {
 					dataStream.put_string("install(FILES\n");
 					dataStream.put_string("\t${CMAKE_CURRENT_BINARY_DIR}/"+pcFilename+"\n");
 					dataStream.put_string("DESTINATION\n");
-					if (destination==null) {
+					if (this.destination==null) {
 						dataStream.put_string("\tlib/pkgconfig/\n");
 					} else {
-						dataStream.put_string("\t%s\n".printf(destination));
+						dataStream.put_string("\t%s\n".printf(this.destination));
 					}
 					dataStream.put_string(")\n");
 
@@ -879,10 +868,10 @@ namespace AutoVala {
 					dataStream.put_string("install(TARGETS\n");
 					dataStream.put_string("\t"+libFilename+"\n");
 					dataStream.put_string("RUNTIME DESTINATION\n");
-					if (destination==null) {
+					if (this.destination==null) {
 						dataStream.put_string("\tbin/\n");
 					} else {
-						dataStream.put_string("\t%s\n".printf(destination));
+						dataStream.put_string("\t%s\n".printf(this.destination));
 					}
 					dataStream.put_string(")\n\n");
 				}

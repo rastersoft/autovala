@@ -49,7 +49,7 @@ namespace AutoVala {
 
 			if (ElementDBusService.addedDBusPrefix==false) {
 				try {
-					dataStream.put_string("SET(DBUS_PREFIX ${AUTOVALA_INSTALL_PREFIX})\n");
+					dataStream.put_string("SET(DBUS_PREFIX ${CMAKE_INSTALL_PREFIX})\n");
 					ElementDBusService.addedDBusPrefix=true;
 				} catch (Error e) {
 					ElementBase.globalData.addError(_("Can't append DBUS data to the header CMakeLists file at %s").printf(this._path));
