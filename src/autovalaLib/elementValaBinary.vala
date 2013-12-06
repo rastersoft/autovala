@@ -162,6 +162,9 @@ namespace AutoVala {
 			this.usingList = new Gee.ArrayList<string>();
 			this.defines = new Gee.ArrayList<string>();
 			
+			this.usingList.add("GLib");
+			this.usingList.add("GObject"); // GLib and GObject are always needed
+
 			foreach(var element in this._packages) {
 				if (element.type!=packageType.LOCAL) {
 					continue;
@@ -279,7 +282,8 @@ namespace AutoVala {
 					 * Of course, this is NOT an exhaustive list, just the most common, to simplify the use.
 					 * In case of needing the Gio package, and not using any of these words in your source, just
 					 * add "//using GIO" */
-					if ((-1!=line.index_of("FileInfo"))||(-1!=line.index_of("FileType"))||(-1!=line.index_of("FileEnumerator"))||
+					if ((-1!=line.index_of("FileInfo"))||(-1!=line.index_of("FileType"))||
+					            (-1!=line.index_of("FileEnumerator"))||(-1!=line.index_of("GLib.File"))||
 								(-1!=line.index_of("DataInputStream"))||(-1!=line.index_of("DataOutputStream"))||
 								(-1!=line.index_of("FileInputStream"))||(-1!=line.index_of("FileOutputStream"))||
 								(-1!=line.index_of("DBus"))||(-1!=line.index_of("Socket"))) {

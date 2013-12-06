@@ -1,3 +1,6 @@
+* version 0.32.0 (2013-12-06)
+    * Always forces GLib and GObject packages to ensure that everything compiles
+    * Added GLib.File as rule to detect when automagically add GIO
 * version 0.31.0 (2013-12-04)
     * Allows to install the projects in the local folder
 * version 0.30.0 (2013-12-04)
