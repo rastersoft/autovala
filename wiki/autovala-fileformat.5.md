@@ -52,11 +52,11 @@ After that, it comes several commands, some of them repeated several times, to s
 
    * **namespace**: contains the namespace used in all the source files. It is more useful when creating libraries.
 
+   * **vala_destination**: specifies a custom path where to install this library or binary. If the path is given in relative format (this is, if it doesn't start with an slash) the file will be installed relative to the PREFIX (**/usr** or **/usr/local**); but if it is given in absolute format (this is, the path starts with a slash) the file will be installed in that precise folder.
+
    * **compile_options**: contains the options to pass to the Vala compiler. Example:
 
                 compile_options: -X -O2
-
-   * **vala_destination**: specifies a custom path where to install this library or binary. If the path is given in relative format (this is, if it doesn't start with an slash) the file will be installed relative to the PREFIX (**/usr** or **/usr/local**); but if it is given in absolute format (this is, the path starts with a slash) the file will be installed in that precise folder.
 
    * **vala_package**: specify a package that must be added with **--pkg=...** to the vala compiler. These are automatically found by Autovala by reading the sources and processing the **Using** directives
 
@@ -68,7 +68,7 @@ After that, it comes several commands, some of them repeated several times, to s
 
    * **vala_vapi**: this command specifies one custom **.vapi** file, needed to compile your project. Each file must be prepended by the relative path from the project folder. The path must be relative to the binary/library path.
 
-                The last five subcommands can be repeated as many times as needed to specify all the sources and packages needed.
+    The last six subcommands (compile_options, vala_package, vala_check_package, vala_local_package, vala_source and vala_vapi) can be repeated as many times as needed to specify all the sources and packages needed.
 
  * **vala_library**: the same than vala_binary, but creates a dynamic linking library. It uses the same subcommands.
 
