@@ -163,6 +163,11 @@ namespace AutoVala {
 					}
 				}
 			}
+			if (file==("gee-1.0")) {
+				cMajor = 0;
+				cMinor = 6;
+			}
+			
 
 			// always take the shortest filename
 			if ((element.currentFile==null)||(newfile.length<element.currentFile.length)) {
