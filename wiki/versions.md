@@ -1,3 +1,5 @@
+* version 0.33.0 (2013-12-14)
+    * Fixed bug with libgee 0.6, which is named, due to historical reasons, as libgee-1.0
 * version 0.32.0 (2013-12-06)
     * Always forces GLib and GObject packages to ensure that everything compiles
     * Added GLib.File as rule to detect when automagically add GIO
