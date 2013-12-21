@@ -102,6 +102,7 @@ namespace AutoVala {
 
 		private GLib.Regex regexVersion;
 		private GLib.Regex regexPackages;
+		private GLib.Regex regexClasses;
 
 		public ElementValaBinary() {
 			this.command = "";
@@ -121,6 +122,7 @@ namespace AutoVala {
 			try {
 				this.regexVersion = new GLib.Regex("^[ \t]*// *project +version *= *[0-9]+.[0-9]+(.[0-9]+)?;?$");
 				this.regexPackages = new GLib.Regex("^([ \t]*// *)?[Uu]sing +[^;]+;?");
+				this.regexClasses = new GLib.Regex("^[ \t]*(public )?(private )?[ \t]*class[ ]+");
 			} catch (Error e) {
 				ElementBase.globalData.addError(_("Can't generate the Regexps"));
 			}
@@ -162,8 +164,7 @@ namespace AutoVala {
 			this.usingList = new Gee.ArrayList<string>();
 			this.defines = new Gee.ArrayList<string>();
 			
-			this.usingList.add("GLib");
-			this.usingList.add("GObject"); // GLib and GObject are always needed
+			this.usingList.add("GLib"); // GLib is always needed
 
 			foreach(var element in this._packages) {
 				if (element.type!=packageType.LOCAL) {
@@ -277,6 +278,12 @@ namespace AutoVala {
 							this.usingList.add(namespaceFound);
 						}
 						continue;
+					}
+					// Check if this source file uses classes, to add the gobject package
+					if (this.regexClasses.match(line,0, out regexMatch)) {
+						if (this.usingList.contains("GObject")==false) {
+							this.usingList.add("GObject");
+						}
 					}
 					/* Check for these words to automatically add the gio package.
 					 * Of course, this is NOT an exhaustive list, just the most common, to simplify the use.

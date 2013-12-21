@@ -1,3 +1,5 @@
+* version 0.34.0 (2013-12-21)
+    * Now adds GObject only if the source file contains classes
 * version 0.33.0 (2013-12-14)
     * Fixed bug with libgee 0.6, which is named, due to historical reasons, as libgee-1.0
 * version 0.32.0 (2013-12-06)
