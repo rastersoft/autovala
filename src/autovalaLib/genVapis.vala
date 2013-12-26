@@ -56,8 +56,9 @@ namespace AutoVala {
 		/**
 		 * @param major Major number of the version of Vala compiler currently installed
 		 * @param minor Minor number of the version of Vala compiler currently installed
+		 * @param local If true, want to process local VAPI files, not the system-wide ones
 		 */
-		public ReadVapis(int major, int minor) {
+		public ReadVapis(int major, int minor, bool local=false) {
 
 			this.errorList={};
 			try {
@@ -71,10 +72,12 @@ namespace AutoVala {
 			this.namespaces=new Gee.HashMap<string,namespacesElement?>();
 			this.pkgConfigs=new ReadPkgConfig();
 
-			this.fillNamespaces("/usr/share/vala");
-			this.fillNamespaces("/usr/share/vala-%d.%d".printf(major,minor));
-			this.fillNamespaces("/usr/local/share/vala");
-			this.fillNamespaces("/usr/local/share/vala-%d.%d".printf(major,minor));
+			if(local==false) {
+				this.fillNamespaces("/usr/share/vala");
+				this.fillNamespaces("/usr/share/vala-%d.%d".printf(major,minor));
+				this.fillNamespaces("/usr/local/share/vala");
+				this.fillNamespaces("/usr/local/share/vala-%d.%d".printf(major,minor));
+			}
 		}
 
 		/**
@@ -196,7 +199,7 @@ namespace AutoVala {
 		 * @param basepath The full path and filename to check
 		 * @param fileP The filename alone
 		 */
-		private void checkVapiFile(string basepath, string fileP) {
+		public void checkVapiFile(string basepath, string fileP) {
 
 			string file=fileP;
 			if (file.has_suffix(".vapi")==false) {

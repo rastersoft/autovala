@@ -199,7 +199,7 @@ namespace AutoVala {
 			var files = ElementBase.getFilesFromFolder(vapisPath,{".vapi"},true,true);
 			bool error=false;
 			foreach (var element in files) {
-				error |= this.addVapi(element,true,null,false,-1);
+				error |= this.addVapi(GLib.Path.build_filename("vapis",element),true,null,false,-1);
 			}
 			ElementBase.globalData.addExclude(vapisPath);
 			return error;
@@ -213,6 +213,20 @@ namespace AutoVala {
 					this.usingList.remove(element);
 				}
 			}
+
+			// Check which dependencies are resolved by local VAPIs
+			var spaceVapis = new ReadVapis(0,0,true);
+			// Fill the namespaces defined in the VAPIs for this binary
+			foreach(var element in this._vapis) {
+				var fullPath = Path.build_filename(ElementBase.globalData.projectFolder,this._path,element.elementName);
+				spaceVapis.checkVapiFile(fullPath,fullPath);
+			}
+			foreach(var element in spaceVapis.getNamespaces()) {
+				if (this.usingList.contains(element)) {
+					this.usingList.remove(element);
+				}
+			}
+
 			// Check which dependencies are already resolved by manually added packages
 			foreach(var element in this._packages) {
 				var namespaces = ElementBase.globalData.vapiList.getNamespaceFromPackage(element.elementName);
