@@ -8,7 +8,7 @@ autovala fileformat - The syntax for autovala configuration file
 
 The project file has a very simple format. Usually you don't need to manually edit it, but when the guesses of autovala are incorrect, you can do it, and your changes will be remembered each time you refresh the file.
 
-The current version for the project file format is **7**.
+The current version for the project file format is **8**.
 
 The file is based on commands in the format:
 
@@ -56,7 +56,11 @@ After that, it comes several commands, some of them repeated several times, to s
 
    * **compile_options**: contains the options to pass to the Vala compiler. Example:
 
-                compile_options: -X -O2
+                compile_options: -g
+
+   * **compile_c_options**: contains the options to pass to the C compiler and linker. Example:
+
+                compile_c_options: -O2
 
    * **vala_package**: specify a package that must be added with **--pkg=...** to the vala compiler. These are automatically found by Autovala by reading the sources and processing the **Using** directives
 

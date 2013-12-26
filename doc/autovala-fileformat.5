@@ -10,7 +10,7 @@
 <p>autovala fileformat - The syntax for autovala configuration file</p>
 <h1>DESCRIPTION</h1>
 <p>The project file has a very simple format. Usually you don't need to manually edit it, but when the guesses of autovala are incorrect, you can do it, and your changes will be remembered each time you refresh the file.</p>
-<p>The current version for the project file format is <strong>7</strong>.</p>
+<p>The current version for the project file format is <strong>8</strong>.</p>
 <p>The file is based on commands in the format:</p>
 <pre><code>    command: data</code></pre>
 <p>one in each line. Every line that starts with # is ignored (is a comment), but also will be removed when the file is recreated.</p>
@@ -39,7 +39,9 @@
 <li><p><strong>namespace</strong>: contains the namespace used in all the source files. It is more useful when creating libraries.</p></li>
 <li><p><strong>vala_destination</strong>: specifies a custom path where to install this library or binary. If the path is given in relative format (this is, if it doesn't start with an slash) the file will be installed relative to the PREFIX (<strong>/usr</strong> or <strong>/usr/local</strong>); but if it is given in absolute format (this is, the path starts with a slash) the file will be installed in that precise folder.</p></li>
 <li><p><strong>compile_options</strong>: contains the options to pass to the Vala compiler. Example:</p>
-<pre><code>        compile_options: -X -O2</code></pre></li>
+<pre><code>        compile_options: -g</code></pre></li>
+<li><p><strong>compile_c_options</strong>: contains the options to pass to the C compiler and linker. Example:</p>
+<pre><code>        compile_c_options: -O2</code></pre></li>
 <li><p><strong>vala_package</strong>: specify a package that must be added with <strong>--pkg=...</strong> to the vala compiler. These are automatically found by Autovala by reading the sources and processing the <strong>Using</strong> directives</p></li>
 <li><p><strong>vala_check_package</strong>: is like <strong>vala_package</strong>, but these packages must, also, be checked during cmake to ensure that they are installed in the system. Autovala finds these automatically by reading the sources, as with vala_package, and checking if the corresponding <strong>.pc</strong> file exists</p></li>
 <li><p><strong>vala_local_package</strong>: is like <strong>vala_package</strong>, but these packages aren't installed in the system. Instead, they belong to this project, and will be compiled automatically before this binary/library.</p></li>

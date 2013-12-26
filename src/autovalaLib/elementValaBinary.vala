@@ -87,6 +87,7 @@ namespace AutoVala {
 		}
 		private Gee.List<VapiElement ?> _vapis;
 		private Gee.List<CompileElement ?> _compileOptions;
+		private Gee.List<CompileElement ?> _compileCOptions;
 
 		private Gee.List<string> usingList;
 		private Gee.List<string> defines;
@@ -118,6 +119,7 @@ namespace AutoVala {
 			this._sources=new Gee.ArrayList<SourceElement ?>();
 			this._vapis=new Gee.ArrayList<VapiElement ?>();
 			this._compileOptions=new Gee.ArrayList<CompileElement ?>();
+			this._compileCOptions=new Gee.ArrayList<CompileElement ?>();
 			ElementValaBinary.addedValaBinaries = false;
 			try {
 				this.regexVersion = new GLib.Regex("^[ \t]*// *project +version *= *[0-9]+.[0-9]+(.[0-9]+)?;?$");
@@ -493,6 +495,23 @@ namespace AutoVala {
 			return false;
 		}
 
+		private bool setCompileCOptions(string options,  bool automatic, string? condition, bool invertCondition, int lineNumber) {
+			// if it is conditional, it MUST be manual, because conditions are not added automatically
+			if (condition!=null) {
+				automatic=false;
+			}
+
+			// adding a non-automatic option to an automatic binary transforms this binary to non-automatic
+			if ((automatic==false)&&(this._automatic==true)) {
+				this.transformToNonAutomatic(false);
+			}
+
+			var element=new CompileElement(options,automatic,condition,invertCondition);
+			this._compileCOptions.add(element);
+
+			return false;
+		}
+
 		private bool setDestination(string destination, int lineNumber) {
 			if (this.destination==null) {
 				this.destination=destination;
@@ -581,6 +600,8 @@ namespace AutoVala {
 				return this.setNamespace(line.substring(11).strip(),automatic,lineNumber);
 			} else if (line.has_prefix("compile_options: ")) {
 				return this.setCompileOptions(line.substring(17).strip(),automatic, condition, invertCondition, lineNumber);
+			} else if (line.has_prefix("compile_c_options: ")) {
+				return this.setCompileCOptions(line.substring(19).strip(),automatic, condition, invertCondition, lineNumber);
 			} else if (line.has_prefix("vala_destination: ")) {
 				return this.setDestination(line.substring(18).strip(),lineNumber);
 			} else if (line.has_prefix("vala_package: ")) {
@@ -817,6 +838,17 @@ namespace AutoVala {
 					dataStream.put_string("\n");
 				}
 
+				bool addedCFlags=false;
+				foreach(var element in this._compileCOptions) {
+					addedCFlags=true;
+					printConditions.printCondition(element.condition,element.invertCondition);
+					dataStream.put_string("set (CMAKE_C_FLAGS ${CMAKE_C_FLAGS} %s )\n".printf(element.elementName));
+				}
+				printConditions.printTail();
+				if (addedCFlags) {
+					dataStream.put_string("\n");
+				}
+
 				dataStream.put_string("vala_precompile(VALA_C "+libFilename+"\n");
 				dataStream.put_string("\t${APP_SOURCES}\n");
 				dataStream.put_string("PACKAGES\n");
@@ -979,6 +1011,15 @@ namespace AutoVala {
 						dataStream.put_string("*");
 					}
 					dataStream.put_string("compile_options: %s\n".printf(element.elementName));
+				}
+				printConditions.printTail();
+
+				foreach(var element in this._compileCOptions) {
+					printConditions.printCondition(element.condition,element.invertCondition);
+					if (element.automatic) {
+						dataStream.put_string("*");
+					}
+					dataStream.put_string("compile_c_options: %s\n".printf(element.elementName));
 				}
 				printConditions.printTail();
 

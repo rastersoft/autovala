@@ -7,12 +7,12 @@ set (GETTEXT_PACKAGE "autovala")
 set (RELEASE_NAME "autovala")
 set (CMAKE_C_FLAGS "")
 set (PREFIX ${CMAKE_INSTALL_PREFIX})
-set (VERSION "0.34.0")
+set (VERSION "0.35.0")
 set (DOLLAR "$")
 
 configure_file (${CMAKE_SOURCE_DIR}/src/Config.vala.cmake ${CMAKE_BINARY_DIR}/src/Config.vala)
 add_definitions(-DGETTEXT_PACKAGE=\"${GETTEXT_PACKAGE}\")
-set (VERSION "0.34.0")
+set (VERSION "0.35.0")
 add_definitions (${DEPS_CFLAGS})
 include_directories ( ${CMAKE_BINARY_DIR}/src/autovalaLib )
 link_libraries ( ${DEPS_LIBRARIES} -lAutoVala )
@@ -34,11 +34,12 @@ set (CUSTOM_VAPIS_LIST ${CUSTOM_VAPIS_LIST} ${CMAKE_BINARY_DIR}/src/autovalaLib/
 if (DEBUG)
 	set (COMPILE_OPTIONS ${COMPILE_OPTIONS} -D DEBUG)
 endif ()
-set (COMPILE_OPTIONS ${COMPILE_OPTIONS} -X -O2 )
 if (DEBUG)
 	set (COMPILE_OPTIONS ${COMPILE_OPTIONS} -g )
 endif ()
 
+
+set (CMAKE_C_FLAGS ${CMAKE_C_FLAGS} -O2 )
 
 vala_precompile(VALA_C autovala
 	${APP_SOURCES}
