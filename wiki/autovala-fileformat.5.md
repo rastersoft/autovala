@@ -68,11 +68,13 @@ After that, it comes several commands, some of them repeated several times, to s
 
    * **vala_local_package**: is like **vala_package**, but these packages aren't installed in the system. Instead, they belong to this project, and will be compiled automatically before this binary/library.
 
-   * **vala_source**: this command specifies one source file that belongs to this binary. The path must be relative to the binary/library path.
+   * **vala_source**: this command specifies one VALA source file that belongs to this binary. The path must be relative to the binary/library path.
+
+   * **c_source**: this command specifies one C source file that belongs to this binary. The path must be relative to the binary/library path.
 
    * **vala_vapi**: this command specifies one custom **.vapi** file, needed to compile your project. Each file must be prepended by the relative path from the project folder. The path must be relative to the binary/library path.
 
-    The last six subcommands (compile_options, vala_package, vala_check_package, vala_local_package, vala_source and vala_vapi) can be repeated as many times as needed to specify all the sources and packages needed.
+    The last eight subcommands (compile_options, compile_c_options, vala_package, vala_check_package, vala_local_package, vala_source, c_source and vala_vapi) can be repeated as many times as needed to specify all the sources and packages needed.
 
  * **vala_library**: the same than vala_binary, but creates a dynamic linking library. It uses the same subcommands.
 

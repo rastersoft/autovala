@@ -85,6 +85,10 @@ namespace AutoVala {
 		public Gee.List<SourceElement ?> sources {
 			get {return this._sources;}
 		}
+		private Gee.List<SourceElement ?> _cSources;
+		public Gee.List<SourceElement ?> cSources {
+			get {return this._cSources;}
+		}
 		private Gee.List<VapiElement ?> _vapis;
 		private Gee.List<CompileElement ?> _compileOptions;
 		private Gee.List<CompileElement ?> _compileCOptions;
@@ -117,6 +121,7 @@ namespace AutoVala {
 			this.destination=null;
 			this._packages=new Gee.ArrayList<PackageElement ?>();
 			this._sources=new Gee.ArrayList<SourceElement ?>();
+			this._cSources=new Gee.ArrayList<SourceElement ?>();
 			this._vapis=new Gee.ArrayList<VapiElement ?>();
 			this._compileOptions=new Gee.ArrayList<CompileElement ?>();
 			this._compileCOptions=new Gee.ArrayList<CompileElement ?>();
@@ -182,6 +187,10 @@ namespace AutoVala {
 			foreach (var element in files) {
 				error |= this.addSource(element,true,null,false,-1);
 				error |= this.processSource(element);
+			}
+			files = ElementBase.getFilesFromFolder(this._path,{".c"},true,true);
+			foreach (var element in files) {
+				error |= this.addCSource(element,true,null,false,-1);
 			}
 			ElementBase.globalData.addExclude(this._path);
 			return error;
@@ -381,6 +390,7 @@ namespace AutoVala {
 			}
 			var packagesTmp=new Gee.ArrayList<PackageElement ?>();
 			var sourcesTmp=new Gee.ArrayList<SourceElement ?>();
+			var cSourcesTmp=new Gee.ArrayList<SourceElement ?>();
 			var vapisTmp=new Gee.ArrayList<VapiElement ?>();
 			var compileTmp=new Gee.ArrayList<CompileElement ?>();
 			foreach (var e in this._packages) {
@@ -391,6 +401,11 @@ namespace AutoVala {
 			foreach (var e in this._sources) {
 				if (e.automatic==false) {
 					sourcesTmp.add(e);
+				}
+			}
+			foreach (var e in this._cSources) {
+				if (e.automatic==false) {
+					cSourcesTmp.add(e);
 				}
 			}
 			foreach (var e in this._vapis) {
@@ -405,6 +420,7 @@ namespace AutoVala {
 			}
 			this._packages=packagesTmp;
 			this._sources=sourcesTmp;
+			this._cSources=cSourcesTmp;
 			this._vapis=vapisTmp;
 			this._compileOptions=compileTmp;
 		}
@@ -435,6 +451,7 @@ namespace AutoVala {
 		public override void sortElements() {
 			this._packages.sort(AutoVala.ElementValaBinary.comparePackages);
 			this._sources.sort(AutoVala.ElementValaBinary.comparePackages);
+			this._cSources.sort(AutoVala.ElementValaBinary.comparePackages);
 			this._vapis.sort(AutoVala.ElementValaBinary.comparePackages);
 			this._compileOptions.sort(AutoVala.ElementValaBinary.comparePackages);
 		}
@@ -565,6 +582,27 @@ namespace AutoVala {
 			return false;
 		}
 
+		private bool addCSource(string sourceFile, bool automatic, string? condition, bool invertCondition, int lineNumber) {
+
+			if (condition!=null) {
+				automatic=false; // if a source file is conditional, it MUST be manual, because conditions are not added automatically
+			}
+
+			// adding a non-automatic source to an automatic binary transforms this binary to non-automatic
+			if ((automatic==false)&&(this._automatic==true)) {
+				this.transformToNonAutomatic(false);
+			}
+
+			foreach(var element in this._cSources) {
+				if (element.elementName==sourceFile) {
+					return false;
+				}
+			}
+			var element=new SourceElement(sourceFile,automatic,condition, invertCondition);
+			this._cSources.add(element);
+			return false;
+		}
+
 		private bool addVapi(string vapiFile, bool automatic, string? condition, bool invertCondition, int lineNumber) {
 
 			if (condition!=null) {
@@ -612,6 +650,8 @@ namespace AutoVala {
 				return this.addPackage(line.substring(20).strip(),packageType.LOCAL,automatic,condition,invertCondition,lineNumber);
 			} else if (line.has_prefix("vala_source: ")) {
 				return this.addSource(line.substring(13).strip(),automatic,condition,invertCondition,lineNumber);
+			} else if (line.has_prefix("c_source: ")) {
+				return this.addCSource(line.substring(10).strip(),automatic,condition,invertCondition,lineNumber);
 			} else if (line.has_prefix("vala_vapi: ")) {
 				return this.addVapi(line.substring(11).strip(),automatic,condition,invertCondition,lineNumber);
 			} else {
@@ -872,6 +912,18 @@ namespace AutoVala {
 				}
 
 				dataStream.put_string(")\n\n");
+
+				bool hasCFiles=false;
+				foreach(var module in this._cSources) {
+					hasCFiles=true;
+					printConditions.printCondition(module.condition,module.invertCondition);
+					dataStream.put_string("set (VALA_C ${VALA_C} %s)\n".printf(module.elementName));
+				}
+				printConditions.printTail();
+				if (hasCFiles) {
+					dataStream.put_string("\n");
+				}
+
 				if (this._type == ConfigType.VALA_LIBRARY) {
 					dataStream.put_string("add_library("+libFilename+" SHARED ${VALA_C})\n\n");
 
@@ -1073,16 +1125,31 @@ namespace AutoVala {
 					dataStream.put_string("vala_source: %s\n".printf(element.elementName));
 				}
 				printConditions.printTail();
-
+				foreach(var element in this._cSources) {
+					printConditions.printCondition(element.condition,element.invertCondition);
+					if (element.automatic) {
+						dataStream.put_string("*");
+					}
+					dataStream.put_string("c_source: %s\n".printf(element.elementName));
+				}
+				printConditions.printTail();
 			} catch (Error e) {
 				ElementBase.globalData.addError(_("Failed to store ': %s' at config").printf(this.fullPath));
 				return true;
 			}
 			return false;
 		}
-		public override string[]? getSubFiles() {
+
+		public string[]? getSubFiles() {
 			string[] subFileList = {};
 			foreach (var element in this._sources) {
+				subFileList += element.elementName;
+			}
+			return subFileList;
+		}
+		public string[]? getCSubFiles() {
+			string[] subFileList = {};
+			foreach (var element in this._cSources) {
 				subFileList += element.elementName;
 			}
 			return subFileList;

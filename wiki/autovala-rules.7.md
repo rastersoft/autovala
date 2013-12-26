@@ -8,13 +8,15 @@ Autovala rules - Rules followed by autovala to guess what kind of file is each o
 
 The rules followed by Autovala are the following:
 
-* All **.vala** files in the **src/** folder belong to a binary called like the project name, and will be scanned to determine the packages needed to compile them. The **.vala** files in the subfolders are also added, unless there is another binary or library that already posesses that folder
+* All **.vala** and **.c** files in the **src/** folder belong to a binary called like the project name. Vala files will be scanned to determine the packages needed to compile them. The **.vala** and **.c** files in the subfolders are also added, unless there is another binary or library that already posesses that folder
 
-* All **.vala** files in a folder posessed by a binary or library belong to it, and will be scanned to determine the packages needed to compile them. The **.vala** files in the subfolders are also added, unless there is another binary or library that already posesses that folder
+* All **.vala** and **.c** files in a folder posessed by a binary or library belong to it. Vala files will be scanned to determine the packages needed to compile them. The **.vala** and **.c** files in the subfolders are also added, unless there is another binary or library that already posesses that folder
 
-* The sources will be scanned to find the version number in a specific format, allowing to keep it inside the sources and avoiding the need of editing the project file manually
+* The VALA sources will be scanned to find the version number in a specific format, allowing to keep it inside the sources and avoiding the need of editing the project file manually
 
-* All **.png** or **.svg** in the folder **data/icons/** (and subfolders) are considered icons, so Autovala will determine automatically the best-fitting standard icon size (in the case of **.png**; for **.svg** it will put them always in **scalable**) and install them in the corresponding folder: **apps** by default, unless it is a **.svg** file with a filename ended in **-symbolic.svg**; in that case it will go to **status**. The user can modify the final folder manually for the icons (s)he wishes.
+* All **.vapi** files inside a **vapis** folder, located in a binary/library top folder will be added to that binary/library
+
+* All **.png** or **.svg** files in the folder **data/icons/** (and subfolders) are considered icons, so Autovala will determine automatically the best-fitting standard icon size (in the case of **.png**; for **.svg** it will put them always in **scalable**) and install them in the corresponding folder: **apps** by default, unless it is a **.svg** file with a filename ended in **-symbolic.svg**; in that case it will go to **status**. The user can modify the final folder manually for the icons (s)he wishes.
 
 * All **.png**, **.jpg** or **.svg** files in the folder **data/pixmaps/** (and subfolders) are considered pixmaps, and will be installed in **share/pixmaps/**.
 

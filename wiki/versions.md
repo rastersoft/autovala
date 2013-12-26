@@ -2,6 +2,7 @@
     * Now includes automagically the VAPIs files in the "vapis" folder for each binary/library
     * Now doesn't add a vala package if a local VAPI provides the same namespaces
     * Allows to pass flags to the C compiler/linker
+    * Allows to mix VALA and C source files in the same binary or library
 * version 0.34.0 (2013-12-21)
     * Now adds GObject only if the source file contains classes
 * version 0.33.0 (2013-12-14)

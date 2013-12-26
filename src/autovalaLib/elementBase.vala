@@ -272,14 +272,6 @@ namespace AutoVala {
 		}
 
 		/**
-		 * If the element contains subelements, like a binary or library (which contains several source files), their paths and filenames can be retrieved with this method
-		 * @return a list with all the paths and filenames, relative to the element path (so it is mandatory to add the project's root path and the element path to get the full path), or null if there are no need for paths or filenames in this element class
-		 */
-		public virtual string[]? getSubFiles() {
-			return null;
-		}
-
-		/**
 		 * Stores in the specified stream the configuration lines needed for this file
 		 * @param dataStream The data stream for the CMakeList.txt file being processed
 		 * @return //true// if there was an error; //false// if not. The error texts can be obtained by calling to returnErrors()

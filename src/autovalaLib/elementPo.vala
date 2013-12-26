@@ -60,10 +60,17 @@ namespace AutoVala {
 					switch (element.eType) {
 					case ConfigType.VALA_BINARY:
 					case ConfigType.VALA_LIBRARY:
-						var subFiles=element.getSubFiles();
+						var element2 = element as ElementValaBinary;
+						var subFiles=element2.getSubFiles();
 						if (subFiles!=null) {
 							foreach(var subFile in subFiles) {
-								dataStream2.put_string(Path.build_filename(element.path,subFile)+"\n");
+								dataStream2.put_string(Path.build_filename(element2.path,subFile)+"\n");
+							}
+						}
+						subFiles=element2.getCSubFiles();
+						if (subFiles!=null) {
+							foreach(var subFile in subFiles) {
+								dataStream2.put_string(Path.build_filename(element2.path,subFile)+"\n");
 							}
 						}
 					break;
