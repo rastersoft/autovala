@@ -11,7 +11,7 @@
 <li>Now includes automagically the VAPIs files in the &quot;vapis&quot; folder for each binary/library<br /></li>
 <li>Now doesn't add a vala package if a local VAPI provides the same namespaces<br /></li>
 <li>Allows to pass flags to the C compiler/linker<br /></li>
-<li>Allows to mix VALA and C source files<br /></li>
+<li>Allows to mix VALA and C source files in the same binary or library<br /></li>
 </ul></li>
 <li>version 0.34.0 (2013-12-21)
 <ul>

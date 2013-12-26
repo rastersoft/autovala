@@ -199,6 +199,10 @@ Finally, if you have different **glade** files for each library version, use als
 		glade: data/interface/file3.ui
 		end
 
+## Mixing VALA and C source files
+
+It is possible to mix in the same binary or library VALA and C source files, but is mandatory to manually create a **.vapi** file to access from VALA to the C functions.
+
 # SEE ALSO
 
 [autovala(1)](autovala.1) [autovala-fileformat(5)](autovala-fileformat.5) [autovala-keep-changes(7)](autovala-keep-changes.7) [autovala-rules(7)](autovala-rules.7)
