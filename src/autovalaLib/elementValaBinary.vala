@@ -143,6 +143,7 @@ namespace AutoVala {
 			foreach(var element in ElementBase.globalData.globalElements) {
 				if ((element.eType==ConfigType.VALA_BINARY)||(element.eType==ConfigType.VALA_LIBRARY)) {
 					var elementBinary = element as ElementValaBinary;
+					elementBinary.checkVAPIs();
 					elementBinary.checkDependencies();
 				}
 			}
@@ -181,6 +182,26 @@ namespace AutoVala {
 				error |= this.processSource(element);
 			}
 			ElementBase.globalData.addExclude(this._path);
+			return error;
+		}
+
+		private bool checkVAPIs() {
+
+			var vapisPath=GLib.Path.build_filename(this._path,"vapis");
+			if(ElementBase.globalData.checkExclude(vapisPath)) {
+				return false;
+			}
+
+			var fullPath = File.new_for_path(Path.build_filename(ElementBase.globalData.projectFolder,vapisPath));
+			if (fullPath.query_exists()==false) {
+				return false; // there's no VAPIS folder
+			}
+			var files = ElementBase.getFilesFromFolder(vapisPath,{".vapi"},true,true);
+			bool error=false;
+			foreach (var element in files) {
+				error |= this.addVapi(element,true,null,false,-1);
+			}
+			ElementBase.globalData.addExclude(vapisPath);
 			return error;
 		}
 
