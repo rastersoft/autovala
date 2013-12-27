@@ -138,6 +138,7 @@
     end</code></pre>
 <h2>Mixing VALA and C source files</h2>
 <p>It is possible to mix in the same binary or library VALA and C source files, but is mandatory to manually create a <strong>.vapi</strong> file to access from VALA to the C functions.</p>
+<p>To access the Vala functions from C, just include the corresponding header files. Each one is called like its corresponding <strong>.vala</strong> file, so if you have <strong>example.vala</strong>, just include <strong>example.h</strong>. During compilation, cmake will add <strong>-I.../install/src/...</strong>, so the <strong>.h</strong> files created by <strong>valac</strong> will be available to the <strong>.c</strong> files.</p>
 <h1>SEE ALSO</h1>
 <p><a href="autovala.1">autovala(1)</a> <a href="autovala-fileformat.5">autovala-fileformat(5)</a> <a href="autovala-keep-changes.7">autovala-keep-changes(7)</a> <a href="autovala-rules.7">autovala-rules(7)</a></p>
 <h1>AUTHOR</h1>

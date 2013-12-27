@@ -203,6 +203,8 @@ Finally, if you have different **glade** files for each library version, use als
 
 It is possible to mix in the same binary or library VALA and C source files, but is mandatory to manually create a **.vapi** file to access from VALA to the C functions.
 
+To access the Vala functions from C, just include the corresponding header files. Each one is called like its corresponding **.vala** file, so if you have **example.vala**, just include **example.h**. During compilation, cmake will add **-I.../install/src/...**, so the **.h** files created by **valac** will be available to the **.c** files.
+
 # SEE ALSO
 
 [autovala(1)](autovala.1) [autovala-fileformat(5)](autovala-fileformat.5) [autovala-keep-changes(7)](autovala-keep-changes.7) [autovala-rules(7)](autovala-rules.7)
