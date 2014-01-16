@@ -40,6 +40,20 @@ namespace AutoVala {
 		}
 	}
 
+	private class dependenciesElement:GLib.Object {
+		public string[] dependencies;
+		public string mainFile;
+
+		public dependenciesElement(string mainFile) {
+			this.mainFile = mainFile;
+			this.dependencies={};
+		}
+
+		public void add_dependency(string dep) {
+			this.dependencies+=dep;
+		}
+	}
+
 	/**
 	 * Reads all the VAPI files in the system and generates a list of the namespaces contained in each one.
 	 * This allows to know which package add for each USING statement in the source code.
@@ -48,6 +62,7 @@ namespace AutoVala {
 
 		private string[] errorList;
 		private Gee.Map<string,namespacesElement?> ?namespaces;
+		private Gee.Map<string,dependenciesElement?> ?dependencies;
 		private ReadPkgConfig pkgConfigs;
 		private GLib.Regex regexGirVersion;
 		private GLib.Regex regexVersion;
@@ -70,6 +85,7 @@ namespace AutoVala {
 			}
 
 			this.namespaces=new Gee.HashMap<string,namespacesElement?>();
+			this.dependencies=new Gee.HashMap<string,dependenciesElement?>();
 			this.pkgConfigs=new ReadPkgConfig();
 
 			if(local==false) {
@@ -96,7 +112,7 @@ namespace AutoVala {
 		 * @return the greatest package version that implements that namespace, or //null// if no package implements it
 		 */
 		public string ? getPackageFromNamespace(string namespaceP, out bool checkable) {
-			
+
 			if (false == this.namespaces.has_key(namespaceP)) {
 				checkable = false;
 				return null;
@@ -113,12 +129,33 @@ namespace AutoVala {
 		 * @return A list with all the namespaces inside that package
 		 */
 		public string[] getNamespaceFromPackage(string package) {
-			
+
 			string[] retVal = {};
 			foreach (var element in this.namespaces.keys) {
 				var ns = this.namespaces.get(element);
 				if (ns.filenames.contains(package)) {
 					retVal += ns.namespaceS;
+				}
+			}
+			return retVal;
+		}
+
+		/**
+		 * For a given package, returns the list of checkable dependencies
+		 * @param package The package to find
+		 * @return A list with all the dependencies, or NULL if there are no checkable dependencies
+		 */
+
+		public string[] ? getDependenciesFromPackage(string package) {
+
+			if (this.dependencies.has_key(package)==false) {
+				return null;
+			}
+
+			string [] retVal = {};
+			foreach (var element in this.dependencies[package].dependencies) {
+				if (pkgConfigs.contains(element)) {
+					retVal += element;
 				}
 			}
 			return retVal;
@@ -147,6 +184,7 @@ namespace AutoVala {
 			} else {
 				file=filename;
 			}
+
 			element.filenames.add(file);
 			newfile=file;
 			// if the filename has a version number, remove it
@@ -170,7 +208,7 @@ namespace AutoVala {
 				cMajor = 0;
 				cMinor = 6;
 			}
-			
+
 
 			// always take the shortest filename
 			if ((element.currentFile==null)||(newfile.length<element.currentFile.length)) {
@@ -200,12 +238,6 @@ namespace AutoVala {
 		 * @param fileP The filename alone
 		 */
 		public void checkVapiFile(string basepath, string fileP) {
-
-			string file=fileP;
-			if (file.has_suffix(".vapi")==false) {
-				return;
-			}
-			file=file.substring(0,fileP.length-5); // remove the .vapi extension
 
 			var file_f = File.new_for_path(basepath);
 			int girMajor=0;
@@ -318,6 +350,26 @@ namespace AutoVala {
 			}
 		}
 
+		private void checkDepsFile(string basepath,string library) {
+
+			var file_f = File.new_for_path(basepath);
+			if (file_f.query_exists()==false) {
+				return;
+			}
+
+			var deps = new dependenciesElement(library);
+			try {
+				var dis = new DataInputStream (file_f.read ());
+				string line;
+				while ((line = dis.read_line (null)) != null) {
+					deps.add_dependency(line);
+				}
+			} catch (Error e) {
+				return;
+			}
+			this.dependencies.set(library,deps);
+		}
+
 		/*
 		 * Fills the NAMESPACES hashmap with a list of each namespace and the files that provides it, and also
 		 * the "best" one (bigger version)
@@ -343,6 +395,8 @@ namespace AutoVala {
 						continue;
 					}
 					this.checkVapiFile(Path.build_filename(basepath,"vapi",fname),fname);
+					var deps_name = fname.substring(0,fname.length-5); // remove the .vapi extension
+					this.checkDepsFile(Path.build_filename(basepath,"vapi",deps_name+".deps"),deps_name);
 				}
 			} catch (Error e) {
 				return;

@@ -171,7 +171,7 @@ namespace AutoVala {
 
 			this.usingList = new Gee.ArrayList<string>();
 			this.defines = new Gee.ArrayList<string>();
-			
+
 			this.usingList.add("GLib"); // GLib is always needed
 
 			foreach(var element in this._packages) {
@@ -255,9 +255,15 @@ namespace AutoVala {
 					this.usingList.remove(element);
 					var filename = ElementBase.globalData.vapiList.getPackageFromNamespace(element, out isCheckable);
 					this.addPackage(filename,isCheckable ? packageType.DO_CHECK : packageType.NO_CHECK, true, null, false, -1);
+					var dependencies = ElementBase.globalData.vapiList.getDependenciesFromPackage(filename);
+					if (dependencies!=null) {
+						foreach (var dep in dependencies) {
+							this.addPackage(dep,packageType.DO_CHECK, true, null, false, -1);
+						}
+					}
 				}
 			}
-			
+
 			// If there are dependencies not resolved, show a warning message for each one
 			foreach(var element in this.usingList) {
 				ElementBase.globalData.addWarning(_("Can't resolve Using %s").printf(element));
@@ -278,7 +284,7 @@ namespace AutoVala {
 			try {
 				var file=File.new_for_path(path);
 				var dis = new DataInputStream (file.read ());
-				
+
 				while ((line = dis.read_line (null)) != null) {
 					if (version!=null) {
 						if ((this.versionSet) && (version!=this.version)) {
