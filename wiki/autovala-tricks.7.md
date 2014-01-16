@@ -205,6 +205,8 @@ It is possible to mix in the same binary or library VALA and C source files, but
 
 To access from C to the Vala functions, just include the corresponding header files. During compilation, cmake will add **-I[whatever]/install/src/[whatever]**, so the **.h** files created by **valac** will be available to the **.c** files.
 
+To add libraries needed only for the C sources, just use **c_check_package** instead of **vala_check_package**.
+
 # SEE ALSO
 
 [autovala(1)](autovala.1) [autovala-fileformat(5)](autovala-fileformat.5) [autovala-keep-changes(7)](autovala-keep-changes.7) [autovala-rules(7)](autovala-rules.7)
