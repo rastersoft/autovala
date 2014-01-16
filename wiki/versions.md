@@ -1,3 +1,6 @@
+* version 0.90.0 (2014-01-16)
+    * Now takes into account the dependencies for VAPI files when creating the CMake files.
+    * Now allows to specify libraries to be added when compiling the C code but not the Vala code. Useful when mixing C and Vala source files.
 * version 0.35.0 (2013-12-26)
     * Now includes automagically the VAPIs files in the "vapis" folder for each binary/library
     * Now doesn't add a vala package if a local VAPI provides the same namespaces

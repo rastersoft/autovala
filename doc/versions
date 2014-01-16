@@ -6,6 +6,11 @@
 <div class="main_frame">
 <p><a href="index.html">Home</a></p>
 <ul>
+<li>version 0.90.0 (2014-01-16)
+<ul>
+<li>Now takes into account the dependencies for VAPI files when creating the CMake files.<br /></li>
+<li>Now allows to specify libraries to be added when compiling the C code but not the Vala code. Useful when mixing C and Vala source files.<br /></li>
+</ul></li>
 <li>version 0.35.0 (2013-12-26)
 <ul>
 <li>Now includes automagically the VAPIs files in the &quot;vapis&quot; folder for each binary/library<br /></li>

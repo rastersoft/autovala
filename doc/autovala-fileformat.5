@@ -44,6 +44,7 @@
 <pre><code>        compile_c_options: -O2</code></pre></li>
 <li><p><strong>vala_package</strong>: specify a package that must be added with <strong>--pkg=...</strong> to the vala compiler. These are automatically found by Autovala by reading the sources and processing the <strong>Using</strong> directives</p></li>
 <li><p><strong>vala_check_package</strong>: is like <strong>vala_package</strong>, but these packages must, also, be checked during cmake to ensure that they are installed in the system. Autovala finds these automatically by reading the sources, as with vala_package, and checking if the corresponding <strong>.pc</strong> file exists</p></li>
+<li><p><strong>c_check_package</strong>: is like <strong>vala_check_package</strong>, but will be added only when compiling and linking the C code, not to the Vala compiler. It is useful when mixing Vala and C sources and the C code needs a library that the Vala source doesn't need.</p></li>
 <li><p><strong>vala_local_package</strong>: is like <strong>vala_package</strong>, but these packages aren't installed in the system. Instead, they belong to this project, and will be compiled automatically before this binary/library.</p></li>
 <li><p><strong>vala_source</strong>: this command specifies one VALA source file that belongs to this binary. The path must be relative to the binary/library path.</p></li>
 <li><p><strong>c_source</strong>: this command specifies one C source file that belongs to this binary. The path must be relative to the binary/library path.</p></li>

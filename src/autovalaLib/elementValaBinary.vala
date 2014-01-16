@@ -20,7 +20,7 @@ using GLib;
 
 namespace AutoVala {
 
-	public enum packageType {NO_CHECK, DO_CHECK, LOCAL}
+	public enum packageType {NO_CHECK, DO_CHECK, C_DO_CHECK, LOCAL}
 
 	private class GenericElement:GLib.Object {
 		public string elementName;
@@ -654,6 +654,8 @@ namespace AutoVala {
 				return this.addPackage(line.substring(20).strip(),packageType.DO_CHECK,automatic,condition,invertCondition,lineNumber);
 			} else if (line.has_prefix("vala_local_package: ")) {
 				return this.addPackage(line.substring(20).strip(),packageType.LOCAL,automatic,condition,invertCondition,lineNumber);
+			} else if (line.has_prefix("c_check_package: ")) {
+				return this.addPackage(line.substring(17).strip(),packageType.C_DO_CHECK,automatic,condition,invertCondition,lineNumber);
 			} else if (line.has_prefix("vala_source: ")) {
 				return this.addSource(line.substring(13).strip(),automatic,condition,invertCondition,lineNumber);
 			} else if (line.has_prefix("c_source: ")) {
@@ -809,6 +811,9 @@ namespace AutoVala {
 
 				bool found_local=false;
 				foreach(var module in this._packages) {
+					if (module.type==packageType.C_DO_CHECK) {
+						continue;
+					}
 					if (module.type==packageType.LOCAL) {
 						found_local=true;
 						continue;
@@ -1098,6 +1103,17 @@ namespace AutoVala {
 						dataStream.put_string("*");
 					}
 					dataStream.put_string("vala_vapi: %s\n".printf(element.elementName));
+				}
+				printConditions.printTail();
+
+				foreach(var element in this._packages) {
+					if (element.type == packageType.C_DO_CHECK) {
+						printConditions.printCondition(element.condition,element.invertCondition);
+						if (element.automatic) {
+							dataStream.put_string("*");
+						}
+						dataStream.put_string("c_check_package: %s\n".printf(element.elementName));
+					}
 				}
 				printConditions.printTail();
 

@@ -113,7 +113,7 @@ namespace AutoVala {
 					}
 					var binElement = element as ElementValaBinary;
 					foreach(var module in binElement.packages) {
-						if ((module.type==packageType.DO_CHECK)&&(module.condition==null)) {
+						if (((module.type==packageType.DO_CHECK)||(module.type==packageType.C_DO_CHECK))&&(module.condition==null)) {
 							if (tocheck.contains(module.elementName)) {
 								continue;
 							}
@@ -130,7 +130,7 @@ namespace AutoVala {
 					}
 					var binElement = element as ElementValaBinary;
 					foreach(var module in binElement.packages) {
-						if ((module.type==packageType.DO_CHECK)&&(module.condition!=null)) {
+						if (((module.type==packageType.DO_CHECK)||(module.type==packageType.C_DO_CHECK))&&(module.condition!=null)) {
 							if (tocheck.contains(module.elementName)) {
 								continue;
 							}

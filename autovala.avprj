@@ -1,5 +1,5 @@
 ### AutoVala Project ###
-autovala_version: 8
+autovala_version: 9
 project_name: autovala
 vala_version: 0.22
 
@@ -7,7 +7,7 @@ custom: data/bash_completion/autovala /etc/bash_completion.d
 custom: data/cmake share/autovala
 
 vala_binary: src/autovala
-*version: 0.35.0
+*version: 0.90.0
 if DEBUG
 compile_options: -g
 end
@@ -19,7 +19,7 @@ vala_local_package: AutoVala
 *vala_source: autovala.vala
 
 vala_library: src/autovalaLib/autovalaLib
-*version: 0.35
+*version: 0.90
 *namespace: AutoVala
 if DEBUG
 compile_options: -g
