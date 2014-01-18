@@ -1,3 +1,5 @@
+* version 0.91.0 (2014-01-18)
+    * When a project creates one or more libraries, the "make install" command shows a message remembering to run 'sudo ldconfig'.
 * version 0.90.0 (2014-01-16)
     * Now takes into account the dependencies for VAPI files when creating the CMake files.
     * Now allows to specify libraries to be added when compiling the C code but not the Vala code. Useful when mixing C and Vala source files.

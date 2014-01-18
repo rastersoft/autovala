@@ -6,6 +6,10 @@
 <div class="main_frame">
 <p><a href="index.html">Home</a></p>
 <ul>
+<li>version 0.91.0 (2014-01-18)
+<ul>
+<li>When a project creates one or more libraries, the &quot;make install&quot; command shows a message remembering to run 'sudo ldconfig'.<br /></li>
+</ul></li>
 <li>version 0.90.0 (2014-01-16)
 <ul>
 <li>Now takes into account the dependencies for VAPI files when creating the CMake files.<br /></li>

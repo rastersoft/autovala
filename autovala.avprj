@@ -7,7 +7,7 @@ custom: data/bash_completion/autovala /etc/bash_completion.d
 custom: data/cmake share/autovala
 
 vala_binary: src/autovala
-*version: 0.90.0
+*version: 0.91.0
 if DEBUG
 compile_options: -g
 end
@@ -19,7 +19,7 @@ vala_local_package: AutoVala
 *vala_source: autovala.vala
 
 vala_library: src/autovalaLib/autovalaLib
-*version: 0.90
+*version: 0.91
 *namespace: AutoVala
 if DEBUG
 compile_options: -g

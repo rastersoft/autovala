@@ -104,6 +104,7 @@ namespace AutoVala {
 		private string? destination;
 
 		private static bool addedValaBinaries;
+		private static bool addedLibraryWarning;
 
 		private GLib.Regex regexVersion;
 		private GLib.Regex regexPackages;
@@ -126,6 +127,7 @@ namespace AutoVala {
 			this._compileOptions=new Gee.ArrayList<CompileElement ?>();
 			this._compileCOptions=new Gee.ArrayList<CompileElement ?>();
 			ElementValaBinary.addedValaBinaries = false;
+			ElementValaBinary.addedLibraryWarning = false;
 			try {
 				this.regexVersion = new GLib.Regex("^[ \t]*// *project +version *= *[0-9]+.[0-9]+(.[0-9]+)?;?$");
 				this.regexPackages = new GLib.Regex("^([ \t]*// *)?[Uu]sing +[^;]+;?");
@@ -699,6 +701,25 @@ namespace AutoVala {
 			} catch (Error e) {
 				ElementBase.globalData.addError(_("Failed to write the header for binary file %s").printf(this.fullPath));
 				return true;
+			}
+			return false;
+		}
+
+		public override bool generateCMakePostData(DataOutputStream dataStream) {
+
+			if (ElementValaBinary.addedLibraryWarning == false) {
+				ElementValaBinary.addedLibraryWarning = true;
+				foreach(var element in ElementBase.globalData.globalElements) {
+					if (element.eType==ConfigType.VALA_LIBRARY) {
+						try {
+							dataStream.put_string("\ninstall(CODE \"MESSAGE (\\\"\n************************************************\n* Run 'sudo ldconfig' to complete installation *\n************************************************\n\n\\\") \" )");
+						} catch(Error e) {
+							ElementBase.globalData.addError(_("Failed to append the 'run sudo ldconfig' message"));
+							return true;
+						}
+						break;
+					}
+				}
 			}
 			return false;
 		}
