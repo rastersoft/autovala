@@ -35,7 +35,8 @@
        +icons
        +pixmaps
        +interface
-       +local</code></pre>
+       +local
+       +man</code></pre>
 <p>Autovala installs its own version of the CMake modules for Vala inside the <strong>cmake/</strong> folder, which contains a modified version that allows to work with Valadoc; but if you want to use a newer version you can always download the last oficial version from launchpad using bazaar:</p>
 <pre><code>    bzr checkout lp:~elementary-apps/+junk/cmake-modules</code></pre>
 <p>This will create a folder called <strong>cmake-modules</strong>. Inside it will be a folder called <strong>cmake</strong>. Copy the later to your project folder, overwriting the existing files (this will keep the files needed for Valadoc).</p>
@@ -50,6 +51,7 @@
 <p>As can be supposed, <strong>DOC</strong> has to contain the documentation, and <strong>PO</strong> will contain the files with translatable strings. These strings are extracted from the <strong>.vala</strong> and <strong>.ui</strong> files (the later from glade).</p>
 <p><strong>DATA</strong> is where you must put things like D-Bus activation files, <strong>.desktop</strong> files, scripts, and so on. <strong>ICONS</strong> folder and subfolders should contain the icons (in png or svg format), and Autovala will automagically take into account its size to put them in the right place.</p>
 <p><strong>INTERFACE</strong> should contain the <strong>.ui</strong> files from Glade.</p>
+<p><strong>MAN</strong> should contain the manpage files. These can be created in the original MANPAGE format (files ended in <strong>.X</strong>, being <strong>X</strong> a number between 0 and 9),Markdown (<strong>.X.md</strong>), HTML (<strong>.X.html</strong>), ReStructured Text (<strong>.X.rst</strong>), LaTeX (<strong>.X.tex</strong>), JSON version of native AST format (<strong>.X.json</strong>), TexTile/RedCloth (<strong>.X.rdoc</strong>), DocBook format (<strong>.X.xml</strong>) or MediaWiki (<strong>.X.txt</strong>).</p>
 <p>Finally, <strong>LOCAL</strong> is a place where to put everything you want to get copied &quot;as-is&quot; into</p>
 <pre><code>    usr/share/PROJECT_NAME/</code></pre>
 <p>To know the precise rules used by AutoVala, check the <a href="autovala-rules.7">rules page</a>.</p>

@@ -124,7 +124,7 @@ After that, it comes several commands, some of them repeated several times, to s
 
             custom: data/config_system.txt /etc/myfolder will install the file **config_system.txt** in **/etc/myfolder**
 
- * **manpage**: followed by a path/filename, and optionally a language and a page section. Specifies that the file is a man page in the specified language (**default** to install it in the default folder), and for the specified section. If the section is not specified, it will be assumed to be section 1. If the language is not specified, it will be assumed **default**. If the file ends in **.md**, Autovala will presume that it is a **markdown** file, and will convert it to groff before. Examples:
+ * **manpage**: followed by a path/filename, and optionally a language and a page section. Specifies that the file is a man page in the specified language (**default** to install it in the default folder), and for the specified section. If the section is not specified, it will be assumed to be section 1. If the language is not specified, it will be assumed **default**. If the file ends in **.md**, Autovala will presume that it is a **markdown** file, and will convert it to groff before. Other supported formats and its extensions are HTML (**.html**), ReStructured Text (**.rst**), LaTeX (**.tex**), JSON version of native AST format (**.json**), TexTile/RedCloth (**.rdoc**), DocBook format (**.xml**) and MediaWiki (**.txt**). Examples:
  
             manpage: data/man/autovala.1   will install the file **data/man/autovala** in **/usr/local/share/man/man1**
             manpage: data/man/autovala-rules.7.md es 7   will install the file **data/man/autovala-rules** in **/usr/local/share/man/es/man7**

@@ -42,6 +42,7 @@ This will create a file called **PROJECT_NAME.avprj**, with the most basic info 
            +pixmaps
            +interface
            +local
+           +man
 
 Autovala installs its own version of the CMake modules for Vala inside the **cmake/** folder, which contains a modified version that allows to work with Valadoc; but if you want to use a newer version you can always download the last oficial version from launchpad using bazaar:
 
@@ -66,6 +67,8 @@ As can be supposed, **DOC** has to contain the documentation, and **PO** will co
 **DATA** is where you must put things like D-Bus activation files, **.desktop** files, scripts, and so on. **ICONS** folder and subfolders should contain the icons (in png or svg format), and Autovala will automagically take into account its size to put them in the right place.
 
 **INTERFACE** should contain the **.ui** files from Glade.
+
+**MAN** should contain the manpage files. These can be created in the original MANPAGE format (files ended in **.X**, being **X** a number between 0 and 9),Markdown (**.X.md**), HTML (**.X.html**), ReStructured Text (**.X.rst**), LaTeX (**.X.tex**), JSON version of native AST format (**.X.json**), TexTile/RedCloth (**.X.rdoc**), DocBook format (**.X.xml**) or MediaWiki (**.X.txt**).
 
 Finally, **LOCAL** is a place where to put everything you want to get copied "as-is" into
 
