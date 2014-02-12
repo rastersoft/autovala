@@ -8,6 +8,8 @@
 <p>Autovala-tricks(1)</p>
 <h1>NAME</h1>
 <p>Autovala tricks - Several tricks for Autovala</p>
+<h2>Using the <strong>Constants</strong> namespace and variables</h2>
+<p>Autovala will create a <strong>Constants</strong> namespace with several strings in it that specifies things like the project version or the final directory. These strings allow to simplify several things, like initializing the <strong>gettext</strong> functions, getting access to the version number set in the code, or getting access to <strong>glade</strong> files, as explained in the following entries.</p>
 <h2>Setting the version number</h2>
 <p>To simplify the maintenance of the code, Autovala allows to set the version number in an easy way inside the source code of your binary or library. That way you will always be sure to use the right number both for the <strong>About</strong> and <strong>--version</strong> commands, and for the library major and minor values.</p>
 <p>To do so, just put in one (no matter which) of the <strong>.vala</strong> source files the following statement:</p>
@@ -17,7 +19,23 @@
 <p>If no version number is defined in the source code, nor manually set in the project file, Autovala will use <strong>1.0.0</strong> whenever it needs it.</p>
 <p>There was an old method, which was putting the statement:</p>
 <pre><code>    const string project_version=&quot;XX.YY.ZZ&quot;;</code></pre>
-<p>This method is now deprecated, because you can still access the version number through the <strong>Constants</strong> namespace, and with the new method you can set the version number in libraries too, without symbol clash.</p>
+<p>This method is now deprecated, because you can still access the version number through the <strong>Constants</strong> namespace. As an example, to print the version number, just use:</p>
+<pre><code>    GLib.stdout.printf(&quot;Version: %s\n&quot;,Constants.VERSION);</code></pre>
+<p>This new method allows to set the version number in libraries too, without symbol clash, because in libraries, the library namespace will be used to define the constants namespace. So, as an example, if we are creating a library <strong>MyExampleLibrary</strong>, which has all its code inside the namespace <strong>exampleLibrary</strong>, to print the library version from inside the library just use:</p>
+<pre><code>    GLib.stdout.printf(&quot;Library version: %s\n&quot;,exampleLibraryConstants.VERSION);</code></pre>
+<h2>Using GETTEXT</h2>
+<p>To initialize <strong>gettext</strong> it is mandatory to specify both the package name and the folder with the <strong>.mo</strong> files. This is as simple as using the <strong>Constants</strong> namespace with this code:</p>
+<pre><code>    Intl.bindtextdomain(Constants.GETTEXT_PACKAGE, Path.build_filename(Constants.DATADIR,&quot;locale&quot;));
+    Intl.setlocale (LocaleCategory.ALL, &quot;&quot;);
+    Intl.textdomain(Constants.GETTEXT_PACKAGE);
+    Intl.bind_textdomain_codeset(Constants.GETTEXT_PACKAGE, &quot;utf-8&quot; );</code></pre>
+<p>For libraries, you must call only:</p>
+<pre><code>    Intl.bindtextdomain(LibraryConstants.GETTEXT_PACKAGE, path.build_filename(LibraryConstants.DATADIR,&quot;locale&quot;));</code></pre>
+<p>being <strong>LibraryConstants</strong> the library Constants namespace. The package name is the same than the project's name.</p>
+<h2>Using GLADE files</h2>
+<p><strong>Glade</strong> files are stored at <strong>/usr/share/PROJECT_NAME/</strong> or <strong>/usr/local/share/PROJECT_NAME/</strong>. To get access to them, just use the Constants namespace. As an example, to load the <strong>example.ui</strong> glade file, just do:</p>
+<pre><code>    var data = new Builder();
+    data.add_from_file(GLib.Path.build_filename(Constants.PKGDATADIR,&quot;example.ui&quot;));</code></pre>
 <h2>Creating several binaries</h2>
 <p>By default, Autovala presumes that every source file inside <strong>src</strong> or its subdirectories belongs to a single binary. But maybe you want to generate several binaries because your program needs several executables.</p>
 <p>Let's suppose that you have a project called <strong>myproject</strong>, with a folder hierarchy inside <strong>src</strong> like this:</p>

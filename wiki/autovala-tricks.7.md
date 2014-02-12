@@ -4,6 +4,10 @@ Autovala-tricks(1)
 
 Autovala tricks - Several tricks for Autovala
 
+## Using the **Constants** namespace and variables
+
+Autovala will create a **Constants** namespace with several strings in it that specifies things like the project version or the final directory. These strings allow to simplify several things, like initializing the **gettext** functions, getting access to the version number set in the code, or getting access to **glade** files, as explained in the following entries.
+
 ## Setting the version number
 
 To simplify the maintenance of the code, Autovala allows to set the version number in an easy way inside the source code of your binary or library. That way you will always be sure to use the right number both for the **About** and **--version** commands, and for the library major and minor values.
@@ -22,7 +26,35 @@ There was an old method, which was putting the statement:
 
         const string project_version="XX.YY.ZZ";
 
-This method is now deprecated, because you can still access the version number through the **Constants** namespace, and with the new method you can set the version number in libraries too, without symbol clash.
+This method is now deprecated, because you can still access the version number through the **Constants** namespace. As an example, to print the version number, just use:
+
+        GLib.stdout.printf("Version: %s\n",Constants.VERSION);
+
+This new method allows to set the version number in libraries too, without symbol clash, because in libraries, the library namespace will be used to define the constants namespace. So, as an example, if we are creating a library **MyExampleLibrary**, which has all its code inside the namespace **exampleLibrary**, to print the library version from inside the library just use:
+
+        GLib.stdout.printf("Library version: %s\n",exampleLibraryConstants.VERSION);
+
+## Using GETTEXT
+
+To initialize **gettext** it is mandatory to specify both the package name and the folder with the **.mo** files. This is as simple as using the **Constants** namespace with this code:
+
+        Intl.bindtextdomain(Constants.GETTEXT_PACKAGE, Path.build_filename(Constants.DATADIR,"locale"));
+        Intl.setlocale (LocaleCategory.ALL, "");
+        Intl.textdomain(Constants.GETTEXT_PACKAGE);
+        Intl.bind_textdomain_codeset(Constants.GETTEXT_PACKAGE, "utf-8" );
+
+For libraries, you must call only:
+
+        Intl.bindtextdomain(LibraryConstants.GETTEXT_PACKAGE, path.build_filename(LibraryConstants.DATADIR,"locale"));
+
+being **LibraryConstants** the library Constants namespace. The package name is the same than the project's name.
+
+## Using GLADE files
+
+**Glade** files are stored at **/usr/share/PROJECT_NAME/** or **/usr/local/share/PROJECT_NAME/**. To get access to them, just use the Constants namespace. As an example, to load the **example.ui** glade file, just do:
+
+        var data = new Builder();
+        data.add_from_file(GLib.Path.build_filename(Constants.PKGDATADIR,"example.ui"));
 
 ## Creating several binaries
 
