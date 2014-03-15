@@ -789,15 +789,23 @@ namespace AutoVala {
 					}
 					string command="";
 					try {
+						int retval;
 						command = "bash -c \"dbus-send --%s --type=method_call --print-reply=literal --dest=%s %s org.freedesktop.DBus.Introspectable.Introspect > /tmp/dbus_data.xml\"".printf(element.systemBus ? "system" : "session",element.elementName,element.obj);
-						Process.spawn_command_line_sync(command);
+						Process.spawn_command_line_sync(command, null, null, out retval);
+						if (retval!=0) {
+							ElementBase.globalData.addWarning(_("Failed to retrieve the DBus interface for the object %s (%s) at the bus '%s'\n").printf(element.obj,element.elementName,element.systemBus ? "system" : "session"));
+							continue;
+						}
 						if (element.GDBus) {
     						command = "vala-dbus-binding-tool --gdbus --api-path=/tmp/dbus_data.xml --directory=%s".printf(elementPathS);
 						} else {
 							command = "vala-dbus-binding-tool --api-path=/tmp/dbus_data.xml --directory=%s".printf(elementPathS);
 						}
-						stdout.printf("Ejecuto %s\n".printf(command));
-						Process.spawn_command_line_sync(command);
+						Process.spawn_command_line_sync(command, null, null, out retval);
+						if (retval!=0) {
+                            ElementBase.globalData.addWarning(_("Failed to generate the DBus interface for the object %s (%s) at the bus '%s'\n").printf(element.obj,element.elementName,element.systemBus ? "system" : "session"));
+                            continue;
+                        }
 					} catch (GLib.SpawnError e) {
 						ElementBase.globalData.addWarning(_("Failed to execute %s").printf(command));
 						continue;
