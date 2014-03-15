@@ -24,7 +24,6 @@ include (ValaPrecompile)
 
 set (VALA_PACKAGES ${VALA_PACKAGES} posix)
 set (VALA_PACKAGES ${VALA_PACKAGES} cairo)
-set (VALA_PACKAGES ${VALA_PACKAGES} dbus-glib-1)
 set (VALA_PACKAGES ${VALA_PACKAGES} gdk-3.0)
 set (VALA_PACKAGES ${VALA_PACKAGES} gdk-pixbuf-2.0)
 set (VALA_PACKAGES ${VALA_PACKAGES} gee-0.8)

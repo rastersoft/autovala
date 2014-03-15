@@ -23,9 +23,9 @@ ensure_vala_version ("0.22" MINIMUM)
 include (ValaPrecompile)
 
 set (VALA_PACKAGES ${VALA_PACKAGES} posix)
+set (VALA_PACKAGES ${VALA_PACKAGES} gio-2.0)
 set (VALA_PACKAGES ${VALA_PACKAGES} gee-0.8)
 set (VALA_PACKAGES ${VALA_PACKAGES} glib-2.0)
-set (VALA_PACKAGES ${VALA_PACKAGES} gio-2.0)
 
 set (APP_SOURCES ${APP_SOURCES} ${CMAKE_CURRENT_BINARY_DIR}/Config.vala)
 set (APP_SOURCES ${APP_SOURCES} autovala.vala)
