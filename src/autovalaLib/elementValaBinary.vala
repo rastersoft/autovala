@@ -71,6 +71,23 @@ namespace AutoVala {
 		}
 	}
 
+	private class DBusElement:GenericElement {
+
+		public string obj;
+		public bool systemBus;
+		public bool GDBus;
+
+		public DBusElement(string destination, string obj, bool systemBus, bool GDBus, bool automatic) {
+			this.elementName=destination;
+			this.obj=obj;
+			this.systemBus=systemBus;
+			this.automatic=automatic;
+			this.condition=null;
+			this.invertCondition=false;
+			this.GDBus=GDBus;
+		}
+	}
+
 	private class ElementValaBinary : ElementBase {
 
 		private string version;
@@ -92,6 +109,8 @@ namespace AutoVala {
 		private Gee.List<VapiElement ?> _vapis;
 		private Gee.List<CompileElement ?> _compileOptions;
 		private Gee.List<CompileElement ?> _compileCOptions;
+
+		private Gee.List<DBusElement ?> _dbusElements;
 
 		private Gee.List<string> usingList;
 		private Gee.List<string> defines;
@@ -126,13 +145,14 @@ namespace AutoVala {
 			this._vapis=new Gee.ArrayList<VapiElement ?>();
 			this._compileOptions=new Gee.ArrayList<CompileElement ?>();
 			this._compileCOptions=new Gee.ArrayList<CompileElement ?>();
+			this._dbusElements=new Gee.ArrayList<DBusElement ?>();
 			ElementValaBinary.addedValaBinaries = false;
 			ElementValaBinary.addedLibraryWarning = false;
 			try {
 				this.regexVersion = new GLib.Regex("^[ \t]*// *project +version *= *[0-9]+.[0-9]+(.[0-9]+)?;?$");
 				this.regexPackages = new GLib.Regex("^([ \t]*// *)?[Uu]sing +[^;]+;?");
 				this.regexClasses = new GLib.Regex("^[ \t]*(public )?(private )?[ \t]*class[ ]+");
-			} catch (Error e) {
+			} catch (GLib.Error e) {
 				ElementBase.globalData.addError(_("Can't generate the Regexps"));
 			}
 		}
@@ -184,6 +204,11 @@ namespace AutoVala {
 					this.usingList.add(element.elementName);
 				}
 			}
+
+			// Don't add automatically the files inside dbus_generated, because they are
+			// automatically (re)generated
+			var dbusFolder=Path.build_filename(this._fullPath,"dbus_generated");
+			ElementBase.globalData.addExclude(dbusFolder);
 
 			var files = ElementBase.getFilesFromFolder(this._path,{".vala"},true,true);
 			foreach (var element in files) {
@@ -344,7 +369,7 @@ namespace AutoVala {
 					 * In case of needing the Gio package, and not using any of these words in your source, just
 					 * add "//using GIO" */
 					if ((-1!=line.index_of("FileInfo"))||(-1!=line.index_of("FileType"))||
-					            (-1!=line.index_of("FileEnumerator"))||(-1!=line.index_of("GLib.File"))||
+								(-1!=line.index_of("FileEnumerator"))||(-1!=line.index_of("GLib.File"))||
 								(-1!=line.index_of("DataInputStream"))||(-1!=line.index_of("DataOutputStream"))||
 								(-1!=line.index_of("FileInputStream"))||(-1!=line.index_of("FileOutputStream"))||
 								(-1!=line.index_of("DBus"))||(-1!=line.index_of("Socket"))) {
@@ -378,7 +403,7 @@ namespace AutoVala {
 						}
 					}
 				}
-			} catch (Error e) {
+			} catch (GLib.Error e) {
 				ElementBase.globalData.addError(_("Can't open for read the file %s").printf(pathP));
 				return true;
 			}
@@ -401,6 +426,7 @@ namespace AutoVala {
 			var cSourcesTmp=new Gee.ArrayList<SourceElement ?>();
 			var vapisTmp=new Gee.ArrayList<VapiElement ?>();
 			var compileTmp=new Gee.ArrayList<CompileElement ?>();
+			var dbusTmp=new Gee.ArrayList<DBusElement ?>();
 			foreach (var e in this._packages) {
 				if (e.automatic==false) {
 					packagesTmp.add(e);
@@ -426,11 +452,17 @@ namespace AutoVala {
 					compileTmp.add(e);
 				}
 			}
+			foreach (var e in this._dbusElements) {
+				if (e.automatic==false) {
+					dbusTmp.add(e);
+				}
+			}
 			this._packages=packagesTmp;
 			this._sources=sourcesTmp;
 			this._cSources=cSourcesTmp;
 			this._vapis=vapisTmp;
 			this._compileOptions=compileTmp;
+			this._dbusElements=dbusTmp;
 		}
 
 		public static int comparePackages (GenericElement? a, GenericElement? b) {
@@ -462,6 +494,7 @@ namespace AutoVala {
 			this._cSources.sort(AutoVala.ElementValaBinary.comparePackages);
 			this._vapis.sort(AutoVala.ElementValaBinary.comparePackages);
 			this._compileOptions.sort(AutoVala.ElementValaBinary.comparePackages);
+			this._dbusElements.sort(AutoVala.ElementValaBinary.comparePackages);
 		}
 
 		private void transformToNonAutomatic(bool automatic) {
@@ -632,6 +665,58 @@ namespace AutoVala {
 			return false;
 		}
 
+		private bool addDBus(string DBusLine, bool automatic, string? condition, bool invertCondition, int lineNumber) {
+
+			if (condition!=null) {
+				ElementBase.globalData.addError(_("DBus definitions can't be conditional (line %d)").printf(lineNumber));
+				return true;
+			}
+
+			var datas=DBusLine.split(" ");
+			string[] datas2={};
+			foreach(var element in datas) {
+				if (element!="") {
+					datas2+=element;
+				}
+			}
+			if ((datas2.length!=3) && (datas2.length!=4)) {
+				ElementBase.globalData.addError(_("DBus definition must have three or four parameters (line %d)").printf(lineNumber));
+				return true;
+			}
+
+			bool systemBus=false;
+			if (datas2[2]=="system") {
+				systemBus=true;
+			} else if (datas2[2]=="session") {
+				systemBus=false;
+			} else {
+				ElementBase.globalData.addError(_("DBus bus must be either 'system' or 'session' (line %d)").printf(lineNumber));
+                return true;
+			}
+			
+			bool GDBus=true;
+			if (datas2.length==4) {
+				if (datas2[3]=="gdbus") {
+					GDBus=true;
+				} else if (datas2[3]=="dbus-glib") {
+					GDBus=false;
+				} else {
+					ElementBase.globalData.addError(_("DBus library must be either 'gdbus' or 'dbus-glib' (line %d)").printf(lineNumber));
+                    return true;
+				}
+			}
+
+			foreach(var element in this._dbusElements) {
+				if ((element.elementName==datas2[0])&&(element.obj==datas2[1])&&(element.systemBus==systemBus)) {
+					return false;
+				}
+			}
+
+			var element=new DBusElement(datas2[0],datas2[1],systemBus,GDBus,automatic);
+			this._dbusElements.add(element);
+			return false;
+		}
+
 		public override bool configureLine(string line, bool automatic, string? condition, bool invertCondition, int lineNumber) {
 
 			if (line.has_prefix("vala_binary: ")) {
@@ -664,6 +749,8 @@ namespace AutoVala {
 				return this.addCSource(line.substring(10).strip(),automatic,condition,invertCondition,lineNumber);
 			} else if (line.has_prefix("vala_vapi: ")) {
 				return this.addVapi(line.substring(11).strip(),automatic,condition,invertCondition,lineNumber);
+			} else if (line.has_prefix("dbus_interface: ")) {
+				return this.addDBus(line.substring(16).strip(),automatic,condition,invertCondition,lineNumber);
 			} else {
 				var badCommand = line.split(": ")[0];
 				ElementBase.globalData.addError(_("Invalid command %s after command %s (line %d)").printf(badCommand,this.command, lineNumber));
@@ -679,6 +766,49 @@ namespace AutoVala {
 		}
 
 		public override bool generateCMakeHeader(DataOutputStream dataStream) {
+
+			// Delete the dbus_generated folder and recreate all the dbus interfaces
+			var pathDbus=GLib.Path.build_filename(ElementBase.globalData.projectFolder,this._fullPath,"dbus_generated");
+			var path = File.new_for_path(pathDbus);
+			if(path.query_exists()) {
+				try {
+					Process.spawn_command_line_sync("rm -rf "+pathDbus);
+				} catch (GLib.SpawnError e) {
+					ElementBase.globalData.addWarning(_("Failed to delete the path %s").printf(pathDbus));
+				}
+			}
+			if (this._dbusElements.size!=0) {
+				foreach (var element in this._dbusElements) {
+					var elementPathS=GLib.Path.build_filename(pathDbus,element.elementName,element.obj);
+					var elementPath=File.new_for_path(elementPathS);
+					try{
+						elementPath.make_directory_with_parents();
+					} catch (GLib.Error e) {
+						ElementBase.globalData.addWarning(_("Failed to create the path %s").printf(elementPathS));
+						continue;
+					}
+					string command="";
+					try {
+						command = "bash -c \"dbus-send --%s --type=method_call --print-reply=literal --dest=%s %s org.freedesktop.DBus.Introspectable.Introspect > /tmp/dbus_data.xml\"".printf(element.systemBus ? "system" : "session",element.elementName,element.obj);
+						Process.spawn_command_line_sync(command);
+						if (element.GDBus) {
+    						command = "vala-dbus-binding-tool --gdbus --api-path=/tmp/dbus_data.xml --directory=%s".printf(elementPathS);
+						} else {
+							command = "vala-dbus-binding-tool --api-path=/tmp/dbus_data.xml --directory=%s".printf(elementPathS);
+						}
+						stdout.printf("Ejecuto %s\n".printf(command));
+						Process.spawn_command_line_sync(command);
+					} catch (GLib.SpawnError e) {
+						ElementBase.globalData.addWarning(_("Failed to execute %s").printf(command));
+						continue;
+					}
+					var files = ElementBase.getFilesFromFolder(GLib.Path.build_filename(this._path,"dbus_generated"),{".vala"},true,true);
+					foreach (var iface in files) {
+					   this.addSource(GLib.Path.build_filename("dbus_generated",iface),true,null,false,-1);
+					}
+				}
+			}
+
 
 			try {
 				if (ElementValaBinary.addedValaBinaries==false) {
@@ -698,7 +828,7 @@ namespace AutoVala {
 					dataStream.put_string("add_definitions(-DGETTEXT_PACKAGE=\\\"${GETTEXT_PACKAGE}\\\")\n");
 				}
 				ElementValaBinary.addedValaBinaries=true;
-			} catch (Error e) {
+			} catch (GLib.Error e) {
 				ElementBase.globalData.addError(_("Failed to write the header for binary file %s").printf(this.fullPath));
 				return true;
 			}
@@ -713,7 +843,7 @@ namespace AutoVala {
 					if (element.eType==ConfigType.VALA_LIBRARY) {
 						try {
 							dataStream.put_string("\ninstall(CODE \"MESSAGE (\\\"\n************************************************\n* Run 'sudo ldconfig' to complete installation *\n************************************************\n\n\\\") \" )");
-						} catch(Error e) {
+						} catch(GLib.Error e) {
 							ElementBase.globalData.addError(_("Failed to append the 'run sudo ldconfig' message"));
 							return true;
 						}
@@ -753,7 +883,7 @@ namespace AutoVala {
 				dataStream2.put_string("\tpublic const string VERSION = \"@VERSION@\";\n");
 				dataStream2.put_string("}\n");
 				dataStream2.close();
-			} catch (Error e) {
+			} catch (GLib.Error e) {
 				ElementBase.globalData.addError(_("Failed to create the Config.vala.cmake file"));
 				return true;
 			}
@@ -780,7 +910,7 @@ namespace AutoVala {
 						dataStream2.put_string("Libs: -L@DOLLAR@{libdir} -l"+libFilename+"\n");
 						dataStream2.put_string("Cflags: -I@DOLLAR@{includedir}\n");
 						dataStream2.close();
-					} catch (Error e) {
+					} catch (GLib.Error e) {
 						ElementBase.globalData.addError(_("Failed to create the Config.vala.cmake file"));
 						return true;
 					}
@@ -1054,7 +1184,7 @@ namespace AutoVala {
 				dataStream.put_string("\t\t"+Path.build_filename("share/doc",ElementBase.globalData.projectName)+"\n");
 				dataStream.put_string("\t)\n");
 				dataStream.put_string("endif()\n");
-			} catch (Error e) {
+			} catch (GLib.Error e) {
 				ElementBase.globalData.addError(_("Failed to write the CMakeLists file for binary %s").printf(libFilename));
 				return true;
 			}
@@ -1168,6 +1298,16 @@ namespace AutoVala {
 					dataStream.put_string("vala_source: %s\n".printf(element.elementName));
 				}
 				printConditions.printTail();
+
+				foreach(var element in this._dbusElements) {
+					printConditions.printCondition(element.condition,element.invertCondition);
+					if (element.automatic) {
+						dataStream.put_string("*");
+					}
+					dataStream.put_string("dbus_interface: %s %s %s\n".printf(element.elementName,element.obj,element.systemBus ? "system" : "session"));
+				}
+				printConditions.printTail();
+
 				foreach(var element in this._cSources) {
 					printConditions.printCondition(element.condition,element.invertCondition);
 					if (element.automatic) {
@@ -1176,7 +1316,7 @@ namespace AutoVala {
 					dataStream.put_string("c_source: %s\n".printf(element.elementName));
 				}
 				printConditions.printTail();
-			} catch (Error e) {
+			} catch (GLib.Error e) {
 				ElementBase.globalData.addError(_("Failed to store ': %s' at config").printf(this.fullPath));
 				return true;
 			}

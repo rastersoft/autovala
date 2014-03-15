@@ -64,6 +64,10 @@ namespace AutoVala {
 						var subFiles=element2.getSubFiles();
 						if (subFiles!=null) {
 							foreach(var subFile in subFiles) {
+								// Don't add the DBUS interfaces to the list of files to check
+								if (subFile.contains("dbus_generated")) {
+									continue;
+								}
 								dataStream2.put_string(Path.build_filename(element2.path,subFile)+"\n");
 							}
 						}
