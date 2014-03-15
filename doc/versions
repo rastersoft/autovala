@@ -9,6 +9,7 @@
 <li><p>version 0.92.0 (2014-03-15)</p>
 <ul>
 <li>Allows to generate automatically DBus interfaces, using DBus introspection capabilities and <em>vala-dbus-binding-tool</em>.<br /></li>
+<li>Now adds GIO automatically if it finds <em>stdin.</em> or <em>stdout.</em> in the source code.<br /></li>
 </ul></li>
 <li><p>version 0.91.0 (2014-01-18)</p>
 <ul>

@@ -1,5 +1,6 @@
 * version 0.92.0 (2014-03-15)
     * Allows to generate automatically DBus interfaces, using DBus introspection capabilities and *vala-dbus-binding-tool*.
+    * Now adds GIO automatically if it finds *stdin.* or *stdout.* in the source code.
 * version 0.91.0 (2014-01-18)
     * When a project creates one or more libraries, the "make install" command shows a message remembering to run 'sudo ldconfig'.
 * version 0.90.0 (2014-01-16)

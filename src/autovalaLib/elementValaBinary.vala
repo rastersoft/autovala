@@ -372,7 +372,9 @@ namespace AutoVala {
 								(-1!=line.index_of("FileEnumerator"))||(-1!=line.index_of("GLib.File"))||
 								(-1!=line.index_of("DataInputStream"))||(-1!=line.index_of("DataOutputStream"))||
 								(-1!=line.index_of("FileInputStream"))||(-1!=line.index_of("FileOutputStream"))||
-								(-1!=line.index_of("DBus"))||(-1!=line.index_of("Socket"))) {
+								(-1!=line.index_of("DBus"))||(-1!=line.index_of("Socket"))||
+								(-1!=line.index_of("stdout."))||(-1!=line.index_of("stdin."))
+								) {
 						if (this.usingList.contains("GIO")==false) {
 							this.usingList.add("GIO");
 						}
