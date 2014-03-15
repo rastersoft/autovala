@@ -5,7 +5,7 @@
 <body>
 <div class="main_frame">
 <p><a href="index.html">Home</a></p>
-<h1>AUTOVALA</h1>
+<h1 id="autovala">AUTOVALA</h1>
 <p>Autovala is a program and a library designed to help in the creation of projects with Vala and CMake.</p>
 <p>The idea is quite simple: CMake is very powerful, but writting the CMakeLists files is boring and repetitive. Why not let the computer create them, by guessing what to do with each file? And if, at the end, there are mistakes, let the user fix them in an easy way, and generate the final CMakeLists files.</p>
 <p><a href="wiki/index.html">You can read the documentation by clicking here</a></p>

@@ -6,11 +6,11 @@
 <div class="main_frame">
 <p><a href="index.html">Home</a></p>
 <p>Autovala(1)</p>
-<h1>NAME</h1>
+<h1 id="name">NAME</h1>
 <p>Autovala - simplify the creation of projects with Vala and CMake</p>
-<h1>SYNOPSIS</h1>
+<h1 id="synopsis">SYNOPSIS</h1>
 <p>autovala {init PROJECT_NAME | clear | refresh | cmake | update | help | version}</p>
-<h1>DESCRIPTION</h1>
+<h1 id="description">DESCRIPTION</h1>
 <p>Autovala is a program and a library designed to help in the creation of projects with Vala and CMake. The idea is quite simple: CMake is very powerful, but writting CMakeLists files is boring and repetitive. Why not let the computer create them, by guessing what to do with each file? And if, at the end, there are mistakes, let the user fix them in an easy way, and generate the final CMakeLists files.</p>
 <p>This is what Autovala does. This process is done in three steps:</p>
 <ul>
@@ -19,7 +19,7 @@
 <li>After that (and after allowing the user to check, if (s)he wishes, the project file), it uses that project file to generate the needed CMakeLists files</li>
 </ul>
 <p>Autovala uses simple rules, like: &quot;png files go to usr/share/pixmaps&quot;, and so on. It even takes into account things like the size and type of picture. For a detailed explanation of the rules followed by Autovala, check the <a href="autovala-rules.7">rules page</a>.</p>
-<h1>USING AUTOVALA</h1>
+<h1 id="using-autovala">USING AUTOVALA</h1>
 <p>Autovala is designed as several Vala classes, so it can be embedded easily in other projects.</p>
 <p>The first thing to do is to initializate the project. This is done by calling autovala in your desired project's folder with:</p>
 <pre><code>    autovala init PROJECT_NAME</code></pre>
@@ -67,7 +67,7 @@
 <p>If you want to remove all the automatically added lines in the project file, leaving only the manually added ones, you can use:</p>
 <pre><code>    autovala clear</code></pre>
 <p>These commands can be called from any of the folders or subfolders of the project, because it will search for the first <strong>.avprj</strong> file located in the current folder or upstream.</p>
-<h1>OPTIONS</h1>
+<h1 id="options">OPTIONS</h1>
 <p><strong>autovala init PROJECT_NAME</strong><br /> Creates a new project called PROJECT_NAME, and initializates the basic directory tree.</p>
 <p><strong>autovala clear</strong><br /> Deletes the <strong>.avprj</strong> file.</p>
 <p><strong>autovala refresh</strong><br /> Refreshes the contents of the <strong>.avprj</strong> file, by cheking the files available in the directory tree and guessing what to do which each one.</p>
@@ -75,9 +75,9 @@
 <p><strong>autovala update</strong><br /> The same than refresh+cmake</p>
 <p><strong>autovala help</strong><br /> Shows the basic commands available</p>
 <p><strong>autovala version</strong><br /> Shows the version of Autovala</p>
-<h1>SEE ALSO</h1>
+<h1 id="see-also">SEE ALSO</h1>
 <p><a href="autovala-rules.7">autovala-rules(7)</a> <a href="autovala-fileformat.5">autovala-fileformat(5)</a> <a href="autovala-keep-changes.7">autovala-keep-changes(7)</a> <a href="autovala-tricks.7">autovala-tricks(7)</a></p>
-<h1>AUTHOR</h1>
+<h1 id="author">AUTHOR</h1>
 <p>Sergio Costas Rodriguez<br /><script type="text/javascript">
 <!--
 h='&#114;&#x61;&#x73;&#116;&#x65;&#114;&#x73;&#x6f;&#102;&#116;&#46;&#x63;&#x6f;&#x6d;';a='&#64;';n='&#114;&#x61;&#x73;&#116;&#x65;&#114;';e=n+a+h;
