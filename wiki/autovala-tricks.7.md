@@ -4,6 +4,22 @@ Autovala-tricks(1)
 
 Autovala tricks - Several tricks for Autovala
 
+## Autogenerating DBus bindings
+
+Starting from version 0.92.0, autovala can use **vala-dbus-binding-tool** to generate automatically bindings for a DBus service. This process is done whenever **autovala cmake** or **autovala update** is done.
+
+To add a DBus binding to an executable, just edit your *.avprj* file and, in the executable section, add a line like this:
+
+        dbus_interface *connection_name* *object_path* *session/system* [*gdbus/dbus-glib*]
+
+This will tell autovala to generate bindings for the object *object_path* in the connection *connection_name*, which sits in the *session/system* bus. By default, the syntax will be for *gdbus*, unless you add an extra parameter at the end, *dbus-glib*, which will force to generate syntax for the old dbus-glib bindings.
+
+An example: the following line
+
+        dbus_interface org.freedesktop.ConsoleKit /org/freedesktop/ConsoleKit/Manager system
+
+will generate bindings for the */org/freedesktop/ConsoleKit/Manager* object.
+
 ## Using the **Constants** namespace and variables
 
 Autovala will create a **Constants** namespace with several strings in it that specifies things like the project version or the final directory. These strings allow to simplify several things, like initializing the **gettext** functions, getting access to the version number set in the code, or getting access to **glade** files, as explained in the following entries.
