@@ -8,7 +8,7 @@ Autovala tricks - Several tricks for Autovala
 
 Starting from version 0.92.0, autovala can use **vala-dbus-binding-tool** to generate automatically bindings for a DBus service. This process is done whenever **autovala cmake** or **autovala update** is done.
 
-To add a DBus binding to an executable, just edit your *.avprj* file and, in the executable section, add a line like this:
+To add a DBus binding to an executable, just edit your *.avprj* file and, in the executable section (this is, after a *vala_binary* or *vala_library* statement), add a line like this:
 
         dbus_interface *connection_name* *object_path* *session/system* [*gdbus/dbus-glib*]
 

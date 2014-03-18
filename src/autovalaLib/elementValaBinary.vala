@@ -1314,7 +1314,7 @@ namespace AutoVala {
 					if (element.automatic) {
 						dataStream.put_string("*");
 					}
-					dataStream.put_string("dbus_interface: %s %s %s\n".printf(element.elementName,element.obj,element.systemBus ? "system" : "session"));
+					dataStream.put_string("dbus_interface: %s %s %s %s\n".printf(element.elementName,element.obj,element.systemBus ? "system" : "session", element.GDBus ? "gdbus" : "dbus-glib"));
 				}
 				printConditions.printTail();
 

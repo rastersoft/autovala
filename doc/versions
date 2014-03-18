@@ -6,6 +6,10 @@
 <div class="main_frame">
 <p><a href="index.html">Home</a></p>
 <ul>
+<li><p>version 0.93.0 (2014-03-18)</p>
+<ul>
+<li>Now remembers if a dbus interface must be generated using gdbus or dbus-glib.<br /></li>
+</ul></li>
 <li><p>version 0.92.0 (2014-03-15)</p>
 <ul>
 <li>Allows to generate automatically DBus interfaces, using DBus introspection capabilities and <em>vala-dbus-binding-tool</em>.<br /></li>

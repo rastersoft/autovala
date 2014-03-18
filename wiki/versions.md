@@ -1,3 +1,5 @@
+* version 0.93.0 (2014-03-18)
+    * Now remembers if a dbus interface must be generated using gdbus or dbus-glib.
 * version 0.92.0 (2014-03-15)
     * Allows to generate automatically DBus interfaces, using DBus introspection capabilities and *vala-dbus-binding-tool*.
     * Now adds GIO automatically if it finds *stdin.* or *stdout.* in the source code.
