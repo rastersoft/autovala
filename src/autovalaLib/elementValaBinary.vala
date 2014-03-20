@@ -674,6 +674,11 @@ namespace AutoVala {
 				return true;
 			}
 
+            // adding a non-automatic DBUS definition to an automatic binary transforms this binary to non-automatic
+            if ((automatic==false)&&(this._automatic==true)) {
+                this.transformToNonAutomatic(false);
+            }
+
 			var datas=DBusLine.split(" ");
 			string[] datas2={};
 			foreach(var element in datas) {

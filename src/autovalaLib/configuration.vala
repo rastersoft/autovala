@@ -150,8 +150,6 @@ namespace AutoVala {
 		 * passed), and upwards. This allows to just pass the path to a file of a project, and it will automatically find the project
 		 * configuration file.
 		 *
-		 * @param open_file The path where to start to search for a configuration file
-		 *
 		 * @return //false// if there was no error; //true// if there was an error. this.globalData.errorList will contain one or more strings with all
 		 * the warnings and errors
 		 */

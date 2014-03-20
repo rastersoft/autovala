@@ -6,19 +6,19 @@
 <div class="main_frame">
 <p><a href="index.html">Home</a></p>
 <p>Autovala-tricks(1)</p>
-<h1 id="name">NAME</h1>
+<h1>NAME</h1>
 <p>Autovala tricks - Several tricks for Autovala</p>
-<h2 id="autogenerating-dbus-bindings">Autogenerating DBus bindings</h2>
+<h2>Autogenerating DBus bindings</h2>
 <p>Starting from version 0.92.0, autovala can use <strong>vala-dbus-binding-tool</strong> to generate automatically bindings for a DBus service. This process is done whenever <strong>autovala cmake</strong> or <strong>autovala update</strong> is done.</p>
 <p>To add a DBus binding to an executable, just edit your <em>.avprj</em> file and, in the executable section (this is, after a <em>vala_binary</em> or <em>vala_library</em> statement), add a line like this:</p>
-<pre><code>    dbus_interface *connection_name* *object_path* *session/system* [*gdbus/dbus-glib*]</code></pre>
+<pre><code>    dbus_interface: *connection_name* *object_path* *session/system* [*gdbus/dbus-glib*]</code></pre>
 <p>This will tell autovala to generate bindings for the object <em>object_path</em> in the connection <em>connection_name</em>, which sits in the <em>session/system</em> bus. By default, the syntax will be for <em>gdbus</em>, unless you add an extra parameter at the end, <em>dbus-glib</em>, which will force to generate syntax for the old dbus-glib bindings.</p>
 <p>An example: the following line</p>
-<pre><code>    dbus_interface org.freedesktop.ConsoleKit /org/freedesktop/ConsoleKit/Manager system</code></pre>
+<pre><code>    dbus_interface: org.freedesktop.ConsoleKit /org/freedesktop/ConsoleKit/Manager system</code></pre>
 <p>will generate bindings for the <em>/org/freedesktop/ConsoleKit/Manager</em> object.</p>
-<h2 id="using-the-constants-namespace-and-variables">Using the <strong>Constants</strong> namespace and variables</h2>
+<h2>Using the <strong>Constants</strong> namespace and variables</h2>
 <p>Autovala will create a <strong>Constants</strong> namespace with several strings in it that specifies things like the project version or the final directory. These strings allow to simplify several things, like initializing the <strong>gettext</strong> functions, getting access to the version number set in the code, or getting access to <strong>glade</strong> files, as explained in the following entries.</p>
-<h2 id="setting-the-version-number">Setting the version number</h2>
+<h2>Setting the version number</h2>
 <p>To simplify the maintenance of the code, Autovala allows to set the version number in an easy way inside the source code of your binary or library. That way you will always be sure to use the right number both for the <strong>About</strong> and <strong>--version</strong> commands, and for the library major and minor values.</p>
 <p>To do so, just put in one (no matter which) of the <strong>.vala</strong> source files the following statement:</p>
 <pre><code>    // project version=XX.YY.ZZ</code></pre>
@@ -31,7 +31,7 @@
 <pre><code>    GLib.stdout.printf(&quot;Version: %s\n&quot;,Constants.VERSION);</code></pre>
 <p>This new method allows to set the version number in libraries too, without symbol clash, because in libraries, the library namespace will be used to define the constants namespace. So, as an example, if we are creating a library <strong>MyExampleLibrary</strong>, which has all its code inside the namespace <strong>exampleLibrary</strong>, to print the library version from inside the library just use:</p>
 <pre><code>    GLib.stdout.printf(&quot;Library version: %s\n&quot;,exampleLibraryConstants.VERSION);</code></pre>
-<h2 id="using-gettext">Using GETTEXT</h2>
+<h2>Using GETTEXT</h2>
 <p>To initialize <strong>gettext</strong> it is mandatory to specify both the package name and the folder with the <strong>.mo</strong> files. This is as simple as using the <strong>Constants</strong> namespace with this code:</p>
 <pre><code>    Intl.bindtextdomain(Constants.GETTEXT_PACKAGE, Path.build_filename(Constants.DATADIR,&quot;locale&quot;));
     Intl.setlocale (LocaleCategory.ALL, &quot;&quot;);
@@ -40,11 +40,11 @@
 <p>For libraries, you must call only:</p>
 <pre><code>    Intl.bindtextdomain(LibraryConstants.GETTEXT_PACKAGE, path.build_filename(LibraryConstants.DATADIR,&quot;locale&quot;));</code></pre>
 <p>being <strong>LibraryConstants</strong> the library Constants namespace. The package name is the same than the project's name.</p>
-<h2 id="using-glade-files">Using GLADE files</h2>
+<h2>Using GLADE files</h2>
 <p><strong>Glade</strong> files are stored at <strong>/usr/share/PROJECT_NAME/</strong> or <strong>/usr/local/share/PROJECT_NAME/</strong>. To get access to them, just use the Constants namespace. As an example, to load the <strong>example.ui</strong> glade file, just do:</p>
 <pre><code>    var data = new Builder();
     data.add_from_file(GLib.Path.build_filename(Constants.PKGDATADIR,&quot;example.ui&quot;));</code></pre>
-<h2 id="creating-several-binaries">Creating several binaries</h2>
+<h2>Creating several binaries</h2>
 <p>By default, Autovala presumes that every source file inside <strong>src</strong> or its subdirectories belongs to a single binary. But maybe you want to generate several binaries because your program needs several executables.</p>
 <p>Let's suppose that you have a project called <strong>myproject</strong>, with a folder hierarchy inside <strong>src</strong> like this:</p>
 <pre><code>    src
@@ -75,13 +75,13 @@
     *vala_binary: src/myproject
     [several commands specific of this binary]</code></pre>
 <p>Save it and run <strong>autovala update</strong>. If you edit again the project file, you will see that Autovala automatically added all the packages and other data to the new executable, and will keep doing every time you run it.</p>
-<h2 id="creating-libraries">Creating libraries</h2>
+<h2>Creating libraries</h2>
 <p>Creating a library is as easy as editing the project file and replacing the command <strong>vala_binary</strong> with <strong>vala_library</strong> and running again <strong>autovala update</strong>.</p>
 <p>When creating a library, Autovala will peek the source files and check the namespace used inside. If all files uses the same namespace, it will use it, by default, as the name for the library, and also to generate the <strong>.vapi</strong>, <strong>.gir</strong> and <strong>.pc</strong> files. Of course, is possible to set this name manually by editing the project file and modifying the command <strong>namespace</strong>.</p>
 <p>The major and minor numbers for the library are taken from the version number set by the user (read the entry <strong>Setting the version number</strong>). They will be used for the library itself, the <strong>.vapi</strong> and the <strong>.pc</strong> files. The <strong>.gir</strong> introspection file uses the version number <strong>major.0</strong> instead of <strong>major.minor</strong> to ensure compatibility.</p>
 <p>Libraries also can have the constants namespace, but modified to avoid clash between the variables in the library and the same in the binary. The final namespace for constants namespace in libraries is <strong>libraryNameSpaceConstants</strong>. Of course, this will work ONLY IF YOUR LIBRARY HAS DEFINED A NAMESPACE. If not, this variables will NOT be added.</p>
 <p>An example: if your library uses the namespace <strong>aBeautifulNameSpace</strong>, then the namespace for the constants will be <strong>aBeautifulNameSpaceConstants</strong>.</p>
-<h2 id="linking-an-executable-against-a-library-from-the-same-project">Linking an executable against a library from the same project</h2>
+<h2>Linking an executable against a library from the same project</h2>
 <p>Let's say that the project contains one or more libraries and an executable, and the executable must use that library we are creating in the same project.</p>
 <p>Let's supose that the executable is <strong>myExecutable</strong>, and the library is <strong>myLibrary</strong> (using the namespace <strong>myLibrarynamespace</strong>). The <strong>.avprj</strong> file will look like this:</p>
 <pre><code>    ### AutoVala Project ###
@@ -108,7 +108,7 @@
     [several commands specific of this binary]</code></pre>
 <p>Run <strong>autovala update</strong>, <strong>cmake ..</strong>, and everything should compile fine.</p>
 <p>Of course, if your executable needs several local libraries, you have to add one <strong>vala_local_package</strong> statement per library.</p>
-<h2 id="compiling-valadoc-in-ubuntu">Compiling Valadoc in Ubuntu</h2>
+<h2>Compiling Valadoc in Ubuntu</h2>
 <p>At the time of writing this, the version of Valadoc shipped with Ubuntu 12.10 has a bug and sometimes fails. The solution is to manually compile it from the sources.</p>
 <p>To get the sources, just use</p>
 <pre><code>    git clone http://git.gnome.org/browse/valadoc</code></pre>
@@ -117,7 +117,7 @@
     make
     sudo make install
     sudo ldconfig</code></pre>
-<h2 id="using-d-bus-service-files">Using D-Bus service files</h2>
+<h2>Using D-Bus service files</h2>
 <p>A D-Bus service file is a file that specifies which binary provides a specific D-Bus service. To ensure that Autovala find them, you must put these files in the <strong>data/</strong> folder, and ensure that their extension is <strong>.service</strong>.</p>
 <p>The problem with these files is that the binary path must be expressed in absolute format; this is: if the binary to run is <strong>mybinary</strong>, you have to put <strong>/usr/bin/mybinary</strong>, or <strong>/usr/local/bin/mybinary</strong>, or the full path where <strong>mybinary</strong> is. This can be a problem, because with CMake, by default, uses <strong>/usr/local/bin</strong>, unless you specify it to use <strong>/usr/bin</strong> when creating a <strong>.deb</strong> or <strong>.rpm</strong> package.</p>
 <p>To avoid this problem, you only need to use the macro <strong>\@DBUS_PREFIX\@</strong> in the path. This CMake macro will be expanded automatically to the base path ( <strong>/usr</strong> or <strong>/usr/local</strong> ), so you only will need to add <strong>bin/</strong> and the binary name.</p>
@@ -126,20 +126,20 @@
         Name=com.rastersoft.cronopete
         Exec=@DBUS_PREFIX@/bin/cronopete</code></pre>
 <p>In this file, the <strong>com.rastersoft.cronopete</strong> service is provided by the binary <strong>cronopete</strong>. The specific folder ( <strong>local</strong> or not <strong>local</strong> ) will be determined automatically by Autovala.</p>
-<h2 id="installing-a-project-in-a-different-final-folder">Installing a project in a different final folder</h2>
+<h2>Installing a project in a different final folder</h2>
 <p>You can set the <strong>CMAKE_INSTALL_PREFIX</strong> variable to define where to install the project. So, if you run</p>
 <pre><code>        cmake .. -DCMAKE_INSTALL_PREFIX=/usr</code></pre>
 <p>the project will be installed in <strong>/usr</strong> instead of <strong>/usr/local</strong>. Also, if you run</p>
 <pre><code>        cmake .. -DCMAKE_INSTALL_PREFIX=$HOME/tmp</code></pre>
 <p>the project will be installed in your personal directory.</p>
-<h2 id="creating-packages-for-a-linux-distro">Creating packages for a Linux distro</h2>
+<h2>Creating packages for a Linux distro</h2>
 <p>To create packages, you must set the install prefix to <strong>/usr</strong> like in the previous entry, and also specify to install everything in a temporal folder. This is made with the <strong>DESTDIR</strong> statement when running <strong>make install</strong>. For example, to create a package in the folder <strong>$HOME/tmpfolder</strong>, you should do:</p>
 <pre><code>        cmake .. -DCMAKE_INSTALL_PREFIX=/usr
         make
         make install DESTDIR=$HOME/tmpfolder</code></pre>
-<h2 id="using-gio-gio-unix-gobject-or-gmodule-packages">Using GIO, GIO-unix, GObject or GModule packages</h2>
+<h2>Using GIO, GIO-unix, GObject or GModule packages</h2>
 <p>There are some exceptions for <strong>using</strong> and package autodetection. Since the packages <strong>GIO</strong>, <strong>GIO-unix</strong>, <strong>GObject</strong> and <strong>GModule</strong> are included inside the <strong>GLib</strong> namespace, Autovala requires them to be manually marked by adding <strong>//using [package name]</strong>. Since it is a comment, it won't be processed by Valac, but will be understood by Autovala and add the required <strong>-pkg</strong> command.</p>
-<h2 id="using-conditional-compilation-to-allow-to-use-gtk2-and-gtk3">Using conditional compilation to allow to use GTK2 and GTK3</h2>
+<h2>Using conditional compilation to allow to use GTK2 and GTK3</h2>
 <p>An special case is when supporting both GTK2 and GTK3 with the same source code is desirable. It is possible to do it by using conditional compilation.</p>
 <p>First, decide a statement to choose between both libraries. Let's say USE_GTK2.</p>
 <p>In your source code use <strong>#if USE_GTK2</strong>, <strong>#else</strong> and <strong>#endif</strong> for keeping sepearated the code parts where GTK2 and GTK3 differs.</p>
@@ -162,13 +162,13 @@
     glade: data/interface/file2.ui
     glade: data/interface/file3.ui
     end</code></pre>
-<h2 id="mixing-vala-and-c-source-files">Mixing VALA and C source files</h2>
+<h2>Mixing VALA and C source files</h2>
 <p>It is possible to mix in the same binary or library VALA and C source files, but is mandatory to manually create a <strong>.vapi</strong> file to access from VALA to the C functions.</p>
 <p>To access from C to the Vala functions, just include the corresponding header files. During compilation, cmake will add <strong>-I[whatever]/install/src/[whatever]</strong>, so the <strong>.h</strong> files created by <strong>valac</strong> will be available to the <strong>.c</strong> files.</p>
 <p>To add libraries needed only for the C sources, just use <strong>c_check_package</strong> instead of <strong>vala_check_package</strong>.</p>
-<h1 id="see-also">SEE ALSO</h1>
+<h1>SEE ALSO</h1>
 <p><a href="autovala.1">autovala(1)</a> <a href="autovala-fileformat.5">autovala-fileformat(5)</a> <a href="autovala-keep-changes.7">autovala-keep-changes(7)</a> <a href="autovala-rules.7">autovala-rules(7)</a></p>
-<h1 id="author">AUTHOR</h1>
+<h1>AUTHOR</h1>
 <p>Sergio Costas Rodriguez<br /><script type="text/javascript">
 <!--
 h='&#114;&#x61;&#x73;&#116;&#x65;&#114;&#x73;&#x6f;&#102;&#116;&#46;&#x63;&#x6f;&#x6d;';a='&#64;';n='&#114;&#x61;&#x73;&#116;&#x65;&#114;';e=n+a+h;

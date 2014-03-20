@@ -6,49 +6,53 @@
 <div class="main_frame">
 <p><a href="index.html">Home</a></p>
 <ul>
-<li><p>version 0.93.0 (2014-03-18)</p>
+<li>version 0.94.0 (2014-03-21)
+<ul>
+<li>Now keeps automatic binaries when contains a manually-added DBus interface definition<br /></li>
+</ul></li>
+<li>version 0.93.0 (2014-03-18)
 <ul>
 <li>Now remembers if a dbus interface must be generated using gdbus or dbus-glib.<br /></li>
 </ul></li>
-<li><p>version 0.92.0 (2014-03-15)</p>
+<li>version 0.92.0 (2014-03-15)
 <ul>
 <li>Allows to generate automatically DBus interfaces, using DBus introspection capabilities and <em>vala-dbus-binding-tool</em>.<br /></li>
 <li>Now adds GIO automatically if it finds <em>stdin.</em> or <em>stdout.</em> in the source code.<br /></li>
 </ul></li>
-<li><p>version 0.91.0 (2014-01-18)</p>
+<li>version 0.91.0 (2014-01-18)
 <ul>
 <li>When a project creates one or more libraries, the &quot;make install&quot; command shows a message remembering to run 'sudo ldconfig'.<br /></li>
 </ul></li>
-<li><p>version 0.90.0 (2014-01-16)</p>
+<li>version 0.90.0 (2014-01-16)
 <ul>
 <li>Now takes into account the dependencies for VAPI files when creating the CMake files.<br /></li>
 <li>Now allows to specify libraries to be added when compiling the C code but not the Vala code. Useful when mixing C and Vala source files.<br /></li>
 </ul></li>
-<li><p>version 0.35.0 (2013-12-26)</p>
+<li>version 0.35.0 (2013-12-26)
 <ul>
 <li>Now includes automagically the VAPIs files in the &quot;vapis&quot; folder for each binary/library<br /></li>
 <li>Now doesn't add a vala package if a local VAPI provides the same namespaces<br /></li>
 <li>Allows to pass flags to the C compiler/linker<br /></li>
 <li>Allows to mix VALA and C source files in the same binary or library<br /></li>
 </ul></li>
-<li><p>version 0.34.0 (2013-12-21)</p>
+<li>version 0.34.0 (2013-12-21)
 <ul>
 <li>Now adds GObject only if the source file contains classes<br /></li>
 </ul></li>
-<li><p>version 0.33.0 (2013-12-14)</p>
+<li>version 0.33.0 (2013-12-14)
 <ul>
 <li>Fixed bug with libgee 0.6, which is named, due to historical reasons, as libgee-1.0<br /></li>
 </ul></li>
-<li><p>version 0.32.0 (2013-12-06)</p>
+<li>version 0.32.0 (2013-12-06)
 <ul>
 <li>Always forces GLib and GObject packages to ensure that everything compiles<br /></li>
 <li>Added GLib.File as rule to detect when automagically add GIO<br /></li>
 </ul></li>
-<li><p>version 0.31.0 (2013-12-04)</p>
+<li>version 0.31.0 (2013-12-04)
 <ul>
 <li>Allows to install the projects in the local folder<br /></li>
 </ul></li>
-<li><p>version 0.30.0 (2013-12-04)</p>
+<li>version 0.30.0 (2013-12-04)
 <ul>
 <li>Now shows a warning message when it can't find a package from a Using statement<br /></li>
 <li>Now supports packages that contains more than one namespace when the user sets manually that package<br /></li>
@@ -56,92 +60,92 @@
 <li>Now puts the manual packages before the automatic ones in the configuration file<br /></li>
 <li>Added support for nested namespaces in VAPI files<br /></li>
 </ul></li>
-<li><p>version 0.29.0 (2013-12-02)</p>
+<li>version 0.29.0 (2013-12-02)
 <ul>
 <li>Now uses regular expressions for processing the USING and PROJECT VERSION strings, which gives more flexibility to the user<br /></li>
 <li>Now can autodetect in some cases when to add the gio package<br /></li>
 </ul></li>
-<li><p>version 0.28.0 (2013-12-01)</p>
+<li>version 0.28.0 (2013-12-01)
 <ul>
 <li>Supports the use of conditionals with COMPILE_OPTIONS statement<br /></li>
 <li>Allows to use several COMPILE_OPTIONS in the same binary/library<br /></li>
 </ul></li>
-<li><p>version 0.27.0 (2013-12-01)</p>
+<li>version 0.27.0 (2013-12-01)
 <ul>
 <li>Full refactorization to simplify future maintenance and improvements<br /></li>
 <li>Removed the Gedit plugin (until having spare time to fix it)<br /></li>
 </ul></li>
-<li><p>version 0.26.0 (2013-11-17)</p>
+<li>version 0.26.0 (2013-11-17)
 <ul>
 <li>Added support for more input formats when creating man pages<br /></li>
 <li>Now MarkDown format is github format<br /></li>
 </ul></li>
-<li><p>version 0.25.0 (2013-11-16)</p>
+<li>version 0.25.0 (2013-11-16)
 <ul>
 <li>Added support for creating and installing man pages<br /></li>
 <li>Added manpages for Autovala<br /></li>
 </ul></li>
-<li><p>version 0.24.0 (2013-10-20)</p>
+<li>version 0.24.0 (2013-10-20)
 <ul>
 <li>Added conditional compilation and conditional installation support<br /></li>
 </ul></li>
-<li><p>version 0.23.0 (2013-10-14)</p>
+<li>version 0.23.0 (2013-10-14)
 <ul>
 <li>Added bash_completion support<br /></li>
 </ul></li>
-<li><p>version 0.22.0 (2013-10-14)</p>
+<li>version 0.22.0 (2013-10-14)
 <ul>
 <li>Autovala and gedit plugin are now different projects, allowing to compile only the former<br /></li>
 <li>Now supports several namespaces in the same .vapi file<br /></li>
 </ul></li>
-<li><p>version 0.21.0 (2013-09-14)</p>
+<li>version 0.21.0 (2013-09-14)
 <ul>
 <li>Allows to specify GIO, GIO-unix, GObject and GModule packages for compilation<br /></li>
 </ul></li>
-<li><p>version 0.20.0 (2013-05-19)</p>
+<li>version 0.20.0 (2013-05-19)
 <ul>
 <li>When initializating a new project, it will copy the needed CMAKE scripts for Vala and create an empty source file<br /></li>
 <li>Now the CUSTOM command accepts both files and folders<br /></li>
 <li>Now only adds CUSTOM_VAPIS_LIST command when there are a custom VAPI list<br /></li>
 <li>Now forbides to set files in the main directory (all files/folders must be inside a folder in the main directory). This is a must to avoid failures.<br /></li>
 </ul></li>
-<li><p>version 0.19.0 (2013-04-30)</p>
+<li>version 0.19.0 (2013-04-30)
 <ul>
 <li>Now the plugin deletes the content of the <em>install</em> folder, but not the folder itself<br /></li>
 </ul></li>
-<li><p>version 0.18.0 (2013-04-30)</p>
+<li>version 0.18.0 (2013-04-30)
 <ul>
 <li>Allows to delete the <em>install</em> folder from Gedit<br /></li>
 <li>Allows to delete the <em>install</em> folder, update the .avprj file, run cmake and launch make in a single step from Gedit<br /></li>
 </ul></li>
-<li><p>version 0.17.0 (2013-04-28)</p>
+<li>version 0.17.0 (2013-04-28)
 <ul>
 <li>Fixed bug in plugin when updating the whole project<br /></li>
 </ul></li>
-<li><p>version 0.16.0 (2013-04-28)</p>
+<li>version 0.16.0 (2013-04-28)
 <ul>
 <li>Added plugin for Gedit<br /></li>
 </ul></li>
-<li><p>version 0.15.0 (2013-04-26)</p>
+<li>version 0.15.0 (2013-04-26)
 <ul>
 <li>Allows to specify manually the destination directory for binaries and libraries (useful for plugins)<br /></li>
 <li>Allows to install files in a manually specified destination directory<br /></li>
 <li>Autodetects autorun <em>.desktop</em> files and install them in the right place<br /></li>
 </ul></li>
-<li><p>version 0.14.0 (2013-04-21)</p>
+<li>version 0.14.0 (2013-04-21)
 <ul>
 <li>Now the autovala library can use its own translated messages instead the ones from the main app (useful when embedding autovala in other programs)<br /></li>
 </ul></li>
-<li><p>version 0.13.0 (2013-04-11)</p>
+<li>version 0.13.0 (2013-04-11)
 <ul>
 <li>In libraries, includes the <em>librarynamespaceConstant</em> namespace to allow to get access to build data without clash (only when the library has a namespace)<br /></li>
 <li>Added <em>clear</em> command, to remove the automatic parts in the <em>.avprj</em> file<br /></li>
 </ul></li>
-<li><p>version 0.12.0 (2013-04-09)</p>
+<li>version 0.12.0 (2013-04-09)
 <ul>
 <li>When checking VAPI files, now will give priority to the version number inside it (gir_version), and only when there is no such number will use the one in the filename<br /></li>
 </ul></li>
-<li><p>version 0.11.0 (2013-04-07)</p>
+<li>version 0.11.0 (2013-04-07)
 <ul>
 <li>Includes the <em>Constant</em> namespace in the executables (but not in libraries to avoid clash)<br /></li>
 <li>Enabled gettext to allow to translate the messages in Autovala<br /></li>
@@ -150,52 +154,52 @@
 <li>Fixed a bug in Constants that prevented defining the VERSION field<br /></li>
 <li>New format for the version string inside source code, that allows to set it in libraries without clash<br /></li>
 </ul></li>
-<li><p>version 0.10.0 (2013-04-07)</p>
+<li>version 0.10.0 (2013-04-07)
 <ul>
 <li>Allows to link an executable with a library from the same project<br /></li>
 <li>Now Autovala itself is a shared library, and the command line binary uses it<br /></li>
 <li>Fixed several bugs in the .pc generation<br /></li>
 <li>Fixed the installation paths for include files<br /></li>
 </ul></li>
-<li><p>version 0.9.0 (2013-04-06)</p>
+<li>version 0.9.0 (2013-04-06)
 <ul>
 <li>Fixed a bug in the .pc generation<br /></li>
 </ul></li>
-<li><p>version 0.8.0 (2013-04-06)</p>
+<li>version 0.8.0 (2013-04-06)
 <ul>
 <li>Automatically generates the .pc file for libraries<br /></li>
 <li>Fixed a bug with CMake when creating more than one binary and/or library<br /></li>
 </ul></li>
-<li><p>version 0.7.0 (2013-04-05)</p>
+<li>version 0.7.0 (2013-04-05)
 <ul>
 <li>Now honors the IGNORE command with VAPI files and source folders<br /></li>
 </ul></li>
-<li><p>version 0.6.0 (2013-04-05)</p>
+<li>version 0.6.0 (2013-04-05)
 <ul>
 <li>Added support for CUSTOM VAPI files<br /></li>
 <li>Installs Valadoc file sin a better place<br /></li>
 <li>Added instructions in HTML format, extracted from GitHub's wiki<br /></li>
 </ul></li>
-<li><p>version 0.5.0 (2013-04-01)</p>
+<li>version 0.5.0 (2013-04-01)
 <ul>
 <li>Adds all source files at SRC and their subdirectories<br /></li>
 </ul></li>
-<li><p>version 0.4.0 (2013-03-31)</p>
+<li>version 0.4.0 (2013-03-31)
 <ul>
 <li>Fixed a bug when PKG_CONFIG_PATH is empty<br /></li>
 </ul></li>
-<li><p>version 0.3.0 (2013-03-30)</p>
+<li>version 0.3.0 (2013-03-30)
 <ul>
 <li>Added support for source files that are not in the same folder than the binary they belong to<br /></li>
 <li>Added documentation about DOC command<br /></li>
 <li>Valadoc support<br /></li>
 </ul></li>
-<li><p>version 0.2.0 (2013-03-30)</p>
+<li>version 0.2.0 (2013-03-30)
 <ul>
 <li>Now recognizes the DOC folder<br /></li>
 <li>Now also search libraries in PKG_CONFIG_PATH<br /></li>
 </ul></li>
-<li><p>version 0.1.0 (2013-03-29)</p>
+<li>version 0.1.0 (2013-03-29)
 <ul>
 <li>First public version</li>
 </ul></li>

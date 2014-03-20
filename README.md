@@ -30,6 +30,8 @@ and enjoy.
 
 
 ## History of versions ##
+* version 0.94.0 (2014-03-21)
+    * Now keeps automatic binaries when contains a manually-added DBus interface definition
 * version 0.93.0 (2014-03-18)
     * Now remembers if a dbus interface must be generated using gdbus or dbus-glib.
 * version 0.92.0 (2014-03-15)
