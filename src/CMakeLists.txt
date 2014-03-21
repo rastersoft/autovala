@@ -36,7 +36,7 @@ if (DEBUG)
 	set (COMPILE_OPTIONS ${COMPILE_OPTIONS} -D DEBUG)
 endif ()
 if (DEBUG)
-	set (COMPILE_OPTIONS ${COMPILE_OPTIONS} -g )
+	set (COMPILE_OPTIONS ${COMPILE_OPTIONS} -g --fatal-warnings )
 endif ()
 
 

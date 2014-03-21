@@ -9,7 +9,7 @@ custom: data/cmake share/autovala
 vala_binary: src/autovala
 *version: 0.94.0
 if DEBUG
-compile_options: -g
+compile_options: -g --fatal-warnings
 end
 compile_c_options: -O2
 vala_local_package: AutoVala
@@ -23,7 +23,7 @@ vala_library: src/autovalaLib/autovalaLib
 *version: 0.94
 *namespace: AutoVala
 if DEBUG
-compile_options: -g
+compile_options: -g --fatal-warnings
 end
 compile_c_options: -O2
 *vala_package: posix
