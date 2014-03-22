@@ -674,10 +674,10 @@ namespace AutoVala {
 				return true;
 			}
 
-            // adding a non-automatic DBUS definition to an automatic binary transforms this binary to non-automatic
-            if ((automatic==false)&&(this._automatic==true)) {
-                this.transformToNonAutomatic(false);
-            }
+			// adding a non-automatic DBUS definition to an automatic binary transforms this binary to non-automatic
+			if ((automatic==false)&&(this._automatic==true)) {
+				this.transformToNonAutomatic(false);
+			}
 
 			var datas=DBusLine.split(" ");
 			string[] datas2={};
@@ -698,7 +698,7 @@ namespace AutoVala {
 				systemBus=false;
 			} else {
 				ElementBase.globalData.addError(_("DBus bus must be either 'system' or 'session' (line %d)").printf(lineNumber));
-                return true;
+				return true;
 			}
 			
 			bool GDBus=true;
@@ -709,7 +709,7 @@ namespace AutoVala {
 					GDBus=false;
 				} else {
 					ElementBase.globalData.addError(_("DBus library must be either 'gdbus' or 'dbus-glib' (line %d)").printf(lineNumber));
-                    return true;
+					return true;
 				}
 			}
 
@@ -774,6 +774,9 @@ namespace AutoVala {
 
 		public override bool generateCMakeHeader(DataOutputStream dataStream) {
 
+			string[]? spawn_args=null;
+			int retval;
+
 			// Delete the dbus_generated folder and recreate all the dbus interfaces
 			var pathDbus=GLib.Path.build_filename(ElementBase.globalData.projectFolder,this._fullPath,"dbus_generated");
 			var path = File.new_for_path(pathDbus);
@@ -795,28 +798,62 @@ namespace AutoVala {
 						continue;
 					}
 					string command="";
+					string output="";
+					string errorMsg="";
+					int exitStatus;
+
 					try {
-						int retval;
-						command = "bash -c \"dbus-send --%s --type=method_call --print-reply=literal --dest=%s %s org.freedesktop.DBus.Introspectable.Introspect > /tmp/dbus_data.xml\"".printf(element.systemBus ? "system" : "session",element.elementName,element.obj);
-						Process.spawn_command_line_sync(command, null, null, out retval);
-						if (retval!=0) {
-							ElementBase.globalData.addWarning(_("Failed to retrieve the DBus interface for the object %s (%s) at the bus '%s'\n").printf(element.obj,element.elementName,element.systemBus ? "system" : "session"));
+						command = "dbus-send --%s --type=method_call --print-reply=literal --dest=%s %s org.freedesktop.DBus.Introspectable.Introspect".printf(element.systemBus ? "system" : "session",element.elementName,element.obj);
+						if (!GLib.Process.spawn_command_line_sync(command,out output,out errorMsg,out exitStatus)) {
+							ElementBase.globalData.addWarning(_("Failed to execute '%s'").printf(command));
 							continue;
 						}
+						if (exitStatus!=0) {
+							ElementBase.globalData.addWarning(_("Failed to execute '%s' with error message '%s'").printf(command,errorMsg.strip()));
+							continue;
+						}
+					} catch (GLib.SpawnError e) {
+						ElementBase.globalData.addWarning(_("Failed to execute '%s'").printf(command));
+						continue;
+					}
+
+					FileOutputStream outputStream;
+					try {
+						GLib.File dbusFile=GLib.File.new_for_path("/tmp/dbus_data.xml");
+						if (dbusFile.query_exists()) {
+							dbusFile.delete();
+						}
+						outputStream = dbusFile.create(GLib.FileCreateFlags.NONE);
+					} catch (GLib.Error e) {
+						ElementBase.globalData.addWarning(_("Failed to check temporary file /tmp/dbus_data.xml"));
+						continue;
+					}
+
+	   					try {
+							outputStream.write(output.data);
+						} catch (IOChannelError e) {
+							ElementBase.globalData.addWarning(_("IOChannelError: %s\n").printf(e.message));
+							return false;
+						} catch (ConvertError e) {
+							ElementBase.globalData.addWarning(_("ConvertError: %s\n").printf(e.message));
+							return false;
+						} catch (GLib.IOError e) {
+							ElementBase.globalData.addWarning(_("IOError: %s\n").printf(e.message));
+							   return false;
+						}
+
+						
 						if (element.GDBus) {
-    						command = "vala-dbus-binding-tool --gdbus --api-path=/tmp/dbus_data.xml --directory=%s".printf(elementPathS);
+							command = "vala-dbus-binding-tool --gdbus --api-path=/tmp/dbus_data.xml --directory=%s".printf(elementPathS);
 						} else {
 							command = "vala-dbus-binding-tool --api-path=/tmp/dbus_data.xml --directory=%s".printf(elementPathS);
 						}
 						Process.spawn_command_line_sync(command, null, null, out retval);
 						if (retval!=0) {
-                            ElementBase.globalData.addWarning(_("Failed to generate the DBus interface for the object %s (%s) at the bus '%s'\n").printf(element.obj,element.elementName,element.systemBus ? "system" : "session"));
-                            continue;
-                        }
-					} catch (GLib.SpawnError e) {
-						ElementBase.globalData.addWarning(_("Failed to execute %s").printf(command));
-						continue;
-					}
+							ElementBase.globalData.addWarning(_("Failed to generate the DBus interface for the object %s (%s) at the bus '%s'\n").printf(element.obj,element.elementName,element.systemBus ? "system" : "session"));
+							continue;
+						}
+
 					var files = ElementBase.getFilesFromFolder(GLib.Path.build_filename(this._path,"dbus_generated"),{".vala"},true,true);
 					foreach (var iface in files) {
 					   this.addSource(GLib.Path.build_filename("dbus_generated",iface),true,null,false,-1);
@@ -1059,7 +1096,7 @@ namespace AutoVala {
 				foreach(var element in this._compileCOptions) {
 					addedCFlags=true;
 					printConditions.printCondition(element.condition,element.invertCondition);
-					dataStream.put_string("set (CMAKE_C_FLAGS ${CMAKE_C_FLAGS} %s )\n".printf(element.elementName));
+					dataStream.put_string("set (CMAKE_C_FLAGS ${CMAKE_C_FLAGS} \" %s \" )\n".printf(element.elementName));
 				}
 				printConditions.printTail();
 				if (addedCFlags) {
