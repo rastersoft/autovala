@@ -700,7 +700,7 @@ namespace AutoVala {
 				ElementBase.globalData.addError(_("DBus bus must be either 'system' or 'session' (line %d)").printf(lineNumber));
 				return true;
 			}
-			
+
 			bool GDBus=true;
 			if (datas2.length==4) {
 				if (datas2[3]=="gdbus") {
@@ -805,16 +805,16 @@ namespace AutoVala {
 					try {
 						command = "dbus-send --%s --type=method_call --print-reply=literal --dest=%s %s org.freedesktop.DBus.Introspectable.Introspect".printf(element.systemBus ? "system" : "session",element.elementName,element.obj);
 						if (!GLib.Process.spawn_command_line_sync(command,out output,out errorMsg,out exitStatus)) {
-							ElementBase.globalData.addWarning(_("Failed to execute '%s'").printf(command));
-							continue;
+							ElementBase.globalData.addError(_("Can't find dbus-send command"));
+							return true;
 						}
 						if (exitStatus!=0) {
 							ElementBase.globalData.addWarning(_("Failed to execute '%s' with error message '%s'").printf(command,errorMsg.strip()));
 							continue;
 						}
 					} catch (GLib.SpawnError e) {
-						ElementBase.globalData.addWarning(_("Failed to execute '%s'").printf(command));
-						continue;
+						ElementBase.globalData.addError(_("Can't find dbus-send command"));
+						return true;
 					}
 
 					FileOutputStream outputStream;
@@ -829,30 +829,39 @@ namespace AutoVala {
 						continue;
 					}
 
-	   					try {
-							outputStream.write(output.data);
-						} catch (IOChannelError e) {
-							ElementBase.globalData.addWarning(_("IOChannelError: %s\n").printf(e.message));
-							return false;
-						} catch (ConvertError e) {
-							ElementBase.globalData.addWarning(_("ConvertError: %s\n").printf(e.message));
-							return false;
-						} catch (GLib.IOError e) {
-							ElementBase.globalData.addWarning(_("IOError: %s\n").printf(e.message));
-							   return false;
-						}
+   					try {
+						outputStream.write(output.data);
+					} catch (IOChannelError e) {
+						ElementBase.globalData.addWarning(_("IOChannelError: %s\n").printf(e.message));
+						return false;
+					} catch (ConvertError e) {
+						ElementBase.globalData.addWarning(_("ConvertError: %s\n").printf(e.message));
+						return false;
+					} catch (GLib.IOError e) {
+						ElementBase.globalData.addWarning(_("IOError: %s\n").printf(e.message));
+						   return false;
+					}
 
-						
-						if (element.GDBus) {
-							command = "vala-dbus-binding-tool --gdbus --api-path=/tmp/dbus_data.xml --directory=%s".printf(elementPathS);
-						} else {
-							command = "vala-dbus-binding-tool --api-path=/tmp/dbus_data.xml --directory=%s".printf(elementPathS);
+
+					if (element.GDBus) {
+						command = "vala-dbus-binding-tool --gdbus --api-path=/tmp/dbus_data.xml --directory=%s".printf(elementPathS);
+					} else {
+						command = "vala-dbus-binding-tool --api-path=/tmp/dbus_data.xml --directory=%s".printf(elementPathS);
+					}
+
+					try {
+						if (!Process.spawn_command_line_sync(command, null, null, out retval)) {
+							ElementBase.globalData.addError(_("Can't find vala-dbus-binding-tool command"));
+							return true;
 						}
-						Process.spawn_command_line_sync(command, null, null, out retval);
 						if (retval!=0) {
 							ElementBase.globalData.addWarning(_("Failed to generate the DBus interface for the object %s (%s) at the bus '%s'\n").printf(element.obj,element.elementName,element.systemBus ? "system" : "session"));
 							continue;
 						}
+					} catch (GLib.SpawnError e) {
+						ElementBase.globalData.addError(_("Can't find vala-dbus-binding-tool command"));
+						return true;
+					}
 
 					var files = ElementBase.getFilesFromFolder(GLib.Path.build_filename(this._path,"dbus_generated"),{".vala"},true,true);
 					foreach (var iface in files) {
