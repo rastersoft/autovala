@@ -4,7 +4,7 @@ project_name: autovala
 vala_version: 0.22
 
 custom: data/bash_completion/autovala /etc/bash_completion.d
-custom: data/cmake share/autovala
+custom: data/cmake share/autovala/cmake
 
 vala_binary: src/autovala
 *version: 0.94.0
