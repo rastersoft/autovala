@@ -123,8 +123,27 @@ namespace AutoVala {
 					dataStream.put_string(")\n");
 				}
 			} catch (Error e) {
-				ElementBase.globalData.addError(_("Failed to create the PO files"));
+				ElementBase.globalData.addError(_("Failed to create the PO files list"));
 				return true;
+			}
+			
+			// run xgettext to generate the basic pot file
+			
+			// first, remember the current folder
+			string currentDir=GLib.Environment.get_current_dir();
+			GLib.Environment.set_current_dir(ElementBase.globalData.projectFolder);
+			bool retVal;
+			string ls_stdout;
+			string ls_stderr;
+			int ls_status;
+			try {
+				retVal=GLib.Process.spawn_command_line_sync("xgettext -d %s -o %s.pot -p po -a --keyword='_' -f po/POTFILES.in".printf(ElementBase.globalData.projectName,ElementBase.globalData.projectName),out ls_stdout,out ls_stderr, out ls_status);
+			} catch (GLib.SpawnError e) {
+				retVal=false;
+			}
+			GLib.Environment.set_current_dir(currentDir);
+			if ((!retVal)||(ls_status!=0)) {
+				ElementBase.globalData.addWarning(_("Failed to run 'xgettext' to generate the base POT file"));
 			}
 			return false;
 		}

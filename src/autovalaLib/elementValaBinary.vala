@@ -774,7 +774,6 @@ namespace AutoVala {
 
 		public override bool generateCMakeHeader(DataOutputStream dataStream) {
 
-			string[]? spawn_args=null;
 			int retval;
 
 			// Delete the dbus_generated folder and recreate all the dbus interfaces
