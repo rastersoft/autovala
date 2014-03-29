@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-03-28 00:00+0100\n"
-"PO-Revision-Date: 2014-03-28 00:01+0100\n"
+"POT-Creation-Date: 2014-03-28 13:42+0100\n"
+"PO-Revision-Date: 2014-03-28 13:42+0100\n"
 "Last-Translator: Sergio Costas <rastersoft@gmail.com>\n"
 "Language-Team: Español; Castellano <>\n"
 "Language: en_US\n"
@@ -621,6 +621,26 @@ msgstr "Error: %s"
 msgid "Warning: %s"
 msgstr "Aviso: %s"
 
+#, fuzzy
+#~ msgid ".vala"
+#~ msgstr "Autovala"
+
+#, fuzzy
+#~ msgid "add_subdirectory("
+#~ msgstr "No ha sido posible añadir el subdirectorio %s"
+
+#, fuzzy
+#~ msgid "project ("
+#~ msgstr "Nuevo proyecto"
+
+#, fuzzy
+#~ msgid "vala_binary: %s\n"
+#~ msgstr "Incapaz de añadir el binario %s"
+
+#, fuzzy
+#~ msgid "version: %s\n"
+#~ msgstr "ConvertError: %s\n"
+
 #~ msgid ""
 #~ "Failed to retrieve the DBus interface for the object %s (%s) at the bus "
 #~ "'%s'\n"
@@ -765,9 +785,6 @@ msgstr "Aviso: %s"
 #~ msgid "All the content of the 'install' folder will be deleted. Continue?"
 #~ msgstr "Se borrará todo el contenido de la carpeta 'install'. ¿Continuar?"
 
-#~ msgid "Autovala"
-#~ msgstr "Autovala"
-
 #~ msgid "Open project file"
 #~ msgstr "Abrir fichero de proyecto"
 
@@ -833,6 +850,3 @@ msgstr "Aviso: %s"
 
 #~ msgid "Refresh project"
 #~ msgstr "Refrescar proyecto"
-
-#~ msgid "New project"
-#~ msgstr "Nuevo proyecto"
