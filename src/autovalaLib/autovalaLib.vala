@@ -271,7 +271,6 @@ namespace AutoVala {
 			if (error==false) {
 				error|=config.saveConfiguration();
 			}
-
 			return error;
 		}
 		public bool clear() {

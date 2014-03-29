@@ -112,7 +112,6 @@ namespace AutoVala {
 
 			var elements = path.split(Path.DIR_SEPARATOR_S);
 			var len = elements.length;
-
 			string pageName = elements[len-1];
 			this.language = null;
 			if (len>3) {
@@ -134,7 +133,7 @@ namespace AutoVala {
 				this.pageSection=extension[0]-'0';
 				break;
 			}
-			return this.configureElement(pageName,null,null,true,null,false);
+			return this.configureElement(path,null,null,true,null,false);
 		}
 
 		public override bool generateCMake(DataOutputStream dataStream) {
