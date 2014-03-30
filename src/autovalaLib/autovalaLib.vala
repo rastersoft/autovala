@@ -285,6 +285,9 @@ namespace AutoVala {
 			}
 
 			error=config.readConfiguration();
+			if (error) {
+				return true;
+			}
 			ElementBase.globalData.clearAutomatic();
 			ElementBase.globalData.generateExtraData();
 
@@ -312,6 +315,80 @@ namespace AutoVala {
 			}
 			return error;
 		}
+
+
+		public bool gettext() {
+			// run xgettext to generate the basic pot file
+
+			this.config = new AutoVala.Configuration();
+			if(this.config.globalData.error) {
+				return true; // if there was at least one error during initialization, return
+			}
+
+			bool error=config.readConfiguration();
+			if (error) {
+				return true;
+			}
+
+			// first, remember the current folder
+			string currentDir=GLib.Environment.get_current_dir();
+			GLib.Environment.set_current_dir(ElementBase.globalData.projectFolder);
+			bool retVal;
+			string ls_stdout;
+			string ls_stderr;
+			int ls_status;
+
+			foreach (var element in ElementBase.globalData.globalElements) {
+				if (element.eType==ConfigType.PO) {
+					try {
+						string callString = "xgettext -d %s -o %s -p %s -a --keyword='_' -f po/POTFILES.in".printf(ElementBase.globalData.projectName,ElementBase.globalData.projectName+".pot",element.path);
+						ElementBase.globalData.addMessage(_("Launching command %s").printf(callString));
+						retVal=GLib.Process.spawn_command_line_sync(callString,out ls_stdout,out ls_stderr, out ls_status);
+					} catch (GLib.SpawnError e) {
+						retVal=false;
+					}
+
+					if ((!retVal)||(ls_status!=0)) {
+						ElementBase.globalData.addWarning(_("Failed to run 'xgettext' to generate the base POT file"));
+					}
+
+					ElementBase.globalData.addMessage(_("\nCommand output: %s\nError output: %s\n").printf(ls_stdout,ls_stderr));
+
+					// run msgmerge for all .po files, to update them.
+					var potFile=Path.build_filename(ElementBase.globalData.projectFolder,element.path);
+					var src = File.new_for_path(potFile);
+					GLib.FileType srcType = src.query_file_type (GLib.FileQueryInfoFlags.NONE, null);
+					if (srcType == GLib.FileType.DIRECTORY) {
+						string srcPath = src.get_path ();
+						try {
+							GLib.FileEnumerator enumerator = src.enumerate_children (GLib.FileAttribute.STANDARD_NAME, GLib.FileQueryInfoFlags.NONE, null);
+							for ( GLib.FileInfo? info = enumerator.next_file (null) ; info != null ; info = enumerator.next_file (null) ) {
+								if (info.get_name().has_suffix(".po")) {
+									string callString = "msgmerge --update %s %s".printf(Path.build_filename(potFile,info.get_name()),Path.build_filename(potFile,ElementBase.globalData.projectName+".pot"));
+									ElementBase.globalData.addMessage(_("Launching command %s").printf(callString));
+									try {
+										retVal=GLib.Process.spawn_command_line_sync(callString,out ls_stdout,out ls_stderr, out ls_status);
+									} catch (GLib.SpawnError e) {
+										retVal=false;
+									}
+									if ((!retVal)||(ls_status!=0)) {
+										ElementBase.globalData.addWarning(_("Failed to run msgmerge"));
+									}
+									ElementBase.globalData.addMessage(_("\nCommand output: %s\nError output: %s\n").printf(ls_stdout,ls_stderr));
+								}
+							}
+						} catch (Error e) {
+							ElementBase.globalData.addError(_("Failed to get the files inside %s").printf(srcPath));
+							return true;
+						}
+					}
+				}
+			}
+			GLib.Environment.set_current_dir(currentDir);
+			return error;
+		}
+
+
 		public bool clear() {
 
 			var config=new AutoVala.Configuration();
