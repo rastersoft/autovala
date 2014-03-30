@@ -74,6 +74,37 @@ namespace AutoVala {
 			return false;
 		}
 
+		private bool delete_recursive (string fileFolder) {
+
+			var src=File.new_for_path(fileFolder);
+
+			GLib.FileType srcType = src.query_file_type (GLib.FileQueryInfoFlags.NONE, null);
+			if (srcType == GLib.FileType.DIRECTORY) {
+				string srcPath = src.get_path ();
+				try {
+					GLib.FileEnumerator enumerator = src.enumerate_children (GLib.FileAttribute.STANDARD_NAME, GLib.FileQueryInfoFlags.NONE, null);
+					for ( GLib.FileInfo? info = enumerator.next_file (null) ; info != null ; info = enumerator.next_file (null) ) {
+						if (delete_recursive (GLib.Path.build_filename (srcPath, info.get_name ()))) {
+							return true;
+						}
+					}
+				} catch (Error e) {
+					ElementBase.globalData.addError(_("Failed when deleting recursively the folder %s").printf(fileFolder));
+					return true;
+				}
+			}
+			try {
+				src.delete();
+			} catch (Error e) {
+				if (srcType != GLib.FileType.DIRECTORY) {
+					ElementBase.globalData.addError(_("Failed when deleting the file %s").printf(fileFolder));
+				}
+				return true;
+			}
+			return false;
+		}
+
+
 		private bool createPath(string configPath, string path) {
 			try {
 				var folder=File.new_for_path(Path.build_filename(configPath,path));
@@ -165,6 +196,14 @@ namespace AutoVala {
 			if (error) {
 				return true;
 			}
+
+			string configPath=this.config.globalData.projectFolder;
+			var folder=File.new_for_path(Path.build_filename(configPath,"cmake"));
+			if (folder.query_exists()) {
+				this.delete_recursive(Path.build_filename(configPath,"cmake"));
+			}
+			this.copy_recursive(Path.build_filename(AutoValaConstants.PKGDATADIR,"cmake"),Path.build_filename(configPath,"cmake"));
+
 			globalData.generateExtraData();
 			var globalElement = new ElementGlobal();
 			try {

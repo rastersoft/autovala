@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-03-28 13:42+0100\n"
-"PO-Revision-Date: 2014-03-28 13:42+0100\n"
+"POT-Creation-Date: 2014-03-30 01:00+0100\n"
+"PO-Revision-Date: 2014-03-30 01:01+0100\n"
 "Last-Translator: Sergio Costas <rastersoft@gmail.com>\n"
 "Language-Team: Español; Castellano <>\n"
 "Language: en_US\n"
@@ -86,39 +86,49 @@ msgstr "Ha fallado la copia recursiva del directorio %s a %s"
 msgid "Failed when copying the file %s to %s"
 msgstr "Incapaz de copiar el fichero %s a %s"
 
-#: ../src/autovalaLib/autovalaLib.vala:81
+#: ../src/autovalaLib/autovalaLib.vala:92
+#, c-format
+msgid "Failed when deleting recursively the folder %s"
+msgstr "Ha fallado el borrado recursivo del directorio %s"
+
+#: ../src/autovalaLib/autovalaLib.vala:100
+#, c-format
+msgid "Failed when deleting the file %s"
+msgstr "Incapaz de borrar el fichero %s"
+
+#: ../src/autovalaLib/autovalaLib.vala:112
 #, c-format
 msgid "The folder '%s' already exists"
 msgstr "El directorio %s ya existe"
 
-#: ../src/autovalaLib/autovalaLib.vala:86
+#: ../src/autovalaLib/autovalaLib.vala:117
 #, c-format
 msgid "Can't create the folder '%s'"
 msgstr "No se ha podido crear el directorio %s"
 
-#: ../src/autovalaLib/autovalaLib.vala:108
+#: ../src/autovalaLib/autovalaLib.vala:139
 #, c-format
 msgid "There's already a project in folder %s"
 msgstr "Ya existe un proyecto en el directorio %s"
 
-#: ../src/autovalaLib/autovalaLib.vala:113
+#: ../src/autovalaLib/autovalaLib.vala:144
 #, c-format
 msgid "Failed to list path %s"
 msgstr "Incapaz de listar el directorio %s"
 
-#: ../src/autovalaLib/autovalaLib.vala:120
+#: ../src/autovalaLib/autovalaLib.vala:151
 msgid "The 'cmake' folder already exists"
 msgstr "El directorio 'cmake' ya existe"
 
-#: ../src/autovalaLib/autovalaLib.vala:142
+#: ../src/autovalaLib/autovalaLib.vala:173
 msgid "Can't create the initial source file"
 msgstr "No se ha podido crear el fichero fuente inicial"
 
-#: ../src/autovalaLib/autovalaLib.vala:181
+#: ../src/autovalaLib/autovalaLib.vala:220
 msgid "Failed while generating the main CMakeLists.txt file"
 msgstr "Falló la creación del fichero CMakeLists.txt principal"
 
-#: ../src/autovalaLib/autovalaLib.vala:233
+#: ../src/autovalaLib/autovalaLib.vala:272
 msgid "Failed while generating the CMakeLists.txt files"
 msgstr "Falló la creación de los ficheros CMakeLists.txt"
 
@@ -406,12 +416,12 @@ msgstr ""
 "La sección de una página de manual tiene que ser un número entre 1 y 9 "
 "(linea %d)"
 
-#: ../src/autovalaLib/elementManpage.vala:190
+#: ../src/autovalaLib/elementManpage.vala:189
 #, c-format
 msgid "Failed to install MANpages at %s"
 msgstr "Incapaz de instalar las páginas de manual en %s"
 
-#: ../src/autovalaLib/elementManpage.vala:216
+#: ../src/autovalaLib/elementManpage.vala:215
 #, c-format
 msgid "Failed to store 'manpage: %s' at config"
 msgstr "No se ha podido almacenar 'manpage: %s' en la configuración"
@@ -431,8 +441,15 @@ msgid "Failed to create the PO files list"
 msgstr "Falló la creación de la lista de ficheros PO"
 
 #: ../src/autovalaLib/elementPo.vala:146
-msgid "Failed to run 'xgettext' to generate the base POT file"
-msgstr "No se ha podido ejecutar 'xgettext' para crear el fichero POT base"
+#, c-format
+msgid ""
+"Failed to run 'xgettext' to generate the base POT file:\n"
+"Output: %s\n"
+"Error output: %s\n"
+msgstr ""
+"No se ha podido ejecutar 'xgettext' para crear el fichero POT base:\n"
+"Salida: %s\n"
+"Salida de error: %s\n"
 
 #: ../src/autovalaLib/elementScheme.vala:57
 #, c-format
