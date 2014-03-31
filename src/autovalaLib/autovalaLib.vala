@@ -39,6 +39,10 @@ namespace AutoVala {
 
 			var src=File.new_for_path(srcS);
 			var dest=File.new_for_path(destS);
+			if (!src.query_exists()) {
+				ElementBase.globalData.addError(_("Can't copy folder %s to %s; it doesn't exists.").printf(srcS,destS));
+				return true;
+			}
 
 			GLib.FileType srcType = src.query_file_type (GLib.FileQueryInfoFlags.NONE, null);
 			if (srcType == GLib.FileType.DIRECTORY) {
@@ -198,11 +202,14 @@ namespace AutoVala {
 			}
 
 			string configPath=this.config.globalData.projectFolder;
-			var folder=File.new_for_path(Path.build_filename(configPath,"cmake"));
-			if (folder.query_exists()) {
-				this.delete_recursive(Path.build_filename(configPath,"cmake"));
+			string origin = Path.build_filename(AutoValaConstants.PKGDATADIR,"cmake");
+			string destiny = Path.build_filename(configPath,"cmake");
+			var folder=File.new_for_path(destiny);
+			var folder2=File.new_for_path(origin);
+			if ((folder.query_exists())&&(folder2.query_exists())) {
+				this.delete_recursive(destiny);
 			}
-			this.copy_recursive(Path.build_filename(AutoValaConstants.PKGDATADIR,"cmake"),Path.build_filename(configPath,"cmake"));
+			this.copy_recursive(origin,destiny);
 
 			globalData.generateExtraData();
 			var globalElement = new ElementGlobal();
