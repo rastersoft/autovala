@@ -206,10 +206,15 @@ namespace AutoVala {
 			string destiny = Path.build_filename(configPath,"cmake");
 			var folder=File.new_for_path(destiny);
 			var folder2=File.new_for_path(origin);
-			if ((folder.query_exists())&&(folder2.query_exists())) {
-				this.delete_recursive(destiny);
+			if (folder2.query_exists()) {
+				if (folder.query_exists()) {
+					this.delete_recursive(destiny);
+				}
+				this.copy_recursive(origin,destiny);
+			} else {
+				ElementBase.globalData.addError(_("Folder %s doesn't exists. Autovala is incorrectly installed").printf(origin));
+				return true;
 			}
-			this.copy_recursive(origin,destiny);
 
 			globalData.generateExtraData();
 			var globalElement = new ElementGlobal();
