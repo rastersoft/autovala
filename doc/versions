@@ -6,6 +6,16 @@
 <div class="main_frame">
 <p><a href="index.html">Home</a></p>
 <ul>
+<li>version 0.95.0 (2014-04-02)
+<ul>
+<li>Now always copy the CMAKE folder when doing a &quot;cmake&quot; or &quot;update&quot; command<br /></li>
+<li>Added extra checks when copying the CMAKE folder<br /></li>
+<li>Allows to automatically update the .po files with new strings (requires gettext 0.18.3)<br /></li>
+<li>Fixed bug when autodetecting manpages<br /></li>
+<li>Now checks if dbus-send and vala-dbus-binding-tool are installed if needed<br /></li>
+<li>Removed BASH dependency<br /></li>
+<li>Now supports several parameters in the compile_c_options statement<br /></li>
+</ul></li>
 <li>version 0.94.0 (2014-03-21)
 <ul>
 <li>Now keeps automatic binaries when contains a manually-added DBus interface definition<br /></li>
