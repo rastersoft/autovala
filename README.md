@@ -30,6 +30,14 @@ and enjoy.
 
 
 ## History of versions ##
+* version 0.95.0 (2014-04-02)
+    * Now always copy the CMAKE folder when doing a "cmake" or "update" command
+    * Added extra checks when copying the CMAKE folder
+    * Allows to automatically update the .po files with new strings (requires gettext 0.18.3)
+    * Fixed bug when autodetecting manpages
+    * Now checks if dbus-send and vala-dbus-binding-tool are installed if needed
+    * Removed BASH dependency
+    * Now supports several parameters in the compile_c_options statement
 * version 0.94.0 (2014-03-21)
     * Now keeps automatic binaries when contains a manually-added DBus interface definition
 * version 0.93.0 (2014-03-18)

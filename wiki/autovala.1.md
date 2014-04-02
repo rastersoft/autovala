@@ -116,6 +116,9 @@ These commands can be called from any of the folders or subfolders of the projec
 
 **autovala update**
   The same than refresh+cmake
+  
+**autovala po**
+  Updates the .po files with the new strings (requires gettext 0.18.3 or later)
 
 **autovala help**
   Shows the basic commands available
