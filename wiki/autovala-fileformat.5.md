@@ -8,7 +8,7 @@ autovala fileformat - The syntax for autovala configuration file
 
 The project file has a very simple format. Usually you don't need to manually edit it, but when the guesses of autovala are incorrect, you can do it, and your changes will be remembered each time you refresh the file.
 
-The current version for the project file format is **10**.
+The current version for the project file format is **11**.
 
 The file is based on commands in the format:
 
@@ -81,6 +81,8 @@ After that, it comes several commands, some of them repeated several times, to s
     The last ten subcommands (compile_options, compile_c_options, vala_package, vala_check_package, c_check_package, vala_local_package, vala_source, c_source, vala_vapi and dbus_interface) can be repeated as many times as needed to specify all the sources and packages needed.
 
  * **vala_library**: the same than vala_binary, but creates a dynamic linking library. It uses the same subcommands.
+
+ * **bash_completion**: specifies that the file is a bash_completion stript that must be copied to where **pkg-config --variable=completionsdir bash-completion** specifies (usually /usr/share/bash-completion/completions). To allow to do installations in the HOME directory, these files won't be installed if *CMAKE_INSTALL_PREFIX* starts with */home*.
 
  * **binary**: specifies that the file is a precompiled binary (or a shell script) that must be copied as-is to vbin/**
 

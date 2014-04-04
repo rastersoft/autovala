@@ -1,17 +1,19 @@
 ### CMakeLists automatically created with AutoVala
 ### Do not edit
 
-IF(IS_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/autovala)
-	install(DIRECTORY
-		${CMAKE_CURRENT_SOURCE_DIR}/autovala
-	DESTINATION
-		/etc/bash_completion.d
+STRING( SUBSTRING ${CMAKE_INSTALL_PREFIX} 0 6 BASE_PREFIX)
+IF( NOT ${BASE_PREFIX} STREQUAL "/home/" )
+	EXEC_PROGRAM (
+		pkg-config
+	ARGS
+		--variable=completionsdir bash-completion
+	OUTPUT_VARIABLE INSTALL_BASH_COMPLETION
 	)
-ELSE()
+
 	install(FILES
 		${CMAKE_CURRENT_SOURCE_DIR}/autovala
 	DESTINATION
-		/etc/bash_completion.d
+		${INSTALL_BASH_COMPLETION}
 	)
 ENDIF()
 

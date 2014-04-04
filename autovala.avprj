@@ -1,9 +1,8 @@
 ### AutoVala Project ###
-autovala_version: 10
+autovala_version: 11
 project_name: autovala
 vala_version: 0.22
 
-custom: data/bash_completion/autovala /etc/bash_completion.d
 custom: data/cmake share/autovala/cmake
 
 vala_binary: src/autovala
@@ -40,6 +39,7 @@ compile_c_options: -O2
 *vala_source: conditionalText.vala
 *vala_source: configuration.vala
 *vala_source: elementBase.vala
+*vala_source: elementBashCompletion.vala
 *vala_source: elementBinary.vala
 *vala_source: elementCustom.vala
 *vala_source: elementDBus.vala
@@ -73,4 +73,6 @@ manpage: wiki/autovala-keep-changes.7.md default 7
 manpage: wiki/autovala-rules.7.md default 7
 manpage: wiki/autovala-tricks.7.md default 7
 manpage: wiki/autovala.1.md
+
+*bash_completion: data/bash_completion/autovala
 

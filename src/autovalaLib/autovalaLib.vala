@@ -167,6 +167,7 @@ namespace AutoVala {
 			error|=this.createPath(configPath,"data/pixmaps");
 			error|=this.createPath(configPath,"data/interface");
 			error|=this.createPath(configPath,"data/local");
+			error|=this.createPath(configPath,"data/bash_completion");
 
 			try {
 				var srcFile=File.new_for_path(Path.build_filename(configPath,"src",projectName+".vala"));
@@ -320,6 +321,7 @@ namespace AutoVala {
 			error|=ElementData.autoGenerate();
 			error|=ElementDoc.autoGenerate();
 			error|=ElementManPage.autoGenerate();
+			error|=ElementBashCompletion.autoGenerate();
 			error|=ElementValaBinary.autoGenerate();
 
 			if (error==false) {

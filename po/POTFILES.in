@@ -3,6 +3,7 @@ src/autovalaLib/autovalaLib.vala
 src/autovalaLib/conditionalText.vala
 src/autovalaLib/configuration.vala
 src/autovalaLib/elementBase.vala
+src/autovalaLib/elementBashCompletion.vala
 src/autovalaLib/elementBinary.vala
 src/autovalaLib/elementCustom.vala
 src/autovalaLib/elementDBus.vala

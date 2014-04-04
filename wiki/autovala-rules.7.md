@@ -58,6 +58,8 @@ The rules followed by Autovala are the following:
 
 * All files ended in **.X**, **.X.md**, **.X.rst**, **.X.htm**, **.X.html**, **.X.tex**, **.X.json**, **.X.rdoc**, **.X.xml** or **.X.txt** (being X a number between 1 and 9) in the folder **data/man/YYYY** will be considered man pages in groff or markdown format respectively, and will be converted to groff using pandoc, compressed with gzip and installed in **share/man/YYYY/manX** (being X the same number). This means that **YYYY** will be considered a language (examples for YYYY: **es**, **en_US**, **es_AR.UTF-8**).
 
+* All files in **data/bash_completion/** will be copied to where the command *pkg-config --variable=completionsdir bash-completion* specifies (usually **/usr/share/bash-completion/completions**), except when *CMAKE_INSTALL_PREFIX* starts with */home* (this allows to do installations in the HOME directory).
+
 When Autovala searchs the packages, it uses only the versions available for the currently active version. Also, by default, it uses the most recent version. But if another version is selected manually, it will use that one instead.
 
 **Example:** if you put "using Gtk;" in your code, by default Autovala will use the package gtk+-3.0 to compile it; but if you manually add the package gtk+-2.0 to that binary, Autovala will use Gtk2 instead of Gtk3.

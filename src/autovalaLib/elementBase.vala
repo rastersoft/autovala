@@ -22,7 +22,7 @@ using Gee;
 namespace AutoVala {
 
 	public enum ConfigType {GLOBAL, VALA_BINARY, VALA_LIBRARY, BINARY, ICON, PIXMAP, PO, GLADE, DBUS_SERVICE, DESKTOP, AUTOSTART,
-							 EOS_PLUG, SCHEME, DATA, DOC, INCLUDE, IGNORE, CUSTOM, DEFINE, MANPAGE}
+							 EOS_PLUG, SCHEME, DATA, DOC, INCLUDE, IGNORE, CUSTOM, DEFINE, MANPAGE, BASH_COMPLETION}
 
 	/**
 	 * Represents a generic file of the project, with its path, filename, compilation condition...
@@ -123,6 +123,9 @@ namespace AutoVala {
 						continue;
 					}
 					if ((ftype==GLib.FileType.REGULAR)||(ftype==GLib.FileType.SYMBOLIC_LINK)) {
+						if (fname2.has_suffix("CMakeLists.txt")) {
+							continue;
+						}
 						if (extensions==null) {
 							files+=fname2;
 						} else {
