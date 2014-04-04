@@ -830,12 +830,12 @@ namespace AutoVala {
 
    					try {
 						outputStream.write(output.data);
-					} catch (IOChannelError e) {
+					/*} catch (IOChannelError e) {
 						ElementBase.globalData.addWarning(_("IOChannelError: %s\n").printf(e.message));
 						return false;
 					} catch (ConvertError e) {
 						ElementBase.globalData.addWarning(_("ConvertError: %s\n").printf(e.message));
-						return false;
+						return false;*/
 					} catch (GLib.IOError e) {
 						ElementBase.globalData.addWarning(_("IOError: %s\n").printf(e.message));
 						   return false;
