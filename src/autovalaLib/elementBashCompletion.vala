@@ -46,18 +46,20 @@ namespace AutoVala {
 
 			try {
 				dataStream.put_string("STRING( SUBSTRING ${CMAKE_INSTALL_PREFIX} 0 6 BASE_PREFIX)\n");
-				dataStream.put_string("IF( NOT ${BASE_PREFIX} STREQUAL \"/home/\" )\n");
+				dataStream.put_string("IF( NOT ( ${BASE_PREFIX} STREQUAL \"/home/\" ) )\n");
 				dataStream.put_string("\tEXEC_PROGRAM (\n");
 				dataStream.put_string("\t\tpkg-config\n");
 				dataStream.put_string("\tARGS\n");
 				dataStream.put_string("\t\t--variable=completionsdir bash-completion\n");
 				dataStream.put_string("\tOUTPUT_VARIABLE INSTALL_BASH_COMPLETION\n");
 				dataStream.put_string("\t)\n\n");
-				dataStream.put_string("\tinstall(FILES\n");
-				dataStream.put_string("\t\t${CMAKE_CURRENT_SOURCE_DIR}/%s\n".printf(this.name));
-				dataStream.put_string("\tDESTINATION\n");
-				dataStream.put_string("\t\t${INSTALL_BASH_COMPLETION}\n");
-				dataStream.put_string("\t)\n");
+				dataStream.put_string("\tIF( NOT ( INSTALL_BASH_COMPLETION STREQUAL \"\" ))\n");
+				dataStream.put_string("\t\tinstall(FILES\n");
+				dataStream.put_string("\t\t\t${CMAKE_CURRENT_SOURCE_DIR}/%s\n".printf(this.name));
+				dataStream.put_string("\t\tDESTINATION\n");
+				dataStream.put_string("\t\t\t${INSTALL_BASH_COMPLETION}\n");
+				dataStream.put_string("\t\t)\n");
+				dataStream.put_string("\tENDIF()\n\n");
 				dataStream.put_string("ENDIF()\n\n");
 			} catch (Error e) {
 				ElementBase.globalData.addError(_("Failed to write the CMakeLists file for custom file %s").printf(this.name));
