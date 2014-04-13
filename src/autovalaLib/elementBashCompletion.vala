@@ -45,8 +45,7 @@ namespace AutoVala {
 		public override bool generateCMake(DataOutputStream dataStream) {
 
 			try {
-				dataStream.put_string("STRING( SUBSTRING ${CMAKE_INSTALL_PREFIX} 0 6 BASE_PREFIX)\n");
-				dataStream.put_string("IF( NOT ( ${BASE_PREFIX} STREQUAL \"/home/\" ) )\n");
+				dataStream.put_string("IF( NOT ( ${CMAKE_INSTALL_PREFIX} MATCHES \"^/home/\" ) )\n");
 				dataStream.put_string("\tEXEC_PROGRAM (\n");
 				dataStream.put_string("\t\tpkg-config\n");
 				dataStream.put_string("\tARGS\n");
