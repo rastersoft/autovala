@@ -2,7 +2,7 @@ Autovala-rules(7)
 
 # NAME
 
-Autovala rules - Rules followed by autovala to guess what kind of file is each one in the folder tree
+Autovala rules - Rules followed by autovala to guess what kind of file is each one in the folder tree.
 
 # DESCRIPTION
 

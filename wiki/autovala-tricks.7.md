@@ -4,6 +4,15 @@ Autovala-tricks(1)
 
 Autovala tricks - Several tricks for Autovala
 
+## Rules followed by autovala to decide which valac version to use
+
+Some source-based distros (like gentoo) doesn't set a soft link *valac* pointing to a default vala compiler version. This behaviour is intentional, to allow to choose with which version compile the packages.
+
+Until version 0.95.0, autovala projects could not be compiled under these distros, unless the user creates the link. In version 0.96.0 this has been fixed. The rules to decide which compiler version to use are the following:
+
+    * During project update, if there is a *valac* symlink, will use that version number to update the *.avprj* file; if not, will use the biggest version available in the system.
+    * During compilation: if the specific version set in the *.avprj* is available, will use it; if not, but there is a *valac* symlink, and its version is equal or greater than the set in the *.avprj* file, will use it. In other case, will return an error.
+
 ## Autogenerating DBus bindings
 
 Starting from version 0.92.0, autovala can use **vala-dbus-binding-tool** to generate automatically bindings for a DBus service. This process is done whenever **autovala cmake** or **autovala update** is done.

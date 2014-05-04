@@ -154,7 +154,7 @@ namespace AutoVala {
 						this.minor=int.parse(numbers[1]);
 						if ((this.minor % 2) != 0) {
 							this.minor++; // odd minor numbers are development versions, so bump to next version
-						} else if (numbers.len > 3) {
+						} else if (numbers.length > 3) {
 							this.minor+=2; // even minor numbers and more than three version numbers are also development versions
 						}
 						return false;
