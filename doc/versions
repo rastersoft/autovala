@@ -11,6 +11,7 @@
 <li>Now manages the bash-completion files automagically<br /></li>
 <li>When installing a project to the HOME folder, it won't install the bash-completion files to avoid an error (because they should go to /etc)<br /></li>
 <li>Added compatibility with source-based linux distributions (like gentoo), which doesn't add a link to a &quot;default&quot; vala compiler version<br /></li>
+<li>Allows to manually specify the vala compiler to use when building a project<br /></li>
 </ul></li>
 <li><p>version 0.95.0 (2014-04-02)</p>
 <ul>

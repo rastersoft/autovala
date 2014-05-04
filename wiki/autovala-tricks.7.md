@@ -4,6 +4,10 @@ Autovala-tricks(1)
 
 Autovala tricks - Several tricks for Autovala
 
+## Updating projects with new versions of Autovala
+
+Every time autovala gets updated, doing "autovala update" or "autovala cmake" will update the *CMaleLists.txt* for that project, so it will take advantage of all the new features added in the new Autovala version.
+
 ## Rules followed by autovala to decide which valac version to use
 
 Some source-based distros (like gentoo) doesn't set a soft link *valac* pointing to a default vala compiler version. This behaviour is intentional, to allow to choose with which version compile the packages.
