@@ -6,9 +6,9 @@
 <div class="main_frame">
 <p><a href="index.html">Home</a></p>
 <p>Autovala-rules(7)</p>
-<h1>NAME</h1>
-<p>Autovala rules - Rules followed by autovala to guess what kind of file is each one in the folder tree</p>
-<h1>DESCRIPTION</h1>
+<h1 id="name">NAME</h1>
+<p>Autovala rules - Rules followed by autovala to guess what kind of file is each one in the folder tree.</p>
+<h1 id="description">DESCRIPTION</h1>
 <p>The rules followed by Autovala are the following:</p>
 <ul>
 <li><p>All <strong>.vala</strong> and <strong>.c</strong> files in the <strong>src/</strong> folder belong to a binary called like the project name. Vala files will be scanned to determine the packages needed to compile them. The <strong>.vala</strong> and <strong>.c</strong> files in the subfolders are also added, unless there is another binary or library that already posesses that folder</p></li>
@@ -40,9 +40,9 @@
 </ul>
 <p>When Autovala searchs the packages, it uses only the versions available for the currently active version. Also, by default, it uses the most recent version. But if another version is selected manually, it will use that one instead.</p>
 <p><strong>Example:</strong> if you put &quot;using Gtk;&quot; in your code, by default Autovala will use the package gtk+-3.0 to compile it; but if you manually add the package gtk+-2.0 to that binary, Autovala will use Gtk2 instead of Gtk3.</p>
-<h1>SEE ALSO</h1>
+<h1 id="see-also">SEE ALSO</h1>
 <p><a href="autovala.1">autovala(1)</a> <a href="autovala-fileformat.5">autovala-fileformat(5)</a> <a href="autovala-keep-changes.7">autovala-keep-changes(7)</a> <a href="autovala-tricks.7">autovala-tricks(7)</a></p>
-<h1>AUTHOR</h1>
+<h1 id="author">AUTHOR</h1>
 <p>Sergio Costas Rodriguez<br /><script type="text/javascript">
 <!--
 h='&#114;&#x61;&#x73;&#116;&#x65;&#114;&#x73;&#x6f;&#102;&#116;&#46;&#x63;&#x6f;&#x6d;';a='&#64;';n='&#114;&#x61;&#x73;&#116;&#x65;&#114;';e=n+a+h;

@@ -2,6 +2,7 @@
     * Now manages the bash-completion files automagically
     * When installing a project to the HOME folder, it won't install the bash-completion files to avoid an error (because they should go to /etc)
     * Added compatibility with source-based linux distributions (like gentoo), which doesn't add a link to a "default" vala compiler version
+    * Allows to manually specify the vala compiler to use when building a project
 * version 0.95.0 (2014-04-02)
     * Now always copy the CMAKE folder when doing a "cmake" or "update" command
     * Added extra checks when copying the CMAKE folder

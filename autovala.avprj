@@ -6,7 +6,7 @@ vala_version: 0.22
 custom: data/cmake share/autovala/cmake
 
 vala_binary: src/autovala
-*version: 0.95.0
+*version: 0.96.0
 if DEBUG
 compile_options: -g --fatal-warnings
 end
@@ -19,7 +19,7 @@ vala_check_package: gio-2.0
 *vala_source: autovala.vala
 
 vala_library: src/autovalaLib/autovalaLib
-*version: 0.95
+*version: 0.96
 *namespace: AutoVala
 if DEBUG
 compile_options: -g --fatal-warnings
