@@ -207,7 +207,7 @@ namespace AutoVala {
 			return (full_path);
 		}
 
-/**
+		/**
 		 * Returns the version of Vala compiler installed in the system (the default one)
 		 *
 		 * @return //false// if there was no error, //true// if the version can't be determined
@@ -215,34 +215,25 @@ namespace AutoVala {
 
 		public bool getValaVersion() {
 
-			/*
-			 * Maybe a not very elegant way of doing it. I accept patches
-			 */
+			
 			this.valaMajor=0;
 			this.valaMinor=16;
 
-			if (0!=Posix.system("valac --version > /var/tmp/current_vala_version")) {
+			var compilers = new FindVala();
+			if (compilers == null) {
 				return true;
 			}
-			var file=File.new_for_path("/var/tmp/current_vala_version");
-			try {
-				var dis = new DataInputStream(file.read());
-				string ?line;
-				while((line=dis.read_line(null))!=null) {
-					var version=line.split(" ");
-					foreach(var element in version) {
-						if (Regex.match_simple("^[0-9]+.[0-9]+(.[0-9]+)?$",element)) {
-							var numbers=element.split(".");
-							this.valaMajor=int.parse(numbers[0]);
-							this.valaMinor=int.parse(numbers[1]);
-							return false;
-						}
-					}
-				}
-			} catch (Error e) {
-				this.valaMajor=0;
-				this.valaMinor=16;
-				return true;
+
+			if (compilers.defaultVersion != null) {
+				this.valaMajor = compilers.defaultVersion.major;
+				this.valaMinor = compilers.defaultVersion.minor;
+				return false;
+			}
+
+			if (compilers.maxVersion != null) {
+				this.valaMajor = compilers.maxVersion.major;
+				this.valaMinor = compilers.maxVersion.minor;
+				return false;
 			}
 			return true;
 		}
