@@ -28,9 +28,6 @@ namespace AutoVala {
 
 		private Configuration config;
 
-		public ManageProject() {
-		}
-
 		public void showErrors() {
 			this.config.showErrors();
 		}
@@ -445,6 +442,7 @@ namespace AutoVala {
 			project.elements = new Gee.ArrayList<PublicElement>();
 			project.projectPath = config.globalData.projectFolder;
 			project.projectName = config.globalData.projectName;
+			project.projectFile = config.globalData.configFile;
 
 			foreach (var element in config.globalData.globalElements) {
 				var newElement = new PublicElement(element.eType, element.fullPath, element.name);
