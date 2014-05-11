@@ -20,7 +20,7 @@ using GLib;
 
 namespace AutoVala {
 
-	class ElementPo : ElementBase {
+	private class ElementPo : ElementBase {
 
 		public ElementPo() {
 			this._type = ConfigType.PO;

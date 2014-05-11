@@ -20,7 +20,7 @@ using GLib;
 
 namespace AutoVala {
 
-	class ElementBinary : ElementBase {
+	private class ElementBinary : ElementBase {
 
 		public ElementBinary() {
 			this._type = ConfigType.BINARY;

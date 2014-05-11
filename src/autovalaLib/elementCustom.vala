@@ -20,7 +20,7 @@ using GLib;
 
 namespace AutoVala {
 
-	class ElementCustom : ElementBase {
+	private class ElementCustom : ElementBase {
 
 		private string destination;
 

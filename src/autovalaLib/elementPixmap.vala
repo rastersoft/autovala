@@ -20,7 +20,7 @@ using GLib;
 
 namespace AutoVala {
 
-	class ElementPixmap : ElementBase {
+	private class ElementPixmap : ElementBase {
 
 		public ElementPixmap() {
 			this._type = ConfigType.PIXMAP;

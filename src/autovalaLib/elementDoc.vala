@@ -20,7 +20,7 @@ using GLib;
 
 namespace AutoVala {
 
-	class ElementDoc : ElementBase {
+	private class ElementDoc : ElementBase {
 
 		public ElementDoc() {
 			this._type = ConfigType.DOC;

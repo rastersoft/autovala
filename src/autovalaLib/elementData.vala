@@ -20,7 +20,7 @@ using GLib;
 
 namespace AutoVala {
 
-	class ElementData : ElementBase {
+	private class ElementData : ElementBase {
 
 		public ElementData() {
 			this._type = ConfigType.DATA;

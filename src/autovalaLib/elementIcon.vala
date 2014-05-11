@@ -21,7 +21,7 @@ using Gdk;
 
 namespace AutoVala {
 
-	class ElementIcon : ElementBase {
+	private class ElementIcon : ElementBase {
 
 		private string iconCathegory;
 		private string[] appendText;

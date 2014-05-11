@@ -20,7 +20,7 @@ using GLib;
 
 namespace AutoVala {
 
-	class ElementDefine : ElementBase {
+	private class ElementDefine : ElementBase {
 
 		public ElementDefine() {
 			this._type = ConfigType.DEFINE;

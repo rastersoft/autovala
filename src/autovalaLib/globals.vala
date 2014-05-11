@@ -24,7 +24,7 @@ namespace AutoVala {
 	 * Contains all the global parameters, like the project name, project folder, the current configuration file, and so on
 	 */
 
-	class Globals : GLib.Object {
+	private class Globals : GLib.Object {
 
 		public string projectName; // The project's name
 		public string? projectFolder; // The absolute path to the project's root folder
@@ -47,7 +47,7 @@ namespace AutoVala {
 
 		public ReadVapis vapiList;
 
-		public Globals(string projectName) {
+		public Globals(string projectName, string ?searchPath = null) {
 
 			ElementBase.globalData = this;
 			ConditionalText.globalData = this;
@@ -62,7 +62,12 @@ namespace AutoVala {
 			this.getValaVersion();
 			this.vapiList = new ReadVapis(this.valaMajor,this.valaMinor);
 
-			var basePath=GLib.Environment.get_current_dir().split(Path.DIR_SEPARATOR_S);
+			string[] basePath;
+			if (searchPath == null) {
+				basePath=GLib.Environment.get_current_dir().split(Path.DIR_SEPARATOR_S);
+			} else {
+				basePath=searchPath.split(Path.DIR_SEPARATOR_S);
+			}
 			var len=basePath.length;
 			while(len>=0) {
 				var path=Path.DIR_SEPARATOR_S;
@@ -215,7 +220,7 @@ namespace AutoVala {
 
 		public bool getValaVersion() {
 
-			
+
 			this.valaMajor=0;
 			this.valaMinor=16;
 

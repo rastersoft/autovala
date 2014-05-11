@@ -124,15 +124,20 @@ namespace AutoVala {
 			return false;
 		}
 
-		public bool init(string projectName) {
+		public bool init(string projectName,string ?basePath = null) {
 
 			bool error=false;
 
-			this.config=new AutoVala.Configuration(projectName,false);
+			this.config=new AutoVala.Configuration(basePath,projectName,false);
 			if(this.config.globalData.error) {
 				return true; // if there was at least one error during initialization, return
 			}
-			string configPath=Posix.realpath(GLib.Environment.get_current_dir());
+			string configPath;
+			if (basePath == null) {
+				configPath=Posix.realpath(GLib.Environment.get_current_dir());
+			} else {
+				configPath = basePath;
+			}
 			var directory=File.new_for_path(configPath);
 
 			try {
@@ -180,18 +185,23 @@ namespace AutoVala {
 
 			this.config.globalData.valaVersionMajor=this.config.globalData.valaMajor;
 			this.config.globalData.valaVersionMinor=this.config.globalData.valaMinor;
-			this.config.globalData.setConfigFilename(projectName+".avprj");
+			if (basePath == null) {
+				this.config.globalData.setConfigFilename(projectName+".avprj");
+			} else {
+				this.config.globalData.setConfigFilename(Path.build_filename(basePath,projectName+".avprj"));
+			}
+
 			if (error==false) {
 				error |= this.config.saveConfiguration();
 			}
 			return error;
 		}
 
-		public bool cmake() {
+		public bool cmake(string ?basePath = null) {
 
 			bool error;
 
-			this.config = new AutoVala.Configuration();
+			this.config = new AutoVala.Configuration(basePath);
 			if(this.config.globalData.error) {
 				return true; // if there was at least one error during initialization, return
 			}
@@ -288,11 +298,11 @@ namespace AutoVala {
 			return error;
 		}
 
-		public bool refresh() {
+		public bool refresh(string ?basePath = null) {
 
 			bool error;
 
-			this.config = new AutoVala.Configuration();
+			this.config = new AutoVala.Configuration(basePath);
 			if(this.config.globalData.error) {
 				return true; // if there was at least one error during initialization, return
 			}
@@ -331,10 +341,10 @@ namespace AutoVala {
 		}
 
 
-		public bool gettext() {
+		public bool gettext(string ?basePath = null) {
 			// run xgettext to generate the basic pot file
 
-			this.config = new AutoVala.Configuration();
+			this.config = new AutoVala.Configuration(basePath);
 			if(this.config.globalData.error) {
 				return true; // if there was at least one error during initialization, return
 			}
@@ -403,10 +413,10 @@ namespace AutoVala {
 		}
 
 
-		public bool clear() {
+		public bool clear(string ?basePath = null) {
 
-			var config=new AutoVala.Configuration();
-			if(this.config.globalData.error) {
+			var config=new AutoVala.Configuration(basePath);
+			if(config.globalData.error) {
 				return true; // if there was at least one error during initialization, return
 			}
 			var retval=config.readConfiguration();
@@ -418,5 +428,52 @@ namespace AutoVala {
 			config.saveConfiguration();
 			return false;
 		}
+
+		public ValaProject ? get_binaries_list(string ?basePath = null) {
+
+			var config=new AutoVala.Configuration(basePath);
+			if (config.globalData.error) {
+				return null;
+			}
+
+			if (config.readConfiguration()) {
+				return null;
+			}
+
+			var project = new ValaProject();
+
+			project.elements = new Gee.ArrayList<PublicElement>();
+			project.projectPath = config.globalData.projectFolder;
+			project.projectName = config.globalData.projectName;
+
+			foreach (var element in config.globalData.globalElements) {
+				var newElement = new PublicElement(element.eType, element.fullPath, element.name);
+				project.elements.add(newElement);
+			}
+
+			return project;
+		} 
+	}
+
+	public class ValaProject : GLib.Object {
+
+		public string projectPath;
+		public string projectName;
+		public string projectFile;
+		public Gee.List<PublicElement>? elements;
+	}
+
+	public class PublicElement : GLib.Object {
+
+		public ConfigType type;
+		public string fullPath;
+		public string name;
+
+		public PublicElement(ConfigType type,string fullPath, string name) {
+			this.type = type;
+			this.fullPath = fullPath;
+			this.name = name;
+		}
+
 	}
 }

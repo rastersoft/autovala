@@ -20,7 +20,7 @@ using GLib;
 
 namespace AutoVala {
 
-	class ElementGlobal : ElementBase {
+	private class ElementGlobal : ElementBase {
 
 		public ElementGlobal() {
 			this._type = ConfigType.GLOBAL;

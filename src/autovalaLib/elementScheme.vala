@@ -20,7 +20,7 @@ using GLib;
 
 namespace AutoVala {
 
-	class ElementScheme : ElementBase {
+	private class ElementScheme : ElementBase {
 
 		private bool addedSchemePrefix;
 

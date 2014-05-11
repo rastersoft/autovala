@@ -20,7 +20,7 @@ using GLib;
 
 namespace AutoVala {
 
-	class ElementEosPlug : ElementBase {
+	private class ElementEosPlug : ElementBase {
 
 		public ElementEosPlug() {
 			this._type = ConfigType.EOS_PLUG;

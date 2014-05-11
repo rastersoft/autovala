@@ -20,7 +20,7 @@ using GLib;
 
 namespace AutoVala {
 
-	class ElementGlade : ElementBase {
+	private class ElementGlade : ElementBase {
 
 		public ElementGlade() {
 			this._type = ConfigType.GLADE;

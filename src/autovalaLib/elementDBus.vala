@@ -20,7 +20,7 @@ using GLib;
 
 namespace AutoVala {
 
-	class ElementDBusService : ElementBase {
+	private class ElementDBusService : ElementBase {
 
 		private static bool addedDBusPrefix;
 

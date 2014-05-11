@@ -20,7 +20,7 @@ using GLib;
 
 namespace AutoVala {
 
-	class ElementIgnore : ElementBase {
+	private class ElementIgnore : ElementBase {
 
 		public ElementIgnore() {
 			this._type = ConfigType.IGNORE;

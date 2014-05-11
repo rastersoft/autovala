@@ -20,7 +20,7 @@ using GLib;
 
 namespace AutoVala {
 
-	class ElementManPage : ElementBase {
+	private class ElementManPage : ElementBase {
 
 		private string? language;
 		private int pageSection;

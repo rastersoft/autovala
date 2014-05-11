@@ -41,7 +41,8 @@ namespace AutoVala {
 		 * @param init_gettext When called from an internal function, set it to false to avoid initializating gettext twice
 		 */
 
-		public Configuration(string projectName="",bool init_gettext=true) {
+		public Configuration(string ?basePath,string projectName="",bool init_gettext=true) {
+
 			if (init_gettext) {
 				Intl.bindtextdomain(AutoValaConstants.GETTEXT_PACKAGE, Path.build_filename(AutoValaConstants.DATADIR,"locale"));
 			}
@@ -49,7 +50,7 @@ namespace AutoVala {
 			this.currentVersion=11; // currently we support version 11 of the syntax
 			this.version=0;
 
-			this.globalData = new AutoVala.Globals(projectName);
+			this.globalData = new AutoVala.Globals(projectName,basePath);
 
 			this.globalData.valaVersionMajor=0;
 			this.globalData.valaVersionMinor=16;

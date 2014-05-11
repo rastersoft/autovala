@@ -20,7 +20,7 @@ using GLib;
 
 namespace AutoVala {
 
-	class ElementDesktop : ElementBase {
+	private class ElementDesktop : ElementBase {
 
 		public ElementDesktop() {
 		}
