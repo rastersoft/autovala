@@ -267,7 +267,7 @@ namespace AutoVala {
 
 			// Check which dependencies are already resolved by manually added packages
 			foreach(var element in this._packages) {
-				var namespaces = ElementBase.globalData.vapiList.getNamespaceFromPackage(element.elementName);
+				var namespaces = Globals.vapiList.getNamespaceFromPackage(element.elementName);
 				foreach (var namespaceP in namespaces) {
 					if ((namespaceP!=null)&&(this.usingList.contains(namespaceP))) {
 						this.usingList.remove(namespaceP);
@@ -276,13 +276,13 @@ namespace AutoVala {
 			}
 
 			// Finally, add the dependencies not resolved yet
-			foreach(var element in ElementBase.globalData.vapiList.getNamespaces()) {
+			foreach(var element in Globals.vapiList.getNamespaces()) {
 				if (this.usingList.contains(element)) {
 					bool isCheckable=false;
 					this.usingList.remove(element);
-					var filename = ElementBase.globalData.vapiList.getPackageFromNamespace(element, out isCheckable);
+					var filename = Globals.vapiList.getPackageFromNamespace(element, out isCheckable);
 					this.addPackage(filename,isCheckable ? packageType.DO_CHECK : packageType.NO_CHECK, true, null, false, -1);
-					var dependencies = ElementBase.globalData.vapiList.getDependenciesFromPackage(filename);
+					var dependencies = Globals.vapiList.getDependenciesFromPackage(filename);
 					if (dependencies!=null) {
 						foreach (var dep in dependencies) {
 							this.addPackage(dep,packageType.DO_CHECK, true, null, false, -1);

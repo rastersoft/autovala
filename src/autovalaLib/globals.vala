@@ -45,7 +45,7 @@ namespace AutoVala {
 		public Gee.Map<string,string> localModules;
 		public Gee.Set<string> pathList;
 
-		public ReadVapis vapiList;
+		public static ReadVapis? vapiList = null;
 
 		public Globals(string projectName, string ?searchPath = null) {
 
@@ -60,26 +60,33 @@ namespace AutoVala {
 			this.globalElements = new Gee.ArrayList<ElementBase>();
 			this.excludeFiles = {};
 			this.getValaVersion();
-			this.vapiList = new ReadVapis(this.valaMajor,this.valaMinor);
-
-			string[] basePath;
-			if (searchPath == null) {
-				basePath=GLib.Environment.get_current_dir().split(Path.DIR_SEPARATOR_S);
-			} else {
-				basePath=searchPath.split(Path.DIR_SEPARATOR_S);
+			if (Globals.vapiList == null) {
+				Globals.vapiList = new ReadVapis(this.valaMajor,this.valaMinor);
 			}
-			var len=basePath.length;
-			while(len>=0) {
-				var path=Path.DIR_SEPARATOR_S;
-				for(var i=0;i<len;i++) {
-					path=Path.build_filename(path,basePath[i]);
+
+			this.configFile = this.findConfiguration(searchPath);
+			if (this.configFile != null) {
+				this.projectFolder = GLib.Path.get_basename(this.configFile);
+			} else {
+				string[]? basePath;
+				if (searchPath == null) {
+					basePath=GLib.Environment.get_current_dir().split(Path.DIR_SEPARATOR_S);
+				} else {
+					basePath=searchPath.split(Path.DIR_SEPARATOR_S);
 				}
-				this.configFile=this.findConfiguration(path);
-				if (this.configFile!="") {
-					this.projectFolder=path;
-					break;
+				var len=basePath.length;
+				while(len>=0) {
+					var path=Path.DIR_SEPARATOR_S;
+					for(var i=0;i<len;i++) {
+						path=Path.build_filename(path,basePath[i]);
+					}
+					this.configFile=this.findConfiguration(path);
+					if (this.configFile!=null) {
+						this.projectFolder=path;
+						break;
+					}
+					len--;
 				}
-				len--;
 			}
 		}
 
@@ -167,20 +174,23 @@ namespace AutoVala {
 		 * @param basePath The path where to seek for a configuration file
 		 * @return the full path of the configuration file
 		 */
-		private string findConfiguration(string basePath) {
+		private string? findConfiguration(string? basePath) {
 
 			FileEnumerator enumerator;
 			FileInfo info_file;
-			string full_path="";
+			string? full_path=null;
 			string[] filename;
 			string extension;
 			FileType typeinfo;
 
+			if (basePath == null) {
+				return null;
+			}
 			var directory = File.new_for_path(basePath);
 			try {
 				enumerator = directory.enumerate_children(GLib.FileAttribute.STANDARD_NAME+","+GLib.FileAttribute.STANDARD_TYPE,GLib.FileQueryInfoFlags.NOFOLLOW_SYMLINKS,null);
 				while ((info_file = enumerator.next_file(null)) != null) {
-					full_path="";
+					full_path=null;
 					typeinfo=info_file.get_file_type();
 					if (typeinfo!=FileType.REGULAR) {
 						continue;
@@ -207,7 +217,7 @@ namespace AutoVala {
 					break;
 				}
 			} catch (Error e) {
-				return "";
+				return null;
 			}
 			return (full_path);
 		}

@@ -30,6 +30,8 @@ and enjoy.
 
 
 ## History of versions ##
+* version 0.97.0 (2014-05-12)
+    * Added support for the new GEdit plugin for Autovala
 * version 0.96.0 (2014-05-04)
     * Now manages the bash-completion files automagically
     * When installing a project to the HOME folder, it won't install the bash-completion files to avoid an error (because they should go to /etc)
