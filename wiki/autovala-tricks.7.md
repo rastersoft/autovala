@@ -4,6 +4,10 @@ Autovala-tricks(1)
 
 Autovala tricks - Several tricks for Autovala
 
+## Creating an Autovala plugin for a GTK3 text editor
+
+Version 0.97 includes a library with two widgets, ProjectViewer and FileViewer, that greatly simplifies the task of creating a plugin for manage Autovala projects. An example of its use can be seen in the Gedit plugin for Autovala, available in a folder with the Autovala source code.
+
 ## Updating projects with new versions of Autovala
 
 Every time autovala gets updated, doing "autovala update" or "autovala cmake" will update the *CMaleLists.txt* for that project, so it will take advantage of all the new features added in the new Autovala version.

@@ -7,8 +7,7 @@
 <p><a href="index.html">Home</a></p>
 <p>While Autovala is fully usable, there are still a lot of things that I want to add to it, and I will need help.</p>
 <ul>
-<li><p>Support localization of desktop files</p></li>
-<li><p>Allow to mix .vala and .c files</p></li>
+<li>Support localization of desktop files</li>
 </ul>
 <p><a href="index.html">Home</a></p>
 </div>

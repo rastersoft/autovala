@@ -6,6 +6,13 @@
 <div class="main_frame">
 <p><a href="index.html">Home</a></p>
 <ul>
+<li><p>version 0.97.0 (2014-05-12)</p>
+<ul>
+<li>Added support for the new GEdit plugin for Autovala<br /></li>
+<li>Added two GTK3 widgets to allow to easily create plugins for text editors<br /></li>
+<li>Now the GLOBALS object has the vapiList as an static member, allowing to read it once. This speeds up the gedit plugin<br /></li>
+<li>Now autovala doesn't add hiden or backup source files<br /></li>
+</ul></li>
 <li><p>version 0.96.0 (2014-05-04)</p>
 <ul>
 <li>Now manages the bash-completion files automagically<br /></li>

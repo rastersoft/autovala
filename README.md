@@ -32,7 +32,9 @@ and enjoy.
 ## History of versions ##
 * version 0.97.0 (2014-05-12)
     * Added support for the new GEdit plugin for Autovala
-    * Now the GLOBALS object has the vapiList as an static member, allowing to read it once. This speeds up the gedit plugin.
+    * Added two GTK3 widgets to allow to easily create plugins for text editors
+    * Now the GLOBALS object has the vapiList as an static member, allowing to read it once. This speeds up the gedit plugin
+    * Now autovala doesn't add hiden or backup source files
 * version 0.96.0 (2014-05-04)
     * Now manages the bash-completion files automagically
     * When installing a project to the HOME folder, it won't install the bash-completion files to avoid an error (because they should go to /etc)
