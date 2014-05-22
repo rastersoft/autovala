@@ -1,0 +1,98 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2014-05-22 17:57+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: src/fileview.vala:368 src/projectview.vala:380
+msgid "Open"
+msgstr ""
+
+#: src/fileview.vala:369
+msgid "Don't show hiden files"
+msgstr ""
+
+#: src/fileview.vala:369
+msgid "Show hiden files"
+msgstr ""
+
+#: src/fileview.vala:370
+msgid "Rename"
+msgstr ""
+
+#: src/fileview.vala:371
+msgid "Delete"
+msgstr ""
+
+#: src/fileview.vala:372
+msgid "Create file"
+msgstr ""
+
+#: src/fileview.vala:373
+msgid "Create folder"
+msgstr ""
+
+#: src/fileview.vala:407
+msgid "Untitled file"
+msgstr ""
+
+#: src/fileview.vala:421
+msgid "Untitled folder"
+msgstr ""
+
+#: src/projectview.vala:295
+#, c-format
+msgid "%s <b>(Project file)</b>"
+msgstr ""
+
+#: src/projectview.vala:307
+#, c-format
+msgid "%s <b>(executable)</b>"
+msgstr ""
+
+#: src/projectview.vala:314
+#, c-format
+msgid "%s <b>(library)</b>"
+msgstr ""
+
+#: src/projectview.vala:381
+msgid "New executable/library"
+msgstr ""
+
+#: src/projectview.vala:382
+msgid "Edit library properties"
+msgstr ""
+
+#: src/projectview.vala:382
+msgid "Edit executable properties"
+msgstr ""
+
+#: src/projectview.vala:383
+msgid "Remove library"
+msgstr ""
+
+#: src/projectview.vala:383
+msgid "Remove executable"
+msgstr ""
+
+#: src/projectview.vala:384
+msgid "Update project"
+msgstr ""
+
+#: src/projectview.vala:385
+msgid "Update translations"
+msgstr ""
+

@@ -1,0 +1,6 @@
+[Plugin]
+Module=AutovalaGeditPlugin.so
+IAge=3
+Name=Autovala Plugin
+Description=An AutoVala Plugin for Gedit
+Authors=Sergio Costas <raster@rastersoft.com>

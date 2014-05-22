@@ -1,0 +1,37 @@
+### AutoVala Project ###
+autovala_version: 11
+project_name: valaplugin
+vala_version: 0.22
+
+custom: data/autovala.plugin share/gedit/plugins/autovala
+
+
+vala_library: src/valaplugin
+*namespace: AutovalaGeditPlugin
+vala_destination: share/gedit/plugins/autovala
+*vala_check_package: AutoVala
+*vala_check_package: AutovalaPlugin
+*vala_check_package: atk
+*vala_check_package: cairo
+*vala_check_package: gdk-3.0
+*vala_check_package: gdk-pixbuf-2.0
+*vala_check_package: gedit
+*vala_check_package: gee-0.8
+*vala_check_package: gio-2.0
+*vala_check_package: glib-2.0
+*vala_check_package: gobject-2.0
+*vala_check_package: gobject-introspection-1.0
+*vala_check_package: gtk+-3.0
+*vala_check_package: gtksourceview-3.0
+*vala_check_package: libpeas-1.0
+*vala_check_package: pango
+*vala_check_package: pangocairo
+*vala_check_package: x11
+*vala_source: valaplugin.vala
+
+*po: po
+
+*data: data/local
+
+*doc: doc
+

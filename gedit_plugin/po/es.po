@@ -1,0 +1,98 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2014-05-22 17:57+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: src/fileview.vala:368 src/projectview.vala:380
+msgid "Open"
+msgstr "Abrir"
+
+#: src/fileview.vala:369
+msgid "Don't show hiden files"
+msgstr "No mostrar archivos ocultos"
+
+#: src/fileview.vala:369
+msgid "Show hiden files"
+msgstr "Mostrar archivos ocultos"
+
+#: src/fileview.vala:370
+msgid "Rename"
+msgstr "Renombrar"
+
+#: src/fileview.vala:371
+msgid "Delete"
+msgstr "Borrar"
+
+#: src/fileview.vala:372
+msgid "Create file"
+msgstr "Crear fichero"
+
+#: src/fileview.vala:373
+msgid "Create folder"
+msgstr "Crear carpeta"
+
+#: src/fileview.vala:407
+msgid "Untitled file"
+msgstr "Fichero sin nombre"
+
+#: src/fileview.vala:421
+msgid "Untitled folder"
+msgstr "Carpeta sin nombre"
+
+#: src/projectview.vala:295
+#, c-format
+msgid "%s <b>(Project file)</b>"
+msgstr "%s <b>(Fichero de proyecto)</b>"
+
+#: src/projectview.vala:307
+#, c-format
+msgid "%s <b>(executable)</b>"
+msgstr "%s <b>(ejecutable)</b>"
+
+#: src/projectview.vala:314
+#, c-format
+msgid "%s <b>(library)</b>"
+msgstr "%s <b>(biblioteca)</b>"
+
+#: src/projectview.vala:381
+msgid "New executable/library"
+msgstr "Nuevo ejecutable/biblioteca"
+
+#: src/projectview.vala:382
+msgid "Edit library properties"
+msgstr "Editar propiedades de la biblioteca"
+
+#: src/projectview.vala:382
+msgid "Edit executable properties"
+msgstr "Editar propiedades del ejecutable"
+
+#: src/projectview.vala:383
+msgid "Remove library"
+msgstr "Eliminar biblioteca"
+
+#: src/projectview.vala:383
+msgid "Remove executable"
+msgstr "Eliminar ejecutable"
+
+#: src/projectview.vala:384
+msgid "Update project"
+msgstr "Actualizar proyecto"
+
+#: src/projectview.vala:385
+msgid "Update translations"
+msgstr "Actualizar traducciones"
+
