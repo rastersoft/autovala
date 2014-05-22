@@ -26,3 +26,6 @@ src/autovalaLib/findVala.vala
 src/autovalaLib/genVapis.vala
 src/autovalaLib/globals.vala
 src/autovalaLib/readPkgconfig.vala
+src/autovalaPlugin/fileview.vala
+src/autovalaPlugin/projectview.vala
+data/interface/binary_properties.ui

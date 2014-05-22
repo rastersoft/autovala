@@ -445,13 +445,44 @@ namespace AutoVala {
 
 			foreach (var element in config.globalData.globalElements) {
 				var newElement = new PublicElement(element.eType, element.fullPath, element.name);
+				if ((element.eType == ConfigType.VALA_LIBRARY) || (element.eType == ConfigType.VALA_BINARY)) {
+					var binElement = element as ElementValaBinary;
+					newElement.set_binary_data(binElement.get_vala_opts(),binElement.get_c_opts());
+				}
 				project.elements.add(newElement);
 			}
 
 			return project;
 		}
 
-		public string ? new_binary(string? projectPath, string binary_name, bool is_library, string base_path, string vala_options, string c_options) {
+		public bool remove_binary(string? projectPath, string binary_name) {
+		
+			var config=new AutoVala.Configuration(projectPath);
+			if (config.globalData.error) {
+				return true;
+			}
+
+			if (config.readConfiguration()) {
+				return true;
+			}
+
+			ElementBase element_found = null;
+			foreach(var element in config.globalData.globalElements) {
+				if ((element.eType == AutoVala.ConfigType.VALA_BINARY) || (element.eType == AutoVala.ConfigType.VALA_LIBRARY)) {
+					if ( element.name == binary_name) {
+						element_found = element;
+						break;
+					}
+				}
+			}
+			if (element_found != null) {
+				config.globalData.globalElements.remove(element_found);
+			}
+			config.saveConfiguration();
+			return false;
+		}
+
+		public string ? process_binary(string? original_name, string? projectPath, string binary_name, bool is_library, string base_path, string vala_options, string c_options) {
 
 			string retval = "";
 
@@ -489,15 +520,25 @@ namespace AutoVala {
 
 			bool path_already_in_use = false;
 			bool name_already_in_use = false;
+			ElementValaBinary? original_element = null;
 			foreach(var element in config.globalData.globalElements) {
 				if (element.eType == AutoVala.ConfigType.IGNORE) {
 					continue;
 				}
-				if (Path.build_filename(config.globalData.projectFolder,element.path) == base_path) {
-					path_already_in_use = true;
-				}
-				if (((element.eType == AutoVala.ConfigType.VALA_BINARY)|| (element.eType == AutoVala.ConfigType.VALA_LIBRARY)) && ( element. name == binary_name)) {
-					name_already_in_use = true;
+				if ((element.eType == AutoVala.ConfigType.VALA_BINARY) || (element.eType == AutoVala.ConfigType.VALA_LIBRARY)) {
+					if ((Path.build_filename(config.globalData.projectFolder,element.path) == base_path) && (element.name != original_name)) {
+						path_already_in_use = true;
+					}
+					if ( element.name == binary_name) {
+						name_already_in_use = true;
+					}
+					if ( element.name == original_name) {
+						original_element = element as AutoVala.ElementValaBinary;
+					}
+				} else {
+					if (Path.build_filename(config.globalData.projectFolder,element.path) == base_path) {
+						path_already_in_use = true;
+					}
 				}
 			}
 			if (path_already_in_use) {
@@ -506,39 +547,61 @@ namespace AutoVala {
 				}
 				retval+=_("Path already in use in other element");
 			}
-			if (name_already_in_use) {
-				if (retval != "") {
-					retval+="\n";
+			if (original_name == null) { // create a new binary element
+				if (name_already_in_use) {
+					if (retval != "") {
+						retval+="\n";
+					}
+					retval+=_("Name already in use in other executable or library");
 				}
-				retval+=_("Name already in use in other executable or library");
+			} else {
+				if (original_element==null) {
+					if (retval != "") {
+						retval+="\n";
+					}
+					retval+=_("The element doesn't exists");
+				}
 			}
 			if (retval != "") {
 				return retval;
 			}
 
-			ElementValaBinary element = new ElementValaBinary();
-			string line;
-			if (is_library) {
-				line = "vala_library: ";
-			} else {
-				line = "vala_binary: ";
-			}
-			line+=Path.build_filename(base_path3,binary_name);
-			if (element.configureLine(line,false,null,false,0)) {
-				var errors = config.globalData.getErrorList();
-				string retString = "";
-				foreach(var error in errors) {
-					retString+=error+"\n";
+			if (original_name == null) {
+				ElementValaBinary element = new ElementValaBinary();
+				string line;
+				if (is_library) {
+					line = "vala_library: ";
+				} else {
+					line = "vala_binary: ";
 				}
-				return retString;
+				line+=Path.build_filename(base_path3,binary_name);
+				if (element.configureLine(line,false,null,false,0)) {
+					var errors = config.globalData.getErrorList();
+					string retString = "";
+					foreach(var error in errors) {
+						retString+=error+"\n";
+					}
+					return retString;
+				}
+				if (vala_options!="") {
+					element.setCompileOptions(vala_options,false, null, false, 0);
+				}
+				if (c_options!="") {
+					element.setCompileCOptions(c_options,false, null, false, 0);
+				}
+				element.autoConfigure();
+			} else {
+				original_element.set_name(binary_name);
+				original_element.set_type(is_library);
+				original_element.set_path(base_path3);
+				if (vala_options!="") {
+					original_element.setCompileOptions(vala_options,false, null, false, 0,true);
+				}
+				if (c_options!="") {
+					original_element.setCompileCOptions(c_options,false, null, false, 0,true);
+				}
+				original_element.autoConfigure();
 			}
-			if (vala_options!="") {
-				element.setCompileOptions(vala_options,false, null, false, 0);
-			}
-			if (c_options!="") {
-				element.setCompileCOptions(c_options,false, null, false, 0);
-			}
-			element.autoConfigure();
 			config.saveConfiguration();
 			return null;
 		}
@@ -557,12 +620,20 @@ namespace AutoVala {
 		public ConfigType type;
 		public string fullPath;
 		public string name;
+		public string vala_opts;
+		public string c_opts;
 
 		public PublicElement(ConfigType type,string fullPath, string name) {
 			this.type = type;
 			this.fullPath = fullPath;
 			this.name = name;
+			vala_opts = "";
+			c_opts = "";
 		}
 
+		public void set_binary_data(string vala_options,string c_options) {
+			this.vala_opts = vala_options;
+			this.c_opts = c_options;
+		}
 	}
 }

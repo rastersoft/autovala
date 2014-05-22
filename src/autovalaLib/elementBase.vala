@@ -98,7 +98,16 @@ namespace AutoVala {
 				var enumerator = dirPath.enumerate_children (FileAttribute.STANDARD_NAME+","+FileAttribute.STANDARD_TYPE, 0);
 				FileInfo file_info;
 				while ((file_info = enumerator.next_file ()) != null) {
-					var fname=Path.build_filename(folder,file_info.get_name());
+					var filename_get = file_info.get_name();
+					// don't read hiden or backup files
+					if (filename_get[0]=='.') {
+						continue;
+					}
+					if (filename_get.has_suffix("~")) {
+						continue;
+					}
+
+					var fname=Path.build_filename(folder,filename_get);
 					string fname2;
 					if (removeFolder) {
 						if (masterFolder==null) {

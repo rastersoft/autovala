@@ -129,6 +129,60 @@ namespace AutoVala {
 		private GLib.Regex regexPackages;
 		private GLib.Regex regexClasses;
 
+		public string get_vala_opts() {
+
+			string opts = "";
+			foreach(var element in this._compileOptions) {
+				if (opts != "") {
+					opts += " ";
+				}
+				opts+=element.elementName;
+			}
+			return opts;
+		}
+
+		public string get_c_opts() {
+
+			string opts = "";
+			foreach(var element in this._compileCOptions) {
+				if (opts != "") {
+					opts += " ";
+				}
+				opts+=element.elementName;
+			}
+			return opts;
+		}
+
+		public void set_name(string new_name) {
+			if ((this._name != new_name) && (this._automatic==true)) {
+				this.transformToNonAutomatic(false);
+			}
+			this._name = new_name;
+		}
+
+		public void set_type(bool set_as_library) {
+			if (set_as_library) {
+				if ((this._type == ConfigType.VALA_BINARY) && (this._automatic==true)) {
+					this.transformToNonAutomatic(false);
+				}
+				this._type = ConfigType.VALA_LIBRARY;
+			} else {
+				if ((this._type == ConfigType.VALA_LIBRARY) && (this._automatic==true)) {
+					this.transformToNonAutomatic(false);
+				}
+				this._type = ConfigType.VALA_BINARY;
+			}
+		}
+
+		public void set_path(string new_path) {
+			if (((this._path != new_path) || (this._fullPath != new_path)) && (this._automatic==true)) {
+				this.transformToNonAutomatic(false);
+			}
+
+			this._path = new_path;
+			this._fullPath = new_path;
+		}
+
 		public ElementValaBinary() {
 			this.command = "";
 			this.version="1.0.0";
@@ -538,7 +592,12 @@ namespace AutoVala {
 			return false;
 		}
 
-		public bool setCompileOptions(string options,  bool automatic, string? condition, bool invertCondition, int lineNumber) {
+		public bool setCompileOptions(string options,  bool automatic, string? condition, bool invertCondition, int lineNumber, bool erase_all=false) {
+
+			if (erase_all) {
+				this._compileOptions = new Gee.ArrayList<CompileElement ?>();
+			}
+
 			// if it is conditional, it MUST be manual, because conditions are not added automatically
 			if (condition!=null) {
 				automatic=false;
@@ -555,7 +614,12 @@ namespace AutoVala {
 			return false;
 		}
 
-		public bool setCompileCOptions(string options,  bool automatic, string? condition, bool invertCondition, int lineNumber) {
+		public bool setCompileCOptions(string options,  bool automatic, string? condition, bool invertCondition, int lineNumber, bool erase_all=false) {
+
+			if (erase_all) {
+				this._compileOptions = new Gee.ArrayList<CompileElement ?>();
+			}
+
 			// if it is conditional, it MUST be manual, because conditions are not added automatically
 			if (condition!=null) {
 				automatic=false;
@@ -1259,9 +1323,9 @@ namespace AutoVala {
 					dataStream.put_string("*");
 				}
 				if (this._type == ConfigType.VALA_BINARY) {
-					dataStream.put_string("vala_binary: %s\n".printf(Path.build_filename(this._path,this._name)));
+					dataStream.put_string("\nvala_binary: %s\n".printf(Path.build_filename(this._path,this._name)));
 				} else {
-					dataStream.put_string("vala_library: %s\n".printf(Path.build_filename(this._path,this._name)));
+					dataStream.put_string("\nvala_library: %s\n".printf(Path.build_filename(this._path,this._name)));
 				}
 				if (this.versionSet) {
 					if (this.versionAutomatic) {
