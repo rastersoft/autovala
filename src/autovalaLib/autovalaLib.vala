@@ -361,7 +361,7 @@ namespace AutoVala {
 			foreach (var element in ElementBase.globalData.globalElements) {
 				if (element.eType==ConfigType.PO) {
 					try {
-						string callString = "xgettext -d %s -o %s -p %s -a --keyword='_' -f po/POTFILES.in".printf(ElementBase.globalData.projectName,ElementBase.globalData.projectName+".pot",element.path);
+						string callString = "xgettext -d %s -o %s -p %s --keyword='_' -f po/POTFILES.in".printf(ElementBase.globalData.projectName,ElementBase.globalData.projectName+".pot",element.path);
 						ElementBase.globalData.addMessage(_("Launching command %s").printf(callString));
 						retVal=GLib.Process.spawn_command_line_sync(callString,out ls_stdout,out ls_stderr, out ls_status);
 					} catch (GLib.SpawnError e) {
@@ -449,7 +449,99 @@ namespace AutoVala {
 			}
 
 			return project;
-		} 
+		}
+
+		public string ? new_binary(string? projectPath, string binary_name, bool is_library, string base_path, string vala_options, string c_options) {
+
+			string retval = "";
+
+			var config=new AutoVala.Configuration(projectPath);
+			if (config.globalData.error) {
+				return null;
+			}
+
+			if (config.readConfiguration()) {
+				return null;
+			}
+
+			string base_path2;
+			string base_path3 = "";
+			string projectPath2;
+			
+			if (base_path.has_suffix(Path.DIR_SEPARATOR_S)) {
+				base_path2 = base_path;
+			} else {
+				base_path2 = base_path+Path.DIR_SEPARATOR_S;
+			}
+			if (config.globalData.projectFolder.has_suffix(Path.DIR_SEPARATOR_S)) {
+				projectPath2 = config.globalData.projectFolder;
+			} else {
+				projectPath2 = config.globalData.projectFolder+Path.DIR_SEPARATOR_S;
+			}
+
+			if (base_path2 == projectPath2) {
+				retval+=_("The path can't be the project's root path");
+			} else if (!base_path2.has_prefix(projectPath2)) {
+				retval+=_("The selected path is outside the project folder");
+			} else {
+				base_path3 = base_path2.substring(projectPath2.length);
+			}
+
+			bool path_already_in_use = false;
+			bool name_already_in_use = false;
+			foreach(var element in config.globalData.globalElements) {
+				if (element.eType == AutoVala.ConfigType.IGNORE) {
+					continue;
+				}
+				if (Path.build_filename(config.globalData.projectFolder,element.path) == base_path) {
+					path_already_in_use = true;
+				}
+				if (((element.eType == AutoVala.ConfigType.VALA_BINARY)|| (element.eType == AutoVala.ConfigType.VALA_LIBRARY)) && ( element. name == binary_name)) {
+					name_already_in_use = true;
+				}
+			}
+			if (path_already_in_use) {
+				if (retval != "") {
+					retval+="\n";
+				}
+				retval+=_("Path already in use in other element");
+			}
+			if (name_already_in_use) {
+				if (retval != "") {
+					retval+="\n";
+				}
+				retval+=_("Name already in use in other executable or library");
+			}
+			if (retval != "") {
+				return retval;
+			}
+
+			ElementValaBinary element = new ElementValaBinary();
+			string line;
+			if (is_library) {
+				line = "vala_library: ";
+			} else {
+				line = "vala_binary: ";
+			}
+			line+=Path.build_filename(base_path3,binary_name);
+			if (element.configureLine(line,false,null,false,0)) {
+				var errors = config.globalData.getErrorList();
+				string retString = "";
+				foreach(var error in errors) {
+					retString+=error+"\n";
+				}
+				return retString;
+			}
+			if (vala_options!="") {
+				element.setCompileOptions(vala_options,false, null, false, 0);
+			}
+			if (c_options!="") {
+				element.setCompileCOptions(c_options,false, null, false, 0);
+			}
+			element.autoConfigure();
+			config.saveConfiguration();
+			return null;
+		}
 	}
 
 	public class ValaProject : GLib.Object {

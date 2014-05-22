@@ -79,7 +79,7 @@ namespace AutoVala {
 						}
 					break;
 					case ConfigType.GLADE:
-						dataStream2.put_string("[type: gettext/glade]"+Path.build_filename(element.fullPath)+"\n");
+						dataStream2.put_string(Path.build_filename(element.fullPath)+"\n");
 					break;
 					default:
 					break;

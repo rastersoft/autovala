@@ -538,7 +538,7 @@ namespace AutoVala {
 			return false;
 		}
 
-		private bool setCompileOptions(string options,  bool automatic, string? condition, bool invertCondition, int lineNumber) {
+		public bool setCompileOptions(string options,  bool automatic, string? condition, bool invertCondition, int lineNumber) {
 			// if it is conditional, it MUST be manual, because conditions are not added automatically
 			if (condition!=null) {
 				automatic=false;
@@ -555,7 +555,7 @@ namespace AutoVala {
 			return false;
 		}
 
-		private bool setCompileCOptions(string options,  bool automatic, string? condition, bool invertCondition, int lineNumber) {
+		public bool setCompileCOptions(string options,  bool automatic, string? condition, bool invertCondition, int lineNumber) {
 			// if it is conditional, it MUST be manual, because conditions are not added automatically
 			if (condition!=null) {
 				automatic=false;
