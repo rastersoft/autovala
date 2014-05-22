@@ -4,6 +4,14 @@ using Gee;
 
 namespace AutovalaPlugin {
 
+	/**
+	 * This is a GTK3 widget that allows to show all the files and folders
+	 * starting in a specific folder, in an hierarchical fashion
+	 * It is useful to create plugins for GTK3-based editors
+	 * The first plugin is for GEdit
+	 * It widget complements the ProjectViewer widget
+	 */
+
 	public class FileViewer : Gtk.TreeView {
 
 		private TreeStore treeModel;
@@ -25,8 +33,11 @@ namespace AutovalaPlugin {
 		 * This signal is emited when a file or folder has been created or
 		 * deleted in the file tree
 		 */
-		 public signal void changed_file();
+		public signal void changed_file();
 
+		/**
+		 * Constructor
+		 */
 		public FileViewer() {
 
 			this.monitors = new Gee.ArrayList<FileMonitor>();
@@ -79,8 +90,10 @@ namespace AutovalaPlugin {
 		}
 
 		/**
+		 * This method must be called each time the user changes the current file.
 		 * Is important to know which is the current file, because GEdit do some weird things
 		 * when saving, which launches filesystem events.
+		 * @param file The full path to the current file being edited
 		 */
 		public void set_current_file(string? file) {
 			this.current_file = file;
@@ -88,6 +101,7 @@ namespace AutovalaPlugin {
 
 		/**
 		 * Sets the base folder that will be shown in this file view
+		 * @param folder The top folder
 		 */
 		public void set_base_folder(string? folder) {
 
@@ -108,6 +122,8 @@ namespace AutovalaPlugin {
 		/**
 		 * This callback is called whenever a cell is edited, which happens when a file is
 		 * renamed. It do the renaming process.
+		 * @param path The TreeView path of the edited cell
+		 * @param new_name The new value of the cell
 		 */
 		public void cell_edited(string path, string new_name) {
 			TreeIter iter;
@@ -134,6 +150,8 @@ namespace AutovalaPlugin {
 
 		/**
 		 * This callback is used for detecting the right-click, for the contextual menu.
+		 * @param event The mouse event
+		 * @return true to stop processing the event; false to continue processing the event.
 		 */
 		public bool click_event(EventButton event) {
 			if (event.button == 3) { // right click
@@ -166,6 +184,7 @@ namespace AutovalaPlugin {
 
 		/**
 		 * This callback is called when the user changes the hiden files visibility with the contextual menu
+		 * @param new_status If true, the hiden files will be visible; if false, they won't
 		 */
 		public void changed_hide_status(bool new_status) {
 
@@ -177,6 +196,8 @@ namespace AutovalaPlugin {
 
 		/**
 		 * This callback manages the classic click over an element
+		 * @param path The path of the clicked element
+		 * @param column The column of the clicked element
 		 */
 		public void clicked(TreePath path, TreeViewColumn column) {
 			TreeModel model;
@@ -197,6 +218,9 @@ namespace AutovalaPlugin {
 			this.clicked_file(filepath);
 		}
 
+		/**
+		 * Removes all the current file monitors
+		 */
 		private void cancel_monitors() {
 			foreach(var mon in this.monitors) {
 				mon.cancel();
@@ -204,6 +228,13 @@ namespace AutovalaPlugin {
 			this.monitors = new Gee.ArrayList<FileMonitor>();
 		}
 
+		/**
+		 * This callback is called by the file monitors whenever a file in the filesystem
+		 * has been modified
+		 * @param file The file that has been modified
+		 * @param other_file
+		 * @param event_type The event that happened (created, deleted...)
+		 */
 		public void folder_changed (File file, File? other_file, FileMonitorEvent event_type) {
 
 			if ((event_type!=FileMonitorEvent.CREATED) &&
@@ -231,7 +262,17 @@ namespace AutovalaPlugin {
 			this.changed_file();
 		}
 
-		private void fill_files(string path,TreeIter? iter=null,bool top=true) {
+		/**
+		 * This method reads all the files in a path and insert them in the TreeView.
+		 * It also creates file monitors for each folder in the file tree.
+		 * It is called recursively. First it reads and fills the folders, and then the files
+		 *
+		 * @param path The full path of the directory to read
+		 * @param iter The parent iterator. The files and folders will be inserted inside it
+		 * @param top If true, this is the top folder, so the TreeView will be cleared and the
+		 * file monitors will be destroyed before starting. If false, it is being called recursively
+		 */
+		private void fill_files(string path, TreeIter? iter=null, bool top=true) {
 			if (top) {
 				this.cancel_monitors();
 				this.treeModel.clear();
@@ -247,6 +288,15 @@ namespace AutovalaPlugin {
 			}
 		}
 
+		/**
+		 * This method is the one that reads the files or folders in a folder
+		 * and adds them inside the Iter specified
+		 * @param path The full path of the folder to read
+		 * @param parent The parent iterator. These files or folders will be inserted as childs of it
+		 * @param folders If true, only the folders will be inserted; if false, only the regular files
+		 * @param top If true, path is the top folder of our file tree; if false, means that the
+		 * method is being called recursively
+		 */
 		private void fill_files2(string path,TreeIter? parent,bool folders,bool top) {
 
 			FileType type;
@@ -303,7 +353,12 @@ namespace AutovalaPlugin {
 			}
 		}
 
-
+		/**
+		 * Compare function to sort the files, first by being hiden or not, then alphabetically
+		 * @param a The first file to compare
+		 * @param b The second file to compare
+		 * @result wheter a must be before (-1), after (1) or no matter (0), b
+		 */
 		public static int CompareFiles(ElementFileViewer a, ElementFileViewer b) {
 
 			if ((a.filename[0]=='.') && (b.filename[0]!='.')) {
@@ -323,6 +378,9 @@ namespace AutovalaPlugin {
 		}
 	}
 
+	/**
+	 * Class used to store the data of one file
+	 */
 	public class ElementFileViewer : Object {
 
 		public string filename;
@@ -337,6 +395,9 @@ namespace AutovalaPlugin {
 		}
 	}
 
+	/**
+	 * This class manages the popup menu in the file view
+	 */
 	public class FileViewerMenu : Gtk.Menu {
 
 		private TreeIter element;

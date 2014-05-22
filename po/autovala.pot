@@ -1,0 +1,730 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2014-05-23 00:17+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: src/autovala.vala:27
+msgid ""
+"Autovala. Usage:\n"
+"\tautovala help: shows this help\n"
+"\tautovala version: shows the current version\n"
+"\tautovala init project_name: initializates a new Vala CMake project and "
+"creates an initial project file\n"
+"\tautovala refresh: tries to guess the type for each file in the folders and "
+"adds them to the project file\n"
+"\tautovala cmake: creates the CMake files from the project file\n"
+"\tautovala update: the same than 'refresh'+'cmake'\n"
+"\tautovala po: updates translatable strings\n"
+"\tautovala clear: removes the automatic parts in the project file, leaving "
+"only the manual ones.\n"
+"\n"
+msgstr ""
+
+#: src/autovala.vala:59 src/autovala.vala:73 src/autovala.vala:88
+#: src/autovala.vala:95 src/autovala.vala:110 src/autovala.vala:124
+#: src/autovala.vala:138
+msgid "Aborting\n"
+msgstr ""
+
+#: src/autovala.vala:62 src/autovala.vala:76 src/autovala.vala:99
+#: src/autovala.vala:113 src/autovala.vala:127 src/autovala.vala:141
+msgid "Done\n"
+msgstr ""
+
+#: src/autovala.vala:84
+msgid "Updating project file\n"
+msgstr ""
+
+#: src/autovala.vala:91
+msgid "Updating CMake files\n"
+msgstr ""
+
+#: src/autovalaLib/autovalaLib.vala:40
+#, c-format
+msgid "Can't copy folder %s to %s; it doesn't exists."
+msgstr ""
+
+#: src/autovalaLib/autovalaLib.vala:50
+#, c-format
+msgid "Failed when creating folder %s"
+msgstr ""
+
+#: src/autovalaLib/autovalaLib.vala:64
+#, c-format
+msgid "Failed when copying recursively the folder %s to %s"
+msgstr ""
+
+#: src/autovalaLib/autovalaLib.vala:71
+#, c-format
+msgid "Failed when copying the file %s to %s"
+msgstr ""
+
+#: src/autovalaLib/autovalaLib.vala:93
+#, c-format
+msgid "Failed when deleting recursively the folder %s"
+msgstr ""
+
+#: src/autovalaLib/autovalaLib.vala:101
+#, c-format
+msgid "Failed when deleting the file %s"
+msgstr ""
+
+#: src/autovalaLib/autovalaLib.vala:113
+#, c-format
+msgid "The folder '%s' already exists"
+msgstr ""
+
+#: src/autovalaLib/autovalaLib.vala:118
+#, c-format
+msgid "Can't create the folder '%s'"
+msgstr ""
+
+#: src/autovalaLib/autovalaLib.vala:145
+#, c-format
+msgid "There's already a project in folder %s"
+msgstr ""
+
+#: src/autovalaLib/autovalaLib.vala:150
+#, c-format
+msgid "Failed to list path %s"
+msgstr ""
+
+#: src/autovalaLib/autovalaLib.vala:157
+msgid "The 'cmake' folder already exists"
+msgstr ""
+
+#: src/autovalaLib/autovalaLib.vala:180
+msgid "Can't create the initial source file"
+msgstr ""
+
+#: src/autovalaLib/autovalaLib.vala:223
+#, c-format
+msgid "Folder %s doesn't exists. Autovala is incorrectly installed"
+msgstr ""
+
+#: src/autovalaLib/autovalaLib.vala:240
+msgid "Failed while generating the main CMakeLists.txt file"
+msgstr ""
+
+#: src/autovalaLib/autovalaLib.vala:292
+msgid "Failed while generating the CMakeLists.txt files"
+msgstr ""
+
+#: src/autovalaLib/autovalaLib.vala:365 src/autovalaLib/autovalaLib.vala:388
+#, c-format
+msgid "Launching command %s"
+msgstr ""
+
+#: src/autovalaLib/autovalaLib.vala:372
+msgid "Failed to run 'xgettext' to generate the base POT file"
+msgstr ""
+
+#: src/autovalaLib/autovalaLib.vala:375 src/autovalaLib/autovalaLib.vala:397
+#, c-format
+msgid ""
+"\n"
+"Command output: %s\n"
+"Error output: %s\n"
+msgstr ""
+
+#: src/autovalaLib/autovalaLib.vala:395
+msgid "Failed to run msgmerge"
+msgstr ""
+
+#: src/autovalaLib/autovalaLib.vala:401
+#, c-format
+msgid "Failed to get the files inside %s"
+msgstr ""
+
+#: src/autovalaLib/autovalaLib.vala:514
+msgid "The path can't be the project's root path"
+msgstr ""
+
+#: src/autovalaLib/autovalaLib.vala:516
+msgid "The selected path is outside the project folder"
+msgstr ""
+
+#: src/autovalaLib/autovalaLib.vala:548
+msgid "Path already in use in other element"
+msgstr ""
+
+#: src/autovalaLib/autovalaLib.vala:555
+msgid "Name already in use in other executable or library"
+msgstr ""
+
+#: src/autovalaLib/autovalaLib.vala:562
+msgid "The element doesn't exists"
+msgstr ""
+
+#: src/autovalaLib/conditionalText.vala:82
+msgid "Failed to store ELSE condition at config"
+msgstr ""
+
+#: src/autovalaLib/conditionalText.vala:97
+msgid "Failed to store ENDIF condition at config"
+msgstr ""
+
+#: src/autovalaLib/conditionalText.vala:111
+msgid "Failed to store IF at config"
+msgstr ""
+
+#: src/autovalaLib/conditionalText.vala:121
+msgid "Failed to store IF NOT/ELSE at config"
+msgstr ""
+
+#: src/autovalaLib/conditionalText.vala:140
+msgid "Failed to store TAIL at config"
+msgstr ""
+
+#: src/autovalaLib/configuration.vala:100
+#, c-format
+msgid "Nested IFs not allowed (line %d)"
+msgstr ""
+
+#: src/autovalaLib/configuration.vala:119
+#, c-format
+msgid "Mismatched END (line %d)"
+msgstr ""
+
+#: src/autovalaLib/configuration.vala:129
+#: src/autovalaLib/configuration.vala:133
+#, c-format
+msgid "Mismatched ELSE (line %d)"
+msgstr ""
+
+#: src/autovalaLib/configuration.vala:265
+#, c-format
+msgid ""
+"Vala version string not valid. It must be in the form N.N or N.N.N (line %d)"
+msgstr ""
+
+#: src/autovalaLib/configuration.vala:278
+#, c-format
+msgid ""
+"This project needs Vala version %s or greater, but you have version %d.%d. "
+"Can't open it."
+msgstr ""
+
+#: src/autovalaLib/configuration.vala:302
+msgid ""
+"This project was created with a newer version of Autovala. Can't open it."
+msgstr ""
+
+#: src/autovalaLib/configuration.vala:313
+msgid "Can't open configuration file"
+msgstr ""
+
+#: src/autovalaLib/configuration.vala:320
+#, c-format
+msgid "IF without END in line %d"
+msgstr ""
+
+#: src/autovalaLib/configuration.vala:329
+#, c-format
+msgid "Conditionals are not supported in this statement (line %d)"
+msgstr ""
+
+#: src/autovalaLib/configuration.vala:351
+msgid "Can't store the configuration. Project name not defined."
+msgstr ""
+
+#: src/autovalaLib/configuration.vala:356
+msgid "Can't store the configuration. Path not defined."
+msgstr ""
+
+#: src/autovalaLib/configuration.vala:372
+#, c-format
+msgid "Failed to delete the old config file %s"
+msgstr ""
+
+#: src/autovalaLib/configuration.vala:376
+#, c-format
+msgid "Storing configuration in file %s"
+msgstr ""
+
+#: src/autovalaLib/configuration.vala:410
+#, c-format
+msgid "Can't create the config file %s"
+msgstr ""
+
+#: src/autovalaLib/configuration.vala:431
+msgid "Error while storing the data"
+msgstr ""
+
+#: src/autovalaLib/elementBase.vala:93 src/autovalaLib/elementGlobal.vala:39
+#, c-format
+msgid "Directory %s doesn't exists"
+msgstr ""
+
+#: src/autovalaLib/elementBase.vala:151 src/autovalaLib/elementGlobal.vala:60
+#, c-format
+msgid "Can't access folder %s"
+msgstr ""
+
+#: src/autovalaLib/elementBase.vala:170
+#, c-format
+msgid "Trying to add an empty path: %s"
+msgstr ""
+
+#: src/autovalaLib/elementBase.vala:180
+#, c-format
+msgid "Trying to add twice the path %s"
+msgstr ""
+
+#: src/autovalaLib/elementBase.vala:188
+#, c-format
+msgid "File %s doesn't exists"
+msgstr ""
+
+#: src/autovalaLib/elementBase.vala:223 src/autovalaLib/elementCustom.vala:36
+#: src/autovalaLib/elementDefine.vala:34
+#: src/autovalaLib/elementDesktop.vala:54 src/autovalaLib/elementIcon.vala:57
+#: src/autovalaLib/elementIgnore.vala:34
+#: src/autovalaLib/elementManpage.vala:69
+#: src/autovalaLib/elementValaBinary.vala:827
+#, c-format
+msgid "Invalid command %s after command %s (line %d)"
+msgstr ""
+
+#: src/autovalaLib/elementBase.vala:299
+#, c-format
+msgid "Failed to store '%s: %s' at config"
+msgstr ""
+
+#: src/autovalaLib/elementBashCompletion.vala:64
+#: src/autovalaLib/elementCustom.vala:68
+#, c-format
+msgid "Failed to write the CMakeLists file for custom file %s"
+msgstr ""
+
+#: src/autovalaLib/elementBinary.vala:50
+#, c-format
+msgid "Failed to add binary %s"
+msgstr ""
+
+#: src/autovalaLib/elementCustom.vala:42
+#, c-format
+msgid "Custom command needs two parameters (line %d)"
+msgstr ""
+
+#: src/autovalaLib/elementCustom.vala:82
+#, c-format
+msgid "Failed to store 'custom: %s %s' at config"
+msgstr ""
+
+#: src/autovalaLib/elementDBus.vala:55
+#, c-format
+msgid "Can't append DBUS data to the header CMakeLists file at %s"
+msgstr ""
+
+#: src/autovalaLib/elementDBus.vala:69 src/autovalaLib/elementInclude.vala:35
+#, c-format
+msgid "Failed to write the CMakeLists file for %s"
+msgstr ""
+
+#: src/autovalaLib/elementData.vala:63
+#, c-format
+msgid "Failed to install local files at %s"
+msgstr ""
+
+#: src/autovalaLib/elementDesktop.vala:83
+#, c-format
+msgid "Failed to check if file %s is a GNome autostart file"
+msgstr ""
+
+#: src/autovalaLib/elementDesktop.vala:103
+#: src/autovalaLib/elementEosPlug.vala:51
+#, c-format
+msgid "Failed to add file %s"
+msgstr ""
+
+#: src/autovalaLib/elementDoc.vala:63
+#, c-format
+msgid "Failed to install document files at %s"
+msgstr ""
+
+#: src/autovalaLib/elementGlade.vala:50
+#, c-format
+msgid "Failed to add glade %s"
+msgstr ""
+
+#: src/autovalaLib/elementGlobal.vala:70
+#, c-format
+msgid "Can't add subdirectory %s"
+msgstr ""
+
+#: src/autovalaLib/elementGlobal.vala:231
+msgid "The following local dependencies cannot be satisfied:"
+msgstr ""
+
+#: src/autovalaLib/elementGlobal.vala:238
+#, c-format
+msgid ""
+"\n"
+"\tLibrary %s, packages:"
+msgstr ""
+
+#: src/autovalaLib/elementGlobal.vala:240
+#, c-format
+msgid ""
+"\n"
+"\tBinary %s, packages:"
+msgstr ""
+
+#: src/autovalaLib/elementGlobal.vala:254
+msgid "Failed to generate the main CMakeLists.txt file"
+msgstr ""
+
+#: src/autovalaLib/elementGlobal.vala:264
+msgid "Failed to store a header"
+msgstr ""
+
+#: src/autovalaLib/elementIcon.vala:111
+#, c-format
+msgid "Can't get the size for icon %s"
+msgstr ""
+
+#: src/autovalaLib/elementIcon.vala:117 src/autovalaLib/elementIcon.vala:124
+#, c-format
+msgid "Failed to write the CMakeLists file for icon %s"
+msgstr ""
+
+#: src/autovalaLib/elementIcon.vala:128
+#, c-format
+msgid "Unknown icon type %s. Must be .png or .svg (in lowercase)"
+msgstr ""
+
+#: src/autovalaLib/elementIcon.vala:145
+#, c-format
+msgid "Failed to write the PostData for icons at %s"
+msgstr ""
+
+#: src/autovalaLib/elementIcon.vala:164
+#, c-format
+msgid "Failed to store 'icon: %s' at config"
+msgstr ""
+
+#: src/autovalaLib/elementManpage.vala:81
+#, c-format
+msgid "Manpage command needs one, two or three parameters (line %d)"
+msgstr ""
+
+#: src/autovalaLib/elementManpage.vala:99
+#, c-format
+msgid "Man page section must be a number between 1 and 9 (line %d)"
+msgstr ""
+
+#: src/autovalaLib/elementManpage.vala:189
+#, c-format
+msgid "Failed to install MANpages at %s"
+msgstr ""
+
+#: src/autovalaLib/elementManpage.vala:215
+#, c-format
+msgid "Failed to store 'manpage: %s' at config"
+msgstr ""
+
+#: src/autovalaLib/elementPixmap.vala:51
+#, c-format
+msgid "Failed to add pixmap %s"
+msgstr ""
+
+#: src/autovalaLib/elementPo.vala:49
+#, c-format
+msgid "Failed to delete the old POTFILES.in file at %s"
+msgstr ""
+
+#: src/autovalaLib/elementPo.vala:126
+msgid "Failed to create the PO files list"
+msgstr ""
+
+#: src/autovalaLib/elementScheme.vala:57
+#, c-format
+msgid "Failed to add schema %s"
+msgstr ""
+
+#: src/autovalaLib/elementValaBinary.vala:210
+msgid "Can't generate the Regexps"
+msgstr ""
+
+#: src/autovalaLib/elementValaBinary.vala:350
+#, c-format
+msgid "Can't resolve Using %s"
+msgstr ""
+
+#: src/autovalaLib/elementValaBinary.vala:372
+#, c-format
+msgid "File %s is overwritting the version number (line %d)"
+msgstr ""
+
+#: src/autovalaLib/elementValaBinary.vala:383
+#, c-format
+msgid ""
+"The contruction 'const string project_version=...' in file %s is deprecated. "
+"Replace it with '// project version=...'"
+msgstr ""
+
+#: src/autovalaLib/elementValaBinary.vala:443
+#, c-format
+msgid "File %s is overwritting the namespace (line %d)"
+msgstr ""
+
+#: src/autovalaLib/elementValaBinary.vala:463
+#, c-format
+msgid "Can't open for read the file %s"
+msgstr ""
+
+#: src/autovalaLib/elementValaBinary.vala:578
+#, c-format
+msgid "Syntax error in VERSION statement (line %d)"
+msgstr ""
+
+#: src/autovalaLib/elementValaBinary.vala:590
+#, c-format
+msgid "Ignoring duplicated NAMESPACE command (line %d)"
+msgstr ""
+
+#: src/autovalaLib/elementValaBinary.vala:643
+#, c-format
+msgid "Ignoring duplicated DESTINATION command (line %d)"
+msgstr ""
+
+#: src/autovalaLib/elementValaBinary.vala:737
+#, c-format
+msgid "DBus definitions can't be conditional (line %d)"
+msgstr ""
+
+#: src/autovalaLib/elementValaBinary.vala:754
+#, c-format
+msgid "DBus definition must have three or four parameters (line %d)"
+msgstr ""
+
+#: src/autovalaLib/elementValaBinary.vala:764
+#, c-format
+msgid "DBus bus must be either 'system' or 'session' (line %d)"
+msgstr ""
+
+#: src/autovalaLib/elementValaBinary.vala:775
+#, c-format
+msgid "DBus library must be either 'gdbus' or 'dbus-glib' (line %d)"
+msgstr ""
+
+#: src/autovalaLib/elementValaBinary.vala:850
+#, c-format
+msgid "Failed to delete the path %s"
+msgstr ""
+
+#: src/autovalaLib/elementValaBinary.vala:860
+#, c-format
+msgid "Failed to create the path %s"
+msgstr ""
+
+#: src/autovalaLib/elementValaBinary.vala:871
+#: src/autovalaLib/elementValaBinary.vala:879
+msgid "Can't find dbus-send command"
+msgstr ""
+
+#: src/autovalaLib/elementValaBinary.vala:875
+#, c-format
+msgid "Failed to execute '%s' with error message '%s'"
+msgstr ""
+
+#: src/autovalaLib/elementValaBinary.vala:891
+msgid "Failed to check temporary file /tmp/dbus_data.xml"
+msgstr ""
+
+#: src/autovalaLib/elementValaBinary.vala:904
+#, c-format
+msgid "IOError: %s\n"
+msgstr ""
+
+#: src/autovalaLib/elementValaBinary.vala:917
+#: src/autovalaLib/elementValaBinary.vala:925
+msgid "Can't find vala-dbus-binding-tool command"
+msgstr ""
+
+#: src/autovalaLib/elementValaBinary.vala:921
+#, c-format
+msgid ""
+"Failed to generate the DBus interface for the object %s (%s) at the bus "
+"'%s'\n"
+msgstr ""
+
+#: src/autovalaLib/elementValaBinary.vala:956
+#, c-format
+msgid "Failed to write the header for binary file %s"
+msgstr ""
+
+#: src/autovalaLib/elementValaBinary.vala:971
+msgid "Failed to append the 'run sudo ldconfig' message"
+msgstr ""
+
+#: src/autovalaLib/elementValaBinary.vala:1011
+#: src/autovalaLib/elementValaBinary.vala:1038
+msgid "Failed to create the Config.vala.cmake file"
+msgstr ""
+
+#: src/autovalaLib/elementValaBinary.vala:1058
+#, c-format
+msgid "Can't set package %s for binary %s"
+msgstr ""
+
+#: src/autovalaLib/elementValaBinary.vala:1151
+#, c-format
+msgid "No namespace specified in library %s; GIR file will not be generated"
+msgstr ""
+
+#: src/autovalaLib/elementValaBinary.vala:1312
+#, c-format
+msgid "Failed to write the CMakeLists file for binary %s"
+msgstr ""
+
+#: src/autovalaLib/elementValaBinary.vala:1444
+#, c-format
+msgid "Failed to store ': %s' at config"
+msgstr ""
+
+#: src/autovalaLib/genVapis.vala:84
+msgid "Can't generate the regular expressions to read the VAPI files."
+msgstr ""
+
+#: src/autovalaLib/genVapis.vala:294
+#, c-format
+msgid "Unknown file %s uses namespace GLib. Contact the author."
+msgstr ""
+
+#: src/autovalaLib/globals.vala:263
+#, c-format
+msgid "Error: %s"
+msgstr ""
+
+#: src/autovalaLib/globals.vala:273
+#, c-format
+msgid "Warning: %s"
+msgstr ""
+
+#: src/autovalaPlugin/fileview.vala:367
+#: src/autovalaPlugin/projectview.vala:469
+msgid "Open"
+msgstr ""
+
+#: src/autovalaPlugin/fileview.vala:368
+msgid "Don't show hiden files"
+msgstr ""
+
+#: src/autovalaPlugin/fileview.vala:368
+msgid "Show hiden files"
+msgstr ""
+
+#: src/autovalaPlugin/fileview.vala:369
+msgid "Rename"
+msgstr ""
+
+#: src/autovalaPlugin/fileview.vala:370
+msgid "Delete"
+msgstr ""
+
+#: src/autovalaPlugin/fileview.vala:371
+msgid "Create file"
+msgstr ""
+
+#: src/autovalaPlugin/fileview.vala:372
+msgid "Create folder"
+msgstr ""
+
+#: src/autovalaPlugin/fileview.vala:406
+msgid "Untitled file"
+msgstr ""
+
+#: src/autovalaPlugin/fileview.vala:420
+msgid "Untitled folder"
+msgstr ""
+
+#: src/autovalaPlugin/projectview.vala:377
+#, c-format
+msgid "%s <b>(Project file)</b>"
+msgstr ""
+
+#: src/autovalaPlugin/projectview.vala:389
+#, c-format
+msgid "%s <b>(executable)</b>"
+msgstr ""
+
+#: src/autovalaPlugin/projectview.vala:396
+#, c-format
+msgid "%s <b>(library)</b>"
+msgstr ""
+
+#: src/autovalaPlugin/projectview.vala:470
+msgid "New executable/library"
+msgstr ""
+
+#: src/autovalaPlugin/projectview.vala:471
+msgid "Edit library properties"
+msgstr ""
+
+#: src/autovalaPlugin/projectview.vala:471
+msgid "Edit executable properties"
+msgstr ""
+
+#: src/autovalaPlugin/projectview.vala:472
+msgid "Remove library"
+msgstr ""
+
+#: src/autovalaPlugin/projectview.vala:472
+msgid "Remove executable"
+msgstr ""
+
+#: src/autovalaPlugin/projectview.vala:473
+msgid "Update project"
+msgstr ""
+
+#: src/autovalaPlugin/projectview.vala:474
+msgid "Update translations"
+msgstr ""
+
+#: data/interface/binary_properties.ui:7
+msgid "Binary properties"
+msgstr ""
+
+#: data/interface/binary_properties.ui:72
+msgid "Binary name:"
+msgstr ""
+
+#: data/interface/binary_properties.ui:108
+msgid "Type:"
+msgstr ""
+
+#: data/interface/binary_properties.ui:118
+msgid "Executable"
+msgstr ""
+
+#: data/interface/binary_properties.ui:134
+msgid "Library"
+msgstr ""
+
+#: data/interface/binary_properties.ui:164
+msgid "Folder with sources:"
+msgstr ""
+
+#: data/interface/binary_properties.ui:205
+msgid "Vala compile options:"
+msgstr ""
+
+#: data/interface/binary_properties.ui:240
+msgid "C compile options:"
+msgstr ""

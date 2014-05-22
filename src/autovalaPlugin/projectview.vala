@@ -9,6 +9,13 @@ namespace AutovalaPlugin {
 
 	public enum ProjectEntryTypes { OTHER, VALA_SOURCE_FILE, VAPI_FILE, C_SOURCE_FILE, C_HEADER_FILE, LIBRARY, EXECUTABLE, PROJECT_FILE }
 
+	/**
+	 * This is a GTK3 widget that allows to manage an Autovala project
+	 * It is useful to create plugins for GTK3-based editors
+	 * The first plugin is for GEdit
+	 * It is complemented with the FileViewer widget, that shows all the files
+	 * in a project
+	 */
 	public class ProjectViewer : Gtk.TreeView {
 
 		private TreeStore treeModel;
@@ -83,6 +90,22 @@ namespace AutovalaPlugin {
 
 			this.row_activated.connect(this.clicked);
 			this.button_press_event.connect(this.click_event);
+		}
+
+		/**
+		 * Links the signals and callbacks of this ProjectViewer and a FileViewer, to allow
+		 * a ProjectViewer to know when a file has been added or removed in the project's folder,
+		 * and to allow the FileViewer to change its root folder when the current project changes.
+		 * @param fileViewer The FileViewer widget to link to this ProjectViewer
+		 */
+		public void link_file_view(FileViewer fileViewer) {
+		
+			fileViewer.changed_file.connect( () => {
+				this.refresh_project(true);
+			});
+			this.changed_base_folder.connect( (path) => {
+				fileViewer.set_base_folder(path);
+			});
 		}
 
 		/**
@@ -212,7 +235,7 @@ namespace AutovalaPlugin {
 		 * This method refreshes the project view
 		 * @param force If false, will refresh the project only if the project file has changed; if true, will refresh always
 		 */
-		public void refresh_project(bool force) {
+		public void refresh_project(bool force = true) {
 
 			var project = this.current_project.get_binaries_list(this.current_file);
 
@@ -309,7 +332,10 @@ namespace AutovalaPlugin {
 		}
 
 		/**
-		 * Adds the files 
+		 * Adds the files to a binary (executable or library)
+		 * @param tmpIter The parent iter into which to add the files
+		 * @param fileList The list of files to add
+		 * @param element The data of the parent binary element
 		 */
 		private void add_files(TreeIter tmpIter,Gee.ArrayList<ElementProjectViewer> fileList, AutoVala.PublicElement? element) {
 
@@ -341,6 +367,10 @@ namespace AutovalaPlugin {
 			}
 		}
 
+		/**
+		 * Refreshes the view, adding each top element
+		 * @param project A ValaProject object already initializated
+		 */
 		private void set_current_project(ValaProject? project) {
 
 			Gee.ArrayList<ElementProjectViewer> fileList = null;
@@ -387,6 +417,9 @@ namespace AutovalaPlugin {
 		}
 	}
 
+	/**
+	 * Class used to store the data of one file
+	 */
 	public class ElementProjectViewer : Object {
 
 		public string filename;
@@ -416,6 +449,9 @@ namespace AutovalaPlugin {
 		}
 	}
 
+	/**
+	 * This class manages the popup menu in the project view
+	 */
 	private class ProjectViewerMenu : Gtk.Menu {
 
 		private string project_path;
@@ -493,6 +529,9 @@ namespace AutovalaPlugin {
 		}
 	}
 
+	/**
+	 * Creates a dialog to add a new binary to a project, or to modify a current one
+	 */
 	private class ProjectProperties : Object {
 
 		private Gtk.Dialog main_window;
@@ -510,7 +549,7 @@ namespace AutovalaPlugin {
 		private bool editing;
 
 		/**
-		 * Creates a dialog to add a new binary to a project, or to modify a current one
+		 * Constructor
 		 *
 		 * @param binary_name The name of the executable/library to edit, or null to create a new one
 		 * @param project_file The full path to the current project file where to edit or create the binary

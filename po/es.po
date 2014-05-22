@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-05-22 23:28+0200\n"
+"POT-Creation-Date: 2014-05-23 00:17+0200\n"
 "PO-Revision-Date: 2014-03-31 23:29+0200\n"
 "Last-Translator: Sergio Costas <rastersoft@gmail.com>\n"
 "Language-Team: Español; Castellano <>\n"
@@ -185,9 +185,8 @@ msgid "Name already in use in other executable or library"
 msgstr ""
 
 #: src/autovalaLib/autovalaLib.vala:562
-#, fuzzy
 msgid "The element doesn't exists"
-msgstr "El fichero %s no existe "
+msgstr "El elemento no existe "
 
 #: src/autovalaLib/conditionalText.vala:82
 msgid "Failed to store ELSE condition at config"
@@ -297,27 +296,27 @@ msgstr "Ha fallado el almacenamiento de los datos"
 msgid "Directory %s doesn't exists"
 msgstr "El directorio %s no existe"
 
-#: src/autovalaLib/elementBase.vala:142 src/autovalaLib/elementGlobal.vala:60
+#: src/autovalaLib/elementBase.vala:151 src/autovalaLib/elementGlobal.vala:60
 #, c-format
 msgid "Can't access folder %s"
 msgstr "No ha sido posible acceder al directorio %s"
 
-#: src/autovalaLib/elementBase.vala:161
+#: src/autovalaLib/elementBase.vala:170
 #, c-format
 msgid "Trying to add an empty path: %s"
 msgstr "Intentando añadir una ruta vacía: %s"
 
-#: src/autovalaLib/elementBase.vala:171
+#: src/autovalaLib/elementBase.vala:180
 #, c-format
 msgid "Trying to add twice the path %s"
 msgstr "Intentando añadir dos veces la ruta %s"
 
-#: src/autovalaLib/elementBase.vala:179
+#: src/autovalaLib/elementBase.vala:188
 #, c-format
 msgid "File %s doesn't exists"
 msgstr "El fichero %s no existe "
 
-#: src/autovalaLib/elementBase.vala:214 src/autovalaLib/elementCustom.vala:36
+#: src/autovalaLib/elementBase.vala:223 src/autovalaLib/elementCustom.vala:36
 #: src/autovalaLib/elementDefine.vala:34
 #: src/autovalaLib/elementDesktop.vala:54 src/autovalaLib/elementIcon.vala:57
 #: src/autovalaLib/elementIgnore.vala:34
@@ -327,7 +326,7 @@ msgstr "El fichero %s no existe "
 msgid "Invalid command %s after command %s (line %d)"
 msgstr "El comando %s no es válido tras el comando %s (linea %d)"
 
-#: src/autovalaLib/elementBase.vala:290
+#: src/autovalaLib/elementBase.vala:299
 #, c-format
 msgid "Failed to store '%s: %s' at config"
 msgstr "No se ha podido almacenar '%s: %s' en la configuración"
@@ -668,7 +667,7 @@ msgid "Warning: %s"
 msgstr "Aviso: %s"
 
 #: src/autovalaPlugin/fileview.vala:367
-#: src/autovalaPlugin/projectview.vala:395
+#: src/autovalaPlugin/projectview.vala:469
 msgid "Open"
 msgstr "Abrir"
 
@@ -693,7 +692,6 @@ msgid "Create file"
 msgstr "Crear fichero"
 
 #: src/autovalaPlugin/fileview.vala:372
-#, fuzzy
 msgid "Create folder"
 msgstr "Crear directorio"
 
@@ -705,46 +703,46 @@ msgstr "Fichero sin título"
 msgid "Untitled folder"
 msgstr "Directorio sin título"
 
-#: src/autovalaPlugin/projectview.vala:309
+#: src/autovalaPlugin/projectview.vala:377
 #, c-format
 msgid "%s <b>(Project file)</b>"
 msgstr "%s <b>(Fichero de proyecto)</b>"
 
-#: src/autovalaPlugin/projectview.vala:321
+#: src/autovalaPlugin/projectview.vala:389
 #, c-format
 msgid "%s <b>(executable)</b>"
 msgstr "%s <b>(ejecutable)</b>"
 
-#: src/autovalaPlugin/projectview.vala:328
+#: src/autovalaPlugin/projectview.vala:396
 #, c-format
 msgid "%s <b>(library)</b>"
 msgstr "%s <b>(biblioteca)</b>"
 
-#: src/autovalaPlugin/projectview.vala:396
+#: src/autovalaPlugin/projectview.vala:470
 msgid "New executable/library"
 msgstr "Nuevo ejecutable/biblioteca"
 
-#: src/autovalaPlugin/projectview.vala:397
+#: src/autovalaPlugin/projectview.vala:471
 msgid "Edit library properties"
 msgstr "Editar propiedades de la biblioteca"
 
-#: src/autovalaPlugin/projectview.vala:397
+#: src/autovalaPlugin/projectview.vala:471
 msgid "Edit executable properties"
 msgstr "Editar propiedades del ejecutable"
 
-#: src/autovalaPlugin/projectview.vala:398
+#: src/autovalaPlugin/projectview.vala:472
 msgid "Remove library"
 msgstr "Borrar biblioteca"
 
-#: src/autovalaPlugin/projectview.vala:398
+#: src/autovalaPlugin/projectview.vala:472
 msgid "Remove executable"
 msgstr "Borrar ejecutable"
 
-#: src/autovalaPlugin/projectview.vala:399
+#: src/autovalaPlugin/projectview.vala:473
 msgid "Update project"
 msgstr "Actualizar el proyecto"
 
-#: src/autovalaPlugin/projectview.vala:400
+#: src/autovalaPlugin/projectview.vala:474
 msgid "Update translations"
 msgstr "Actualizar traducciones"
 
