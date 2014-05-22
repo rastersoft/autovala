@@ -20,6 +20,20 @@ This is what Autovala does. This process is done in three steps:
     project file), it uses that project file to generate the needed CMakeLists
     files
 
+## COMPILING AUTOVALA ##
+
+Just use these commands:
+
+    mkdir install
+    cd install
+    cmake ..
+    make
+    sudo make install
+    sudo ldconfig
+
+You also can compile the plugin for Gedit, which is in the folder *gedit_plugin*.
+You can find inside the instructions.
+
 
 ## USING AUTOVALA ##
 

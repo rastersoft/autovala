@@ -12,9 +12,7 @@ just by clicking on each. It also shows all the other files in the project
 To open an AutoVala project, just open any of the files belonging to it, and
 the plugin will autodetect the project and show all the data.
 
-Remember that you need Autovala installed in your system. To get it, just go to
-
-        https://github.com/rastersoft/autovala
+Remember that you need Autovala installed in your system.
 
 # INSTALLING THE PLUGIN #
 
