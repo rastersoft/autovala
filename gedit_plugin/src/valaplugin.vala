@@ -60,7 +60,7 @@ namespace AutovalaGeditPlugin {
 			scroll1.add(this.projectViewer);
 			var scroll2 = new Gtk.ScrolledWindow(null,null);
 			scroll2.add(this.fileViewer);
-			var panel = this.window.get_side_panel();
+
 			this.container = new Gtk.Paned(Gtk.Orientation.VERTICAL);
 
 			/*
@@ -95,7 +95,13 @@ namespace AutovalaGeditPlugin {
 			this.container.add2(scroll2);
 			// the icon "autovala_plugin_vala" is added inside ProjectViewer
 			icon = new Gtk.Image.from_icon_name("autovala-plugin-vala",Gtk.IconSize.MENU);
+#if OLD_GEDIT
+			var panel = this.window.get_side_panel();
 			panel.add_item(this.container, "Autovala", "Autovala", icon);
+#else
+			var panel = (Gtk.Stack)this.window.get_side_panel();
+			panel.add_titled(this.container, "Autovala", "Autovala");
+#endif
 			this.update_state();
 			this.container.show_all();
 		}
@@ -105,8 +111,12 @@ namespace AutovalaGeditPlugin {
 				return;
 			}
 
+#if OLD_GEDIT
 			var panel = this.window.get_side_panel();
 			panel.remove_item(this.container);
+#else
+			this.container.unparent();
+#endif
 			this.container = null;
 			this.projectViewer = null;
 			this.fileViewer = null;
