@@ -26,11 +26,11 @@ system, just type:
 
         mkdir install
         cd install
-        cmake .. [-DOLD_GTK]
+        cmake .. [-DOLD_GEGIT=on]
         make
         sudo make install
 
-This mode needs root priviledges. Remember that [-DOLD_GTK] is optional, and
+This mode needs root priviledges. Remember that [-DOLD_GEDIT=on] is optional, and
 needed only to compile for GEDIT 3.10 or older.
 
 ## Local installation ##
@@ -41,9 +41,9 @@ way, just type:
 
         mkdir install
         cd install
-        cmake .. -DCMAKE_INSTALL_PREFIX=$HOME/.local [-DOLD_GTK]
+        cmake .. -DCMAKE_INSTALL_PREFIX=$HOME/.local [-DOLD_GEDIT=on]
         make
         make install
 
-Again, remember that [-DOLD_GTK] is optional, and needed only to compile for
+Again, remember that [-DOLD_GEDIT=on] is optional, and needed only to compile for
 GEDIT 3.10 or older.

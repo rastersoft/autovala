@@ -5,6 +5,8 @@ vala_version: 0.22
 
 custom: data/autovala.plugin share/gedit/plugins/autovala
 
+*define: OLD_GEDIT
+
 
 vala_library: src/valaplugin
 *namespace: AutovalaGeditPlugin

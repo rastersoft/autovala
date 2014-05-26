@@ -29,10 +29,12 @@ namespace AutoVala {
 			this.pkgconfigs=new Gee.HashSet<string>();
 
 			this.fill_pkgconfig_files("/usr/lib");
+			this.fill_pkgconfig_files("/usr/lib64");
 			this.fill_pkgconfig_files("/usr/share");
 			this.fill_pkgconfig_files("/usr/lib/i386-linux-gnu");
 			this.fill_pkgconfig_files("/usr/lib/x86_64-linux-gnu");
 			this.fill_pkgconfig_files("/usr/local/lib");
+			this.fill_pkgconfig_files("/usr/local/lib64");
 			this.fill_pkgconfig_files("/usr/local/share");
 			this.fill_pkgconfig_files("/usr/local/lib/i386-linux-gnu");
 			this.fill_pkgconfig_files("/usr/local/lib/x86_64-linux-gnu");

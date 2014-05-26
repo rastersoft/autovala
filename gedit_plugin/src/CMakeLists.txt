@@ -44,6 +44,9 @@ set (VALA_PACKAGES ${VALA_PACKAGES} x11)
 set (APP_SOURCES ${APP_SOURCES} ${CMAKE_CURRENT_BINARY_DIR}/Config.vala)
 set (APP_SOURCES ${APP_SOURCES} valaplugin.vala)
 
+if (OLD_GEDIT)
+	set (COMPILE_OPTIONS ${COMPILE_OPTIONS} -D OLD_GEDIT)
+endif ()
 set (COMPILE_OPTIONS ${COMPILE_OPTIONS} --library=AutovalaGeditPlugin --gir AutovalaGeditPlugin-1.0.gir )
 
 vala_precompile(VALA_C AutovalaGeditPlugin
