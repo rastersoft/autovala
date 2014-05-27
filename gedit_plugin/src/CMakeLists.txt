@@ -19,7 +19,7 @@ link_libraries ( ${DEPS_LIBRARIES} )
 link_directories ( ${DEPS_LIBRARY_DIRS} )
 find_package (Vala REQUIRED)
 include (ValaVersion)
-ensure_vala_version ("0.22" MINIMUM)
+ensure_vala_version ("0.24" MINIMUM)
 include (ValaPrecompile)
 
 set (VALA_PACKAGES ${VALA_PACKAGES} AutoVala)
@@ -28,7 +28,6 @@ set (VALA_PACKAGES ${VALA_PACKAGES} atk)
 set (VALA_PACKAGES ${VALA_PACKAGES} cairo)
 set (VALA_PACKAGES ${VALA_PACKAGES} gdk-3.0)
 set (VALA_PACKAGES ${VALA_PACKAGES} gdk-pixbuf-2.0)
-set (VALA_PACKAGES ${VALA_PACKAGES} gedit)
 set (VALA_PACKAGES ${VALA_PACKAGES} gee-0.8)
 set (VALA_PACKAGES ${VALA_PACKAGES} gio-2.0)
 set (VALA_PACKAGES ${VALA_PACKAGES} glib-2.0)
@@ -44,6 +43,8 @@ set (VALA_PACKAGES ${VALA_PACKAGES} x11)
 set (APP_SOURCES ${APP_SOURCES} ${CMAKE_CURRENT_BINARY_DIR}/Config.vala)
 set (APP_SOURCES ${APP_SOURCES} valaplugin.vala)
 
+set (CUSTOM_VAPIS_LIST ${CUSTOM_VAPIS_LIST} ${CMAKE_SOURCE_DIR}/src/vapis/gedit.vapi)
+
 if (OLD_GEDIT)
 	set (COMPILE_OPTIONS ${COMPILE_OPTIONS} -D OLD_GEDIT)
 endif ()
@@ -53,6 +54,8 @@ vala_precompile(VALA_C AutovalaGeditPlugin
 	${APP_SOURCES}
 PACKAGES
 	${VALA_PACKAGES}
+CUSTOM_VAPIS
+	${CUSTOM_VAPIS_LIST}
 OPTIONS
 	${COMPILE_OPTIONS}
 GENERATE_VAPI

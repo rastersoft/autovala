@@ -6,6 +6,8 @@ using AutoVala;
 using Gee;
 using AutovalaPlugin;
 
+using Gtk.SourceUtils;
+
 namespace AutovalaGeditPlugin {
 
 	public class ValaWindow : Gedit.WindowActivatable, Peas.ExtensionBase {
@@ -96,10 +98,10 @@ namespace AutovalaGeditPlugin {
 			// the icon "autovala_plugin_vala" is added inside ProjectViewer
 			icon = new Gtk.Image.from_icon_name("autovala-plugin-vala",Gtk.IconSize.MENU);
 #if OLD_GEDIT
-			var panel = this.window.get_side_panel();
+			Gedit.Panel panel = (Gedit.Panel)this.window.get_side_panel();
 			panel.add_item(this.container, "Autovala", "Autovala", icon);
 #else
-			var panel = (Gtk.Stack)this.window.get_side_panel();
+			Gtk.Stack panel = (Gtk.Stack)this.window.get_side_panel();
 			panel.add_titled(this.container, "Autovala", "Autovala");
 #endif
 			this.update_state();
@@ -112,7 +114,7 @@ namespace AutovalaGeditPlugin {
 			}
 
 #if OLD_GEDIT
-			var panel = this.window.get_side_panel();
+			Gedit.Panel panel = (Gedit.Panel)this.window.get_side_panel();
 			panel.remove_item(this.container);
 #else
 			this.container.unparent();

@@ -11,6 +11,10 @@ option(BUILD_VALADOC "Build API documentation if Valadoc is available" OFF)
 option(OLD_GEDIT "OLD_GEDIT" OFF)
 
 include(GNUInstallDirs)
+if( ( ${CMAKE_INSTALL_PREFIX} MATCHES "^/usr/local" ) )
+	# A workaround to ensure that works 'out of the box' in Debian-based systems
+	set(CMAKE_INSTALL_LIBDIR lib)
+endif()
 
 set(HAVE_VALADOC OFF)
 if(BUILD_VALADOC)
@@ -25,13 +29,13 @@ endif()
 
 find_package(PkgConfig)
 
+set(MODULES_TO_CHECK ${MODULES_TO_CHECK} gedit)
 set(MODULES_TO_CHECK ${MODULES_TO_CHECK} AutoVala)
 set(MODULES_TO_CHECK ${MODULES_TO_CHECK} AutovalaPlugin)
 set(MODULES_TO_CHECK ${MODULES_TO_CHECK} atk)
 set(MODULES_TO_CHECK ${MODULES_TO_CHECK} cairo)
 set(MODULES_TO_CHECK ${MODULES_TO_CHECK} gdk-3.0)
 set(MODULES_TO_CHECK ${MODULES_TO_CHECK} gdk-pixbuf-2.0)
-set(MODULES_TO_CHECK ${MODULES_TO_CHECK} gedit)
 set(MODULES_TO_CHECK ${MODULES_TO_CHECK} gee-0.8)
 set(MODULES_TO_CHECK ${MODULES_TO_CHECK} gio-2.0)
 set(MODULES_TO_CHECK ${MODULES_TO_CHECK} glib-2.0)

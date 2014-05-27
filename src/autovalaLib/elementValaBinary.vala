@@ -1319,13 +1319,14 @@ namespace AutoVala {
 		public override bool storeConfig(DataOutputStream dataStream,ConditionalText printConditions) {
 
 			try {
+				dataStream.put_string("\n");
 				if (this._automatic) {
 					dataStream.put_string("*");
 				}
 				if (this._type == ConfigType.VALA_BINARY) {
-					dataStream.put_string("\nvala_binary: %s\n".printf(Path.build_filename(this._path,this._name)));
+					dataStream.put_string("vala_binary: %s\n".printf(Path.build_filename(this._path,this._name)));
 				} else {
-					dataStream.put_string("\nvala_library: %s\n".printf(Path.build_filename(this._path,this._name)));
+					dataStream.put_string("vala_library: %s\n".printf(Path.build_filename(this._path,this._name)));
 				}
 				if (this.versionSet) {
 					if (this.versionAutomatic) {
