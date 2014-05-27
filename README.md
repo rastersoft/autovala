@@ -48,6 +48,7 @@ and enjoy.
     * Added support for GEdit 3.12 and later in the plugin
     * Added folders */usr/lib64* and */usr/local/lib64* in the list for searching pkgconfig packages (enhances compatibility with Fedora)
     * Now it uses GNUInstallDirs with CMake, improving compatibility with non-debian-based systems
+    * Now installs the autostart file in ${XDG\_CONFIG\_HOME}/autostart when the code is being installed in the $HOME directory
 * version 0.97.0 (2014-05-12)
     * Added support for the new GEdit plugin for Autovala
     * Added two GTK3 widgets to allow to easily create plugins for text editors

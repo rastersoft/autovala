@@ -97,7 +97,15 @@ namespace AutoVala {
 				if (this._type == ConfigType.DESKTOP) {
 					dataStream.put_string("install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/"+this.name+" DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/applications/ )\n");
 				} else {
-					dataStream.put_string("install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/"+this.name+" DESTINATION /etc/xdg/autostart/ )\n");
+					dataStream.put_string("if( NOT ( ${CMAKE_INSTALL_PREFIX} MATCHES \"^/home/\" ) )\n");
+					dataStream.put_string("\tinstall(FILES ${CMAKE_CURRENT_SOURCE_DIR}/"+this.name+" DESTINATION /etc/xdg/autostart/ )\n");
+					dataStream.put_string("else()\n");
+					dataStream.put_string("\tset ( CONFIG_HOME $ENV{XDG_CONFIG_HOME})\n");
+					dataStream.put_string("\tif ( NOT (CONFIG_HOME))\n");
+					dataStream.put_string("\t\tset ( CONFIG_HOME $ENV{HOME}/.config )\n");
+					dataStream.put_string("\tendif()\n");
+					dataStream.put_string("\tinstall(FILES ${CMAKE_CURRENT_SOURCE_DIR}/"+this.name+" DESTINATION ${CONFIG_HOME}/autostart )\n");
+					dataStream.put_string("endif()\n");
 				}
 			} catch (Error e) {
 				ElementBase.globalData.addError(_("Failed to add file %s").printf(this.name));
