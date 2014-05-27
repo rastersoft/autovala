@@ -1,7 +1,7 @@
 ### CMakeLists automatically created with AutoVala
 ### Do not edit
 
-set (DATADIR "${CMAKE_INSTALL_PREFIX}/share")
+set (DATADIR "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATAROOTDIR}")
 set (PKGDATADIR "${DATADIR}/valaplugin")
 set (GETTEXT_PACKAGE "valaplugin")
 set (RELEASE_NAME "valaplugin")
@@ -106,7 +106,7 @@ if(HAVE_VALADOC)
 	install(DIRECTORY
 		${CMAKE_BINARY_DIR}/valadoc
 	DESTINATION
-		share/doc/valaplugin
+		${CMAKE_INSTALL_DATAROOTDIR}/doc/valaplugin
 	)
 endif()
 

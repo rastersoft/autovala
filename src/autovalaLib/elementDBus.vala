@@ -64,7 +64,7 @@ namespace AutoVala {
 			try {
 				// DBus files must use DBUS_PREFIX in their path, instead of a fixed one, to allow them to be installed both in /usr or /usr/local
 				dataStream.put_string("configure_file(${CMAKE_CURRENT_SOURCE_DIR}/"+this.name+" ${CMAKE_CURRENT_BINARY_DIR}/"+this.name+")\n");
-				dataStream.put_string("install(FILES ${CMAKE_CURRENT_BINARY_DIR}/"+this.name+" DESTINATION ${CMAKE_INSTALL_PREFIX}/share/dbus-1/services/)\n");
+				dataStream.put_string("install(FILES ${CMAKE_CURRENT_BINARY_DIR}/"+this.name+" DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/dbus-1/services/)\n");
 			} catch (Error e) {
 				ElementBase.globalData.addError(_("Failed to write the CMakeLists file for %s").printf(this.name));
 				return true;

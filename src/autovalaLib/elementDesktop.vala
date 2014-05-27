@@ -95,7 +95,7 @@ namespace AutoVala {
 
 			try {
 				if (this._type == ConfigType.DESKTOP) {
-					dataStream.put_string("install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/"+this.name+" DESTINATION share/applications/ )\n");
+					dataStream.put_string("install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/"+this.name+" DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/applications/ )\n");
 				} else {
 					dataStream.put_string("install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/"+this.name+" DESTINATION /etc/xdg/autostart/ )\n");
 				}

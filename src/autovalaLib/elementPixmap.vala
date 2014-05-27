@@ -46,7 +46,7 @@ namespace AutoVala {
 		public override bool generateCMake(DataOutputStream dataStream) {
 
 			try {
-				dataStream.put_string("install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/"+this.name+" DESTINATION share/"+ElementBase.globalData.projectName+"/ )\n");
+				dataStream.put_string("install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/"+this.name+" DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/"+ElementBase.globalData.projectName+"/ )\n");
 			} catch (Error e) {
 				ElementBase.globalData.addError(_("Failed to add pixmap %s").printf(this.fullPath));
 				return true;

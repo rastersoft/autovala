@@ -1,7 +1,7 @@
 ### CMakeLists automatically created with AutoVala
 ### Do not edit
 
-set (DATADIR "${CMAKE_INSTALL_PREFIX}/share")
+set (DATADIR "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATAROOTDIR}")
 set (PKGDATADIR "${DATADIR}/autovala")
 set (GETTEXT_PACKAGE "autovala")
 set (RELEASE_NAME "autovala")
@@ -96,27 +96,27 @@ SOVERSION
 install(TARGETS
 	AutoVala
 LIBRARY DESTINATION
-	lib/
+	${CMAKE_INSTALL_LIBDIR}/
 )
 install(FILES
 	${CMAKE_CURRENT_BINARY_DIR}/AutoVala.h
 DESTINATION
-	include/
+	${CMAKE_INSTALL_INCLUDEDIR}/
 )
 install(FILES
 	${CMAKE_CURRENT_BINARY_DIR}/AutoVala.vapi
 DESTINATION
-	share/vala/vapi/
+	${CMAKE_INSTALL_DATAROOTDIR}/vala/vapi/
 )
 install(FILES
 	${CMAKE_CURRENT_BINARY_DIR}/AutoVala-0.0.gir
 DESTINATION
-	share/gir-1.0/
+	${CMAKE_INSTALL_DATAROOTDIR}/gir-1.0/
 )
 install(FILES
 	${CMAKE_CURRENT_BINARY_DIR}/AutoVala.pc
 DESTINATION
-	lib/pkgconfig/
+	${CMAKE_INSTALL_LIBDIR}/pkgconfig/
 )
 if(HAVE_VALADOC)
 	valadoc(AutoVala
@@ -130,6 +130,6 @@ if(HAVE_VALADOC)
 	install(DIRECTORY
 		${CMAKE_BINARY_DIR}/valadoc
 	DESTINATION
-		share/doc/autovala
+		${CMAKE_INSTALL_DATAROOTDIR}/doc/autovala
 	)
 endif()

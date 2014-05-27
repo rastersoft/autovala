@@ -1,7 +1,7 @@
 ### CMakeLists automatically created with AutoVala
 ### Do not edit
 
-set (DATADIR "${CMAKE_INSTALL_PREFIX}/share")
+set (DATADIR "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATAROOTDIR}")
 set (PKGDATADIR "${DATADIR}/autovala")
 set (GETTEXT_PACKAGE "autovala")
 set (RELEASE_NAME "autovala")
@@ -57,7 +57,7 @@ add_executable(autovala ${VALA_C})
 install(TARGETS
 	autovala
 RUNTIME DESTINATION
-	bin/
+	${CMAKE_INSTALL_BINDIR}/
 )
 
 if(HAVE_VALADOC)
@@ -72,7 +72,7 @@ if(HAVE_VALADOC)
 	install(DIRECTORY
 		${CMAKE_BINARY_DIR}/valadoc
 	DESTINATION
-		share/doc/autovala
+		${CMAKE_INSTALL_DATAROOTDIR}/doc/autovala
 	)
 endif()
 

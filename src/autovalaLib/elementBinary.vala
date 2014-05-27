@@ -45,7 +45,7 @@ namespace AutoVala {
 		public override bool generateCMake(DataOutputStream dataStream) {
 
 			try {
-				dataStream.put_string("install(PROGRAMS ${CMAKE_CURRENT_SOURCE_DIR}/"+this.name+" DESTINATION bin/)\n");
+				dataStream.put_string("install(PROGRAMS ${CMAKE_CURRENT_SOURCE_DIR}/"+this.name+" DESTINATION ${CMAKE_INSTALL_BINDIR})\n");
 			} catch (Error e) {
 				ElementBase.globalData.addError(_("Failed to add binary %s").printf(this.name));
 				return true;

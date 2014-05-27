@@ -936,7 +936,7 @@ namespace AutoVala {
 
 			try {
 				if (ElementValaBinary.addedValaBinaries==false) {
-					dataStream.put_string("set (DATADIR \"${CMAKE_INSTALL_PREFIX}/share\")\n");
+					dataStream.put_string("set (DATADIR \"${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATAROOTDIR}\")\n");
 					dataStream.put_string("set (PKGDATADIR \"${DATADIR}/"+ElementBase.globalData.projectName+"\")\n");
 					dataStream.put_string("set (GETTEXT_PACKAGE \""+ElementBase.globalData.projectName+"\")\n");
 					dataStream.put_string("set (RELEASE_NAME \""+ElementBase.globalData.projectName+"\")\n");
@@ -1026,8 +1026,8 @@ namespace AutoVala {
 						dataStream2.put_string("prefix=@CMAKE_INSTALL_PREFIX@\n");
 						dataStream2.put_string("real_prefix=@CMAKE_INSTALL_PREFIX@\n");
 						dataStream2.put_string("exec_prefix=@DOLLAR@{prefix}\n");
-						dataStream2.put_string("libdir=@DOLLAR@{exec_prefix}/lib\n");
-						dataStream2.put_string("includedir=@DOLLAR@{exec_prefix}/include\n\n");
+						dataStream2.put_string("libdir=@DOLLAR@{exec_prefix}/${CMAKE_INSTALL_LIBDIR}\n");
+						dataStream2.put_string("includedir=@DOLLAR@{exec_prefix}/${CMAKE_INSTALL_INCLUDEDIR}\n\n");
 						dataStream2.put_string("Name: "+libFilename+"\n");
 						dataStream2.put_string("Description: "+libFilename+"\n");
 						dataStream2.put_string("Version: "+this.version+"\n");
@@ -1225,7 +1225,7 @@ namespace AutoVala {
 					dataStream.put_string("\t"+libFilename+"\n");
 					dataStream.put_string("LIBRARY DESTINATION\n");
 					if (this.destination==null) {
-						dataStream.put_string("\tlib/\n");
+						dataStream.put_string("\t${CMAKE_INSTALL_LIBDIR}/\n");
 					} else {
 						dataStream.put_string("\t%s\n".printf(this.destination));
 					}
@@ -1236,7 +1236,7 @@ namespace AutoVala {
 					dataStream.put_string("\t${CMAKE_CURRENT_BINARY_DIR}/"+libFilename+".h\n");
 					dataStream.put_string("DESTINATION\n");
 					if (this.destination==null) {
-						dataStream.put_string("\tinclude/\n");
+						dataStream.put_string("\t${CMAKE_INSTALL_INCLUDEDIR}/\n");
 					} else {
 						dataStream.put_string("\t%s\n".printf(this.destination));
 					}
@@ -1247,7 +1247,7 @@ namespace AutoVala {
 					dataStream.put_string("\t${CMAKE_CURRENT_BINARY_DIR}/"+libFilename+".vapi\n");
 					dataStream.put_string("DESTINATION\n");
 					if (this.destination==null) {
-						dataStream.put_string("\tshare/vala/vapi/\n");
+						dataStream.put_string("\t${CMAKE_INSTALL_DATAROOTDIR}/vala/vapi/\n");
 					} else {
 						dataStream.put_string("\t%s\n".printf(this.destination));
 					}
@@ -1259,7 +1259,7 @@ namespace AutoVala {
 						dataStream.put_string("\t${CMAKE_CURRENT_BINARY_DIR}/"+girFilename+"\n");
 						dataStream.put_string("DESTINATION\n");
 					if (this.destination==null) {
-						dataStream.put_string("\tshare/gir-1.0/\n");
+						dataStream.put_string("\t${CMAKE_INSTALL_DATAROOTDIR}/gir-1.0/\n");
 					} else {
 						dataStream.put_string("\t%s\n".printf(this.destination));
 					}
@@ -1271,7 +1271,7 @@ namespace AutoVala {
 					dataStream.put_string("\t${CMAKE_CURRENT_BINARY_DIR}/"+pcFilename+"\n");
 					dataStream.put_string("DESTINATION\n");
 					if (this.destination==null) {
-						dataStream.put_string("\tlib/pkgconfig/\n");
+						dataStream.put_string("\t${CMAKE_INSTALL_LIBDIR}/pkgconfig/\n");
 					} else {
 						dataStream.put_string("\t%s\n".printf(this.destination));
 					}
@@ -1285,7 +1285,7 @@ namespace AutoVala {
 					dataStream.put_string("\t"+libFilename+"\n");
 					dataStream.put_string("RUNTIME DESTINATION\n");
 					if (this.destination==null) {
-						dataStream.put_string("\tbin/\n");
+						dataStream.put_string("\t${CMAKE_INSTALL_BINDIR}/\n");
 					} else {
 						dataStream.put_string("\t%s\n".printf(this.destination));
 					}
@@ -1305,7 +1305,7 @@ namespace AutoVala {
 				dataStream.put_string("\tinstall(DIRECTORY\n");
 				dataStream.put_string("\t\t${CMAKE_BINARY_DIR}/valadoc\n");
 				dataStream.put_string("\tDESTINATION\n");
-				dataStream.put_string("\t\t"+Path.build_filename("share/doc",ElementBase.globalData.projectName)+"\n");
+				dataStream.put_string("\t\t"+Path.build_filename("${CMAKE_INSTALL_DATAROOTDIR}/doc",ElementBase.globalData.projectName)+"\n");
 				dataStream.put_string("\t)\n");
 				dataStream.put_string("endif()\n");
 			} catch (GLib.Error e) {

@@ -49,13 +49,13 @@ namespace AutoVala {
 				dataStream.put_string("\t\tinstall(DIRECTORY\n");
 				dataStream.put_string("\t\t\t${file_data}\n");
 				dataStream.put_string("\t\tDESTINATION\n");
-				dataStream.put_string("\t\t\t"+Path.build_filename("share",ElementBase.globalData.projectName)+"\n");
+				dataStream.put_string("\t\t\t"+Path.build_filename("${CMAKE_INSTALL_DATAROOTDIR}",ElementBase.globalData.projectName)+"\n");
 				dataStream.put_string("\t\t)\n");
 				dataStream.put_string("\tELSE()\n");
 				dataStream.put_string("\t\tinstall(FILES\n");
 				dataStream.put_string("\t\t\t${file_data}\n");
 				dataStream.put_string("\t\tDESTINATION\n");
-				dataStream.put_string("\t\t\t"+Path.build_filename("share",ElementBase.globalData.projectName)+"\n");
+				dataStream.put_string("\t\t\t"+Path.build_filename("${CMAKE_INSTALL_DATAROOTDIR}",ElementBase.globalData.projectName)+"\n");
 				dataStream.put_string("\t\t)\n");
 				dataStream.put_string("\tENDIF()\n");
 				dataStream.put_string("endforeach()\n\n");

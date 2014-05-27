@@ -112,14 +112,14 @@ namespace AutoVala {
 					return true;
 				}
 				try {
-					dataStream.put_string("install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/%s DESTINATION share/icons/hicolor/%d/%s/)\n".printf(this.name,size,this.iconCathegory));
+					dataStream.put_string("install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/%s DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/%d/%s/)\n".printf(this.name,size,this.iconCathegory));
 				} catch (Error e) {
 					ElementBase.globalData.addError(_("Failed to write the CMakeLists file for icon %s").printf(fullPath));
 					return true;
 				}
 			} else if (this.name.has_suffix(".svg")) {
 				try {
-					dataStream.put_string("install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/%s DESTINATION share/icons/hicolor/scalable/%s/)\n".printf(this.name,this.iconCathegory));
+					dataStream.put_string("install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/%s DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/scalable/%s/)\n".printf(this.name,this.iconCathegory));
 				} catch (Error e) {
 					ElementBase.globalData.addError(_("Failed to write the CMakeLists file for icon %s").printf(fullPath));
 					return true;
@@ -139,7 +139,7 @@ namespace AutoVala {
 				try {
 					ElementIcon.addedSuffix=true;
 					dataStream.put_string("IF( NOT (${ICON_UPDATE} STREQUAL \"OFF\" ))\n");
-					dataStream.put_string("\tinstall (CODE \"execute_process ( COMMAND /usr/bin/gtk-update-icon-cache-3.0 -t ${CMAKE_INSTALL_PREFIX}/share/icons/hicolor )\" )\n");
+					dataStream.put_string("\tinstall (CODE \"execute_process ( COMMAND /usr/bin/gtk-update-icon-cache-3.0 -t ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor )\" )\n");
 					dataStream.put_string("ENDIF()\n");
 				} catch (Error e) {
 					ElementBase.globalData.addError(_("Failed to write the PostData for icons at %s").printf(fullPath));

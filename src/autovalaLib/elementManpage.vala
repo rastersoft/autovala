@@ -180,7 +180,7 @@ namespace AutoVala {
 
 				dataStream.put_string("execute_process ( COMMAND gzip -f ${CMAKE_CURRENT_BINARY_DIR}/" + finalFile + " )\n");
 				finalFile+=".gz";
-				dataStream.put_string("install(FILES ${CMAKE_CURRENT_BINARY_DIR}/" + finalFile + " DESTINATION share/man/");
+				dataStream.put_string("install(FILES ${CMAKE_CURRENT_BINARY_DIR}/" + finalFile + " DESTINATION ${CMAKE_INSTALL_MANDIR}/man/");
 				if (this.language!=null) {
 					dataStream.put_string(this.language+"/");
 				}

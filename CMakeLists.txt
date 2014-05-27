@@ -10,6 +10,12 @@ option(ICON_UPDATE "Update the icon cache after installing" ON)
 option(BUILD_VALADOC "Build API documentation if Valadoc is available" OFF)
 option(DEBUG "DEBUG" OFF)
 
+include(GNUInstallDirs)
+if( ( ${CMAKE_INSTALL_PREFIX} MATCHES "^/usr/local" ) )
+	# A workaround to ensure that works 'out of the box' in Debian-based systems
+	set(CMAKE_INSTALL_LIBDIR lib)
+endif()
+
 set(HAVE_VALADOC OFF)
 if(BUILD_VALADOC)
 	find_package(Valadoc)
@@ -37,8 +43,6 @@ set(MODULES_TO_CHECK ${MODULES_TO_CHECK} pangocairo)
 set(MODULES_TO_CHECK ${MODULES_TO_CHECK} x11)
 
 pkg_check_modules(DEPS REQUIRED ${MODULES_TO_CHECK})
-
-MESSAGE( WARNING ${FIND_LIBRARY_USE_LIB64_PATHS})
 
 find_program ( WHERE_PANDOC pandoc )
 if ( NOT WHERE_PANDOC )

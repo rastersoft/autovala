@@ -90,6 +90,11 @@ namespace AutoVala {
 					}
 					dataStream.put_string("option(%s \"%s\" OFF)\n".printf(element.name,element.name));
 				}
+				dataStream.put_string("\ninclude(GNUInstallDirs)\n");
+				dataStream.put_string("if( ( ${CMAKE_INSTALL_PREFIX} MATCHES \"^/usr/local\" ) )\n");
+				dataStream.put_string("\t# A workaround to ensure that works 'out of the box' in Debian-based systems\n");
+				dataStream.put_string("\tset(CMAKE_INSTALL_LIBDIR lib)\n");
+				dataStream.put_string("endif()\n");
 				dataStream.put_string("\nset(HAVE_VALADOC OFF)\n");
 				dataStream.put_string("if(BUILD_VALADOC)\n");
 				dataStream.put_string("\tfind_package(Valadoc)\n");

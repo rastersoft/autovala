@@ -7,13 +7,13 @@ foreach(file_data ${list_data})
 		install(DIRECTORY
 			${file_data}
 		DESTINATION
-			share/doc/valaplugin
+			${CMAKE_INSTALL_DATAROOTDIR}/doc/valaplugin
 		)
 	ELSE()
 		install(FILES
 			${file_data}
 		DESTINATION
-			share/doc/valaplugin
+			${CMAKE_INSTALL_DATAROOTDIR}/doc/valaplugin
 		)
 	ENDIF()
 endforeach()

@@ -10,6 +10,8 @@ option(ICON_UPDATE "Update the icon cache after installing" ON)
 option(BUILD_VALADOC "Build API documentation if Valadoc is available" OFF)
 option(OLD_GEDIT "OLD_GEDIT" OFF)
 
+include(GNUInstallDirs)
+
 set(HAVE_VALADOC OFF)
 if(BUILD_VALADOC)
 	find_package(Valadoc)

@@ -7,13 +7,13 @@ foreach(file_data ${list_data})
 		install(DIRECTORY
 			${file_data}
 		DESTINATION
-			share/autovala
+			${CMAKE_INSTALL_DATAROOTDIR}/autovala
 		)
 	ELSE()
 		install(FILES
 			${file_data}
 		DESTINATION
-			share/autovala
+			${CMAKE_INSTALL_DATAROOTDIR}/autovala
 		)
 	ENDIF()
 endforeach()
