@@ -658,7 +658,7 @@ namespace AutoVala {
 			}
 
 			foreach(var element in this._packages) {
-				if (element.elementName==package) {
+				if ((element.elementName==package) && ((automatic==true) || (element.type==type))) {
 					return false;
 				}
 			}

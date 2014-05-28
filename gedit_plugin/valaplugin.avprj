@@ -19,6 +19,9 @@ if OLD_GEDIT
 else
 c_check_package: gedit
 end
+if OLD_GEDIT
+vala_check_package: gedit
+end
 *vala_check_package: AutoVala
 *vala_check_package: AutovalaPlugin
 *vala_check_package: atk
