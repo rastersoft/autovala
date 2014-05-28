@@ -11,8 +11,14 @@ custom: data/autovala.plugin share/gedit/plugins/autovala
 vala_library: src/valaplugin
 *namespace: AutovalaGeditPlugin
 vala_destination: share/gedit/plugins/autovala
-*vala_vapi: vapis/gedit.vapi
+if OLD_GEDIT
+else
+vala_vapi: vapis/gedit.vapi
+end
+if OLD_GEDIT
+else
 c_check_package: gedit
+end
 *vala_check_package: AutoVala
 *vala_check_package: AutovalaPlugin
 *vala_check_package: atk

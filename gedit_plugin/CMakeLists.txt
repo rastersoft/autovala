@@ -29,7 +29,9 @@ endif()
 
 find_package(PkgConfig)
 
-set(MODULES_TO_CHECK ${MODULES_TO_CHECK} gedit)
+if (NOT(OLD_GEDIT))
+	set(MODULES_TO_CHECK ${MODULES_TO_CHECK} gedit)
+endif ()
 set(MODULES_TO_CHECK ${MODULES_TO_CHECK} AutoVala)
 set(MODULES_TO_CHECK ${MODULES_TO_CHECK} AutovalaPlugin)
 set(MODULES_TO_CHECK ${MODULES_TO_CHECK} atk)
