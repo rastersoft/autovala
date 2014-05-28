@@ -1,7 +1,7 @@
 ### AutoVala Project ###
 autovala_version: 11
 project_name: autovala
-vala_version: 0.22
+vala_version: 0.24
 
 custom: data/cmake share/autovala/cmake
 

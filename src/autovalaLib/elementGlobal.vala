@@ -140,7 +140,6 @@ namespace AutoVala {
 								continue;
 							}
 							elements.add(module);
-							//tocheck.add(module.elementName);
 						}
 					}
 				}

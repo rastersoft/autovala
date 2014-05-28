@@ -19,7 +19,7 @@ link_libraries ( ${DEPS_LIBRARIES} -lAutoVala )
 link_directories ( ${DEPS_LIBRARY_DIRS} ${CMAKE_BINARY_DIR}/src/autovalaLib )
 find_package (Vala REQUIRED)
 include (ValaVersion)
-ensure_vala_version ("0.22" MINIMUM)
+ensure_vala_version ("0.24" MINIMUM)
 include (ValaPrecompile)
 
 set (VALA_PACKAGES ${VALA_PACKAGES} posix)
