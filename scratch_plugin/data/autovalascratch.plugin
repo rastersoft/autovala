@@ -1,0 +1,10 @@
+[Plugin]
+Module=autovalascratch
+Loader=C
+IAge=2
+Name=Autovala Plugin
+Description=Manage Autovala projects
+Icon=system-file-manager
+Authors=Sergio Costas
+Copyright=Copyright © 2014 Raster Software Vigo
+Website=http://launchpad.net/scratch

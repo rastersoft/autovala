@@ -1,5 +1,5 @@
 [Plugin]
-Module=AutovalaGeditPlugin.so
+Module=autovalagedit.so
 IAge=3
 Name=Autovala Plugin
 Description=An AutoVala Plugin for Gedit

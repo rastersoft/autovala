@@ -8,8 +8,8 @@ namespace AutovalaPlugin {
 	 * This is a GTK3 widget that allows to show all the files and folders
 	 * starting in a specific folder, in an hierarchical fashion
 	 * It is useful to create plugins for GTK3-based editors
-	 * The first plugin is for GEdit
-	 * It widget complements the ProjectViewer widget
+	 * The first plugins are for GEdit and Scratch
+	 * This widget complements the ProjectViewer widget
 	 */
 
 	public class FileViewer : Gtk.TreeView {
@@ -39,6 +39,8 @@ namespace AutovalaPlugin {
 		 * Constructor
 		 */
 		public FileViewer() {
+
+			Intl.bindtextdomain(AutoValaConstants.GETTEXT_PACKAGE, Path.build_filename(AutoValaConstants.DATADIR,"locale"));
 
 			this.monitors = new Gee.ArrayList<FileMonitor>();
 			this.current_file = null;

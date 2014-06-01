@@ -3,7 +3,7 @@ using Gdk;
 using Gee;
 using AutoVala;
 
-// project version=0.97
+// project version=0.98
 
 namespace AutovalaPlugin {
 
@@ -12,18 +12,19 @@ namespace AutovalaPlugin {
 	/**
 	 * This is a GTK3 widget that allows to manage an Autovala project
 	 * It is useful to create plugins for GTK3-based editors
-	 * The first plugin is for GEdit
-	 * It is complemented with the FileViewer widget, that shows all the files
-	 * in a project
+	 * The first plugins are for GEdit and Scratch
+	 * It is complemented with the FileViewer and MenuItem widgets
 	 */
-	public class ProjectViewer : Gtk.TreeView {
+	public class ProjectViewer : Gtk.Box {
 
+		private Gtk.TreeView treeView;
 		private TreeStore treeModel;
 		private Gtk.CellRendererText renderer;
-		private string current_file;
+
+		private string ? current_file;
 		private string current_project_file;
 		private AutoVala.ManageProject current_project;
-		private ProjectViewerMenu menu;
+		private ProjectViewerMenu popupMenu;
 		private ProjectProperties properties;
 
 		/**
@@ -36,17 +37,20 @@ namespace AutovalaPlugin {
 		 * This signal is emited when the current project has changed
 		 * @param path The full path to the project's base folder
 		 */
-		public signal void changed_base_folder(string? path);
+		public signal void changed_base_folder(string? path, string? project_file);
 
 		/**
 		 * Constructor
 		 */
 		public ProjectViewer() {
 
+			Intl.bindtextdomain(AutoValaConstants.GETTEXT_PACKAGE, Path.build_filename(AutoValaConstants.DATADIR,"locale"));
+
 			this.current_project = new AutoVala.ManageProject();
 			this.current_project_file = null;
 			this.current_file = null;
-			this.menu = null;
+			this.popupMenu = null;
+			this.orientation = Gtk.Orientation.VERTICAL;
 
 			try {
 				Gdk.Pixbuf pixbuf;
@@ -66,6 +70,8 @@ namespace AutovalaPlugin {
 				Gtk.IconTheme.add_builtin_icon("autovala-plugin-vala",-1,pixbuf);
 			} catch (GLib.Error e) {}
 
+			this.treeView = new Gtk.TreeView();
+
 			/*
 			 * string: visible text (with markup)
 			 * string: path to open when clicking (or NULL if it doesn't open a file)
@@ -74,7 +80,7 @@ namespace AutovalaPlugin {
 			 * ProjectEntryTypes: type of the entry
 			 */
 			this.treeModel = new TreeStore(5,typeof(string),typeof(string),typeof(string),typeof(string),typeof(ProjectEntryTypes));
-			this.set_model(this.treeModel);
+			this.treeView.set_model(this.treeModel);
 			var column = new Gtk.TreeViewColumn();
 			this.renderer = new Gtk.CellRendererText();
 			var pixbuf = new Gtk.CellRendererPixbuf();
@@ -82,14 +88,16 @@ namespace AutovalaPlugin {
 			column.add_attribute(pixbuf,"icon_name",2);
 			column.pack_start(this.renderer,false);
 			column.add_attribute(this.renderer,"markup",0);
-			this.append_column(column);
+			this.treeView.append_column(column);
 
-			this.activate_on_single_click = true;
-			this.headers_visible = false;
-			this.get_selection().mode = SelectionMode.SINGLE;
+			this.treeView.activate_on_single_click = true;
+			this.treeView.headers_visible = false;
+			this.treeView.get_selection().mode = SelectionMode.SINGLE;
 
-			this.row_activated.connect(this.clicked);
-			this.button_press_event.connect(this.click_event);
+			this.treeView.row_activated.connect(this.clicked);
+			this.treeView.button_press_event.connect(this.click_event);
+
+			this.pack_start(this.treeView);
 		}
 
 		/**
@@ -103,8 +111,22 @@ namespace AutovalaPlugin {
 			fileViewer.changed_file.connect( () => {
 				this.refresh_project(true);
 			});
-			this.changed_base_folder.connect( (path) => {
+			this.changed_base_folder.connect( (path, project_file) => {
 				fileViewer.set_base_folder(path);
+			});
+		}
+
+		/**
+		 * Links the signals and callbacks of this ProjectViewer and an ActionButtons, to allow
+		 * a ProjectViewer to know when the user asked to create a new project, update the current one...
+		 * and to allow the ActionButtons to change its status
+		 * @param fileViewer The FileViewer widget to link to this ProjectViewer
+		 */
+		public void link_action_buttons(ActionButtons actionButtons) {
+		
+			actionButtons.set_current_project(this.current_project);
+			this.changed_base_folder.connect( (path, project_file) => {
+				actionButtons.set_current_project_file(project_file);
 			});
 		}
 
@@ -122,7 +144,7 @@ namespace AutovalaPlugin {
 				int y;
 				TreeIter iter;
 
-				if (this.get_path_at_pos((int)event.x, (int)event.y, out path, out column, out x, out y)) {
+				if (this.treeView.get_path_at_pos((int)event.x, (int)event.y, out path, out column, out x, out y)) {
 					if (!this.treeModel.get_iter(out iter, path)) {
 						return true;
 					}
@@ -132,23 +154,11 @@ namespace AutovalaPlugin {
 					ProjectEntryTypes type;
 
 					this.treeModel.get(iter,1,out file_path,3,out binary_name,4,out type,-1);
-					this.menu = new ProjectViewerMenu(this.current_project_file,file_path, binary_name,type);
-					this.menu.open.connect( (file_path) => {
+					this.popupMenu = new ProjectViewerMenu(this.current_project_file,file_path, binary_name,type);
+					this.popupMenu.open.connect( (file_path) => {
 						this.clicked_file (file_path);
 					});
-					this.menu.update_project.connect( () => {
-						var retval=this.current_project.refresh(this.current_project_file);
-						this.current_project.showErrors();
-						if (!retval) {
-							retval=this.current_project.cmake(this.current_project_file);
-							this.current_project.showErrors();
-						}
-					});
-					this.menu.update_gettext.connect( () => {
-						this.current_project.gettext(this.current_project_file);
-						this.current_project.showErrors();
-					});
-					this.menu.new_binary.connect( () => {
+					this.popupMenu.new_binary.connect( () => {
 						if (this.properties != null) {
 							return;
 						}
@@ -157,7 +167,7 @@ namespace AutovalaPlugin {
 						this.properties.destroy();
 						this.properties = null;
 					});
-					this.menu.edit_binary.connect( (binary_name2) => {
+					this.popupMenu.edit_binary.connect( (binary_name2) => {
 						if (this.properties != null) {
 							return;
 						}
@@ -166,11 +176,11 @@ namespace AutovalaPlugin {
 						this.properties.destroy();
 						this.properties = null;
 					});
-					this.menu.remove_binary.connect( (binary_name2) => {
+					this.popupMenu.remove_binary.connect( (binary_name2) => {
 						this.current_project.remove_binary(this.current_project_file,binary_name2);
 					});
-					this.menu.popup(null,null,null,event.button,event.time);
-					this.menu.show_all();
+					this.popupMenu.popup(null,null,null,event.button,event.time);
+					this.popupMenu.show_all();
 					return false;
 				}
 			}
@@ -187,7 +197,7 @@ namespace AutovalaPlugin {
 			TreeModel model;
 			TreeIter iter;
 
-			var selection = this.get_selection();
+			var selection = this.treeView.get_selection();
 			if (!selection.get_selected(out model, out iter)) {
 				return;
 			}
@@ -213,7 +223,7 @@ namespace AutovalaPlugin {
 				this.treeModel.clear();
 				this.current_project_file = null;
 				this.current_file = null;
-				this.changed_base_folder(null);
+				this.changed_base_folder(null,null);
 				return;
 			}
 
@@ -226,7 +236,6 @@ namespace AutovalaPlugin {
 			if ((this.current_file != null) && (Path.get_dirname(file) == Path.get_dirname(this.current_file))) {
 				return;
 			}
-
 			this.current_file = file;
 			this.refresh_project(false);
 		}
@@ -237,19 +246,24 @@ namespace AutovalaPlugin {
 		 */
 		public void refresh_project(bool force = true) {
 
-			var project = this.current_project.get_binaries_list(this.current_file);
+			AutoVala.ValaProject ? project;
+			if (this.current_file != null) {
+				project = this.current_project.get_binaries_list(this.current_file);
+			} else {
+				project = null;
+			}
 
 			if (project==null) {
 				this.treeModel.clear();
-				this.menu = null;
+				this.popupMenu = null;
 				this.current_project_file = null;
-				this.changed_base_folder(null);
+				this.changed_base_folder(null,null);
 			} else if ((this.current_project_file==null) || (this.current_project_file!=project.projectFile) || force) {
 				this.treeModel.clear();
-				this.menu = null;
+				this.popupMenu = null;
 				this.set_current_project(project);
-				this.set_model(this.treeModel);
-				this.expand_all();
+				this.treeView.set_model(this.treeModel);
+				this.treeView.expand_all();
 			}
 		}
 
@@ -413,7 +427,7 @@ namespace AutovalaPlugin {
 				}
 			}
 			this.treeModel.append(out fileIter,null);
-			this.changed_base_folder(project.projectPath);
+			this.changed_base_folder(project.projectPath,this.current_project_file);
 		}
 	}
 
@@ -462,12 +476,8 @@ namespace AutovalaPlugin {
 		private Gtk.MenuItem action_new_binary;
 		private Gtk.MenuItem action_edit_binary;
 		private Gtk.MenuItem action_delete_binary;
-		private Gtk.MenuItem action_update_project;
-		private Gtk.MenuItem action_update_translations;
 
 		public signal void open(string file);
-		public signal void update_project();
-		public signal void update_gettext();
 		public signal void new_binary();
 		public signal void edit_binary(string ?binary_name);
 		public signal void remove_binary(string ?binary_name);
@@ -483,8 +493,6 @@ namespace AutovalaPlugin {
 			this.action_new_binary = new Gtk.MenuItem.with_label(_("New executable/library"));
 			this.action_edit_binary = new Gtk.MenuItem.with_label((type == ProjectEntryTypes.LIBRARY) ? _("Edit library properties") : _("Edit executable properties"));
 			this.action_delete_binary = new Gtk.MenuItem.with_label((type == ProjectEntryTypes.LIBRARY) ? _("Remove library") : _("Remove executable"));
-			this.action_update_project = new Gtk.MenuItem.with_label(_("Update project"));
-			this.action_update_translations = new Gtk.MenuItem.with_label(_("Update translations"));
 
 			switch (type) {
 			case ProjectEntryTypes.VALA_SOURCE_FILE:
@@ -504,18 +512,8 @@ namespace AutovalaPlugin {
 				this.append(this.action_delete_binary);
 			}
 			
-			this.append(new Gtk.SeparatorMenuItem());
-			this.append(this.action_update_project);
-			this.append(this.action_update_translations);
-
 			this.action_open.activate.connect( () => {
 				this.open(this.file_path);
-			});
-			this.action_update_project.activate.connect( () => {
-				this.update_project();
-			});
-			this.action_update_translations.activate.connect( () => {
-				this.update_gettext();
 			});
 			this.action_new_binary.activate.connect( () => {
 				this.new_binary();

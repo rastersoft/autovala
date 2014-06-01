@@ -7,13 +7,13 @@ foreach(file_data ${list_data})
 		install(DIRECTORY
 			${file_data}
 		DESTINATION
-			${CMAKE_INSTALL_DATAROOTDIR}/doc/gedit_plugin
+			${CMAKE_INSTALL_DATAROOTDIR}/scratch_plugin
 		)
 	ELSE()
 		install(FILES
 			${file_data}
 		DESTINATION
-			${CMAKE_INSTALL_DATAROOTDIR}/doc/gedit_plugin
+			${CMAKE_INSTALL_DATAROOTDIR}/scratch_plugin
 		)
 	ENDIF()
 endforeach()

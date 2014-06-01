@@ -7,13 +7,13 @@ set (GETTEXT_PACKAGE "autovala")
 set (RELEASE_NAME "autovala")
 set (CMAKE_C_FLAGS "")
 set (PREFIX ${CMAKE_INSTALL_PREFIX})
-set (VERSION "0.97")
+set (VERSION "0.98")
 set (DOLLAR "$")
 
 configure_file (${CMAKE_SOURCE_DIR}/src/autovalaPlugin/Config.vala.cmake ${CMAKE_BINARY_DIR}/src/autovalaPlugin/Config.vala)
 add_definitions(-DGETTEXT_PACKAGE=\"${GETTEXT_PACKAGE}\")
 configure_file (${CMAKE_CURRENT_SOURCE_DIR}/AutovalaPlugin.pc ${CMAKE_CURRENT_BINARY_DIR}/AutovalaPlugin.pc)
-set (VERSION "0.97")
+set (VERSION "0.98")
 add_definitions (${DEPS_CFLAGS})
 include_directories ( ${CMAKE_BINARY_DIR}/src/autovalaLib )
 link_libraries ( ${DEPS_LIBRARIES} -lAutoVala )
@@ -37,6 +37,7 @@ set (VALA_PACKAGES ${VALA_PACKAGES} pangocairo)
 set (VALA_PACKAGES ${VALA_PACKAGES} x11)
 
 set (APP_SOURCES ${APP_SOURCES} ${CMAKE_CURRENT_BINARY_DIR}/Config.vala)
+set (APP_SOURCES ${APP_SOURCES} actionbuttons.vala)
 set (APP_SOURCES ${APP_SOURCES} fileview.vala)
 set (APP_SOURCES ${APP_SOURCES} projectview.vala)
 
@@ -65,7 +66,7 @@ add_library(AutovalaPlugin SHARED ${VALA_C})
 
 set_target_properties( AutovalaPlugin PROPERTIES
 VERSION
-	0.97
+	0.98
 SOVERSION
 	0 )
 

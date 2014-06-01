@@ -2,4 +2,4 @@
 ### Do not edit
 
 include (Translations)
-add_translations_directory("gedit_plugin")
+add_translations_directory("scratch_plugin")

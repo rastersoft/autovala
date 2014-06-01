@@ -20,7 +20,7 @@ using GLib;
 using Gee;
 using Posix;
 
-// project version=0.97
+// project version=0.98
 
 namespace AutoVala {
 
@@ -30,6 +30,10 @@ namespace AutoVala {
 
 		public void showErrors() {
 			this.config.showErrors();
+		}
+
+		public string[] getErrors() {
+			return this.config.getErrors();
 		}
 
 		private bool copy_recursive (string srcS, string destS) {
@@ -451,7 +455,6 @@ namespace AutoVala {
 				}
 				project.elements.add(newElement);
 			}
-
 			return project;
 		}
 

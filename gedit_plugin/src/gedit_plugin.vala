@@ -8,16 +8,15 @@ using AutovalaPlugin;
 
 using Gtk.SourceUtils;
 
-namespace AutovalaGeditPlugin {
+namespace autovalagedit {
 
 	public class ValaWindow : Gedit.WindowActivatable, Peas.ExtensionBase {
 
-		private string current_file=null;
-		private string current_project_file=null;
 		private AutovalaPlugin.FileViewer fileViewer;
 		private AutovalaPlugin.ProjectViewer projectViewer;
+		private AutovalaPlugin.ActionButtons actionButtons;
 		private Paned container;
-		private bool set_size;
+		private Box main_container;
 		private int current_paned_position;
 		private int current_paned_size;
 		private double desired_paned_percentage;
@@ -32,10 +31,9 @@ namespace AutovalaGeditPlugin {
 		}
 
 		construct {
-			Intl.bindtextdomain(AutovalaPluginConstants.GETTEXT_PACKAGE, Path.build_filename(AutovalaPluginConstants.DATADIR,"locale"));
-			this.current_file = null;
-			this.current_project_file = null;
+			Intl.bindtextdomain(autovalageditConstants.GETTEXT_PACKAGE, Path.build_filename(autovalageditConstants.DATADIR,"locale"));
 			this.container = null;
+			this.main_container = null;
 			this.current_paned_position = -1;
 			this.current_paned_size = -1;
 			this.desired_paned_percentage = 0.5;
@@ -45,10 +43,11 @@ namespace AutovalaGeditPlugin {
 		public void activate () {
 
 			Gtk.Image icon = null;
-			if (this.container != null) {
+			if (this.main_container != null) {
 				return;
 			}
-			this.set_size = false;
+
+			this.main_container = new Gtk.Box(Gtk.Orientation.VERTICAL, 0);
 
 			this.fileViewer = new FileViewer();
 			this.fileViewer.clicked_file.connect(this.file_selected);
@@ -56,7 +55,11 @@ namespace AutovalaGeditPlugin {
 			this.projectViewer = new ProjectViewer();
 			this.projectViewer.clicked_file.connect(this.file_selected);
 
+			this.actionButtons = new ActionButtons();
+			this.actionButtons.open_file.connect(this.file_selected);
+
 			this.projectViewer.link_file_view(this.fileViewer);
+			this.projectViewer.link_action_buttons(this.actionButtons);
 
 			var scroll1 = new Gtk.ScrolledWindow(null,null);
 			scroll1.add(this.projectViewer);
@@ -95,30 +98,36 @@ namespace AutovalaGeditPlugin {
 
 			this.container.add1(scroll1);
 			this.container.add2(scroll2);
+
+			this.main_container.pack_start(this.actionButtons,false,true);
+			this.main_container.pack_start(this.container,true,true);
+			
 			// the icon "autovala_plugin_vala" is added inside ProjectViewer
 			icon = new Gtk.Image.from_icon_name("autovala-plugin-vala",Gtk.IconSize.MENU);
 #if OLD_GEDIT
 			Gedit.Panel panel = (Gedit.Panel)this.window.get_side_panel();
-			panel.add_item(this.container, "Autovala", "Autovala", icon);
+			panel.add_item(this.main_container, "Autovala", "Autovala", icon);
 #else
 			Gtk.Stack panel = (Gtk.Stack)this.window.get_side_panel();
-			panel.add_titled(this.container, "Autovala", "Autovala");
+			panel.add_titled(this.main_container, "Autovala", "Autovala");
 #endif
 			this.update_state();
-			this.container.show_all();
+			this.main_container.show_all();
+
 		}
 
 		public void deactivate () {
-			if (this.container == null) {
+			if (this.main_container == null) {
 				return;
 			}
 
 #if OLD_GEDIT
 			Gedit.Panel panel = (Gedit.Panel)this.window.get_side_panel();
-			panel.remove_item(this.container);
+			panel.remove_item(this.main_container);
 #else
-			this.container.unparent();
+			this.main_container.unparent();
 #endif
+			this.main_container = null;
 			this.container = null;
 			this.projectViewer = null;
 			this.fileViewer = null;
@@ -130,16 +139,15 @@ namespace AutovalaGeditPlugin {
 
 			if ((current_tab == null) || (current_tab.get_document() == null) || (current_tab.get_document().location == null) || (current_tab.get_document().location.get_path()==null)) {
 				// if there is no file open, just empty everything
-				this.current_file = null;
 				this.fileViewer.set_base_folder(null);
 				this.fileViewer.set_current_file(null);
 				this.projectViewer.set_current_file(null);
 				return;
 			}
 
-			this.current_file = current_tab.get_document().location.get_path();
-			this.fileViewer.set_current_file(this.current_file);
-			this.projectViewer.set_current_file(this.current_file);
+			var current_file = current_tab.get_document().location.get_path();
+			this.fileViewer.set_current_file(current_file);
+			this.projectViewer.set_current_file(current_file);
 		}
 
 
@@ -169,5 +177,5 @@ public void peas_register_types (TypeModule module) {
 	var objmodule = module as Peas.ObjectModule;
 
 	// Register my plugin extension
-	objmodule.register_extension_type (typeof (Gedit.WindowActivatable), typeof (AutovalaGeditPlugin.ValaWindow));
+	objmodule.register_extension_type (typeof (Gedit.WindowActivatable), typeof (autovalagedit.ValaWindow));
 }

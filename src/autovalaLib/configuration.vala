@@ -70,6 +70,20 @@ namespace AutoVala {
 		}
 
 		/**
+		 * Returns all the errors ocurred until now
+		 */
+		public string[] getErrors() {
+		
+			string[] retval = {};
+			var errorList = this.globalData.getErrorList();
+			foreach(var e in errorList) {
+				retval += e;
+			}
+			this.globalData.clearErrors();
+			return retval;
+		}
+
+		/**
 		 * Removes all the non-automatic elements
 		 */
 
@@ -158,6 +172,10 @@ namespace AutoVala {
 		public bool readConfiguration() {
 
 			this.resetCondition();
+
+			if (this.globalData.configFile == null) {
+				return true;
+			}
 
 			var file=File.new_for_path(this.globalData.configFile);
 			bool error=false;
