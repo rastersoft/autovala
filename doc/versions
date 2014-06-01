@@ -6,6 +6,16 @@
 <div class="main_frame">
 <p><a href="index.html">Home</a></p>
 <ul>
+<li><p>version 0.98.0 (2014-05-26)</p>
+<ul>
+<li>Added support for GEdit 3.12 and later in the plugin<br /></li>
+<li>Added a plugin for Scratch Text Editor<br /></li>
+<li>Allows to create new projects from the plugins<br /></li>
+<li>Added folders <em>/usr/lib64</em> and <em>/usr/local/lib64</em> in the list for searching pkgconfig packages (enhances compatibility with Fedora)<br /></li>
+<li>Now it uses GNUInstallDirs with CMake, improving compatibility with non-debian-based systems<br /></li>
+<li>Now installs the autostart file in ${XDG_CONFIG_HOME}/autostart when the code is being installed in the $HOME directory<br /></li>
+<li>Now adds all non-conditional CHECK elements<br /></li>
+</ul></li>
 <li><p>version 0.97.0 (2014-05-12)</p>
 <ul>
 <li>Added support for the new GEdit plugin for Autovala<br /></li>
