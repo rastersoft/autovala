@@ -16,12 +16,14 @@ namespace autovalascratch {
         public Scratch.Services.Interface plugins;
         
         private Paned container=null;
+        private Box main_container=null;
 		private int current_paned_position;
 		private int current_paned_size;
 		private double desired_paned_percentage;
 		private bool changed_paned_size;
 		private AutovalaPlugin.FileViewer fileViewer;
 		private AutovalaPlugin.ProjectViewer projectViewer;
+		private AutovalaPlugin.ActionButtons actionButtons;
 
         public Object object { owned get; construct; }
 
@@ -35,7 +37,7 @@ namespace autovalascratch {
         construct {
             message ("Starting Autovala Plugin");
 			Intl.bindtextdomain(autovalascratchConstants.GETTEXT_PACKAGE, Path.build_filename(autovalascratchConstants.DATADIR,"locale"));
-			this.container = null;
+			this.main_container = null;
 			this.current_paned_position = -1;
 			this.current_paned_size = -1;
 			this.desired_paned_percentage = 0.5;
@@ -71,16 +73,26 @@ namespace autovalascratch {
         }
 
         void on_hook_sidebar (Gtk.Notebook notebook) {
-			if (this.container != null) {
+			if (this.main_container != null) {
 				return;
 			}
+			
+			this.main_container = new Gtk.Box(Gtk.Orientation.VERTICAL, 0);
+			
 			this.fileViewer = new FileViewer();
 			this.fileViewer.clicked_file.connect(this.file_selected);
 
 			this.projectViewer = new ProjectViewer();
 			this.projectViewer.clicked_file.connect(this.file_selected);
 
+			this.actionButtons = new ActionButtons();
+			this.actionButtons.open_file.connect(this.file_selected);
+
 			this.projectViewer.link_file_view(this.fileViewer);
+			this.projectViewer.link_action_buttons(this.actionButtons);
+
+			this.fileViewer.set_current_file(null);
+			this.projectViewer.set_current_file(null);
 
 			var scroll1 = new Gtk.ScrolledWindow(null,null);
 			scroll1.add(this.projectViewer);
@@ -120,9 +132,12 @@ namespace autovalascratch {
 			this.container.add1(scroll1);
 			this.container.add2(scroll2);
 			this.update_state();
-			this.container.show_all();
 
-            notebook.append_page (this.container, new Gtk.Label (_("Autovala Project")));
+			this.main_container.pack_start(this.actionButtons,false,true);
+			this.main_container.pack_start(this.container,true,true);
+			this.main_container.show_all();
+
+            notebook.append_page (this.main_container, new Gtk.Label (_("Autovala Project")));
         }
 
         /**
