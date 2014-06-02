@@ -16,7 +16,9 @@ Remember that you need Autovala installed in your system.
 
 # INSTALLING THE PLUGIN #
 
-The plugin needs Scratch 2.0 or later.
+The plugin needs Scratch 2.0 or later. After installing, close all Scratch
+windows, open it again, and go to Preferences -> Extensions to enable the
+Autovala extension.
 
 ## System-wide installation ##
 

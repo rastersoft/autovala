@@ -17,7 +17,9 @@ Remember that you need Autovala installed in your system.
 # INSTALLING THE PLUGIN #
 
 By default, the plugin is compiled for GEDIT 3.12 or later. If you are using
-GEDIT 3.10 or previous, you must add the -DOLD_GTK=on parameter to cmake.
+GEDIT 3.10 or previous, you must add the -DOLD_GTK=on parameter to cmake. After
+installation, close all GEdit windows, open it again and go to
+Preferences -> Plugins to enable the Autovala plugin.
 
 
 ## Local installation ##
