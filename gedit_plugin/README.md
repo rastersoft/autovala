@@ -17,7 +17,28 @@ Remember that you need Autovala installed in your system.
 # INSTALLING THE PLUGIN #
 
 By default, the plugin is compiled for GEDIT 3.12 or later. If you are using
-GEDIT 3.10 or previous, you must add the -DOLD_GTK=on parameter to cmake.
+GEDIT 3.10 or previous, you must add the -DOLD_GTK=on parameter to cmake. After
+installation, close all GEdit windows, open it again and go to
+Preferences -> Plugins to enable the Autovala plugin.
+
+
+## Local installation ##
+
+Local installation is the preferable way for installing this plugin. It makes
+the plugin accesible only to the user that installed it, but has the advantage
+of not needing root priviledges, and also avoids the problems with library
+paths (which, in 64bit systems, are problematic). To install it in this way,
+just type:
+
+        mkdir install
+        cd install
+        cmake .. -DCMAKE_INSTALL_PREFIX=$HOME/.local [-DOLD_GEDIT=on]
+        make
+        make install
+
+Remember that [-DOLD_GEDIT=on] is optional, and needed only to compile for
+GEDIT 3.10 or older.
+
 
 ## System-wide installation ##
 
@@ -30,20 +51,7 @@ system, just type:
         make
         sudo make install
 
-This mode needs root priviledges. Remember that [-DOLD_GEDIT=on] is optional, and
-needed only to compile for GEDIT 3.10 or older.
-
-## Local installation ##
-
-Local installation makes the plugin accesible only to the user that installed
-it, but has the advantage of not needing root priviledges. To install it in this
-way, just type:
-
-        mkdir install
-        cd install
-        cmake .. -DCMAKE_INSTALL_PREFIX=$HOME/.local [-DOLD_GEDIT=on]
-        make
-        make install
-
-Again, remember that [-DOLD_GEDIT=on] is optional, and needed only to compile for
-GEDIT 3.10 or older.
+This mode needs root priviledges, and in some systems can be installed in the
+wrong folder, forcing the user to manually move the files to the right place.
+Again, remember that [-DOLD_GEDIT=on] is optional and needed only to compile
+for GEDIT 3.10 or older.

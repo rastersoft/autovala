@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-06-01 19:20+0200\n"
-"PO-Revision-Date: 2014-06-01 19:24+0200\n"
+"POT-Creation-Date: 2014-06-01 23:59+0200\n"
+"PO-Revision-Date: 2014-06-02 00:00+0200\n"
 "Last-Translator: Sergio Costas <rastersoft@gmail.com>\n"
 "Language-Team: Español; Castellano <>\n"
 "Language: en_US\n"
@@ -68,87 +68,87 @@ msgstr "Actualizando el fichero de proyecto\n"
 msgid "Updating CMake files\n"
 msgstr "Actualizando los ficheros de CMake\n"
 
-#: src/autovalaLib/autovalaLib.vala:40
+#: src/autovalaLib/autovalaLib.vala:44
 #, c-format
 msgid "Can't copy folder %s to %s; it doesn't exists."
 msgstr "No es posible copiar la carpeta %s a %s; no existe."
 
-#: src/autovalaLib/autovalaLib.vala:50
+#: src/autovalaLib/autovalaLib.vala:54
 #, c-format
 msgid "Failed when creating folder %s"
 msgstr "Incapaz de crear el fichero %s"
 
-#: src/autovalaLib/autovalaLib.vala:64
+#: src/autovalaLib/autovalaLib.vala:68
 #, c-format
 msgid "Failed when copying recursively the folder %s to %s"
 msgstr "Ha fallado la copia recursiva del directorio %s a %s"
 
-#: src/autovalaLib/autovalaLib.vala:71
+#: src/autovalaLib/autovalaLib.vala:75
 #, c-format
 msgid "Failed when copying the file %s to %s"
 msgstr "Incapaz de copiar el fichero %s a %s"
 
-#: src/autovalaLib/autovalaLib.vala:93
+#: src/autovalaLib/autovalaLib.vala:97
 #, c-format
 msgid "Failed when deleting recursively the folder %s"
 msgstr "Ha fallado el borrado recursivo del directorio %s"
 
-#: src/autovalaLib/autovalaLib.vala:101
+#: src/autovalaLib/autovalaLib.vala:105
 #, c-format
 msgid "Failed when deleting the file %s"
 msgstr "Incapaz de borrar el fichero %s"
 
-#: src/autovalaLib/autovalaLib.vala:113
+#: src/autovalaLib/autovalaLib.vala:117
 #, c-format
 msgid "The folder '%s' already exists"
 msgstr "El directorio %s ya existe"
 
-#: src/autovalaLib/autovalaLib.vala:118
+#: src/autovalaLib/autovalaLib.vala:122
 #, c-format
 msgid "Can't create the folder '%s'"
 msgstr "No se ha podido crear el directorio %s"
 
-#: src/autovalaLib/autovalaLib.vala:145
+#: src/autovalaLib/autovalaLib.vala:149
 #, c-format
 msgid "There's already a project in folder %s"
 msgstr "Ya existe un proyecto en el directorio %s"
 
-#: src/autovalaLib/autovalaLib.vala:150
+#: src/autovalaLib/autovalaLib.vala:154
 #, c-format
 msgid "Failed to list path %s"
 msgstr "Incapaz de listar el directorio %s"
 
-#: src/autovalaLib/autovalaLib.vala:157
+#: src/autovalaLib/autovalaLib.vala:161
 msgid "The 'cmake' folder already exists"
 msgstr "El directorio 'cmake' ya existe"
 
-#: src/autovalaLib/autovalaLib.vala:180
+#: src/autovalaLib/autovalaLib.vala:184
 msgid "Can't create the initial source file"
 msgstr "No se ha podido crear el fichero fuente inicial"
 
-#: src/autovalaLib/autovalaLib.vala:223
+#: src/autovalaLib/autovalaLib.vala:227
 #, c-format
 msgid "Folder %s doesn't exists. Autovala is incorrectly installed"
 msgstr "La carpeta %s no existe. Autovala está instalado incorrectamente"
 
-#: src/autovalaLib/autovalaLib.vala:240
+#: src/autovalaLib/autovalaLib.vala:244
 msgid "Failed while generating the main CMakeLists.txt file"
 msgstr "Falló la creación del fichero CMakeLists.txt principal"
 
-#: src/autovalaLib/autovalaLib.vala:292
+#: src/autovalaLib/autovalaLib.vala:296
 msgid "Failed while generating the CMakeLists.txt files"
 msgstr "Falló la creación de los ficheros CMakeLists.txt"
 
-#: src/autovalaLib/autovalaLib.vala:365 src/autovalaLib/autovalaLib.vala:388
+#: src/autovalaLib/autovalaLib.vala:369 src/autovalaLib/autovalaLib.vala:392
 #, c-format
 msgid "Launching command %s"
 msgstr "Lanzando el comando %s"
 
-#: src/autovalaLib/autovalaLib.vala:372
+#: src/autovalaLib/autovalaLib.vala:376
 msgid "Failed to run 'xgettext' to generate the base POT file"
 msgstr "No se ha podido ejecutar 'xgettext' para crear el fichero POT base"
 
-#: src/autovalaLib/autovalaLib.vala:375 src/autovalaLib/autovalaLib.vala:397
+#: src/autovalaLib/autovalaLib.vala:379 src/autovalaLib/autovalaLib.vala:401
 #, c-format
 msgid ""
 "\n"
@@ -159,32 +159,32 @@ msgstr ""
 "Salida del comando: %s\n"
 "Salida de error: %s\n"
 
-#: src/autovalaLib/autovalaLib.vala:395
+#: src/autovalaLib/autovalaLib.vala:399
 msgid "Failed to run msgmerge"
 msgstr "Incapaz de ejecutar msgmerge"
 
-#: src/autovalaLib/autovalaLib.vala:401
+#: src/autovalaLib/autovalaLib.vala:405
 #, c-format
 msgid "Failed to get the files inside %s"
 msgstr "Falló la obtención de los ficheros de dentro de %s"
 
-#: src/autovalaLib/autovalaLib.vala:513
+#: src/autovalaLib/autovalaLib.vala:517
 msgid "The path can't be the project's root path"
 msgstr "La ruta no puede estar en la raíz del proyecto"
 
-#: src/autovalaLib/autovalaLib.vala:515
+#: src/autovalaLib/autovalaLib.vala:519
 msgid "The selected path is outside the project folder"
 msgstr "La ruta escogida está fuera de la carpeta del proyecto"
 
-#: src/autovalaLib/autovalaLib.vala:547
+#: src/autovalaLib/autovalaLib.vala:551
 msgid "Path already in use in other element"
 msgstr "La ruta ya está asignada a otro elemento"
 
-#: src/autovalaLib/autovalaLib.vala:554
+#: src/autovalaLib/autovalaLib.vala:558
 msgid "Name already in use in other executable or library"
 msgstr "Otro ejecutable o biblioteca tiene asignado ese nombre"
 
-#: src/autovalaLib/autovalaLib.vala:561
+#: src/autovalaLib/autovalaLib.vala:565
 msgid "The element doesn't exists"
 msgstr "El elemento no existe "
 
@@ -208,23 +208,23 @@ msgstr "Incapaz de almacenar IF NOT/ELSE en la configuracion"
 msgid "Failed to store TAIL at config"
 msgstr "Incapaz de almacenar TAIL en la configuración"
 
-#: src/autovalaLib/configuration.vala:100
+#: src/autovalaLib/configuration.vala:114
 #, c-format
 msgid "Nested IFs not allowed (line %d)"
 msgstr "No se permiten IFs anidados (linea %d)"
 
-#: src/autovalaLib/configuration.vala:119
+#: src/autovalaLib/configuration.vala:133
 #, c-format
 msgid "Mismatched END (line %d)"
 msgstr "END sin IF (linea %d)"
 
-#: src/autovalaLib/configuration.vala:129
-#: src/autovalaLib/configuration.vala:133
+#: src/autovalaLib/configuration.vala:143
+#: src/autovalaLib/configuration.vala:147
 #, c-format
 msgid "Mismatched ELSE (line %d)"
 msgstr "ELSE sin IF (linea %d)"
 
-#: src/autovalaLib/configuration.vala:269
+#: src/autovalaLib/configuration.vala:283
 #, c-format
 msgid ""
 "Vala version string not valid. It must be in the form N.N or N.N.N (line %d)"
@@ -232,7 +232,7 @@ msgstr ""
 "La cadena de versión de Vala no es válida. Tiene que ser de la forma N.N o N."
 "N.N (línea %d)"
 
-#: src/autovalaLib/configuration.vala:282
+#: src/autovalaLib/configuration.vala:296
 #, c-format
 msgid ""
 "This project needs Vala version %s or greater, but you have version %d.%d. "
@@ -241,53 +241,53 @@ msgstr ""
 "Este proyecto necesita la versión %s o superior de Vala, pero está instalada "
 "la versión %d.%d. No es posible abrirlo."
 
-#: src/autovalaLib/configuration.vala:306
+#: src/autovalaLib/configuration.vala:320
 msgid ""
 "This project was created with a newer version of Autovala. Can't open it."
 msgstr ""
 "Este proyecto se creó con una versión de Autovala más reciente. No es "
 "posible abrirlo."
 
-#: src/autovalaLib/configuration.vala:317
+#: src/autovalaLib/configuration.vala:331
 msgid "Can't open configuration file"
 msgstr "No se ha podido abrir el fichero de configuración"
 
-#: src/autovalaLib/configuration.vala:324
+#: src/autovalaLib/configuration.vala:338
 #, c-format
 msgid "IF without END in line %d"
 msgstr "IF sin END en la línea %d"
 
-#: src/autovalaLib/configuration.vala:333
+#: src/autovalaLib/configuration.vala:347
 #, c-format
 msgid "Conditionals are not supported in this statement (line %d)"
 msgstr "No se admiten condicionales en este comando (linea %d)"
 
-#: src/autovalaLib/configuration.vala:355
+#: src/autovalaLib/configuration.vala:369
 msgid "Can't store the configuration. Project name not defined."
 msgstr ""
 "No se puede guardar la configuración. No se ha especificado un nombre de "
 "proyecto."
 
-#: src/autovalaLib/configuration.vala:360
+#: src/autovalaLib/configuration.vala:374
 msgid "Can't store the configuration. Path not defined."
 msgstr "No se puede guardar la configuración. No se ha definido una ruta."
 
-#: src/autovalaLib/configuration.vala:376
+#: src/autovalaLib/configuration.vala:390
 #, c-format
 msgid "Failed to delete the old config file %s"
 msgstr "No se ha podido borrar el viejo fichero de configuración %s"
 
-#: src/autovalaLib/configuration.vala:380
+#: src/autovalaLib/configuration.vala:394
 #, c-format
 msgid "Storing configuration in file %s"
 msgstr "Almacenando la configuración en el fichero %s"
 
-#: src/autovalaLib/configuration.vala:414
+#: src/autovalaLib/configuration.vala:428
 #, c-format
 msgid "Can't create the config file %s"
 msgstr "No se ha podido crear el fichero de configuración %s"
 
-#: src/autovalaLib/configuration.vala:435
+#: src/autovalaLib/configuration.vala:449
 msgid "Error while storing the data"
 msgstr "Ha fallado el almacenamiento de los datos"
 
@@ -666,19 +666,19 @@ msgstr "Error: %s"
 msgid "Warning: %s"
 msgstr "Aviso: %s"
 
-#: src/autovalaPlugin/actionbuttons.vala:32
+#: src/autovalaPlugin/actionbuttons.vala:35
 msgid "New project"
 msgstr "Nuevo proyecto"
 
-#: src/autovalaPlugin/actionbuttons.vala:34
+#: src/autovalaPlugin/actionbuttons.vala:37
 msgid "Creates a new Autovala project"
 msgstr "Crea un nuevo proyecto de Autovala"
 
-#: src/autovalaPlugin/actionbuttons.vala:39
+#: src/autovalaPlugin/actionbuttons.vala:42
 msgid "Update project"
 msgstr "Actualizar el proyecto"
 
-#: src/autovalaPlugin/actionbuttons.vala:40
+#: src/autovalaPlugin/actionbuttons.vala:43
 msgid "Update translations"
 msgstr "Actualizar las traducciones"
 
@@ -786,6 +786,18 @@ msgstr "Opciones de compilación de Vala:"
 msgid "C compile options:"
 msgstr "Opciones de compilación de C:"
 
+#: data/interface/new_project.ui:7
+msgid "New Autovala project"
+msgstr "Nuevo proyecto de Autovala"
+
+#: data/interface/new_project.ui:69
+msgid "Project name:"
+msgstr "Nombre del proyecto:"
+
+#: data/interface/new_project.ui:105
+msgid "Project folder:"
+msgstr "Carpeta del proyecto:"
+
 #~ msgid "New"
 #~ msgstr "Nuevo"
 
@@ -827,10 +839,6 @@ msgstr "Opciones de compilación de C:"
 #, fuzzy
 #~ msgid "vala_version: "
 #~ msgstr "ConvertError: %s\n"
-
-#, fuzzy
-#~ msgid "project_name: "
-#~ msgstr "Nuevo proyecto"
 
 #, fuzzy
 #~ msgid "autovala_version: "
