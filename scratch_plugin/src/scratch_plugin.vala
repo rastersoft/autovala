@@ -15,15 +15,11 @@ namespace autovalascratch {
 
         public Scratch.Services.Interface plugins;
         
-        private Paned container=null;
         private Box main_container=null;
-		private int current_paned_position;
-		private int current_paned_size;
-		private double desired_paned_percentage;
-		private bool changed_paned_size;
 		private AutovalaPlugin.FileViewer fileViewer;
 		private AutovalaPlugin.ProjectViewer projectViewer;
 		private AutovalaPlugin.ActionButtons actionButtons;
+        private AutovalaPlugin.PanedPercentage container=null;
 
         public Object object { owned get; construct; }
 
@@ -38,10 +34,6 @@ namespace autovalascratch {
             message ("Starting Autovala Plugin");
 			Intl.bindtextdomain(autovalascratchConstants.GETTEXT_PACKAGE, Path.build_filename(autovalascratchConstants.DATADIR,"locale"));
 			this.main_container = null;
-			this.current_paned_position = -1;
-			this.current_paned_size = -1;
-			this.desired_paned_percentage = 0.5;
-			this.changed_paned_size = false;
 		}
 
         public void activate () {
@@ -78,6 +70,7 @@ namespace autovalascratch {
 			}
 			
 			this.main_container = new Gtk.Box(Gtk.Orientation.VERTICAL, 0);
+			this.main_container.spacing = 1;
 			
 			this.fileViewer = new FileViewer();
 			this.fileViewer.clicked_file.connect(this.file_selected);
@@ -99,41 +92,15 @@ namespace autovalascratch {
 			var scroll2 = new Gtk.ScrolledWindow(null,null);
 			scroll2.add(this.fileViewer);
 
-			this.container = new Gtk.Paned(Gtk.Orientation.VERTICAL);
-
-			/*
-			 * This is a trick to ensure that the paned remains with the same relative
-			 * position, no mater if the user resizes the window
-			 */
-			 
-			this.container.size_allocate.connect_after((allocation) => {
-
-				if (this.current_paned_size != allocation.height) {
-					this.current_paned_size = allocation.height;
-					this.changed_paned_size = true;
-				}
-			});
-
-			this.container.draw.connect((cr) => {
-
-				if (changed_paned_size) {
-					this.current_paned_position=(int)(this.current_paned_size*this.desired_paned_percentage);
-					this.container.set_position(this.current_paned_position);
-					this.changed_paned_size = false;
-				} else {
-					if (this.container.position != this.current_paned_position) {
-						this.current_paned_position = this.container.position;
-						this.desired_paned_percentage = ((double)this.current_paned_position)/((double)this.current_paned_size);
-					}
-				}
-				return false;
-			});
+			this.container = new AutovalaPlugin.PanedPercentage(Gtk.Orientation.VERTICAL,0.5);
+			this.container.border_width = 2;
 
 			this.container.add1(scroll1);
 			this.container.add2(scroll2);
 			this.update_state();
 
 			this.main_container.pack_start(this.actionButtons,false,true);
+			this.main_container.pack_start(new Gtk.Separator (Gtk.Orientation.HORIZONTAL),false,true);
 			this.main_container.pack_start(this.container,true,true);
 			this.main_container.show_all();
 

@@ -26,6 +26,7 @@ src/autovalaLib/findVala.vala
 src/autovalaLib/genVapis.vala
 src/autovalaLib/globals.vala
 src/autovalaLib/readPkgconfig.vala
+src/autovalaPlugin/PanedPercentage.vala
 src/autovalaPlugin/actionbuttons.vala
 src/autovalaPlugin/fileview.vala
 src/autovalaPlugin/projectview.vala

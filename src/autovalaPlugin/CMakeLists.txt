@@ -37,6 +37,7 @@ set (VALA_PACKAGES ${VALA_PACKAGES} pangocairo)
 set (VALA_PACKAGES ${VALA_PACKAGES} x11)
 
 set (APP_SOURCES ${APP_SOURCES} ${CMAKE_CURRENT_BINARY_DIR}/Config.vala)
+set (APP_SOURCES ${APP_SOURCES} PanedPercentage.vala)
 set (APP_SOURCES ${APP_SOURCES} actionbuttons.vala)
 set (APP_SOURCES ${APP_SOURCES} fileview.vala)
 set (APP_SOURCES ${APP_SOURCES} projectview.vala)

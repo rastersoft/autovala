@@ -5,9 +5,14 @@ using AutoVala;
 
 namespace AutovalaPlugin {
 
-	public class ActionButtons : Gtk.Toolbar {
+	/**
+	 * Shows the upper action buttons that allows to create a new project,
+	 * update the CMake files, translations, and so on.
+	 */
+	public class ActionButtons : Gtk.Box {
 
-		private Gtk.MenuToolButton new_project;
+		private Gtk.Button new_project;
+		private Gtk.MenuButton expand_menu;
 		private Gtk.Menu popupMenu;
 		private Gtk.MenuItem update_project;
 		private Gtk.MenuItem update_translations;
@@ -30,12 +35,14 @@ namespace AutovalaPlugin {
 		public ActionButtons() {
 
 			this.create_new_project = null;
-			this.toolbar_style = Gtk.ToolbarStyle.BOTH;
+			this.orientation = Gtk.Orientation.HORIZONTAL;
 		
-			this.new_project = new Gtk.MenuToolButton(null,_("New project"));
-			this.new_project.icon_name = "document-new";
+			this.new_project = new Gtk.Button.with_label(_("New project"));
 			this.new_project.tooltip_text =_("Creates a new Autovala project");
-			this.insert(this.new_project,-1);
+			this.pack_start(this.new_project,false,false);
+
+			this.expand_menu = new Gtk.MenuButton();
+			this.pack_start(this.expand_menu,false,false);
 
 			this.popupMenu = new Gtk.Menu();
 
@@ -77,7 +84,7 @@ namespace AutovalaPlugin {
 			this.popupMenu.append(this.update_project);
 			this.popupMenu.append(this.update_translations);
 			this.popupMenu.show_all();
-			this.new_project.set_menu(this.popupMenu);
+			this.expand_menu.set_popup(this.popupMenu);
 			this.show_all();
 		}
 		

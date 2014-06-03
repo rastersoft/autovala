@@ -15,12 +15,8 @@ namespace autovalagedit {
 		private AutovalaPlugin.FileViewer fileViewer;
 		private AutovalaPlugin.ProjectViewer projectViewer;
 		private AutovalaPlugin.ActionButtons actionButtons;
-		private Paned container;
+		private AutovalaPlugin.PanedPercentage container;
 		private Box main_container;
-		private int current_paned_position;
-		private int current_paned_size;
-		private double desired_paned_percentage;
-		private bool changed_paned_size;
 
 		public ValaWindow() {
 			GLib.Object ();
@@ -34,10 +30,6 @@ namespace autovalagedit {
 			Intl.bindtextdomain(autovalageditConstants.GETTEXT_PACKAGE, Path.build_filename(autovalageditConstants.DATADIR,"locale"));
 			this.container = null;
 			this.main_container = null;
-			this.current_paned_position = -1;
-			this.current_paned_size = -1;
-			this.desired_paned_percentage = 0.5;
-			this.changed_paned_size = false;
 		}
 
 		public void activate () {
@@ -48,6 +40,7 @@ namespace autovalagedit {
 			}
 
 			this.main_container = new Gtk.Box(Gtk.Orientation.VERTICAL, 0);
+			this.main_container.spacing = 1;
 
 			this.fileViewer = new FileViewer();
 			this.fileViewer.clicked_file.connect(this.file_selected);
@@ -66,40 +59,13 @@ namespace autovalagedit {
 			var scroll2 = new Gtk.ScrolledWindow(null,null);
 			scroll2.add(this.fileViewer);
 
-			this.container = new Gtk.Paned(Gtk.Orientation.VERTICAL);
-
-			/*
-			 * This is a trick to ensure that the paned remains with the same relative
-			 * position, no mater if the user resizes the window
-			 */
-			 
-			this.container.size_allocate.connect_after((allocation) => {
-
-				if (this.current_paned_size != allocation.height) {
-					this.current_paned_size = allocation.height;
-					this.changed_paned_size = true;
-				}
-			});
-
-			this.container.draw.connect((cr) => {
-
-				if (changed_paned_size) {
-					this.current_paned_position=(int)(this.current_paned_size*this.desired_paned_percentage);
-					this.container.set_position(this.current_paned_position);
-					this.changed_paned_size = false;
-				} else {
-					if (this.container.position != this.current_paned_position) {
-						this.current_paned_position = this.container.position;
-						this.desired_paned_percentage = ((double)this.current_paned_position)/((double)this.current_paned_size);
-					}
-				}
-				return false;
-			});
+			this.container = new AutovalaPlugin.PanedPercentage(Gtk.Orientation.VERTICAL,0.5);
 
 			this.container.add1(scroll1);
 			this.container.add2(scroll2);
 
 			this.main_container.pack_start(this.actionButtons,false,true);
+			this.main_container.pack_start(new Gtk.Separator (Gtk.Orientation.HORIZONTAL),false,true);
 			this.main_container.pack_start(this.container,true,true);
 			
 			// the icon "autovala_plugin_vala" is added inside ProjectViewer
