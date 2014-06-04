@@ -57,7 +57,6 @@ compile_c_options: -O2
 *vala_source: elementInclude.vala
 *vala_source: elementManpage.vala
 *vala_source: elementPixmap.vala
-*vala_source: elementPluginData.vala
 *vala_source: elementPo.vala
 *vala_source: elementScheme.vala
 *vala_source: elementValaBinary.vala

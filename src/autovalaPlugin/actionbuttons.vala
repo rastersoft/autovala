@@ -33,6 +33,18 @@ namespace AutovalaPlugin {
 		public signal void action_update_project();
 		public signal void action_update_gettext();
 
+		/**
+		 * This signal is emited when the output view must be clear
+		 * because a new job is going to be launch
+		 */
+		public signal void output_message_clear();
+		/**
+		 * This signal is emited when there is output from a job
+		 */
+		public signal void output_message_append(string msg);
+		
+		public signal void set_project_status(ProjectStatus status);
+
 		public ActionButtons() {
 
 			this.create_new_project = null;
@@ -68,20 +80,35 @@ namespace AutovalaPlugin {
 			});
 
 			this.update_project.activate.connect( () => {
+			
+				string[] msgs;
+			
+				this.output_message_clear();
 				var retval=this.current_project.refresh(this.current_project_file);
-				this.current_project.showErrors();
+
+				msgs = this.current_project.getErrors();
+				foreach(var msg in msgs) {
+					this.output_message_append(msg+"\n");
+				}
 				if (!retval) {
 					retval=this.current_project.cmake(this.current_project_file);
-					this.current_project.showErrors();
+					msgs = this.current_project.getErrors();
+					foreach(var msg in msgs) {
+						this.output_message_append(msg+"\n");
+					}
 				}
 				this.action_update_project();
 			});
 
 			this.update_translations.activate.connect( () => {
 				this.current_project.gettext(this.current_project_file);
-				this.current_project.showErrors();
+				var msgs = this.current_project.getErrors();
+				foreach(var msg in msgs) {
+					this.output_message_append(msg+"\n");
+				}
 				this.action_update_gettext();
 			});
+
 			this.popupMenu.append(this.update_project);
 			this.popupMenu.append(this.update_translations);
 			this.popupMenu.show_all();

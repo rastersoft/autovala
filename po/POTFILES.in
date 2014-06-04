@@ -19,7 +19,6 @@ src/autovalaLib/elementIgnore.vala
 src/autovalaLib/elementInclude.vala
 src/autovalaLib/elementManpage.vala
 src/autovalaLib/elementPixmap.vala
-src/autovalaLib/elementPluginData.vala
 src/autovalaLib/elementPo.vala
 src/autovalaLib/elementScheme.vala
 src/autovalaLib/elementValaBinary.vala

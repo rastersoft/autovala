@@ -30,6 +30,10 @@ namespace AutovalaPlugin {
 		private ProjectProperties properties;
 		private ProjectStatus projectStatus;
 
+		private FileViewer? fileViewer;
+		private ActionButtons? actionButtons;
+		private OutputView? outputView;
+
 		/**
 		 * This signal is emited when the user clicks on a file
 		 * @param path The full path to the file clicked by the user
@@ -54,6 +58,9 @@ namespace AutovalaPlugin {
 			this.current_file = null;
 			this.popupMenu = null;
 			this.orientation = Gtk.Orientation.VERTICAL;
+			this.fileViewer = null;
+			this.actionButtons = null;
+			this.outputView = null;
 
 			try {
 				Gdk.Pixbuf pixbuf;
@@ -108,29 +115,82 @@ namespace AutovalaPlugin {
 		 * a ProjectViewer to know when a file has been added or removed in the project's folder,
 		 * and to allow the FileViewer to change its root folder when the current project changes.
 		 * @param fileViewer The FileViewer widget to link to this ProjectViewer
+		 * @return true if all went fine; false if there was a FileViewer object already registered
 		 */
-		public void link_file_view(FileViewer fileViewer) {
-		
-			fileViewer.changed_file.connect( () => {
+		public bool link_file_view(FileViewer fileViewer) {
+
+			if (this.fileViewer != null) {
+				return false;
+			}
+			
+			this.fileViewer = fileViewer;
+			this.fileViewer.changed_file.connect( () => {
 				this.refresh_project(true);
 			});
 			this.changed_base_folder.connect( (path, project_file) => {
-				fileViewer.set_base_folder(path);
+				this.fileViewer.set_base_folder(path);
 			});
+
+			return true;
 		}
 
 		/**
 		 * Links the signals and callbacks of this ProjectViewer and an ActionButtons, to allow
 		 * a ProjectViewer to know when the user asked to create a new project, update the current one...
 		 * and to allow the ActionButtons to change its status
-		 * @param fileViewer The FileViewer widget to link to this ProjectViewer
+		 * @param actionButtons The ActionButtons widget to link to this ProjectViewer
+		 * @return true if all went fine; false if there was an ActionButtons object already registered
 		 */
-		public void link_action_buttons(ActionButtons actionButtons) {
-		
-			actionButtons.set_current_project(this.current_project);
+		public bool link_action_buttons(ActionButtons actionButtons) {
+
+			if(this.actionButtons != null) {
+				return false;
+			}
+
+			this.actionButtons = actionButtons;
+			this.actionButtons.set_current_project(this.current_project);
 			this.changed_base_folder.connect( (path, project_file) => {
-				actionButtons.set_current_project_file(project_file);
+				this.actionButtons.set_current_project_file(project_file);
 			});
+			if (this.outputView != null) {
+				this.link_output_view_internal();
+			}
+			return true;
+		}
+
+		/**
+		 * Links the signals and callbacks of this ProjectViewer and an OutputView, to allow
+		 * the OutputView to receive the texts from running a command
+		 * @param outputView The OutputView widget to link to this ProjectViewer
+		 * @return true if all went fine; false if there was an OutputView object already registered
+		 */
+		public bool link_output_view(OutputView outputView) {
+
+			if(this.outputView != null) {
+				return false;
+			}
+
+			this.outputView = outputView;
+			if (this.actionButtons != null) {
+				this.link_output_view_internal();
+			}
+			return true;
+		}
+
+		/**
+		 * When there is both an OutputView and an ActionButtons, this method
+		 * links both to make the messages from the later be shown in the former
+		 */
+		private void link_output_view_internal() {
+
+			this.actionButtons.output_message_clear.connect( () => {
+				this.outputView.clear_buffer();
+			});
+
+			this.actionButtons.output_message_append.connect( (msg) => {
+				this.outputView.append_text(msg);
+			});
+
 		}
 
 		/**

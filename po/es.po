@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-06-01 23:59+0200\n"
+"POT-Creation-Date: 2014-06-05 00:21+0200\n"
 "PO-Revision-Date: 2014-06-02 00:00+0200\n"
 "Last-Translator: Sergio Costas <rastersoft@gmail.com>\n"
 "Language-Team: Español; Castellano <>\n"
@@ -666,91 +666,91 @@ msgstr "Error: %s"
 msgid "Warning: %s"
 msgstr "Aviso: %s"
 
-#: src/autovalaPlugin/actionbuttons.vala:35
+#: src/autovalaPlugin/actionbuttons.vala:53
 msgid "New project"
 msgstr "Nuevo proyecto"
 
-#: src/autovalaPlugin/actionbuttons.vala:37
+#: src/autovalaPlugin/actionbuttons.vala:54
 msgid "Creates a new Autovala project"
 msgstr "Crea un nuevo proyecto de Autovala"
 
-#: src/autovalaPlugin/actionbuttons.vala:42
+#: src/autovalaPlugin/actionbuttons.vala:62
 msgid "Update project"
 msgstr "Actualizar el proyecto"
 
-#: src/autovalaPlugin/actionbuttons.vala:43
+#: src/autovalaPlugin/actionbuttons.vala:63
 msgid "Update translations"
 msgstr "Actualizar las traducciones"
 
-#: src/autovalaPlugin/fileview.vala:430
-#: src/autovalaPlugin/projectview.vala:492
+#: src/autovalaPlugin/fileview.vala:428
+#: src/autovalaPlugin/projectview.vala:555
 msgid "Open"
 msgstr "Abrir"
 
-#: src/autovalaPlugin/fileview.vala:431
+#: src/autovalaPlugin/fileview.vala:429
 msgid "Don't show hiden files"
 msgstr "No mostrar ficheros ocultos"
 
-#: src/autovalaPlugin/fileview.vala:431
+#: src/autovalaPlugin/fileview.vala:429
 msgid "Show hiden files"
 msgstr "Mostrar ficheros ocultos"
 
-#: src/autovalaPlugin/fileview.vala:432
+#: src/autovalaPlugin/fileview.vala:430
 msgid "Rename"
 msgstr "Renombrar"
 
-#: src/autovalaPlugin/fileview.vala:433
+#: src/autovalaPlugin/fileview.vala:431
 msgid "Delete"
 msgstr "Borrar"
 
-#: src/autovalaPlugin/fileview.vala:434
+#: src/autovalaPlugin/fileview.vala:432
 msgid "Create file"
 msgstr "Crear fichero"
 
-#: src/autovalaPlugin/fileview.vala:435
+#: src/autovalaPlugin/fileview.vala:433
 msgid "Create folder"
 msgstr "Crear directorio"
 
-#: src/autovalaPlugin/fileview.vala:469
+#: src/autovalaPlugin/fileview.vala:467
 msgid "Untitled file"
 msgstr "Fichero sin título"
 
-#: src/autovalaPlugin/fileview.vala:483
+#: src/autovalaPlugin/fileview.vala:481
 msgid "Untitled folder"
 msgstr "Directorio sin título"
 
-#: src/autovalaPlugin/projectview.vala:404
+#: src/autovalaPlugin/projectview.vala:467
 #, c-format
 msgid "%s <b>(Project file)</b>"
 msgstr "%s <b>(Fichero de proyecto)</b>"
 
-#: src/autovalaPlugin/projectview.vala:416
+#: src/autovalaPlugin/projectview.vala:479
 #, c-format
 msgid "%s <b>(executable)</b>"
 msgstr "%s <b>(ejecutable)</b>"
 
-#: src/autovalaPlugin/projectview.vala:423
+#: src/autovalaPlugin/projectview.vala:486
 #, c-format
 msgid "%s <b>(library)</b>"
 msgstr "%s <b>(biblioteca)</b>"
 
-#: src/autovalaPlugin/projectview.vala:493
+#: src/autovalaPlugin/projectview.vala:556
 msgid "New executable/library"
 msgstr "Nuevo ejecutable/biblioteca"
 
-#: src/autovalaPlugin/projectview.vala:494
+#: src/autovalaPlugin/projectview.vala:557
 msgid "Edit library properties"
 msgstr "Editar propiedades de la biblioteca"
 
-#: src/autovalaPlugin/projectview.vala:494
+#: src/autovalaPlugin/projectview.vala:557
 msgid "Edit executable properties"
 msgstr "Editar propiedades del ejecutable"
 
-#: src/autovalaPlugin/projectview.vala:495
+#: src/autovalaPlugin/projectview.vala:558
 msgid "Remove library"
 msgstr "Borrar biblioteca"
 
-#: src/autovalaPlugin/projectview.vala:495
+#: src/autovalaPlugin/projectview.vala:558
 msgid "Remove executable"
 msgstr "Borrar ejecutable"
 
@@ -797,6 +797,26 @@ msgstr "Nombre del proyecto:"
 #: data/interface/new_project.ui:105
 msgid "Project folder:"
 msgstr "Carpeta del proyecto:"
+
+#: data/interface/project_properties.ui:78
+msgid "default install path"
+msgstr ""
+
+#: data/interface/project_properties.ui:95
+msgid "install at $HOME/.local"
+msgstr ""
+
+#: data/interface/project_properties.ui:113
+msgid "manually set to:"
+msgstr ""
+
+#: data/interface/project_properties.ui:149
+msgid "Install path (-DCMAKE_INSTALL_PATH)"
+msgstr ""
+
+#: data/interface/project_properties.ui:167
+msgid "CMake extra parameters: "
+msgstr ""
 
 #~ msgid "New"
 #~ msgstr "Nuevo"

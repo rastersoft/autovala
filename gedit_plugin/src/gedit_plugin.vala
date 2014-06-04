@@ -16,6 +16,7 @@ namespace autovalagedit {
 		private AutovalaPlugin.ProjectViewer projectViewer;
 		private AutovalaPlugin.ActionButtons actionButtons;
 		private AutovalaPlugin.PanedPercentage container;
+		private AutovalaPlugin.OutputView outputView;
 		private Box main_container;
 
 		public ValaWindow() {
@@ -51,8 +52,11 @@ namespace autovalagedit {
 			this.actionButtons = new ActionButtons();
 			this.actionButtons.open_file.connect(this.file_selected);
 
+			this.outputView = new AutovalaPlugin.OutputView();
+
 			this.projectViewer.link_file_view(this.fileViewer);
 			this.projectViewer.link_action_buttons(this.actionButtons);
+			this.projectViewer.link_output_view(this.outputView);
 
 			var scroll1 = new Gtk.ScrolledWindow(null,null);
 			scroll1.add(this.projectViewer);
@@ -73,9 +77,15 @@ namespace autovalagedit {
 #if OLD_GEDIT
 			Gedit.Panel panel = (Gedit.Panel)this.window.get_side_panel();
 			panel.add_item(this.main_container, "Autovala", "Autovala", icon);
+
+			Gedit.Panel bpanel = (Gedit.Panel)this.window.get_bottom_panel();
+			bpanel.add_item(this.outputView, "Autovala", "Autovala", null);
 #else
 			Gtk.Stack panel = (Gtk.Stack)this.window.get_side_panel();
 			panel.add_titled(this.main_container, "Autovala", "Autovala");
+
+			Gtk.Stack bpanel = (Gtk.Stack)this.window.get_bottom_panel();
+			bpanel.add_titled(this.outputView, "Autovala", "Autovala");
 #endif
 			this.update_state();
 			this.main_container.show_all();
@@ -90,8 +100,11 @@ namespace autovalagedit {
 #if OLD_GEDIT
 			Gedit.Panel panel = (Gedit.Panel)this.window.get_side_panel();
 			panel.remove_item(this.main_container);
+			Gedit.Panel bpanel = (Gedit.Panel)this.window.get_bottom_panel();
+			bpanel.remove_item(this.outputView);
 #else
 			this.main_container.unparent();
+			this.outputView.unparent();
 #endif
 			this.main_container = null;
 			this.container = null;
