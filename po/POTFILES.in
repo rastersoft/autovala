@@ -19,6 +19,7 @@ src/autovalaLib/elementIgnore.vala
 src/autovalaLib/elementInclude.vala
 src/autovalaLib/elementManpage.vala
 src/autovalaLib/elementPixmap.vala
+src/autovalaLib/elementPluginData.vala
 src/autovalaLib/elementPo.vala
 src/autovalaLib/elementScheme.vala
 src/autovalaLib/elementValaBinary.vala
@@ -29,6 +30,8 @@ src/autovalaLib/readPkgconfig.vala
 src/autovalaPlugin/PanedPercentage.vala
 src/autovalaPlugin/actionbuttons.vala
 src/autovalaPlugin/fileview.vala
+src/autovalaPlugin/outputview.vala
 src/autovalaPlugin/projectview.vala
 data/interface/binary_properties.ui
 data/interface/new_project.ui
+data/interface/project_properties.ui

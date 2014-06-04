@@ -7,7 +7,7 @@ custom: data/cmake share/autovala/cmake
 
 
 vala_binary: src/autovala
-*version: 0.98.0
+*version: 0.99.0
 if DEBUG
 compile_options: -g --fatal-warnings
 end
@@ -21,7 +21,7 @@ vala_check_package: gio-2.0
 
 
 vala_library: src/autovalaLib/autovalaLib
-*version: 0.98
+*version: 0.99
 *namespace: AutoVala
 if DEBUG
 compile_options: -g --fatal-warnings
@@ -57,6 +57,7 @@ compile_c_options: -O2
 *vala_source: elementInclude.vala
 *vala_source: elementManpage.vala
 *vala_source: elementPixmap.vala
+*vala_source: elementPluginData.vala
 *vala_source: elementPo.vala
 *vala_source: elementScheme.vala
 *vala_source: elementValaBinary.vala
@@ -66,7 +67,7 @@ compile_c_options: -O2
 *vala_source: readPkgconfig.vala
 
 vala_library: src/autovalaPlugin/autovalaPlugin
-*version: 0.98
+*version: 0.99
 *namespace: AutovalaPlugin
 vala_local_package: AutoVala
 *vala_check_package: atk
@@ -84,6 +85,7 @@ vala_local_package: AutoVala
 *vala_source: PanedPercentage.vala
 *vala_source: actionbuttons.vala
 *vala_source: fileview.vala
+*vala_source: outputview.vala
 *vala_source: projectview.vala
 
 *po: po
@@ -94,6 +96,7 @@ vala_local_package: AutoVala
 
 *glade: data/interface/binary_properties.ui
 *glade: data/interface/new_project.ui
+*glade: data/interface/project_properties.ui
 
 *pixmap: data/pixmaps/application.svg
 *pixmap: data/pixmaps/c.svg

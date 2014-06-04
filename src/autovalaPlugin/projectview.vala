@@ -3,17 +3,19 @@ using Gdk;
 using Gee;
 using AutoVala;
 
-// project version=0.98
+// project version=0.99
 
 namespace AutovalaPlugin {
 
 	public enum ProjectEntryTypes { OTHER, VALA_SOURCE_FILE, VAPI_FILE, C_SOURCE_FILE, C_HEADER_FILE, LIBRARY, EXECUTABLE, PROJECT_FILE }
+	public enum ProjectStatus { NOT_SET, OK, WARNING, ERROR}
 
 	/**
 	 * This is a GTK3 widget that allows to manage an Autovala project
 	 * It is useful to create plugins for GTK3-based editors
 	 * The first plugins are for GEdit and Scratch
-	 * It is complemented with the FileViewer and MenuItem widgets
+	 * This is the main widget. The other widgets (FileViewer, ActionButtons and
+	 *  OutputView widgets) are optional and complements this one.
 	 */
 	public class ProjectViewer : Gtk.Box {
 
@@ -26,6 +28,7 @@ namespace AutovalaPlugin {
 		private AutoVala.ManageProject current_project;
 		private ProjectViewerMenu popupMenu;
 		private ProjectProperties properties;
+		private ProjectStatus projectStatus;
 
 		/**
 		 * This signal is emited when the user clicks on a file

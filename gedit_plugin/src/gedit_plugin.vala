@@ -47,7 +47,7 @@ namespace autovalagedit {
 
 			this.projectViewer = new ProjectViewer();
 			this.projectViewer.clicked_file.connect(this.file_selected);
-
+			
 			this.actionButtons = new ActionButtons();
 			this.actionButtons.open_file.connect(this.file_selected);
 

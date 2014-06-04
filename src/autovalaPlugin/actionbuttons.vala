@@ -8,6 +8,7 @@ namespace AutovalaPlugin {
 	/**
 	 * Shows the upper action buttons that allows to create a new project,
 	 * update the CMake files, translations, and so on.
+	 * This widget needs a ProjectView widget in order to work.
 	 */
 	public class ActionButtons : Gtk.Box {
 
