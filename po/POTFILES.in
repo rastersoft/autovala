@@ -33,4 +33,3 @@ src/autovalaPlugin/outputview.vala
 src/autovalaPlugin/projectview.vala
 data/interface/binary_properties.ui
 data/interface/new_project.ui
-data/interface/project_properties.ui

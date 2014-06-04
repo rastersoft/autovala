@@ -95,7 +95,6 @@ vala_local_package: AutoVala
 
 *glade: data/interface/binary_properties.ui
 *glade: data/interface/new_project.ui
-*glade: data/interface/project_properties.ui
 
 *pixmap: data/pixmaps/application.svg
 *pixmap: data/pixmaps/c.svg
