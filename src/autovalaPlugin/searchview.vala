@@ -18,6 +18,7 @@ namespace AutovalaPlugin {
 		private Gtk.CellRendererText renderer;
 		private Gtk.Entry entry;
 		private Gtk.Button searchButton;
+		private Gtk.CheckButton caseSensitive;
 		
 		private string? current_project_file;
 		private Gee.List<path_element> path_list;
@@ -35,10 +36,12 @@ namespace AutovalaPlugin {
 			var label = new Gtk.Label(_("Global search:"));
 			this.entry = new Gtk.Entry();
 			this.searchButton = new Gtk.Button.with_label(_("Search"));
+			this.caseSensitive = new Gtk.CheckButton.with_label(_("Case sensitive"));
 			this.searchButton.clicked.connect(this.do_search);
 			this.entry.activate.connect(this.do_search);
 			content.pack_start(label,false,true);
 			content.pack_start(this.entry,true,true);
+			content.pack_start(this.caseSensitive,false,true);
 			content.pack_start(this.searchButton,false,true);
 
 			this.treeView = new Gtk.TreeView();
@@ -118,11 +121,22 @@ namespace AutovalaPlugin {
 			TreeIter? elementIter = null;
 			TreeIter? elementBaseIter = null;
 
+			if (this.current_project_file == null) {
+				return;
+			}
+
 			this.treeModel.clear();
 			string search_line = this.entry.text;
 			bool put_filename;
 			int line_count;
 			int occurrences;
+			
+			bool case_sensitive;
+			
+			case_sensitive = this.caseSensitive.active;
+			if(!case_sensitive) {
+				search_line = search_line.casefold();
+			}
 
 			foreach(var file_element in this.path_list) {
 				put_filename = false;
@@ -136,6 +150,9 @@ namespace AutovalaPlugin {
 					line_count = 0;
 					occurrences = 0;
 					while ((line = dis.read_line (null)) != null) {
+						if(!case_sensitive) {
+							line = line.casefold();
+						}
 						if (line.contains(search_line)) {
 							occurrences++;
 							if (!put_filename) {
