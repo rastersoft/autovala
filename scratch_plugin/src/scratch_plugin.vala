@@ -20,6 +20,8 @@ namespace autovalascratch {
 		private AutovalaPlugin.ProjectViewer projectViewer;
 		private AutovalaPlugin.ActionButtons actionButtons;
         private AutovalaPlugin.PanedPercentage container=null;
+        private AutovalaPlugin.OutputView outputView;
+		private AutovalaPlugin.SearchView searchView;
 
         public Object object { owned get; construct; }
 
@@ -34,12 +36,15 @@ namespace autovalascratch {
             message ("Starting Autovala Plugin");
 			Intl.bindtextdomain(autovalascratchConstants.GETTEXT_PACKAGE, Path.build_filename(autovalascratchConstants.DATADIR,"locale"));
 			this.main_container = null;
+			this.outputView = null;
+			this.projectViewer = null;
 		}
 
         public void activate () {
             plugins = (Scratch.Services.Interface) object;
             plugins.hook_notebook_sidebar.connect (on_hook_sidebar);
             plugins.hook_document.connect (on_hook_document);
+            plugins.hook_notebook_bottom.connect (on_hook_bottombar);
         }
 
         public void deactivate () {
@@ -64,6 +69,23 @@ namespace autovalascratch {
 			this.projectViewer.set_current_file(current_file);
         }
 
+		void on_hook_bottombar (Gtk.Notebook notebook) {
+			if (this.outputView != null) {
+				return;
+			}
+			this.outputView = new AutovalaPlugin.OutputView();
+			
+			this.searchView = new AutovalaPlugin.SearchView();
+			this.searchView.open_file.connect(this.file_line_selected);
+			
+			if(this.projectViewer != null) {
+				this.projectViewer.link_output_view(this.outputView);
+				this.projectViewer.link_search_view(this.searchView);
+			}
+			notebook.append_page (this.outputView, new Gtk.Label (_("Autovala output")));
+			notebook.append_page (this.searchView, new Gtk.Label (_("Autovala search")));
+		}
+
         void on_hook_sidebar (Gtk.Notebook notebook) {
 			if (this.main_container != null) {
 				return;
@@ -84,8 +106,13 @@ namespace autovalascratch {
 			this.projectViewer.link_file_view(this.fileViewer);
 			this.projectViewer.link_action_buttons(this.actionButtons);
 
+			if (this.outputView != null) {
+				this.projectViewer.link_output_view(this.outputView);
+				this.projectViewer.link_search_view(this.searchView);
+			}
+
 			this.fileViewer.set_current_file(null);
-			this.projectViewer.set_current_file(null);
+			this.projectViewer.set_current_file(null);			
 
 			var scroll1 = new Gtk.ScrolledWindow(null,null);
 			scroll1.add(this.projectViewer);
@@ -113,6 +140,17 @@ namespace autovalascratch {
 		 * @param filepath The file (with full path) clicked by the user
 		 */
 		public void file_selected(string filepath) {
+			var file = GLib.File.new_for_path (filepath);
+            plugins.open_file (file);
+		}
+
+		/**
+		 * This callback is called whenever the user clicks on a file in the
+		 * global search panel
+		 * @param filepath The file (with full path) clicked by the user
+		 * @param line The line to which move the cursor
+		 */
+		public void file_selected(string filepath, int line) {
 			var file = GLib.File.new_for_path (filepath);
             plugins.open_file (file);
 		}
