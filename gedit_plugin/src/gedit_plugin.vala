@@ -84,14 +84,14 @@ namespace autovalagedit {
 			panel.add_item(this.main_container, "Autovala", "Autovala", icon);
 
 			Gedit.Panel bpanel = (Gedit.Panel)this.window.get_bottom_panel();
-			bpanel.add_item(this.outputView, "Autovala", "Autovala", null);
+			bpanel.add_item(this.outputView, _("Autovala output"), _("Autovala output"), null);
 			bpanel.add_item(this.searchView, _("Autovala search"), _("Autovala search"), null);
 #else
 			Gtk.Stack panel = (Gtk.Stack)this.window.get_side_panel();
 			panel.add_titled(this.main_container, "Autovala", "Autovala");
 
 			Gtk.Stack bpanel = (Gtk.Stack)this.window.get_bottom_panel();
-			bpanel.add_titled(this.outputView, "Autovala", "Autovala");
+			bpanel.add_titled(this.outputView, _("Autovala output"), _("Autovala output"));
 			bpanel.add_titled(this.searchView, _("Autovala search"), _("Autovala search"));
 #endif
 			this.update_state();

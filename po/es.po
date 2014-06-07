@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-06-05 00:21+0200\n"
-"PO-Revision-Date: 2014-06-02 00:00+0200\n"
+"POT-Creation-Date: 2014-06-07 23:38+0200\n"
+"PO-Revision-Date: 2014-06-07 23:41+0200\n"
 "Last-Translator: Sergio Costas <rastersoft@gmail.com>\n"
 "Language-Team: Español; Castellano <>\n"
 "Language: en_US\n"
@@ -683,7 +683,7 @@ msgid "Update translations"
 msgstr "Actualizar las traducciones"
 
 #: src/autovalaPlugin/fileview.vala:428
-#: src/autovalaPlugin/projectview.vala:555
+#: src/autovalaPlugin/projectview.vala:594
 msgid "Open"
 msgstr "Abrir"
 
@@ -719,40 +719,63 @@ msgstr "Fichero sin título"
 msgid "Untitled folder"
 msgstr "Directorio sin título"
 
-#: src/autovalaPlugin/projectview.vala:467
+#: src/autovalaPlugin/projectview.vala:506
 #, c-format
 msgid "%s <b>(Project file)</b>"
 msgstr "%s <b>(Fichero de proyecto)</b>"
 
-#: src/autovalaPlugin/projectview.vala:479
+#: src/autovalaPlugin/projectview.vala:518
 #, c-format
 msgid "%s <b>(executable)</b>"
 msgstr "%s <b>(ejecutable)</b>"
 
-#: src/autovalaPlugin/projectview.vala:486
+#: src/autovalaPlugin/projectview.vala:525
 #, c-format
 msgid "%s <b>(library)</b>"
 msgstr "%s <b>(biblioteca)</b>"
 
-#: src/autovalaPlugin/projectview.vala:556
+#: src/autovalaPlugin/projectview.vala:595
 msgid "New executable/library"
 msgstr "Nuevo ejecutable/biblioteca"
 
-#: src/autovalaPlugin/projectview.vala:557
+#: src/autovalaPlugin/projectview.vala:596
 msgid "Edit library properties"
 msgstr "Editar propiedades de la biblioteca"
 
-#: src/autovalaPlugin/projectview.vala:557
+#: src/autovalaPlugin/projectview.vala:596
 msgid "Edit executable properties"
 msgstr "Editar propiedades del ejecutable"
 
-#: src/autovalaPlugin/projectview.vala:558
+#: src/autovalaPlugin/projectview.vala:597
 msgid "Remove library"
 msgstr "Borrar biblioteca"
 
-#: src/autovalaPlugin/projectview.vala:558
+#: src/autovalaPlugin/projectview.vala:597
 msgid "Remove executable"
 msgstr "Borrar ejecutable"
+
+#: src/autovalaPlugin/searchview.vala:36
+msgid "Global search:"
+msgstr "Búsqueda global:"
+
+#: src/autovalaPlugin/searchview.vala:38
+msgid "Search"
+msgstr "Buscar"
+
+#: src/autovalaPlugin/searchview.vala:39
+msgid "Case sensitive"
+msgstr "Coincidir con capitalización"
+
+#: src/autovalaPlugin/searchview.vala:163
+#, c-format
+msgid "Found element at line %d"
+msgstr "Encontrado elemento en la línea %d"
+
+#: src/autovalaPlugin/searchview.vala:168
+#, c-format
+msgid "Search result for file %s: found %d occurrences"
+msgstr ""
+"Resultados de la búsqueda para el fichero %s: encontradas % ocurrencias"
 
 #: data/interface/binary_properties.ui:7
 msgid "Binary properties"
@@ -797,26 +820,6 @@ msgstr "Nombre del proyecto:"
 #: data/interface/new_project.ui:105
 msgid "Project folder:"
 msgstr "Carpeta del proyecto:"
-
-#: data/interface/project_properties.ui:78
-msgid "default install path"
-msgstr ""
-
-#: data/interface/project_properties.ui:95
-msgid "install at $HOME/.local"
-msgstr ""
-
-#: data/interface/project_properties.ui:113
-msgid "manually set to:"
-msgstr ""
-
-#: data/interface/project_properties.ui:149
-msgid "Install path (-DCMAKE_INSTALL_PATH)"
-msgstr ""
-
-#: data/interface/project_properties.ui:167
-msgid "CMake extra parameters: "
-msgstr ""
 
 #~ msgid "New"
 #~ msgstr "Nuevo"

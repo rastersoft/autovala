@@ -2,24 +2,33 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# Sergio Costas <rastersoft@gmail.com>, 2014.
 #
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-05-31 23:37+0200\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
+"POT-Creation-Date: 2014-06-07 23:38+0200\n"
+"PO-Revision-Date: 2014-06-07 23:40+0200\n"
+"Last-Translator: Sergio Costas <rastersoft@gmail.com>\n"
+"Language-Team: Español; Castellano <>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Gtranslator 2.91.6\n"
 
-#: src/gedit_plugin.vala:57
-msgid "Project actions"
-msgstr "Acciones del proyecto"
+#: src/gedit_plugin.vala:87 src/gedit_plugin.vala:94
+msgid "Autovala output"
+msgstr "Salida de Autovala"
+
+#: src/gedit_plugin.vala:88 src/gedit_plugin.vala:95
+msgid "Autovala search"
+msgstr "Búsqueda de Autovala"
+
+#~ msgid "Project actions"
+#~ msgstr "Acciones del proyecto"
 
 #~ msgid "Open"
 #~ msgstr "Abrir"
