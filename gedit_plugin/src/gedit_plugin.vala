@@ -17,6 +17,7 @@ namespace autovalagedit {
 		private AutovalaPlugin.ActionButtons actionButtons;
 		private AutovalaPlugin.PanedPercentage container;
 		private AutovalaPlugin.OutputView outputView;
+		private AutovalaPlugin.SearchView searchView;
 		private Box main_container;
 
 		public ValaWindow() {
@@ -53,10 +54,14 @@ namespace autovalagedit {
 			this.actionButtons.open_file.connect(this.file_selected);
 
 			this.outputView = new AutovalaPlugin.OutputView();
+			
+			this.searchView = new AutovalaPlugin.SearchView();
+			this.searchView.open_file.connect(this.file_line_selected);
 
 			this.projectViewer.link_file_view(this.fileViewer);
 			this.projectViewer.link_action_buttons(this.actionButtons);
 			this.projectViewer.link_output_view(this.outputView);
+			this.projectViewer.link_search_view(this.searchView);
 
 			var scroll1 = new Gtk.ScrolledWindow(null,null);
 			scroll1.add(this.projectViewer);
@@ -80,12 +85,14 @@ namespace autovalagedit {
 
 			Gedit.Panel bpanel = (Gedit.Panel)this.window.get_bottom_panel();
 			bpanel.add_item(this.outputView, "Autovala", "Autovala", null);
+			bpanel.add_item(this.searchView, _("Autovala search"), _("Autovala search"), null);
 #else
 			Gtk.Stack panel = (Gtk.Stack)this.window.get_side_panel();
 			panel.add_titled(this.main_container, "Autovala", "Autovala");
 
 			Gtk.Stack bpanel = (Gtk.Stack)this.window.get_bottom_panel();
 			bpanel.add_titled(this.outputView, "Autovala", "Autovala");
+			bpanel.add_titled(this.searchView, _("Autovala search"), _("Autovala search"));
 #endif
 			this.update_state();
 			this.main_container.show_all();
@@ -136,6 +143,20 @@ namespace autovalagedit {
 		 * @param filepath The file (with full path) clicked by the user
 		 */
 		public void file_selected(string filepath) {
+			this.goto_file_line(filepath,0);
+		}
+
+		/**
+		 * This callback is called whenever the user clicks on a file in the search
+		 * @param filepath The file (with full path) clicked by the user
+		 * @param line The line to which the cursor must be moved
+		 */
+		public void file_line_selected(string filepath, int line) {
+			this.goto_file_line(filepath,line);
+	
+		}
+
+		private void goto_file_line(string filepath, int line) {
 
 			var file = File.new_for_path(filepath);
 			if (file==null) {
@@ -143,11 +164,18 @@ namespace autovalagedit {
 			}
 			var tab = this.window.get_tab_from_location(file);
 			if (tab == null) {
-				this.window.create_tab_from_location(file, null, 0,0,false,true);
+				this.window.create_tab_from_location(file, null, line+1,0,false,true);
 			} else {
 				this.window.set_active_tab(tab);
 			}
+			if (tab != null) {
+				var document = tab.get_document();
+				document.goto_line(line);
+				var view = tab.get_view();
+				view.scroll_to_cursor();
+			}
 		}
+
 	}
 }
 

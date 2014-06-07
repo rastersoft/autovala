@@ -31,5 +31,6 @@ src/autovalaPlugin/actionbuttons.vala
 src/autovalaPlugin/fileview.vala
 src/autovalaPlugin/outputview.vala
 src/autovalaPlugin/projectview.vala
+src/autovalaPlugin/searchview.vala
 data/interface/binary_properties.ui
 data/interface/new_project.ui

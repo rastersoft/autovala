@@ -42,6 +42,7 @@ set (APP_SOURCES ${APP_SOURCES} actionbuttons.vala)
 set (APP_SOURCES ${APP_SOURCES} fileview.vala)
 set (APP_SOURCES ${APP_SOURCES} outputview.vala)
 set (APP_SOURCES ${APP_SOURCES} projectview.vala)
+set (APP_SOURCES ${APP_SOURCES} searchview.vala)
 
 set (CUSTOM_VAPIS_LIST ${CUSTOM_VAPIS_LIST} ${CMAKE_BINARY_DIR}/src/autovalaLib/AutoVala.vapi)
 

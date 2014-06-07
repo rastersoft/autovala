@@ -86,6 +86,7 @@ vala_local_package: AutoVala
 *vala_source: fileview.vala
 *vala_source: outputview.vala
 *vala_source: projectview.vala
+*vala_source: searchview.vala
 
 *po: po
 

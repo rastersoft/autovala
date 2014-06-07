@@ -33,6 +33,7 @@ namespace AutovalaPlugin {
 		private FileViewer? fileViewer;
 		private ActionButtons? actionButtons;
 		private OutputView? outputView;
+		private SearchView? searchView;
 
 		/**
 		 * This signal is emited when the user clicks on a file
@@ -61,6 +62,7 @@ namespace AutovalaPlugin {
 			this.fileViewer = null;
 			this.actionButtons = null;
 			this.outputView = null;
+			this.searchView = null;
 
 			try {
 				Gdk.Pixbuf pixbuf;
@@ -194,6 +196,25 @@ namespace AutovalaPlugin {
 		}
 
 		/**
+		 * Links the signals and callbacks of this ProjectViewer and a SearchView
+		 * @param searchView The SearchView widget to link to this ProjectViewer
+		 * @return true if all went fine; false if there was a SearchView object already registered
+		 */
+		 
+		 public bool link_search_view(SearchView searchView) {
+
+		 	if(this.searchView != null) {
+				return false;
+			}
+
+			this.searchView = searchView;
+			this.changed_base_folder.connect( (path, project_file) => {
+				this.searchView.set_current_project_file(project_file);
+			});
+			return true;
+		 }
+
+		/**
 		 * Click event callback, to detect when the user clicks with the right button
 		 * @param event The mouse event
 		 * @return true to stop processing the event; false to continue processing the event.
@@ -317,11 +338,17 @@ namespace AutovalaPlugin {
 			}
 
 			if (project==null) {
+				if (this.searchView != null) {
+					this.searchView.del_source_files();
+				}
 				this.treeModel.clear();
 				this.popupMenu = null;
 				this.current_project_file = null;
 				this.changed_base_folder(null,null);
 			} else if ((this.current_project_file==null) || (this.current_project_file!=project.projectFile) || force) {
+				if (this.searchView != null) {
+					this.searchView.del_source_files();
+				}
 				this.treeModel.clear();
 				this.popupMenu = null;
 				this.set_current_project(project);
@@ -425,15 +452,27 @@ namespace AutovalaPlugin {
 				switch (item.type) {
 				case ProjectEntryTypes.VALA_SOURCE_FILE:
 					pixbuf = "autovala-plugin-vala";
+					if (this.searchView != null) {
+						this.searchView.append_source(item.filename,item.fullPath);
+					}
 				break;
 				case ProjectEntryTypes.VAPI_FILE:
 					pixbuf = "autovala-plugin-vapi";
+					if (this.searchView != null) {
+						this.searchView.append_source(item.filename,item.fullPath);
+					}
 				break;
 				case ProjectEntryTypes.C_SOURCE_FILE:
 					pixbuf = "autovala-plugin-c";
+					if (this.searchView != null) {
+						this.searchView.append_source(item.filename,item.fullPath);
+					}
 				break;
 				case ProjectEntryTypes.C_HEADER_FILE:
 					pixbuf = "autovala-plugin-h";
+					if (this.searchView != null) {
+						this.searchView.append_source(item.filename,item.fullPath);
+					}
 				break;
 				default:
 					pixbuf = "text-x-generic";
