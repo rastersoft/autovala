@@ -150,7 +150,7 @@ namespace autovalascratch {
 		 * @param filepath The file (with full path) clicked by the user
 		 * @param line The line to which move the cursor
 		 */
-		public void file_selected(string filepath, int line) {
+		public void file_line_selected(string filepath, int line) {
 			var file = GLib.File.new_for_path (filepath);
             plugins.open_file (file);
 		}
