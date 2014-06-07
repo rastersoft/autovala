@@ -44,7 +44,7 @@ namespace autovalascratch {
             plugins = (Scratch.Services.Interface) object;
             plugins.hook_notebook_sidebar.connect (on_hook_sidebar);
             plugins.hook_document.connect (on_hook_document);
-            plugins.hook_notebook_bottom.connect (on_hook_bottombar);
+            //plugins.hook_notebook_bottom.connect (on_hook_bottombar);
         }
 
         public void deactivate () {
