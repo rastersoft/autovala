@@ -44,6 +44,9 @@ and enjoy.
 
 
 ## History of versions ##
+* version 0.99.0
+    * Added global search (searchs all the files in a project)
+    * Added panel to show the output of the building process
 * version 0.98.0 (2014-05-26)
     * Added support for GEdit 3.12 and later in the plugin
     * Added a plugin for Scratch Text Editor
