@@ -43,11 +43,12 @@ and enjoy.
 
 
 ## History of versions ##
-* version 0.99.0
+* version 0.99.0 (2014-06-08)
     * Added global search (searchs string in all the files in a project)
     * Added panel to show the output of the building process
     * Internal changes to allow to add more types of elements
-    * Now double-click is used to open any of the files, from the project view, the file view or the global search
+    * Now double-click is used to the files from the project view, the file view or the global search
+    * Fixed scrolling problem in the project view under scratch text editor
 * version 0.98.0 (2014-05-26)
     * Added support for GEdit 3.12 and later in the plugin
     * Added a plugin for Scratch Text Editor
