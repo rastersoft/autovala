@@ -230,7 +230,7 @@ namespace AutovalaPlugin {
 
 				if (this.treeView.get_path_at_pos((int)event.x, (int)event.y, out path, out column, out x, out y)) {
 					if (!this.treeModel.get_iter(out iter, path)) {
-						return true;
+						return false;
 					}
 
 					string ?file_path;
@@ -268,7 +268,7 @@ namespace AutovalaPlugin {
 					return false;
 				}
 			}
-			return true;
+			return false;
 		}
 
 		/**
