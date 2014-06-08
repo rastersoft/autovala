@@ -117,9 +117,6 @@ namespace autovalagedit {
 			bpanel.remove(this.searchView);
 #endif
 			this.main_container = null;
-			this.container = null;
-			this.projectViewer = null;
-			this.fileViewer = null;
 		}
 
 		public void update_state() {
