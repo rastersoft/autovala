@@ -31,8 +31,8 @@ Just use these commands:
     sudo make install
     sudo ldconfig
 
-You also can compile the plugin for Gedit, which is in the folder *gedit_plugin*.
-You can find inside the instructions.
+You also can compile the plugins for Gedit and Scratch Text Editor, which are
+in the folders *gedit_plugin* and *scratch_plugin*. You can find inside the instructions.
 
 
 ## USING AUTOVALA ##
