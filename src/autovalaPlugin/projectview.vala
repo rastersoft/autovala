@@ -268,7 +268,7 @@ namespace AutovalaPlugin {
 					return false;
 				}
 			}
-			return false;
+			return true;
 		}
 
 		/**
