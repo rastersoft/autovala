@@ -110,19 +110,22 @@ namespace autovalagedit {
 			Gedit.Panel bpanel = (Gedit.Panel)this.window.get_bottom_panel();
 			bpanel.remove_item(this.outputView);
 #else
-			//Gtk.Stack panel = (Gtk.Stack)this.window.get_side_panel();
-			this.main_container.dispose();
-			//Gtk.Stack bpanel = (Gtk.Stack)this.window.get_bottom_panel();
-			this.outputView.dispose;
-			this.searchView.dispose;
+			Gtk.Stack panel = (Gtk.Stack)this.window.get_side_panel();
+			panel.remove(this.main_container);
+			Gtk.Stack bpanel = (Gtk.Stack)this.window.get_bottom_panel();
+			bpanel.remove(this.outputView);
+			bpanel.remove(this.searchView);
 #endif
-			this.main_container = null;
 			this.outputView = null;
 			this.searchView = null;
+			this.main_container = null;
 		}
 
 		public void update_state() {
 
+			if (this.main_container == null) {
+				return;
+			}
 			var current_tab = this.window.get_active_tab();
 
 			if ((current_tab == null) || (current_tab.get_document() == null) || (current_tab.get_document().location == null) || (current_tab.get_document().location.get_path()==null)) {
