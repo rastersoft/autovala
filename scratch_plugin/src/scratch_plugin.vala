@@ -22,6 +22,8 @@ namespace autovalascratch {
         private AutovalaPlugin.PanedPercentage container=null;
         private AutovalaPlugin.OutputView outputView;
 		private AutovalaPlugin.SearchView searchView;
+		
+		private int go_to_line;
 
         public Object object { owned get; construct; }
 
@@ -38,6 +40,7 @@ namespace autovalascratch {
 			this.main_container = null;
 			this.outputView = null;
 			this.projectViewer = null;
+			this.go_to_line = -1;
 		}
 
         public void activate () {
@@ -67,6 +70,10 @@ namespace autovalascratch {
 	        }
 			this.fileViewer.set_current_file(current_file);
 			this.projectViewer.set_current_file(current_file);
+			if (this.go_to_line != -1) {
+				doc.source_view.go_to_line(this.go_to_line);
+				this.go_to_line = -1;
+			}
         }
 
 		void on_hook_bottombar (Gtk.Notebook notebook) {
