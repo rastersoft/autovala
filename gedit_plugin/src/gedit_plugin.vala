@@ -110,8 +110,11 @@ namespace autovalagedit {
 			Gedit.Panel bpanel = (Gedit.Panel)this.window.get_bottom_panel();
 			bpanel.remove_item(this.outputView);
 #else
-			this.main_container.unparent();
-			this.outputView.unparent();
+			Gtk.Stack panel = (Gtk.Stack)this.window.get_side_panel();
+			panel.remove(this.main_container);
+			Gtk.Stack bpanel = (Gtk.Stack)this.window.get_bottom_panel();
+			bpanel.remove(this.outputView);
+			bpanel.remove(this.searchView);
 #endif
 			this.main_container = null;
 			this.container = null;
