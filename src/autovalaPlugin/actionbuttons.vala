@@ -144,9 +144,11 @@ namespace AutovalaPlugin {
 
 			this.current_project_file = file;
 			if (file == null) {
+				this.refresh_project.sensitive=false;
 				this.update_project.sensitive=false;
 				this.update_translations.sensitive=false;
 			} else {
+				this.refresh_project.sensitive=true;
 				this.update_project.sensitive=true;
 				this.update_translations.sensitive=true;
 			}

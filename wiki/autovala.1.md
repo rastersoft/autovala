@@ -20,6 +20,8 @@ This is what Autovala does. This process is done in three steps:
 
 Autovala uses simple rules, like: "png files go to usr/share/pixmaps", and so on. It even takes into account things like the size and type of picture. For a detailed explanation of the rules followed by Autovala, check the [rules page](autovala-rules.7).
 
+It also includes several Gtk widgets that simplifies writing plugins for text editors. Currently plugins for GEdit 3.x and another for Scratch Text Editor 2.x are included.
+
 # USING AUTOVALA
 
 Autovala is designed as several Vala classes, so it can be embedded easily in other projects.
