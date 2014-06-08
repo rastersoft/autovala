@@ -506,7 +506,9 @@ namespace AutovalaPlugin {
 			this.treeModel.set(tmpIter,0,_("%s <b>(Project file)</b>").printf(GLib.Path.get_basename(project.projectFile)),1,project.projectFile,2,"autovala-plugin-project",4,ProjectEntryTypes.PROJECT_FILE,-1);
 
 			foreach(var element in list) {
-				ignorePaths.add(Path.build_filename(project.projectPath,element.fullPath));
+				if (element.fullPath != null) {
+					ignorePaths.add(Path.build_filename(project.projectPath,element.fullPath));
+				}
 			}
 
 			foreach(var element in list) {

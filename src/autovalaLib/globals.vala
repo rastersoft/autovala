@@ -122,7 +122,9 @@ namespace AutoVala {
 				element.clearAutomatic();
 				if (element.automatic==false) {
 					newElements.add(element);
-					this.addExclude(element.fullPath);
+					if (element.fullPath != null) {
+						this.addExclude(element.fullPath);
+					}
 				}
 			}
 			this.globalElements=newElements;
@@ -325,6 +327,15 @@ namespace AutoVala {
 		 */
 		public static int compareElements (ElementBase? a, ElementBase? b) {
 			if ((a.condition==null)&&(b.condition==null)) {
+				if ((a.fullPath == null) && (b.fullPath == null)) {
+					return 0;
+				}
+				if (a.fullPath == null) {
+					return -1;
+				}
+				if (b.fullPath == null) {
+					return 1;
+				}
 				return Posix.strcmp(a.fullPath,b.fullPath);
 			}
 			if (a.condition==null) {
@@ -335,6 +346,15 @@ namespace AutoVala {
 			}
 			if (a.condition==b.condition) {
 				if (a.invertCondition==b.invertCondition) {
+					if ((a.fullPath == null) && (b.fullPath == null)) {
+						return 0;
+					}
+					if (a.fullPath == null) {
+						return -1;
+					}
+					if (b.fullPath == null) {
+						return 1;
+					}
 					return Posix.strcmp(a.fullPath,b.fullPath); // both are equal; sort alphabetically
 				} else {
 					return a.invertCondition ? 1 : -1; // the one with the condition not inverted goes first

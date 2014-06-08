@@ -1135,8 +1135,8 @@ namespace AutoVala {
 				foreach(var element in ElementBase.globalData.globalElements) {
 					if (element.eType==ConfigType.DEFINE) {
 						addDefines=true;
-						dataStream.put_string("if (%s)\n".printf(element.path));
-						dataStream.put_string("\tset (COMPILE_OPTIONS ${COMPILE_OPTIONS} -D %s)\n".printf(element.path));
+						dataStream.put_string("if (%s)\n".printf(element.name));
+						dataStream.put_string("\tset (COMPILE_OPTIONS ${COMPILE_OPTIONS} -D %s)\n".printf(element.name));
 						dataStream.put_string("endif ()\n");
 					}
 				}

@@ -46,7 +46,7 @@ namespace AutoVala {
 					return false; // this DEFINE already exists
 				}
 			}
-			return this.configureElement(data,data,data,automatic,null,false);			
+			return this.configureElement(null,data,data,automatic,null,false);
 		}
 
 		public override bool autoConfigure(string? path=null) {

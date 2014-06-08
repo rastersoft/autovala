@@ -621,12 +621,12 @@ namespace AutoVala {
 	public class PublicElement : GLib.Object {
 
 		public ConfigType type;
-		public string fullPath;
+		public string? fullPath;
 		public string name;
 		public string vala_opts;
 		public string c_opts;
 
-		public PublicElement(ConfigType type,string fullPath, string name) {
+		public PublicElement(ConfigType type,string? fullPath, string name) {
 			this.type = type;
 			this.fullPath = fullPath;
 			this.name = name;
