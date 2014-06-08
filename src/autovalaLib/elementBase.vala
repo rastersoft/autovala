@@ -172,13 +172,16 @@ namespace AutoVala {
 			}
 
 			string fullPath=fullPathP;
-			if (fullPath.has_suffix(Path.DIR_SEPARATOR_S)) {
-				fullPath=fullPathP.substring(0,fullPathP.length-1);
-			}
+			if (fullPath != null) {
+				
+				if (fullPath.has_suffix(Path.DIR_SEPARATOR_S)) {
+					fullPath=fullPathP.substring(0,fullPathP.length-1);
+				}
 
-			if (ElementBase.globalData.checkExclude(fullPath)) {
-				ElementBase.globalData.addWarning(_("Trying to add twice the path %s").printf(fullPath));
-				return false;
+				if (ElementBase.globalData.checkExclude(fullPath)) {
+					ElementBase.globalData.addWarning(_("Trying to add twice the path %s").printf(fullPath));
+					return false;
+				}
 			}
 
 			this._fullPath = fullPath;
@@ -201,7 +204,9 @@ namespace AutoVala {
 			}
 
 			ElementBase.globalData.addElement(this);
-			ElementBase.globalData.addExclude(fullPath);
+			if (fullPath != null) {
+				ElementBase.globalData.addExclude(fullPath);
+			}
 			this._automatic = automatic;
 			this._condition = condition;
 			this._invertCondition = invertCondition;
