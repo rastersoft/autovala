@@ -17,9 +17,8 @@ namespace AutovalaPlugin {
 	 * This is the main widget. The other widgets (FileViewer, ActionButtons and
 	 *  OutputView widgets) are optional and complements this one.
 	 */
-	public class ProjectViewer : Gtk.Box {
+	public class ProjectViewer : Gtk.TreeView {
 
-		private Gtk.TreeView treeView;
 		private TreeStore treeModel;
 		private Gtk.CellRendererText renderer;
 
@@ -58,7 +57,6 @@ namespace AutovalaPlugin {
 			this.current_project_file = null;
 			this.current_file = null;
 			this.popupMenu = null;
-			this.orientation = Gtk.Orientation.VERTICAL;
 			this.fileViewer = null;
 			this.actionButtons = null;
 			this.outputView = null;
@@ -82,8 +80,6 @@ namespace AutovalaPlugin {
 				Gtk.IconTheme.add_builtin_icon("autovala-plugin-vala",-1,pixbuf);
 			} catch (GLib.Error e) {}
 
-			this.treeView = new Gtk.TreeView();
-
 			/*
 			 * string: visible text (with markup)
 			 * string: path to open when clicking (or NULL if it doesn't open a file)
@@ -92,7 +88,7 @@ namespace AutovalaPlugin {
 			 * ProjectEntryTypes: type of the entry
 			 */
 			this.treeModel = new TreeStore(5,typeof(string),typeof(string),typeof(string),typeof(string),typeof(ProjectEntryTypes));
-			this.treeView.set_model(this.treeModel);
+			this.set_model(this.treeModel);
 			var column = new Gtk.TreeViewColumn();
 			this.renderer = new Gtk.CellRendererText();
 			var pixbuf = new Gtk.CellRendererPixbuf();
@@ -100,16 +96,14 @@ namespace AutovalaPlugin {
 			column.add_attribute(pixbuf,"icon_name",2);
 			column.pack_start(this.renderer,false);
 			column.add_attribute(this.renderer,"markup",0);
-			this.treeView.append_column(column);
+			this.append_column(column);
 
-			//this.treeView.activate_on_single_click = true;
-			this.treeView.headers_visible = false;
-			this.treeView.get_selection().mode = SelectionMode.SINGLE;
+			//this.activate_on_single_click = true;
+			this.headers_visible = false;
+			this.get_selection().mode = SelectionMode.SINGLE;
 
-			this.treeView.row_activated.connect(this.clicked);
-			this.treeView.button_press_event.connect(this.click_event);
-
-			this.pack_start(this.treeView);
+			this.row_activated.connect(this.clicked);
+			this.button_press_event.connect(this.click_event);
 		}
 
 		/**
@@ -228,7 +222,7 @@ namespace AutovalaPlugin {
 				int y;
 				TreeIter iter;
 
-				if (this.treeView.get_path_at_pos((int)event.x, (int)event.y, out path, out column, out x, out y)) {
+				if (this.get_path_at_pos((int)event.x, (int)event.y, out path, out column, out x, out y)) {
 					if (!this.treeModel.get_iter(out iter, path)) {
 						return false;
 					}
@@ -281,7 +275,7 @@ namespace AutovalaPlugin {
 			TreeModel model;
 			TreeIter iter;
 
-			var selection = this.treeView.get_selection();
+			var selection = this.get_selection();
 			if (!selection.get_selected(out model, out iter)) {
 				return;
 			}
@@ -352,8 +346,8 @@ namespace AutovalaPlugin {
 				this.treeModel.clear();
 				this.popupMenu = null;
 				this.set_current_project(project);
-				this.treeView.set_model(this.treeModel);
-				this.treeView.expand_all();
+				this.set_model(this.treeModel);
+				this.expand_all();
 			}
 		}
 
