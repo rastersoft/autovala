@@ -6,6 +6,14 @@
 <div class="main_frame">
 <p><a href="index.html">Home</a></p>
 <ul>
+<li><p>version 0.99.0 (2014-06-08)</p>
+<ul>
+<li>Added global search (searchs string in all the files in a project)<br /></li>
+<li>Added panel to show the output of the building process<br /></li>
+<li>Internal changes to allow to add more types of elements<br /></li>
+<li>Now double-click is used to the files from the project view, the file view or the global search<br /></li>
+<li>Fixed scrolling problem in the project view under scratch text editor<br /></li>
+</ul></li>
 <li><p>version 0.98.0 (2014-05-26)</p>
 <ul>
 <li>Added support for GEdit 3.12 and later in the plugin<br /></li>
