@@ -7,7 +7,7 @@ custom: data/cmake share/autovala/cmake
 
 
 vala_binary: src/autovala
-*version: 0.98.0
+*version: 0.99.0
 if DEBUG
 compile_options: -g --fatal-warnings
 end
@@ -21,7 +21,7 @@ vala_check_package: gio-2.0
 
 
 vala_library: src/autovalaLib/autovalaLib
-*version: 0.98
+*version: 0.99
 *namespace: AutoVala
 if DEBUG
 compile_options: -g --fatal-warnings
@@ -66,7 +66,7 @@ compile_c_options: -O2
 *vala_source: readPkgconfig.vala
 
 vala_library: src/autovalaPlugin/autovalaPlugin
-*version: 0.98
+*version: 0.99
 *namespace: AutovalaPlugin
 vala_local_package: AutoVala
 *vala_check_package: atk
@@ -81,9 +81,12 @@ vala_local_package: AutoVala
 *vala_check_package: pango
 *vala_check_package: pangocairo
 *vala_check_package: x11
+*vala_source: PanedPercentage.vala
 *vala_source: actionbuttons.vala
 *vala_source: fileview.vala
+*vala_source: outputview.vala
 *vala_source: projectview.vala
+*vala_source: searchview.vala
 
 *po: po
 

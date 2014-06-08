@@ -36,13 +36,13 @@ namespace AutoVala {
 		public static Globals globalData = null;
 		public bool processed=false;
 
-		protected string _fullPath; // Full file path, relative to the project's root
+		protected string? _fullPath; // Full file path, relative to the project's root
 		protected string _path; // File path relative to the project's root
 		protected string _name; // File name
 		protected ConfigType _type; // File type
 		protected string command; // command in the config file
 
-		public string fullPath {
+		public string? fullPath {
 			get {return this._fullPath;}
 		}
 		public string path {
@@ -164,7 +164,7 @@ namespace AutoVala {
 		 * @param invertCondition When true, invert the condition (this is, the file is after the #else statement)
 		 * @return //true// if the file has been already processed
 		 */
-		public virtual bool configureElement(string fullPathP, string? path, string? name, bool automatic, string? condition, bool invertCondition) {
+		public virtual bool configureElement(string? fullPathP, string? path, string? name, bool automatic, string? condition, bool invertCondition) {
 
 			if (fullPathP=="") {
 				ElementBase.globalData.addError(_("Trying to add an empty path: %s").printf(fullPath));
@@ -172,13 +172,16 @@ namespace AutoVala {
 			}
 
 			string fullPath=fullPathP;
-			if (fullPath.has_suffix(Path.DIR_SEPARATOR_S)) {
-				fullPath=fullPathP.substring(0,fullPathP.length-1);
-			}
+			if (fullPath != null) {
+				
+				if (fullPath.has_suffix(Path.DIR_SEPARATOR_S)) {
+					fullPath=fullPathP.substring(0,fullPathP.length-1);
+				}
 
-			if (ElementBase.globalData.checkExclude(fullPath)) {
-				ElementBase.globalData.addWarning(_("Trying to add twice the path %s").printf(fullPath));
-				return false;
+				if (ElementBase.globalData.checkExclude(fullPath)) {
+					ElementBase.globalData.addWarning(_("Trying to add twice the path %s").printf(fullPath));
+					return false;
+				}
 			}
 
 			this._fullPath = fullPath;
@@ -201,7 +204,9 @@ namespace AutoVala {
 			}
 
 			ElementBase.globalData.addElement(this);
-			ElementBase.globalData.addExclude(fullPath);
+			if (fullPath != null) {
+				ElementBase.globalData.addExclude(fullPath);
+			}
 			this._automatic = automatic;
 			this._condition = condition;
 			this._invertCondition = invertCondition;
@@ -290,13 +295,20 @@ namespace AutoVala {
 		 */
 		public virtual bool storeConfig(DataOutputStream dataStream,ConditionalText printConditions) {
 
+			string data;
+			if (this.fullPath == null) {
+				data = this.name;
+			} else {
+				data = this.fullPath;
+			}
+
 			try {
 				if (this._automatic) {
 					dataStream.put_string("*");
 				}
-				dataStream.put_string("%s: %s\n".printf(this.command,this.fullPath));
+				dataStream.put_string("%s: %s\n".printf(this.command,data));
 			} catch (Error e) {
-				ElementBase.globalData.addError(_("Failed to store '%s: %s' at config").printf(this.command,this.fullPath));
+				ElementBase.globalData.addError(_("Failed to store '%s: %s' at config").printf(this.command.data));
 				return true;
 			}
 			return false;

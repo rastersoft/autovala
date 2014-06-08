@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-06-01 23:59+0200\n"
+"POT-Creation-Date: 2014-06-07 23:38+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -617,92 +617,114 @@ msgstr ""
 msgid "Warning: %s"
 msgstr ""
 
-#: src/autovalaPlugin/actionbuttons.vala:35
+#: src/autovalaPlugin/actionbuttons.vala:53
 msgid "New project"
 msgstr ""
 
-#: src/autovalaPlugin/actionbuttons.vala:37
+#: src/autovalaPlugin/actionbuttons.vala:54
 msgid "Creates a new Autovala project"
 msgstr ""
 
-#: src/autovalaPlugin/actionbuttons.vala:42
+#: src/autovalaPlugin/actionbuttons.vala:62
 msgid "Update project"
 msgstr ""
 
-#: src/autovalaPlugin/actionbuttons.vala:43
+#: src/autovalaPlugin/actionbuttons.vala:63
 msgid "Update translations"
 msgstr ""
 
-#: src/autovalaPlugin/fileview.vala:430
-#: src/autovalaPlugin/projectview.vala:492
+#: src/autovalaPlugin/fileview.vala:428
+#: src/autovalaPlugin/projectview.vala:594
 msgid "Open"
 msgstr ""
 
-#: src/autovalaPlugin/fileview.vala:431
+#: src/autovalaPlugin/fileview.vala:429
 msgid "Don't show hiden files"
 msgstr ""
 
-#: src/autovalaPlugin/fileview.vala:431
+#: src/autovalaPlugin/fileview.vala:429
 msgid "Show hiden files"
 msgstr ""
 
-#: src/autovalaPlugin/fileview.vala:432
+#: src/autovalaPlugin/fileview.vala:430
 msgid "Rename"
 msgstr ""
 
-#: src/autovalaPlugin/fileview.vala:433
+#: src/autovalaPlugin/fileview.vala:431
 msgid "Delete"
 msgstr ""
 
-#: src/autovalaPlugin/fileview.vala:434
+#: src/autovalaPlugin/fileview.vala:432
 msgid "Create file"
 msgstr ""
 
-#: src/autovalaPlugin/fileview.vala:435
+#: src/autovalaPlugin/fileview.vala:433
 msgid "Create folder"
 msgstr ""
 
-#: src/autovalaPlugin/fileview.vala:469
+#: src/autovalaPlugin/fileview.vala:467
 msgid "Untitled file"
 msgstr ""
 
-#: src/autovalaPlugin/fileview.vala:483
+#: src/autovalaPlugin/fileview.vala:481
 msgid "Untitled folder"
 msgstr ""
 
-#: src/autovalaPlugin/projectview.vala:404
+#: src/autovalaPlugin/projectview.vala:506
 #, c-format
 msgid "%s <b>(Project file)</b>"
 msgstr ""
 
-#: src/autovalaPlugin/projectview.vala:416
+#: src/autovalaPlugin/projectview.vala:518
 #, c-format
 msgid "%s <b>(executable)</b>"
 msgstr ""
 
-#: src/autovalaPlugin/projectview.vala:423
+#: src/autovalaPlugin/projectview.vala:525
 #, c-format
 msgid "%s <b>(library)</b>"
 msgstr ""
 
-#: src/autovalaPlugin/projectview.vala:493
+#: src/autovalaPlugin/projectview.vala:595
 msgid "New executable/library"
 msgstr ""
 
-#: src/autovalaPlugin/projectview.vala:494
+#: src/autovalaPlugin/projectview.vala:596
 msgid "Edit library properties"
 msgstr ""
 
-#: src/autovalaPlugin/projectview.vala:494
+#: src/autovalaPlugin/projectview.vala:596
 msgid "Edit executable properties"
 msgstr ""
 
-#: src/autovalaPlugin/projectview.vala:495
+#: src/autovalaPlugin/projectview.vala:597
 msgid "Remove library"
 msgstr ""
 
-#: src/autovalaPlugin/projectview.vala:495
+#: src/autovalaPlugin/projectview.vala:597
 msgid "Remove executable"
+msgstr ""
+
+#: src/autovalaPlugin/searchview.vala:36
+msgid "Global search:"
+msgstr ""
+
+#: src/autovalaPlugin/searchview.vala:38
+msgid "Search"
+msgstr ""
+
+#: src/autovalaPlugin/searchview.vala:39
+msgid "Case sensitive"
+msgstr ""
+
+#: src/autovalaPlugin/searchview.vala:163
+#, c-format
+msgid "Found element at line %d"
+msgstr ""
+
+#: src/autovalaPlugin/searchview.vala:168
+#, c-format
+msgid "Search result for file %s: found %d occurrences"
 msgstr ""
 
 #: data/interface/binary_properties.ui:7

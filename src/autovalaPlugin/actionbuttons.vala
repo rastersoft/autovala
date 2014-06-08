@@ -5,10 +5,17 @@ using AutoVala;
 
 namespace AutovalaPlugin {
 
-	public class ActionButtons : Gtk.Toolbar {
+	/**
+	 * Shows the upper action buttons that allows to create a new project,
+	 * update the CMake files, translations, and so on.
+	 * This widget needs a ProjectView widget in order to work.
+	 */
+	public class ActionButtons : Gtk.Box {
 
-		private Gtk.MenuToolButton new_project;
+		private Gtk.Button new_project;
+		private Gtk.MenuButton expand_menu;
 		private Gtk.Menu popupMenu;
+		private Gtk.MenuItem refresh_project;
 		private Gtk.MenuItem update_project;
 		private Gtk.MenuItem update_translations;
 		
@@ -24,22 +31,38 @@ namespace AutovalaPlugin {
 		public signal void open_file(string path);
 
 		public signal void action_new_project();
-		public signal void action_update_project();
-		public signal void action_update_gettext();
+		public signal void action_refresh_project(bool retval);
+		public signal void action_update_project(bool retval);
+		public signal void action_update_gettext(bool retval);
+
+		/**
+		 * This signal is emited when the output view must be clear
+		 * because a new job is going to be launch
+		 */
+		public signal void output_message_clear();
+		/**
+		 * This signal is emited when there is output from a job
+		 */
+		public signal void output_message_append(string msg);
+		
+		public signal void set_project_status(ProjectStatus status);
 
 		public ActionButtons() {
 
 			this.create_new_project = null;
-			this.toolbar_style = Gtk.ToolbarStyle.BOTH;
+			this.orientation = Gtk.Orientation.HORIZONTAL;
 		
-			this.new_project = new Gtk.MenuToolButton(null,_("New project"));
-			this.new_project.icon_name = "document-new";
+			this.new_project = new Gtk.Button.with_label(_("New project"));
 			this.new_project.tooltip_text =_("Creates a new Autovala project");
-			this.insert(this.new_project,-1);
+			this.pack_start(this.new_project,false,false);
+
+			this.expand_menu = new Gtk.MenuButton();
+			this.pack_start(this.expand_menu,false,false);
 
 			this.popupMenu = new Gtk.Menu();
 
-			this.update_project = new Gtk.MenuItem.with_label(_("Update project"));
+			this.refresh_project = new Gtk.MenuItem.with_label("autovala refresh");
+			this.update_project = new Gtk.MenuItem.with_label("autovala update");
 			this.update_translations = new Gtk.MenuItem.with_label(_("Update translations"));
 
 			this.new_project.clicked.connect( () => {
@@ -59,25 +82,55 @@ namespace AutovalaPlugin {
 				this.create_new_project = null;
 			});
 
-			this.update_project.activate.connect( () => {
+			this.refresh_project.activate.connect( () => {
+			
+				string[] msgs;
+			
+				this.output_message_clear();
 				var retval=this.current_project.refresh(this.current_project_file);
-				this.current_project.showErrors();
+
+				msgs = this.current_project.getErrors();
+				foreach(var msg in msgs) {
+					this.output_message_append(msg+"\n");
+				}
+				this.action_refresh_project(retval);
+			});
+
+			this.update_project.activate.connect( () => {
+			
+				string[] msgs;
+			
+				this.output_message_clear();
+				var retval=this.current_project.refresh(this.current_project_file);
+
+				msgs = this.current_project.getErrors();
+				foreach(var msg in msgs) {
+					this.output_message_append(msg+"\n");
+				}
 				if (!retval) {
 					retval=this.current_project.cmake(this.current_project_file);
-					this.current_project.showErrors();
+					msgs = this.current_project.getErrors();
+					foreach(var msg in msgs) {
+						this.output_message_append(msg+"\n");
+					}
 				}
-				this.action_update_project();
+				this.action_update_project(retval);
 			});
 
 			this.update_translations.activate.connect( () => {
-				this.current_project.gettext(this.current_project_file);
-				this.current_project.showErrors();
-				this.action_update_gettext();
+				var retval = this.current_project.gettext(this.current_project_file);
+				var msgs = this.current_project.getErrors();
+				foreach(var msg in msgs) {
+					this.output_message_append(msg+"\n");
+				}
+				this.action_update_gettext(retval);
 			});
+
+			this.popupMenu.append(this.refresh_project);
 			this.popupMenu.append(this.update_project);
 			this.popupMenu.append(this.update_translations);
 			this.popupMenu.show_all();
-			this.new_project.set_menu(this.popupMenu);
+			this.expand_menu.set_popup(this.popupMenu);
 			this.show_all();
 		}
 		

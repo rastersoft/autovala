@@ -3,21 +3,22 @@ using Gdk;
 using Gee;
 using AutoVala;
 
-// project version=0.98
+// project version=0.99
 
 namespace AutovalaPlugin {
 
 	public enum ProjectEntryTypes { OTHER, VALA_SOURCE_FILE, VAPI_FILE, C_SOURCE_FILE, C_HEADER_FILE, LIBRARY, EXECUTABLE, PROJECT_FILE }
+	public enum ProjectStatus { NOT_SET, OK, WARNING, ERROR}
 
 	/**
 	 * This is a GTK3 widget that allows to manage an Autovala project
 	 * It is useful to create plugins for GTK3-based editors
 	 * The first plugins are for GEdit and Scratch
-	 * It is complemented with the FileViewer and MenuItem widgets
+	 * This is the main widget. The other widgets (FileViewer, ActionButtons and
+	 *  OutputView widgets) are optional and complements this one.
 	 */
-	public class ProjectViewer : Gtk.Box {
+	public class ProjectViewer : Gtk.TreeView {
 
-		private Gtk.TreeView treeView;
 		private TreeStore treeModel;
 		private Gtk.CellRendererText renderer;
 
@@ -26,6 +27,12 @@ namespace AutovalaPlugin {
 		private AutoVala.ManageProject current_project;
 		private ProjectViewerMenu popupMenu;
 		private ProjectProperties properties;
+		private ProjectStatus projectStatus;
+
+		private FileViewer? fileViewer;
+		private ActionButtons? actionButtons;
+		private OutputView? outputView;
+		private SearchView? searchView;
 
 		/**
 		 * This signal is emited when the user clicks on a file
@@ -50,7 +57,10 @@ namespace AutovalaPlugin {
 			this.current_project_file = null;
 			this.current_file = null;
 			this.popupMenu = null;
-			this.orientation = Gtk.Orientation.VERTICAL;
+			this.fileViewer = null;
+			this.actionButtons = null;
+			this.outputView = null;
+			this.searchView = null;
 
 			try {
 				Gdk.Pixbuf pixbuf;
@@ -70,8 +80,6 @@ namespace AutovalaPlugin {
 				Gtk.IconTheme.add_builtin_icon("autovala-plugin-vala",-1,pixbuf);
 			} catch (GLib.Error e) {}
 
-			this.treeView = new Gtk.TreeView();
-
 			/*
 			 * string: visible text (with markup)
 			 * string: path to open when clicking (or NULL if it doesn't open a file)
@@ -80,7 +88,7 @@ namespace AutovalaPlugin {
 			 * ProjectEntryTypes: type of the entry
 			 */
 			this.treeModel = new TreeStore(5,typeof(string),typeof(string),typeof(string),typeof(string),typeof(ProjectEntryTypes));
-			this.treeView.set_model(this.treeModel);
+			this.set_model(this.treeModel);
 			var column = new Gtk.TreeViewColumn();
 			this.renderer = new Gtk.CellRendererText();
 			var pixbuf = new Gtk.CellRendererPixbuf();
@@ -88,16 +96,14 @@ namespace AutovalaPlugin {
 			column.add_attribute(pixbuf,"icon_name",2);
 			column.pack_start(this.renderer,false);
 			column.add_attribute(this.renderer,"markup",0);
-			this.treeView.append_column(column);
+			this.append_column(column);
 
-			this.treeView.activate_on_single_click = true;
-			this.treeView.headers_visible = false;
-			this.treeView.get_selection().mode = SelectionMode.SINGLE;
+			//this.activate_on_single_click = true;
+			this.headers_visible = false;
+			this.get_selection().mode = SelectionMode.SINGLE;
 
-			this.treeView.row_activated.connect(this.clicked);
-			this.treeView.button_press_event.connect(this.click_event);
-
-			this.pack_start(this.treeView);
+			this.row_activated.connect(this.clicked);
+			this.button_press_event.connect(this.click_event);
 		}
 
 		/**
@@ -105,30 +111,102 @@ namespace AutovalaPlugin {
 		 * a ProjectViewer to know when a file has been added or removed in the project's folder,
 		 * and to allow the FileViewer to change its root folder when the current project changes.
 		 * @param fileViewer The FileViewer widget to link to this ProjectViewer
+		 * @return true if all went fine; false if there was a FileViewer object already registered
 		 */
-		public void link_file_view(FileViewer fileViewer) {
-		
-			fileViewer.changed_file.connect( () => {
+		public bool link_file_view(FileViewer fileViewer) {
+
+			if (this.fileViewer != null) {
+				return false;
+			}
+			
+			this.fileViewer = fileViewer;
+			this.fileViewer.changed_file.connect( () => {
 				this.refresh_project(true);
 			});
 			this.changed_base_folder.connect( (path, project_file) => {
-				fileViewer.set_base_folder(path);
+				this.fileViewer.set_base_folder(path);
 			});
+
+			return true;
 		}
 
 		/**
 		 * Links the signals and callbacks of this ProjectViewer and an ActionButtons, to allow
 		 * a ProjectViewer to know when the user asked to create a new project, update the current one...
 		 * and to allow the ActionButtons to change its status
-		 * @param fileViewer The FileViewer widget to link to this ProjectViewer
+		 * @param actionButtons The ActionButtons widget to link to this ProjectViewer
+		 * @return true if all went fine; false if there was an ActionButtons object already registered
 		 */
-		public void link_action_buttons(ActionButtons actionButtons) {
-		
-			actionButtons.set_current_project(this.current_project);
+		public bool link_action_buttons(ActionButtons actionButtons) {
+
+			if(this.actionButtons != null) {
+				return false;
+			}
+
+			this.actionButtons = actionButtons;
+			this.actionButtons.set_current_project(this.current_project);
 			this.changed_base_folder.connect( (path, project_file) => {
-				actionButtons.set_current_project_file(project_file);
+				this.actionButtons.set_current_project_file(project_file);
 			});
+			if (this.outputView != null) {
+				this.link_output_view_internal();
+			}
+			return true;
 		}
+
+		/**
+		 * Links the signals and callbacks of this ProjectViewer and an OutputView, to allow
+		 * the OutputView to receive the texts from running a command
+		 * @param outputView The OutputView widget to link to this ProjectViewer
+		 * @return true if all went fine; false if there was an OutputView object already registered
+		 */
+		public bool link_output_view(OutputView outputView) {
+
+			if(this.outputView != null) {
+				return false;
+			}
+
+			this.outputView = outputView;
+			if (this.actionButtons != null) {
+				this.link_output_view_internal();
+			}
+			return true;
+		}
+
+		/**
+		 * When there is both an OutputView and an ActionButtons, this method
+		 * links both to make the messages from the later be shown in the former
+		 */
+		private void link_output_view_internal() {
+
+			this.actionButtons.output_message_clear.connect( () => {
+				this.outputView.clear_buffer();
+			});
+
+			this.actionButtons.output_message_append.connect( (msg) => {
+				this.outputView.append_text(msg);
+			});
+
+		}
+
+		/**
+		 * Links the signals and callbacks of this ProjectViewer and a SearchView
+		 * @param searchView The SearchView widget to link to this ProjectViewer
+		 * @return true if all went fine; false if there was a SearchView object already registered
+		 */
+		 
+		 public bool link_search_view(SearchView searchView) {
+
+		 	if(this.searchView != null) {
+				return false;
+			}
+
+			this.searchView = searchView;
+			this.changed_base_folder.connect( (path, project_file) => {
+				this.searchView.set_current_project_file(project_file);
+			});
+			return true;
+		 }
 
 		/**
 		 * Click event callback, to detect when the user clicks with the right button
@@ -144,9 +222,9 @@ namespace AutovalaPlugin {
 				int y;
 				TreeIter iter;
 
-				if (this.treeView.get_path_at_pos((int)event.x, (int)event.y, out path, out column, out x, out y)) {
+				if (this.get_path_at_pos((int)event.x, (int)event.y, out path, out column, out x, out y)) {
 					if (!this.treeModel.get_iter(out iter, path)) {
-						return true;
+						return false;
 					}
 
 					string ?file_path;
@@ -197,7 +275,7 @@ namespace AutovalaPlugin {
 			TreeModel model;
 			TreeIter iter;
 
-			var selection = this.treeView.get_selection();
+			var selection = this.get_selection();
 			if (!selection.get_selected(out model, out iter)) {
 				return;
 			}
@@ -254,16 +332,22 @@ namespace AutovalaPlugin {
 			}
 
 			if (project==null) {
+				if (this.searchView != null) {
+					this.searchView.del_source_files();
+				}
 				this.treeModel.clear();
 				this.popupMenu = null;
 				this.current_project_file = null;
 				this.changed_base_folder(null,null);
 			} else if ((this.current_project_file==null) || (this.current_project_file!=project.projectFile) || force) {
+				if (this.searchView != null) {
+					this.searchView.del_source_files();
+				}
 				this.treeModel.clear();
 				this.popupMenu = null;
 				this.set_current_project(project);
-				this.treeView.set_model(this.treeModel);
-				this.treeView.expand_all();
+				this.set_model(this.treeModel);
+				this.expand_all();
 			}
 		}
 
@@ -362,15 +446,27 @@ namespace AutovalaPlugin {
 				switch (item.type) {
 				case ProjectEntryTypes.VALA_SOURCE_FILE:
 					pixbuf = "autovala-plugin-vala";
+					if (this.searchView != null) {
+						this.searchView.append_source(item.filename,item.fullPath);
+					}
 				break;
 				case ProjectEntryTypes.VAPI_FILE:
 					pixbuf = "autovala-plugin-vapi";
+					if (this.searchView != null) {
+						this.searchView.append_source(item.filename,item.fullPath);
+					}
 				break;
 				case ProjectEntryTypes.C_SOURCE_FILE:
 					pixbuf = "autovala-plugin-c";
+					if (this.searchView != null) {
+						this.searchView.append_source(item.filename,item.fullPath);
+					}
 				break;
 				case ProjectEntryTypes.C_HEADER_FILE:
 					pixbuf = "autovala-plugin-h";
+					if (this.searchView != null) {
+						this.searchView.append_source(item.filename,item.fullPath);
+					}
 				break;
 				default:
 					pixbuf = "text-x-generic";
@@ -404,7 +500,9 @@ namespace AutovalaPlugin {
 			this.treeModel.set(tmpIter,0,_("%s <b>(Project file)</b>").printf(GLib.Path.get_basename(project.projectFile)),1,project.projectFile,2,"autovala-plugin-project",4,ProjectEntryTypes.PROJECT_FILE,-1);
 
 			foreach(var element in list) {
-				ignorePaths.add(Path.build_filename(project.projectPath,element.fullPath));
+				if (element.fullPath != null) {
+					ignorePaths.add(Path.build_filename(project.projectPath,element.fullPath));
+				}
 			}
 
 			foreach(var element in list) {
