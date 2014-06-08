@@ -15,6 +15,7 @@ namespace AutovalaPlugin {
 		private Gtk.Button new_project;
 		private Gtk.MenuButton expand_menu;
 		private Gtk.Menu popupMenu;
+		private Gtk.MenuItem refresh_project;
 		private Gtk.MenuItem update_project;
 		private Gtk.MenuItem update_translations;
 		
@@ -30,8 +31,9 @@ namespace AutovalaPlugin {
 		public signal void open_file(string path);
 
 		public signal void action_new_project();
-		public signal void action_update_project();
-		public signal void action_update_gettext();
+		public signal void action_refresh_project(bool retval);
+		public signal void action_update_project(bool retval);
+		public signal void action_update_gettext(bool retval);
 
 		/**
 		 * This signal is emited when the output view must be clear
@@ -59,7 +61,8 @@ namespace AutovalaPlugin {
 
 			this.popupMenu = new Gtk.Menu();
 
-			this.update_project = new Gtk.MenuItem.with_label(_("Update project"));
+			this.refresh_project = new Gtk.MenuItem.with_label("autovala refresh");
+			this.update_project = new Gtk.MenuItem.with_label("autovala update");
 			this.update_translations = new Gtk.MenuItem.with_label(_("Update translations"));
 
 			this.new_project.clicked.connect( () => {
@@ -77,6 +80,20 @@ namespace AutovalaPlugin {
 				}
 				this.create_new_project.destroy();
 				this.create_new_project = null;
+			});
+
+			this.refresh_project.activate.connect( () => {
+			
+				string[] msgs;
+			
+				this.output_message_clear();
+				var retval=this.current_project.refresh(this.current_project_file);
+
+				msgs = this.current_project.getErrors();
+				foreach(var msg in msgs) {
+					this.output_message_append(msg+"\n");
+				}
+				this.action_refresh_project(retval);
 			});
 
 			this.update_project.activate.connect( () => {
@@ -97,18 +114,19 @@ namespace AutovalaPlugin {
 						this.output_message_append(msg+"\n");
 					}
 				}
-				this.action_update_project();
+				this.action_update_project(retval);
 			});
 
 			this.update_translations.activate.connect( () => {
-				this.current_project.gettext(this.current_project_file);
+				var retval = this.current_project.gettext(this.current_project_file);
 				var msgs = this.current_project.getErrors();
 				foreach(var msg in msgs) {
 					this.output_message_append(msg+"\n");
 				}
-				this.action_update_gettext();
+				this.action_update_gettext(retval);
 			});
 
+			this.popupMenu.append(this.refresh_project);
 			this.popupMenu.append(this.update_project);
 			this.popupMenu.append(this.update_translations);
 			this.popupMenu.show_all();

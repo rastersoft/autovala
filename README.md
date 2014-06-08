@@ -37,7 +37,6 @@ You can find inside the instructions.
 
 ## USING AUTOVALA ##
 
-
 The DOC folder contains the Wiki dumped in HTML format. Just open the
 **index.html** file with your browser, or go to the **Wiki section** in GitHub,
 and enjoy.
