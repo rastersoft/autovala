@@ -66,7 +66,7 @@ namespace AutovalaPlugin {
 			column.add_attribute(this.renderer,"editable",2);
 			this.append_column(column);
 
-			this.activate_on_single_click = true;
+			//this.activate_on_single_click = true;
 			this.headers_visible = false;
 			this.get_selection().mode = SelectionMode.SINGLE;
 

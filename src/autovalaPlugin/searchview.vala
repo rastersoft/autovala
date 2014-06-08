@@ -60,7 +60,7 @@ namespace AutovalaPlugin {
 			column.add_attribute(this.renderer,"markup",0);
 			this.treeView.append_column(column);
 
-			this.treeView.activate_on_single_click = true;
+			//this.treeView.activate_on_single_click = true;
 			this.treeView.headers_visible = false;
 			this.treeView.get_selection().mode = SelectionMode.SINGLE;
 			this.treeView.row_activated.connect(this.clicked);
