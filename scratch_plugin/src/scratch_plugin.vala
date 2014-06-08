@@ -158,6 +158,7 @@ namespace autovalascratch {
 		 * @param line The line to which move the cursor
 		 */
 		public void file_line_selected(string filepath, int line) {
+			this.go_to_line = line;
 			var file = GLib.File.new_for_path (filepath);
             plugins.open_file (file);
 		}
