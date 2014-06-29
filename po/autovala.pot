@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-06-07 23:38+0200\n"
+"POT-Creation-Date: 2014-06-08 21:00+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -280,17 +280,17 @@ msgstr ""
 msgid "Trying to add an empty path: %s"
 msgstr ""
 
-#: src/autovalaLib/elementBase.vala:180
+#: src/autovalaLib/elementBase.vala:182
 #, c-format
 msgid "Trying to add twice the path %s"
 msgstr ""
 
-#: src/autovalaLib/elementBase.vala:188
+#: src/autovalaLib/elementBase.vala:191
 #, c-format
 msgid "File %s doesn't exists"
 msgstr ""
 
-#: src/autovalaLib/elementBase.vala:223 src/autovalaLib/elementCustom.vala:36
+#: src/autovalaLib/elementBase.vala:228 src/autovalaLib/elementCustom.vala:36
 #: src/autovalaLib/elementDefine.vala:34
 #: src/autovalaLib/elementDesktop.vala:54 src/autovalaLib/elementIcon.vala:57
 #: src/autovalaLib/elementIgnore.vala:34
@@ -300,7 +300,7 @@ msgstr ""
 msgid "Invalid command %s after command %s (line %d)"
 msgstr ""
 
-#: src/autovalaLib/elementBase.vala:299
+#: src/autovalaLib/elementBase.vala:311
 #, c-format
 msgid "Failed to store '%s: %s' at config"
 msgstr ""
@@ -607,34 +607,30 @@ msgstr ""
 msgid "Unknown file %s uses namespace GLib. Contact the author."
 msgstr ""
 
-#: src/autovalaLib/globals.vala:263
+#: src/autovalaLib/globals.vala:265
 #, c-format
 msgid "Error: %s"
 msgstr ""
 
-#: src/autovalaLib/globals.vala:273
+#: src/autovalaLib/globals.vala:275
 #, c-format
 msgid "Warning: %s"
 msgstr ""
 
-#: src/autovalaPlugin/actionbuttons.vala:53
+#: src/autovalaPlugin/actionbuttons.vala:55
 msgid "New project"
 msgstr ""
 
-#: src/autovalaPlugin/actionbuttons.vala:54
+#: src/autovalaPlugin/actionbuttons.vala:56
 msgid "Creates a new Autovala project"
 msgstr ""
 
-#: src/autovalaPlugin/actionbuttons.vala:62
-msgid "Update project"
-msgstr ""
-
-#: src/autovalaPlugin/actionbuttons.vala:63
+#: src/autovalaPlugin/actionbuttons.vala:66
 msgid "Update translations"
 msgstr ""
 
 #: src/autovalaPlugin/fileview.vala:428
-#: src/autovalaPlugin/projectview.vala:594
+#: src/autovalaPlugin/projectview.vala:590
 msgid "Open"
 msgstr ""
 
@@ -670,38 +666,38 @@ msgstr ""
 msgid "Untitled folder"
 msgstr ""
 
-#: src/autovalaPlugin/projectview.vala:506
+#: src/autovalaPlugin/projectview.vala:500
 #, c-format
 msgid "%s <b>(Project file)</b>"
 msgstr ""
 
-#: src/autovalaPlugin/projectview.vala:518
+#: src/autovalaPlugin/projectview.vala:514
 #, c-format
 msgid "%s <b>(executable)</b>"
 msgstr ""
 
-#: src/autovalaPlugin/projectview.vala:525
+#: src/autovalaPlugin/projectview.vala:521
 #, c-format
 msgid "%s <b>(library)</b>"
 msgstr ""
 
-#: src/autovalaPlugin/projectview.vala:595
+#: src/autovalaPlugin/projectview.vala:591
 msgid "New executable/library"
 msgstr ""
 
-#: src/autovalaPlugin/projectview.vala:596
+#: src/autovalaPlugin/projectview.vala:592
 msgid "Edit library properties"
 msgstr ""
 
-#: src/autovalaPlugin/projectview.vala:596
+#: src/autovalaPlugin/projectview.vala:592
 msgid "Edit executable properties"
 msgstr ""
 
-#: src/autovalaPlugin/projectview.vala:597
+#: src/autovalaPlugin/projectview.vala:593
 msgid "Remove library"
 msgstr ""
 
-#: src/autovalaPlugin/projectview.vala:597
+#: src/autovalaPlugin/projectview.vala:593
 msgid "Remove executable"
 msgstr ""
 
