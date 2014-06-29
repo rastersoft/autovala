@@ -32,7 +32,8 @@ Just use these commands:
     sudo ldconfig
 
 You also can compile the plugins for Gedit and Scratch Text Editor, which are
-in the folders *gedit_plugin* and *scratch_plugin*. You can find inside the instructions.
+in the folders *gedit_plugin* and *scratch_plugin*. You can find inside the
+instructions.
 
 
 ## USING AUTOVALA ##
