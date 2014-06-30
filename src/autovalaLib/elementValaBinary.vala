@@ -277,6 +277,21 @@ namespace AutoVala {
 			return error;
 		}
 
+		public override void add_files() {
+
+			this.file_list = {};
+
+			this.file_list = ElementBase.getFilesFromFolder(this._path,{".vala",".c",".pc",".cmake"},true);
+			var files = ElementBase.getFilesFromFolder(GLib.Path.build_filename(this._path,"vapis"),{".vapi"},true);
+			foreach (var element in files) {
+				this.file_list+= element;
+			}
+			files = ElementBase.getFilesFromFolder(GLib.Path.build_filename(this._path,"dbus_generated"),{".vala"},true);
+			foreach (var element in files) {
+				this.file_list+= element;
+			}
+		}
+
 		private bool checkVAPIs() {
 
 			var vapisPath=GLib.Path.build_filename(this._path,"vapis");

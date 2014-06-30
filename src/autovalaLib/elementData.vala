@@ -40,6 +40,11 @@ namespace AutoVala {
 		}
 
 
+		public override void add_files() {
+
+			this.file_list = ElementBase.getFilesFromFolder(this._path,null,true);
+		}
+
 		public override bool generateCMake(DataOutputStream dataStream) {
 
 			try {

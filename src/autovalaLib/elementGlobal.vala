@@ -31,6 +31,9 @@ namespace AutoVala {
 			return false;
 		}
 
+		public override void add_files() {
+		}
+
 		private void addFolderToMainCMakeLists(string element, DataOutputStream dataStream) {
 
 			var path = Path.build_filename(ElementBase.globalData.projectFolder,element);
@@ -70,7 +73,6 @@ namespace AutoVala {
 					ElementBase.globalData.addWarning(_("Can't add subdirectory %s").printf(element));
 				}
 			}
-
 		}
 
 		public bool generateMainCMakeHeader(DataOutputStream dataStream) {

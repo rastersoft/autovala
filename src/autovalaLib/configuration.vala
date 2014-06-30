@@ -64,7 +64,7 @@ namespace AutoVala {
 
 			var errorList = this.globalData.getErrorList();
 			foreach(var e in errorList) {
-				GLib.stdout.printf("%s\n".printf(e));
+				GLib.stderr.printf("%s\n".printf(e));
 			}
 			this.globalData.clearErrors();
 		}

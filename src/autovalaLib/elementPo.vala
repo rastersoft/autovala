@@ -38,6 +38,15 @@ namespace AutoVala {
 			return false;
 		}
 
+		public override void add_files() {
+
+			string[] extensions = {};
+			extensions += "po";
+			extensions += "pot";
+			this.file_list = ElementBase.getFilesFromFolder(this._path,extensions,false);
+			this.file_list+= Path.build_filename(this._path,"POTFILES.in");
+		}
+
 		public override bool generateCMake(DataOutputStream dataStream) {
 
 			var potFile=Path.build_filename(ElementBase.globalData.projectFolder,this._path,"POTFILES.in");

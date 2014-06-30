@@ -33,6 +33,8 @@ namespace AutoVala {
 
 	abstract class ElementBase : GLib.Object {
 
+		public string[]? file_list = null;
+
 		public static Globals globalData = null;
 		public bool processed=false;
 
@@ -71,6 +73,17 @@ namespace AutoVala {
 		}
 
 		public ElementBase() {
+		}
+
+
+		/**
+		 * fills the list of files for this element
+		 */
+		public virtual void add_files() {
+
+			this.file_list = {};
+			var full_path = GLib.Path.build_filename(this._path, this._name);
+			this.file_list += full_path;
 		}
 
 		/**

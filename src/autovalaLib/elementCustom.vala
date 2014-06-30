@@ -29,6 +29,17 @@ namespace AutoVala {
 			this.command = "custom";
 		}
 
+		public override void add_files() {
+
+			var file = File.new_for_path(Path.build_filename(ElementBase.globalData.projectFolder,this._fullPath));
+			if (file.query_file_type(FileQueryInfoFlags.NONE) == GLib.FileType.DIRECTORY) {
+				this.file_list = ElementBase.getFilesFromFolder(this._path,null,true);
+			} else {
+				this.file_list = {};
+				this.file_list+=this._fullPath;
+			}
+		}
+
 		public override bool configureLine(string line, bool automatic, string? condition, bool invertCondition, int lineNumber) {
 
 			if (false == line.has_prefix("custom: ")) {
