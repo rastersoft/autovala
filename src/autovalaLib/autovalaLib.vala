@@ -341,6 +341,43 @@ namespace AutoVala {
 			return error;
 		}
 
+		public string[]? get_files(string ?basePath = null) {
+
+			string[] all_files = {};
+
+			this.config = new AutoVala.Configuration(basePath);
+			if(this.config.globalData.error) {
+				return null; // if there was at least one error during initialization, return
+			}
+
+			var error=config.readConfiguration();
+			if (error) {
+				return null;
+			}
+
+			ElementBase.globalData.generateExtraData();
+			all_files += GLib.Path.get_basename(ElementBase.globalData.configFile);
+			all_files += "CMakeLists.txt";
+			foreach(var path in ElementBase.globalData.pathList) {
+				all_files+= GLib.Path.build_filename(path,"CMakeLists.txt");
+			}
+			var cmake_files = ElementBase.getFilesFromFolder("cmake",null,true);
+			foreach(var element2 in cmake_files) {
+				all_files+=element2;
+			}
+			var file = File.new_for_path(Path.build_filename(ElementBase.globalData.projectFolder,"cmake","CMakeLists.txt"));
+			if (file.query_exists()) {
+				all_files+=Path.build_filename("cmake","CMakeLists.txt");
+			}
+			foreach(var element in ElementBase.globalData.globalElements) {
+				element.add_files();
+				foreach(var element2 in element.file_list) {
+					all_files+=element2;
+				}
+			}
+			return all_files;
+		}
+
 		public bool gettext(string ?basePath = null) {
 			// run xgettext to generate the basic pot file
 

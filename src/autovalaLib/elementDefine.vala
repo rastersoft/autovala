@@ -27,6 +27,10 @@ namespace AutoVala {
 			this.command = "define";
 		}
 
+		public override void add_files() {
+			this.file_list = {};
+		}
+
 		public override bool configureLine(string line, bool automatic, string? condition, bool invertCondition, int lineNumber) {
 
 			if (false == line.has_prefix("define: ")) {

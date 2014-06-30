@@ -56,10 +56,10 @@ int main(string[] argv) {
 		retval=gen.init(argv[2]);
 		gen.showErrors();
 		if (retval) {
-			GLib.stdout.printf(_("Aborting\n"));
+			GLib.stderr.printf(_("Aborting\n"));
 			return -1;
 		}
-		GLib.stdout.printf(_("Done\n"));
+		GLib.stderr.printf(_("Done\n"));
 		break;
 	case "cmake":
 		if (argv.length!=2) {
@@ -70,10 +70,26 @@ int main(string[] argv) {
 		retval=gen.cmake();
 		gen.showErrors();
 		if (retval) {
-			GLib.stdout.printf(_("Aborting\n"));
+			GLib.stderr.printf(_("Aborting\n"));
 			return -1;
 		}
-		GLib.stdout.printf(_("Done\n"));
+		GLib.stderr.printf(_("Done\n"));
+		break;
+	case "project_files":
+		if (argv.length!=2) {
+			help();
+			return -1;
+		}
+		var gen = new AutoVala.ManageProject();
+		var retval2=gen.get_files();
+		if (retval2 == null) {
+			gen.showErrors();
+			GLib.stderr.printf(_("Aborting\n"));
+			return -1;
+		}
+		foreach(var element in retval2) {
+			GLib.stdout.printf("%s\n",element);
+		}
 		break;
 	case "update":
 		if (argv.length!=2) {
@@ -85,18 +101,18 @@ int main(string[] argv) {
 		retval=gen.refresh();
 		gen.showErrors();
 		if (retval) {
-			GLib.stdout.printf(_("Aborting\n"));
+			GLib.stderr.printf(_("Aborting\n"));
 			return -1;
 		} else {
 			GLib.stdout.printf(_("Updating CMake files\n"));
 			retval=gen.cmake();
 			gen.showErrors();
 			if (retval) {
-				GLib.stdout.printf(_("Aborting\n"));
+				GLib.stderr.printf(_("Aborting\n"));
 				return -1;
 			}
 		}
-		GLib.stdout.printf(_("Done\n"));
+		GLib.stderr.printf(_("Done\n"));
 		break;
 	case "refresh":
 		if (argv.length!=2) {
@@ -107,10 +123,10 @@ int main(string[] argv) {
 		retval=gen.refresh();
 		gen.showErrors();
 		if (retval) {
-			GLib.stdout.printf(_("Aborting\n"));
+			GLib.stderr.printf(_("Aborting\n"));
 			return -1;
 		}
-		GLib.stdout.printf(_("Done\n"));
+		GLib.stderr.printf(_("Done\n"));
 		break;
 	case "po":
 		if (argv.length!=2) {
@@ -121,10 +137,10 @@ int main(string[] argv) {
 		retval=gen.gettext();
 		gen.showErrors();
 		if (retval) {
-			GLib.stdout.printf(_("Aborting\n"));
+			GLib.stderr.printf(_("Aborting\n"));
 			return -1;
 		}
-		GLib.stdout.printf(_("Done\n"));
+		GLib.stderr.printf(_("Done\n"));
 		break;
 	case "clear":
 		if (argv.length!=2) {
@@ -135,10 +151,10 @@ int main(string[] argv) {
 		retval=gen.clear();
 		gen.showErrors();
 		if (retval) {
-			GLib.stdout.printf(_("Aborting\n"));
+			GLib.stderr.printf(_("Aborting\n"));
 			return -1;
 		}
-		GLib.stdout.printf(_("Done\n"));
+		GLib.stderr.printf(_("Done\n"));
 		break;
 	default:
 		help();
