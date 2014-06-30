@@ -44,6 +44,12 @@ and enjoy.
 
 
 ## History of versions ##
+* version 0.99.2 (2014-06-30)
+    * Now installs manpages at .../man/manX, instead of .../man/man/manX
+* version 0.99.1 (2014-06-30)
+    * Allows to list all the files needed to compile the project. Useful to add them to GIT, Bazaar, Subversion...
+    * Now error messages are shown in STDERR instead of STDOUT
+    * Added translations for Scratch plugin
 * version 0.99.0 (2014-06-08)
     * Added global search (searchs string in all the files in a project)
     * Added panel to show the output of the building process

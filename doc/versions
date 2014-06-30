@@ -6,6 +6,16 @@
 <div class="main_frame">
 <p><a href="index.html">Home</a></p>
 <ul>
+<li><p>version 0.99.2 (2014-06-30)</p>
+<ul>
+<li>Now installs manpages at .../man/manX, instead of .../man/man/manX<br /></li>
+</ul></li>
+<li><p>version 0.99.1 (2014-06-30)</p>
+<ul>
+<li>Allows to list all the files needed to compile the project. Useful to add them to GIT, Bazaar, Subversion...<br /></li>
+<li>Now error messages are shown in STDERR instead of STDOUT<br /></li>
+<li>Added translations for Scratch plugin<br /></li>
+</ul></li>
 <li><p>version 0.99.0 (2014-06-08)</p>
 <ul>
 <li>Added global search (searchs string in all the files in a project)<br /></li>
