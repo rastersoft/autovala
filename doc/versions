@@ -6,6 +6,10 @@
 <div class="main_frame">
 <p><a href="index.html">Home</a></p>
 <ul>
+<li><p>version 0.99.3 (2014-08-30)</p>
+<ul>
+<li>Now detects valac development versions with non-classic version numbers, like <em>Vala 0.25.1.1-ba8e</em><br /></li>
+</ul></li>
 <li><p>version 0.99.2 (2014-06-30)</p>
 <ul>
 <li>Now installs manpages at .../man/manX, instead of .../man/man/manX<br /></li>

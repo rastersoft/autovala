@@ -148,7 +148,7 @@ namespace AutoVala {
 			foreach(var line in lines) {
 				var version=line.split(" ");
 				foreach(var element in version) {
-					if (Regex.match_simple("^[0-9]+.[0-9]+(.[0-9]+)?$",element)) {
+					if (Regex.match_simple("^[0-9]+.[0-9]+(.[0-9]+)?",element)) {
 						var numbers=element.split(".");
 						this.major=int.parse(numbers[0]);
 						this.minor=int.parse(numbers[1]);

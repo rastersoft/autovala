@@ -44,6 +44,8 @@ and enjoy.
 
 
 ## History of versions ##
+* version 0.99.3 (2014-08-30)
+    * Now detects valac development versions with non-classic version numbers, like *Vala 0.25.1.1-ba8e*
 * version 0.99.2 (2014-06-30)
     * Now installs manpages at .../man/manX, instead of .../man/man/manX
 * version 0.99.1 (2014-06-30)
