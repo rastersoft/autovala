@@ -1,4 +1,6 @@
-* version 0.99.3 (2014-08-30)
+* version 0.99.4 (2014-08-25)
+    * Added the "project_files" option to the text shown with "help"
+* version 0.99.3 (2014-07-30)
     * Now detects valac development versions with non-classic version numbers, like *Vala 0.25.1.1-ba8e*
 * version 0.99.2 (2014-06-30)
     * Now installs manpages at .../man/manX, instead of .../man/man/manX

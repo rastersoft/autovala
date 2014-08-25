@@ -6,7 +6,11 @@
 <div class="main_frame">
 <p><a href="index.html">Home</a></p>
 <ul>
-<li><p>version 0.99.3 (2014-08-30)</p>
+<li><p>version 0.99.4 (2014-08-25)</p>
+<ul>
+<li>Added the &quot;project_files&quot; option to the text shown with &quot;help&quot;<br /></li>
+</ul></li>
+<li><p>version 0.99.3 (2014-07-30)</p>
 <ul>
 <li>Now detects valac development versions with non-classic version numbers, like <em>Vala 0.25.1.1-ba8e</em><br /></li>
 </ul></li>
