@@ -10,7 +10,7 @@ GLib includes the namespace GLib.Math, that contains all the C Math library func
 
 In Autovala, instead, you only need to add at the start of your code an **using** statement with the namespace to ensure that the library will be linked. To do so, just use:
 
-    **//using GLib.Math**
+    //using GLib.Math
 
 (you can put it inside a comment, and Autovala will also understand it).
 

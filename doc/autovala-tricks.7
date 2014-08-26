@@ -8,6 +8,11 @@
 <p>Autovala-tricks(1)</p>
 <h1 id="name">NAME</h1>
 <p>Autovala tricks - Several tricks for Autovala</p>
+<h2 id="using-the-math-library">Using the math library</h2>
+<p>GLib includes the namespace GLib.Math, that contains all the C Math library functions. To use it from C it is mandatory to pass <em>-lm</em> to the compiler.</p>
+<p>In Autovala, instead, you only need to add at the start of your code an <strong>using</strong> statement with the namespace to ensure that the library will be linked. To do so, just use:</p>
+<pre><code>//using GLib.Math</code></pre>
+<p>(you can put it inside a comment, and Autovala will also understand it).</p>
 <h2 id="creating-an-autovala-plugin-for-a-gtk3-text-editor">Creating an Autovala plugin for a GTK3 text editor</h2>
 <p>Version 0.97 includes a library with two widgets, ProjectViewer and FileViewer, that greatly simplifies the task of creating a plugin for manage Autovala projects. An example of its use can be seen in the Gedit plugin for Autovala, available in a folder with the Autovala source code.</p>
 <h2 id="updating-projects-with-new-versions-of-autovala">Updating projects with new versions of Autovala</h2>
@@ -148,8 +153,8 @@
 <pre><code>        cmake .. -DCMAKE_INSTALL_PREFIX=/usr
         make
         make install DESTDIR=$HOME/tmpfolder</code></pre>
-<h2 id="using-gio-gio-unix-gobject-or-gmodule-packages">Using GIO, GIO-unix, GObject or GModule packages</h2>
-<p>There are some exceptions for <strong>using</strong> and package autodetection. Since the packages <strong>GIO</strong>, <strong>GIO-unix</strong>, <strong>GObject</strong> and <strong>GModule</strong> are included inside the <strong>GLib</strong> namespace, Autovala requires them to be manually marked by adding <strong>//using [package name]</strong>. Since it is a comment, it won't be processed by Valac, but will be understood by Autovala and add the required <strong>-pkg</strong> command.</p>
+<h2 id="using-gio-gio-unix-gobject-gmodule-or-math-packages">Using GIO, GIO-unix, GObject, GModule or Math packages</h2>
+<p>There are some exceptions for <strong>using</strong> and package autodetection. Since the packages <strong>GIO</strong>, <strong>GIO-unix</strong>, <strong>GObject</strong>, <strong>GModule</strong> and <strong>Math</strong> are included inside the <strong>GLib</strong> namespace, Autovala requires them to be manually marked by adding <strong>//using [package name]</strong>. Since it is a comment, it won't be processed by Valac, but will be understood by Autovala and add the required <strong>-pkg</strong> command (or <strong>-lm</strong> in the case of Math).</p>
 <h2 id="using-conditional-compilation-to-allow-to-use-gtk2-and-gtk3">Using conditional compilation to allow to use GTK2 and GTK3</h2>
 <p>An special case is when supporting both GTK2 and GTK3 with the same source code is desirable. It is possible to do it by using conditional compilation.</p>
 <p>First, decide a statement to choose between both libraries. Let's say USE_GTK2.</p>
