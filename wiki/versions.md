@@ -1,3 +1,5 @@
+* version 0.99.5 (2014-08-26)
+    * Allows to specify C libraries that lacks pkg-config support (like the math library, needed when using GLib.Math)
 * version 0.99.4 (2014-08-25)
     * Added the "project_files" option to the text shown with "help"
 * version 0.99.3 (2014-07-30)

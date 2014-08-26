@@ -8,7 +8,7 @@ autovala fileformat - The syntax for autovala configuration file
 
 The project file has a very simple format. Usually you don't need to manually edit it, but when the guesses of autovala are incorrect, you can do it, and your changes will be remembered each time you refresh the file.
 
-The current version for the project file format is **11**.
+The current version for the project file format is **12**.
 
 The file is based on commands in the format:
 
@@ -78,7 +78,9 @@ After that, it comes several commands, some of them repeated several times, to s
 
    * **dbus_interface**: this command specifies a DBus interface to be automatically extracted using introspection, and to generate a source file with it. It must be followed by the connection name (e.g. org.freedesktop.ConsoleKit), the object path (e.g. /org/freedesktop/ConsoleKit/Manager), and whether it must connect to the **system** or **session** bus. Finally, it can have an extra parameter specifying if the generated interface must be for **gdbus** (the default option) or for the obsolete **dbus-glib** library.
 
-    The last ten subcommands (compile_options, compile_c_options, vala_package, vala_check_package, c_check_package, vala_local_package, vala_source, c_source, vala_vapi and dbus_interface) can be repeated as many times as needed to specify all the sources and packages needed.
+   * **c_library**: this command specifies one or more C libraries which must be linked against this binary (separated by blank spaces), useful for libraries not supported with **pkg_config** like the math C library. The libraries must be specified without the 'l' preffix; this is, the math library is 'm'; the posix threads library is 'pthread', and so on.
+
+    The last eleven subcommands (compile_options, compile_c_options, vala_package, vala_check_package, c_check_package, vala_local_package, vala_source, c_source, vala_vapi, dbus_interface and c_library) can be repeated as many times as needed to specify all the sources and packages needed.
 
  * **vala_library**: the same than vala_binary, but creates a dynamic linking library. It uses the same subcommands.
 

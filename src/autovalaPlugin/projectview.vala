@@ -638,6 +638,7 @@ namespace AutovalaPlugin {
 		private AutoVala.ManageProject project;
 		private Gtk.Entry vala_options;
 		private Gtk.Entry c_options;
+		private Gtk.Entry libraries;
 		private Gtk.Button accept_button;
 		private Gtk.Label error_message;
 		private string project_file;
@@ -672,6 +673,7 @@ namespace AutovalaPlugin {
 			this.is_executable = (Gtk.RadioButton) builder.get_object("is_executable");
 			this.vala_options = (Gtk.Entry) builder.get_object("vala_compile_options");
 			this.c_options = (Gtk.Entry) builder.get_object("c_compile_options");
+			this.libraries = (Gtk.Entry) builder.get_object("libraries");
 			this.accept_button = (Gtk.Button) builder.get_object("button_accept");
 			this.error_message = (Gtk.Label) builder.get_object("error_message");
 
@@ -689,6 +691,7 @@ namespace AutovalaPlugin {
 							}
 							this.vala_options.text=element.vala_opts;
 							this.c_options.text=element.c_opts;
+							this.libraries.text=element.libraries;
 						}
 					}
 				}
@@ -709,7 +712,7 @@ namespace AutovalaPlugin {
 				if (retval != 2) {
 					break;
 				}
-				var retMsg = this.project.process_binary(this.binary_name,this.project_file,this.name.text,this.is_library.active,this.path.get_filename(),this.vala_options.text,this.c_options.text);
+				var retMsg = this.project.process_binary(this.binary_name,this.project_file,this.name.text,this.is_library.active,this.path.get_filename(),this.vala_options.text,this.c_options.text,this.libraries.text);
 				if (null == retMsg) {
 					break;
 				} else {

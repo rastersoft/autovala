@@ -71,6 +71,15 @@ namespace AutoVala {
 		}
 	}
 
+	private class LibraryElement:GenericElement {
+		public LibraryElement(string libraries, bool automatic, string? condition, bool inverted) {
+			this.elementName=libraries;
+			this.automatic=automatic;
+			this.condition=condition;
+			this.invertCondition=inverted;
+		}
+	}
+
 	private class DBusElement:GenericElement {
 
 		public string obj;
@@ -115,6 +124,11 @@ namespace AutoVala {
 		private Gee.List<string> usingList;
 		private Gee.List<string> defines;
 
+		private Gee.List<LibraryElement ?> _link_libraries;
+		public Gee.List<LibraryElement ?> link_libraries {
+			get {return this._link_libraries;}
+		}
+
 		private string? _currentNamespace;
 		public string ? currentNamespace {
 			get {return this._currentNamespace;}
@@ -151,6 +165,21 @@ namespace AutoVala {
 				opts+=element.elementName;
 			}
 			return opts;
+		}
+
+		public string get_libraries() {
+
+			string libs = "";
+			foreach(var element in this._link_libraries) {
+				if (element.automatic==true) {
+					continue; // don't put the automatically added ones
+				}
+				if (libs != "") {
+					libs += " ";
+				}
+				libs+=element.elementName;
+			}
+			return libs;
 		}
 
 		public void set_name(string new_name) {
@@ -200,6 +229,7 @@ namespace AutoVala {
 			this._compileOptions=new Gee.ArrayList<CompileElement ?>();
 			this._compileCOptions=new Gee.ArrayList<CompileElement ?>();
 			this._dbusElements=new Gee.ArrayList<DBusElement ?>();
+			this._link_libraries=new Gee.ArrayList<LibraryElement ?>();
 			ElementValaBinary.addedValaBinaries = false;
 			ElementValaBinary.addedLibraryWarning = false;
 			try {
@@ -209,6 +239,22 @@ namespace AutoVala {
 			} catch (GLib.Error e) {
 				ElementBase.globalData.addError(_("Can't generate the Regexps"));
 			}
+		}
+
+		private void add_library(string library) {
+
+			foreach (var element in this._link_libraries) {
+				var libs = element.elementName.split(" ");
+				foreach (var lib in libs) {
+					if (lib == "") {
+						continue;
+					}
+					if (lib == library) {
+						return; // that library already exists
+					}
+				}
+			}
+			this.setCLibrary(library, true, null, false, 0);
 		}
 
 		public static bool autoGenerate() {
@@ -380,6 +426,7 @@ namespace AutoVala {
 			try {
 				var file=File.new_for_path(path);
 				var dis = new DataInputStream (file.read ());
+				bool added_math = false;
 
 				while ((line = dis.read_line (null)) != null) {
 					if (version!=null) {
@@ -422,6 +469,12 @@ namespace AutoVala {
 							pos=regexString.length; // allow to put //using without a ; at the end, but also accept with it
 						}
 						var namespaceFound=regexString.substring(pos2+2,pos-pos2-2).strip();
+						if ((namespaceFound == "Math") || (namespaceFound == "GLib.Math")) {
+							if (added_math == false) {
+								added_math = true;
+								this.add_library("m");
+							}
+						}
 						if (this.usingList.contains(namespaceFound)==false) {
 							this.usingList.add(namespaceFound);
 						}
@@ -448,6 +501,7 @@ namespace AutoVala {
 							this.usingList.add("GIO");
 						}
 					}
+
 					if (line.has_prefix("namespace ")) {
 						var pos=line.index_of("{");
 						if (pos==-1) {
@@ -498,6 +552,7 @@ namespace AutoVala {
 			var vapisTmp=new Gee.ArrayList<VapiElement ?>();
 			var compileTmp=new Gee.ArrayList<CompileElement ?>();
 			var dbusTmp=new Gee.ArrayList<DBusElement ?>();
+			var librariesTmp=new Gee.ArrayList<LibraryElement ?>();
 			foreach (var e in this._packages) {
 				if (e.automatic==false) {
 					packagesTmp.add(e);
@@ -528,12 +583,18 @@ namespace AutoVala {
 					dbusTmp.add(e);
 				}
 			}
+			foreach (var e in this._link_libraries) {
+				if (e.automatic==false) {
+					librariesTmp.add(e);
+				}
+			}
 			this._packages=packagesTmp;
 			this._sources=sourcesTmp;
 			this._cSources=cSourcesTmp;
 			this._vapis=vapisTmp;
 			this._compileOptions=compileTmp;
 			this._dbusElements=dbusTmp;
+			this._link_libraries=librariesTmp;
 		}
 
 		public static int comparePackages (GenericElement? a, GenericElement? b) {
@@ -607,10 +668,47 @@ namespace AutoVala {
 			return false;
 		}
 
+		public bool setCLibrary(string libraries,  bool automatic, string? condition, bool invertCondition, int lineNumber, bool erase_all=false) {
+
+			if (erase_all) {
+				// remove the manually added libraries
+				var librariesTmp=new Gee.ArrayList<LibraryElement ?>();
+				foreach (var e in this._link_libraries) {
+					if (e.automatic==true) {
+						librariesTmp.add(e);
+					}
+				}
+				this._link_libraries = librariesTmp;
+			}
+
+			if (libraries == "") {
+				return false;
+			}
+
+			// if it is conditional, it MUST be manual, because conditions are not added automatically
+			if (condition!=null) {
+				automatic=false;
+			}
+
+			// adding a non-automatic library to an automatic binary transforms this binary to non-automatic
+			if ((automatic==false)&&(this._automatic==true)) {
+				this.transformToNonAutomatic(false);
+			}
+
+			var element=new LibraryElement(libraries,automatic,condition,invertCondition);
+			this._link_libraries.add(element);
+
+			return false;
+		}
+
 		public bool setCompileOptions(string options,  bool automatic, string? condition, bool invertCondition, int lineNumber, bool erase_all=false) {
 
 			if (erase_all) {
 				this._compileOptions = new Gee.ArrayList<CompileElement ?>();
+			}
+
+			if (options == "") {
+				return false;
 			}
 
 			// if it is conditional, it MUST be manual, because conditions are not added automatically
@@ -633,6 +731,10 @@ namespace AutoVala {
 
 			if (erase_all) {
 				this._compileOptions = new Gee.ArrayList<CompileElement ?>();
+			}
+
+			if (options == "") {
+				return false;
 			}
 
 			// if it is conditional, it MUST be manual, because conditions are not added automatically
@@ -837,6 +939,8 @@ namespace AutoVala {
 				return this.addVapi(line.substring(11).strip(),automatic,condition,invertCondition,lineNumber);
 			} else if (line.has_prefix("dbus_interface: ")) {
 				return this.addDBus(line.substring(16).strip(),automatic,condition,invertCondition,lineNumber);
+			} else if (line.has_prefix("c_library: ")) {
+				return this.setCLibrary(line.substring(11).strip(),automatic,condition,invertCondition,lineNumber);
 			} else {
 				var badCommand = line.split(": ")[0];
 				ElementBase.globalData.addError(_("Invalid command %s after command %s (line %d)").printf(badCommand,this.command, lineNumber));
@@ -1293,9 +1397,14 @@ namespace AutoVala {
 					dataStream.put_string(")\n");
 
 				} else {
-
 					// Install executable
-					dataStream.put_string("add_executable("+libFilename+" ${VALA_C})\n\n");
+					dataStream.put_string("add_executable("+libFilename+" ${VALA_C})\n");
+					foreach (var element in this._link_libraries) {
+						printConditions.printCondition(element.condition,element.invertCondition);
+						dataStream.put_string("target_link_libraries( "+libFilename+" "+element.elementName+" )\n");
+					}
+					printConditions.printTail();
+					dataStream.put_string("\n");
 					dataStream.put_string("install(TARGETS\n");
 					dataStream.put_string("\t"+libFilename+"\n");
 					dataStream.put_string("RUNTIME DESTINATION\n");
@@ -1427,6 +1536,15 @@ namespace AutoVala {
 						}
 						dataStream.put_string("vala_check_package: %s\n".printf(element.elementName));
 					}
+				}
+				printConditions.printTail();
+
+				foreach(var element in this._link_libraries) {
+					printConditions.printCondition(element.condition,element.invertCondition);
+					if (element.automatic) {
+						dataStream.put_string("*");
+					}
+					dataStream.put_string("c_library: %s\n".printf(element.elementName));
 				}
 				printConditions.printTail();
 
