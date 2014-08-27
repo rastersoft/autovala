@@ -1,3 +1,5 @@
+* version 0.99.6 (2014-08-27)
+    * Doesn't show the message that can't resolve "Using Math" when using that statement
 * version 0.99.5 (2014-08-26)
     * Allows to specify C libraries that lacks pkg-config support (like the math library, needed when using GLib.Math)
 * version 0.99.4 (2014-08-25)

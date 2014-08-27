@@ -474,6 +474,7 @@ namespace AutoVala {
 								added_math = true;
 								this.add_library("m");
 							}
+							continue;
 						}
 						if (this.usingList.contains(namespaceFound)==false) {
 							this.usingList.add(namespaceFound);
