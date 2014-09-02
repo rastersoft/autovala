@@ -13,6 +13,7 @@ set (DOLLAR "$")
 configure_file (${CMAKE_SOURCE_DIR}/src/autovalaPlugin/Config.vala.cmake ${CMAKE_BINARY_DIR}/src/autovalaPlugin/Config.vala)
 add_definitions(-DGETTEXT_PACKAGE=\"${GETTEXT_PACKAGE}\")
 configure_file (${CMAKE_CURRENT_SOURCE_DIR}/AutovalaPlugin.pc ${CMAKE_CURRENT_BINARY_DIR}/AutovalaPlugin.pc)
+configure_file (${CMAKE_CURRENT_SOURCE_DIR}/AutovalaPlugin.deps ${CMAKE_CURRENT_BINARY_DIR}/AutovalaPlugin.deps)
 set (VERSION "0.99")
 add_definitions (${DEPS_CFLAGS})
 include_directories ( ${CMAKE_BINARY_DIR}/src/autovalaLib )
@@ -85,6 +86,11 @@ DESTINATION
 )
 install(FILES
 	${CMAKE_CURRENT_BINARY_DIR}/AutovalaPlugin.vapi
+DESTINATION
+	${CMAKE_INSTALL_DATAROOTDIR}/vala/vapi/
+)
+install(FILES
+	${CMAKE_CURRENT_BINARY_DIR}/AutovalaPlugin.deps
 DESTINATION
 	${CMAKE_INSTALL_DATAROOTDIR}/vala/vapi/
 )

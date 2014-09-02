@@ -1145,9 +1145,10 @@ namespace AutoVala {
 
 			try {
 				string pcFilename=libFilename+".pc";
+				string depsFilename=libFilename+".deps";
 
 				if (this._type == ConfigType.VALA_LIBRARY) {
-					fname=File.new_for_path(Path.build_filename(ElementBase.globalData.projectFolder,this._path,libFilename+".pc"));
+					fname=File.new_for_path(Path.build_filename(ElementBase.globalData.projectFolder,this._path,pcFilename));
 					if (fname.query_exists()) {
 						fname.delete();
 					}
@@ -1164,12 +1165,47 @@ namespace AutoVala {
 						dataStream2.put_string("Version: "+this.version+"\n");
 						dataStream2.put_string("Libs: -L@DOLLAR@{libdir} -l"+libFilename+"\n");
 						dataStream2.put_string("Cflags: -I@DOLLAR@{includedir}\n");
+
+						bool first = true;
+						foreach(var module in this._packages) {
+							if ((module.type != packageType.DO_CHECK) && (module.type != packageType.LOCAL)){
+								continue;
+							}
+							if (first) {
+								dataStream2.put_string("Requires:");
+								first = false;
+							}
+							dataStream2.put_string(" %s".printf(module.elementName));
+						}
+						if (!first) {
+							dataStream2.put_string("\n");
+						}
 						dataStream2.close();
 					} catch (GLib.Error e) {
-						ElementBase.globalData.addError(_("Failed to create the Config.vala.cmake file"));
+						ElementBase.globalData.addError(_("Failed to create the .PC file"));
 						return true;
 					}
 					dataStream.put_string("configure_file (${CMAKE_CURRENT_SOURCE_DIR}/"+pcFilename+" ${CMAKE_CURRENT_BINARY_DIR}/"+pcFilename+")\n");
+
+					fname=File.new_for_path(Path.build_filename(ElementBase.globalData.projectFolder,this._path,depsFilename));
+					if (fname.query_exists()) {
+						fname.delete();
+					}
+					try {
+						var dis = fname.create(FileCreateFlags.NONE);
+						var dataStream2 = new DataOutputStream(dis);
+						foreach(var module in this._packages) {
+							if ((module.type == packageType.C_DO_CHECK)) {
+								continue;
+							}
+							dataStream2.put_string("%s\n".printf(module.elementName));
+						}
+						dataStream2.close();
+					} catch (GLib.Error e) {
+						ElementBase.globalData.addError(_("Failed to create the .DEPS file"));
+						return true;
+					}
+					dataStream.put_string("configure_file (${CMAKE_CURRENT_SOURCE_DIR}/"+depsFilename+" ${CMAKE_CURRENT_BINARY_DIR}/"+depsFilename+")\n");
 				}
 
 				dataStream.put_string("set (VERSION \""+this.version+"\")\n");
@@ -1376,6 +1412,17 @@ namespace AutoVala {
 					// Install VAPI
 					dataStream.put_string("install(FILES\n");
 					dataStream.put_string("\t${CMAKE_CURRENT_BINARY_DIR}/"+libFilename+".vapi\n");
+					dataStream.put_string("DESTINATION\n");
+					if (this.destination==null) {
+						dataStream.put_string("\t${CMAKE_INSTALL_DATAROOTDIR}/vala/vapi/\n");
+					} else {
+						dataStream.put_string("\t%s\n".printf(this.destination));
+					}
+					dataStream.put_string(")\n");
+
+					// Install DEPS
+					dataStream.put_string("install(FILES\n");
+					dataStream.put_string("\t${CMAKE_CURRENT_BINARY_DIR}/"+libFilename+".deps\n");
 					dataStream.put_string("DESTINATION\n");
 					if (this.destination==null) {
 						dataStream.put_string("\t${CMAKE_INSTALL_DATAROOTDIR}/vala/vapi/\n");
