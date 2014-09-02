@@ -6,6 +6,12 @@
 <div class="main_frame">
 <p><a href="index.html">Home</a></p>
 <ul>
+<li><p>version 0.99.7 /2014-09-03)</p>
+<ul>
+<li>Generates .deps files for libraries, needed with .vapi files<br /></li>
+<li>Adds <strong>Require</strong> field in pkg-config files to list the dependencies of a library<br /></li>
+<li>Now doesn't put as a requirement the library being built when it defines a sub-namespace of its own namespace<br /></li>
+</ul></li>
 <li><p>version 0.99.6 (2014-08-27)</p>
 <ul>
 <li>Doesn't show the message that can't resolve &quot;Using Math&quot; when using that statement<br /></li>

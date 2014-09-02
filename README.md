@@ -44,6 +44,10 @@ and enjoy.
 
 
 ## History of versions ##
+* version 0.99.7 /2014-09-03)
+    * Generates .deps files for libraries, needed with .vapi files
+    * Adds **Require** field in pkg-config files to list the dependencies of a library
+    * Now doesn't put as a requirement the library being built when it defines a sub-namespace of its own namespace
 * version 0.99.6 (2014-08-27)
     * Doesn't show the message that can't resolve "Using Math" when using that statement
 * version 0.99.5 (2014-08-26)
