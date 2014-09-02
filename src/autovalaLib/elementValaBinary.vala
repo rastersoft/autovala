@@ -123,6 +123,7 @@ namespace AutoVala {
 
 		private Gee.List<string> usingList;
 		private Gee.List<string> defines;
+		private Gee.List<string> namespaces;
 
 		private Gee.List<LibraryElement ?> _link_libraries;
 		public Gee.List<LibraryElement ?> link_libraries {
@@ -222,6 +223,7 @@ namespace AutoVala {
 			this.defines=null;
 			this.namespaceAutomatic=true;
 			this.destination=null;
+			this.namespaces=null;
 			this._packages=new Gee.ArrayList<PackageElement ?>();
 			this._sources=new Gee.ArrayList<SourceElement ?>();
 			this._cSources=new Gee.ArrayList<SourceElement ?>();
@@ -293,6 +295,7 @@ namespace AutoVala {
 
 			this.usingList = new Gee.ArrayList<string>();
 			this.defines = new Gee.ArrayList<string>();
+			this.namespaces = new Gee.ArrayList<string>();
 
 			this.usingList.add("GLib"); // GLib is always needed
 
@@ -408,6 +411,9 @@ namespace AutoVala {
 
 			// If there are dependencies not resolved, show a warning message for each one
 			foreach(var element in this.usingList) {
+				if (this.namespaces.index_of(element) != -1) {
+					continue;
+				}
 				ElementBase.globalData.addWarning(_("Can't resolve Using %s").printf(element));
 			}
 			return false;
@@ -509,11 +515,16 @@ namespace AutoVala {
 							pos=line.length;
 						}
 						var namespaceFound=line.substring(10,pos-10).strip();
-						if ((this.currentNamespace!=null)&&(this.currentNamespace!=namespaceFound)) {
+
+						var topNamespaceFound = namespaceFound.split(".")[0];
+						if ((this.currentNamespace!=null)&&(this.currentNamespace!=topNamespaceFound)) {
 							ElementBase.globalData.addWarning(_("File %s is overwritting the namespace (line %d)").printf(pathP,lineCounter));
 							continue;
 						}
-						this._currentNamespace=namespaceFound;
+						this._currentNamespace=topNamespaceFound;
+						if (this.namespaces.index_of(namespaceFound) == -1) {
+							this.namespaces.add(namespaceFound);
+						}
 						continue;
 					}
 					if ((line.has_prefix("#if ")) || (line.has_prefix("#elif "))) { // Add #defines
