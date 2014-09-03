@@ -330,7 +330,7 @@ namespace AutoVala {
 
 			this.file_list = {};
 
-			this.file_list = ElementBase.getFilesFromFolder(this._path,{".vala",".c",".pc",".cmake"},true);
+			this.file_list = ElementBase.getFilesFromFolder(this._path,{".vala",".c",".pc","deps",".cmake"},true);
 			var files = ElementBase.getFilesFromFolder(GLib.Path.build_filename(this._path,"vapis"),{".vapi"},true);
 			foreach (var element in files) {
 				this.file_list+= element;
