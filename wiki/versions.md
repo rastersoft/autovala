@@ -1,3 +1,21 @@
+* version 0.99.7 /2014-09-03)
+    * Generates .deps files for libraries, needed with .vapi files
+    * Adds **Require** field in pkg-config files to list the dependencies of a library
+    * Now doesn't put as a requirement the library being built when it defines a sub-namespace of its own namespace
+* version 0.99.6 (2014-08-27)
+    * Doesn't show the message that can't resolve "Using Math" when using that statement
+* version 0.99.5 (2014-08-26)
+    * Allows to specify C libraries that lacks pkg-config support (like the math library, needed when using GLib.Math)
+* version 0.99.4 (2014-08-25)
+    * Added the "project_files" option to the text shown with "help"
+* version 0.99.3 (2014-07-30)
+    * Now detects valac development versions with non-classic version numbers, like *Vala 0.25.1.1-ba8e*
+* version 0.99.2 (2014-06-30)
+    * Now installs manpages at .../man/manX, instead of .../man/man/manX
+* version 0.99.1 (2014-06-30)
+    * Allows to list all the files needed to compile the project. Useful to add them to GIT, Bazaar, Subversion...
+    * Now error messages are shown in STDERR instead of STDOUT
+    * Added translations for Scratch plugin
 * version 0.99.0 (2014-06-08)
     * Added global search (searchs string in all the files in a project)
     * Added panel to show the output of the building process

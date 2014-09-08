@@ -488,7 +488,7 @@ namespace AutoVala {
 				var newElement = new PublicElement(element.eType, element.fullPath, element.name);
 				if ((element.eType == ConfigType.VALA_LIBRARY) || (element.eType == ConfigType.VALA_BINARY)) {
 					var binElement = element as ElementValaBinary;
-					newElement.set_binary_data(binElement.get_vala_opts(),binElement.get_c_opts());
+					newElement.set_binary_data(binElement.get_vala_opts(),binElement.get_c_opts(),binElement.get_libraries());
 				}
 				project.elements.add(newElement);
 			}
@@ -522,7 +522,7 @@ namespace AutoVala {
 			return false;
 		}
 
-		public string ? process_binary(string? original_name, string? projectPath, string binary_name, bool is_library, string base_path, string vala_options, string c_options) {
+		public string ? process_binary(string? original_name, string? projectPath, string binary_name, bool is_library, string base_path, string vala_options, string c_options, string libraries) {
 
 			string retval = "";
 
@@ -623,23 +623,17 @@ namespace AutoVala {
 					}
 					return retString;
 				}
-				if (vala_options!="") {
-					element.setCompileOptions(vala_options,false, null, false, 0);
-				}
-				if (c_options!="") {
-					element.setCompileCOptions(c_options,false, null, false, 0);
-				}
+				element.setCompileOptions(vala_options,false, null, false, 0);
+				element.setCompileCOptions(c_options,false, null, false, 0);
+				element.setCLibrary(libraries,false,null,false,0);
 				element.autoConfigure();
 			} else {
 				original_element.set_name(binary_name);
 				original_element.set_type(is_library);
 				original_element.set_path(base_path3);
-				if (vala_options!="") {
-					original_element.setCompileOptions(vala_options,false, null, false, 0,true);
-				}
-				if (c_options!="") {
-					original_element.setCompileCOptions(c_options,false, null, false, 0,true);
-				}
+				original_element.setCompileOptions(vala_options,false, null, false, 0,true);
+				original_element.setCompileCOptions(c_options,false, null, false, 0,true);
+				original_element.setCLibrary(libraries,false,null,false,0,true);
 				original_element.autoConfigure();
 			}
 			config.saveConfiguration();
@@ -662,18 +656,21 @@ namespace AutoVala {
 		public string name;
 		public string vala_opts;
 		public string c_opts;
+		public string libraries;
 
 		public PublicElement(ConfigType type,string? fullPath, string name) {
 			this.type = type;
 			this.fullPath = fullPath;
 			this.name = name;
-			vala_opts = "";
-			c_opts = "";
+			this.vala_opts = "";
+			this.c_opts = "";
+			this.libraries = "";
 		}
 
-		public void set_binary_data(string vala_options,string c_options) {
+		public void set_binary_data(string vala_options,string c_options,string libraries) {
 			this.vala_opts = vala_options;
 			this.c_opts = c_options;
+			this.libraries = libraries;
 		}
 	}
 }

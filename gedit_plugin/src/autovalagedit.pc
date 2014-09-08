@@ -9,3 +9,4 @@ Description: autovalagedit
 Version: 1.0.0
 Libs: -L@DOLLAR@{libdir} -lautovalagedit
 Cflags: -I@DOLLAR@{includedir}
+Requires: gedit AutoVala AutovalaPlugin atk cairo gdk-3.0 gdk-pixbuf-2.0 gee-0.8 gio-2.0 glib-2.0 gobject-2.0 gobject-introspection-1.0 gtk+-3.0 gtksourceview-3.0 libpeas-1.0 pango pangocairo x11

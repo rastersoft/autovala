@@ -4,6 +4,16 @@ Autovala-tricks(1)
 
 Autovala tricks - Several tricks for Autovala
 
+## Using the math library
+
+GLib includes the namespace GLib.Math, that contains all the C Math library functions. To use it from C it is mandatory to pass *-lm* to the compiler.
+
+In Autovala, instead, you only need to add at the start of your code an **using** statement with the namespace to ensure that the library will be linked. To do so, just use:
+
+    //using GLib.Math
+
+(you can put it inside a comment, and Autovala will also understand it).
+
 ## Creating an Autovala plugin for a GTK3 text editor
 
 Version 0.97 includes a library with two widgets, ProjectViewer and FileViewer, that greatly simplifies the task of creating a plugin for manage Autovala projects. An example of its use can be seen in the Gedit plugin for Autovala, available in a folder with the Autovala source code.
@@ -233,9 +243,9 @@ To create packages, you must set the install prefix to **/usr** like in the prev
             make
             make install DESTDIR=$HOME/tmpfolder
 
-## Using GIO, GIO-unix, GObject or GModule packages
+## Using GIO, GIO-unix, GObject, GModule or Math packages
 
-There are some exceptions for **using** and package autodetection. Since the packages **GIO**, **GIO-unix**, **GObject** and **GModule** are included inside the **GLib** namespace, Autovala requires them to be manually marked by adding **//using [package name]**. Since it is a comment, it won't be processed by Valac, but will be understood by Autovala and add the required **-pkg** command.
+There are some exceptions for **using** and package autodetection. Since the packages **GIO**, **GIO-unix**, **GObject**, **GModule** and **Math** are included inside the **GLib** namespace, Autovala requires them to be manually marked by adding **//using [package name]**. Since it is a comment, it won't be processed by Valac, but will be understood by Autovala and add the required **-pkg** command (or **-lm** in the case of Math).
 
 ## Using conditional compilation to allow to use GTK2 and GTK3
 

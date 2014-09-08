@@ -6,6 +6,38 @@
 <div class="main_frame">
 <p><a href="index.html">Home</a></p>
 <ul>
+<li><p>version 0.99.7 /2014-09-03)</p>
+<ul>
+<li>Generates .deps files for libraries, needed with .vapi files<br /></li>
+<li>Adds <strong>Require</strong> field in pkg-config files to list the dependencies of a library<br /></li>
+<li>Now doesn't put as a requirement the library being built when it defines a sub-namespace of its own namespace<br /></li>
+</ul></li>
+<li><p>version 0.99.6 (2014-08-27)</p>
+<ul>
+<li>Doesn't show the message that can't resolve &quot;Using Math&quot; when using that statement<br /></li>
+</ul></li>
+<li><p>version 0.99.5 (2014-08-26)</p>
+<ul>
+<li>Allows to specify C libraries that lacks pkg-config support (like the math library, needed when using GLib.Math)<br /></li>
+</ul></li>
+<li><p>version 0.99.4 (2014-08-25)</p>
+<ul>
+<li>Added the &quot;project_files&quot; option to the text shown with &quot;help&quot;<br /></li>
+</ul></li>
+<li><p>version 0.99.3 (2014-07-30)</p>
+<ul>
+<li>Now detects valac development versions with non-classic version numbers, like <em>Vala 0.25.1.1-ba8e</em><br /></li>
+</ul></li>
+<li><p>version 0.99.2 (2014-06-30)</p>
+<ul>
+<li>Now installs manpages at .../man/manX, instead of .../man/man/manX<br /></li>
+</ul></li>
+<li><p>version 0.99.1 (2014-06-30)</p>
+<ul>
+<li>Allows to list all the files needed to compile the project. Useful to add them to GIT, Bazaar, Subversion...<br /></li>
+<li>Now error messages are shown in STDERR instead of STDOUT<br /></li>
+<li>Added translations for Scratch plugin<br /></li>
+</ul></li>
 <li><p>version 0.99.0 (2014-06-08)</p>
 <ul>
 <li>Added global search (searchs string in all the files in a project)<br /></li>
