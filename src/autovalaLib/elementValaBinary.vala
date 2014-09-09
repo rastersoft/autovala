@@ -322,8 +322,20 @@ namespace AutoVala {
 			foreach (var element in files) {
 				error |= this.addCSource(element,true,null,false,-1);
 			}
+
 			ElementBase.globalData.addExclude(this._path);
 			return error;
+		}
+
+		private void remove_self_package() {
+
+			var tmpPackages = new Gee.ArrayList<PackageElement ?>();
+			foreach(var element in this._packages) {
+				if (element.elementName != this._currentNamespace) {
+					tmpPackages.add(element);
+				}
+			}
+			this._packages = tmpPackages;
 		}
 
 		public override void add_files() {
@@ -1025,12 +1037,6 @@ namespace AutoVala {
 
    					try {
 						outputStream.write(output.data);
-					/*} catch (IOChannelError e) {
-						ElementBase.globalData.addWarning(_("IOChannelError: %s\n").printf(e.message));
-						return false;
-					} catch (ConvertError e) {
-						ElementBase.globalData.addWarning(_("ConvertError: %s\n").printf(e.message));
-						return false;*/
 					} catch (GLib.IOError e) {
 						ElementBase.globalData.addWarning(_("IOError: %s\n").printf(e.message));
 						   return false;
@@ -1117,6 +1123,10 @@ namespace AutoVala {
 				// Build the GIR filename
 				girFilename=this._currentNamespace+"-"+this.version.split(".")[0]+".0.gir";
 				libFilename=this._currentNamespace;
+			}
+
+			if (this._type == ConfigType.VALA_LIBRARY) {
+				this.remove_self_package();
 			}
 
 			var fname=File.new_for_path(Path.build_filename(ElementBase.globalData.projectFolder,this._path,"Config.vala.cmake"));
@@ -1500,6 +1510,10 @@ namespace AutoVala {
 		}
 
 		public override bool storeConfig(DataOutputStream dataStream,ConditionalText printConditions) {
+
+			if (this._type == ConfigType.VALA_LIBRARY) {
+				this.remove_self_package();
+			}
 
 			try {
 				dataStream.put_string("\n");
