@@ -7,7 +7,7 @@ custom: data/cmake share/autovala/cmake
 
 
 vala_binary: src/autovala
-*version: 0.99.7
+*version: 0.99.8
 if DEBUG
 compile_options: -g --fatal-warnings
 end
