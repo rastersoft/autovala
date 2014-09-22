@@ -275,6 +275,7 @@ namespace AutoVala {
 
 					if (line.has_prefix("vala_version: ")) {
 						if (this.checkConditionals(cond)) {
+							this.globalData.addError(_("Vala version can't be conditional (line %d)").printf(this.lineNumber));
 							error=true;
 							continue;
 						}
@@ -299,6 +300,7 @@ namespace AutoVala {
 							}
 							this.globalData.valaVersionMajor=fMajor;
 							this.globalData.valaVersionMinor=fMinor;
+							this.globalData.versionAutomatic = automatic;
 						}
 						continue;
 					} else if (line.has_prefix("project_name: ")) {
@@ -399,8 +401,8 @@ namespace AutoVala {
 				data_stream.put_string("### AutoVala Project ###\n");
 				data_stream.put_string("autovala_version: %d\n".printf(this.currentVersion));
 				data_stream.put_string("project_name: %s\n".printf(this.globalData.projectName));
-				if ((this.globalData.valaMajor>this.globalData.valaVersionMajor) || ((this.globalData.valaMajor==this.globalData.valaVersionMajor)&&(this.globalData.valaMinor>this.globalData.valaVersionMinor))) {
-					data_stream.put_string("vala_version: %d.%d\n\n".printf(this.globalData.valaMajor,this.globalData.valaMinor));
+				if (this.globalData.versionAutomatic) {
+					data_stream.put_string("*vala_version: %d.%d\n\n".printf(this.globalData.valaMajor,this.globalData.valaMinor));
 				} else {
 					data_stream.put_string("vala_version: %d.%d\n\n".printf(this.globalData.valaVersionMajor,this.globalData.valaVersionMinor));
 				}
