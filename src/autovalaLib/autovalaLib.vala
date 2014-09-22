@@ -130,7 +130,6 @@ namespace AutoVala {
 			try {
 				var ignoreFile=File.new_for_path(Path.build_filename(basePath,filePath));
 				if (ignoreFile.query_exists()) {
-					ElementBase.globalData.addWarning(_("The file '%s' already exists").printf(filePath));
 					return false;
 				} else {
 					var dos = new DataOutputStream (ignoreFile.create (FileCreateFlags.REPLACE_DESTINATION));
@@ -138,6 +137,9 @@ namespace AutoVala {
 					dos.put_string(".bzrignore\n");
 					dos.put_string(".hgignore\n");
 					dos.put_string("install\n");
+					if (filePath == ".gitignore") {
+						dos.put_string("*~\n");
+					}
 				}
 			} catch (Error e) {
 				ElementBase.globalData.addError(_("Can't create the file '%s'").printf(filePath));
