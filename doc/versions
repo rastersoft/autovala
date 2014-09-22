@@ -6,7 +6,12 @@
 <div class="main_frame">
 <p><a href="index.html">Home</a></p>
 <ul>
-<li><p>version 0.99.7 /2014-09-03)</p>
+<li><p>version 0.99.8 (2014-09-18)</p>
+<ul>
+<li>Fully fixed to avoid put as a requirement the library being built when it defines a sub-namespace of its own namespace<br /></li>
+<li>Autogenerates a .gitignore, .bzrignore and .hgignore files<br /></li>
+</ul></li>
+<li><p>version 0.99.7 (2014-09-03)</p>
 <ul>
 <li>Generates .deps files for libraries, needed with .vapi files<br /></li>
 <li>Adds <strong>Require</strong> field in pkg-config files to list the dependencies of a library<br /></li>

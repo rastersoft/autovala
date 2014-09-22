@@ -125,6 +125,29 @@ namespace AutoVala {
 			return false;
 		}
 
+		private bool createIgnore(string basePath, string filePath) {
+
+			try {
+				var ignoreFile=File.new_for_path(Path.build_filename(basePath,filePath));
+				if (ignoreFile.query_exists()) {
+					return false;
+				} else {
+					var dos = new DataOutputStream (ignoreFile.create (FileCreateFlags.REPLACE_DESTINATION));
+					dos.put_string(".gitignore\n");
+					dos.put_string(".bzrignore\n");
+					dos.put_string(".hgignore\n");
+					dos.put_string("install\n");
+					if (filePath == ".gitignore") {
+						dos.put_string("*~\n");
+					}
+				}
+			} catch (Error e) {
+				ElementBase.globalData.addError(_("Can't create the file '%s'").printf(filePath));
+				return false;
+			}
+			return false;
+		}
+
 		public bool init(string projectName,string ?basePath = null) {
 
 			bool error=false;
@@ -174,6 +197,9 @@ namespace AutoVala {
 			error|=this.createPath(configPath,"data/interface");
 			error|=this.createPath(configPath,"data/local");
 			error|=this.createPath(configPath,"data/bash_completion");
+			error|=this.createIgnore(configPath,".gitignore");
+			error|=this.createIgnore(configPath,".bzrignore");
+			error|=this.createIgnore(configPath,".hgignore");
 
 			try {
 				var srcFile=File.new_for_path(Path.build_filename(configPath,"src",projectName+".vala"));

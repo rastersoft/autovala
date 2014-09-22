@@ -44,7 +44,10 @@ and enjoy.
 
 
 ## History of versions ##
-* version 0.99.7 /2014-09-03)
+* version 0.99.8 (2014-09-18)
+    * Fully fixed to avoid put as a requirement the library being built when it defines a sub-namespace of its own namespace
+    * Autogenerates a .gitignore, .bzrignore and .hgignore files
+* version 0.99.7 (2014-09-03)
     * Generates .deps files for libraries, needed with .vapi files
     * Adds **Require** field in pkg-config files to list the dependencies of a library
     * Now doesn't put as a requirement the library being built when it defines a sub-namespace of its own namespace
