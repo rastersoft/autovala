@@ -34,6 +34,7 @@ namespace AutoVala {
 		public int valaMinor; // Vala version currently installed in the system (minor number)
 		public int valaVersionMajor; // Minimun Vala version needed to compile the project (major number)
 		public int valaVersionMinor; // Minimun Vala version needed to compile the project (minor number)
+		public bool versionAutomatic; // If true, the compiler version in the file has been automatically detected (it has an asterisk in the file)
 
 		public string[] excludeFiles; // A list with all the files and paths that must be avoided when doing automatic detection
 		public Gee.List<ElementBase> globalElements; // The list of all elements
@@ -235,6 +236,8 @@ namespace AutoVala {
 
 			this.valaMajor=0;
 			this.valaMinor=16;
+
+			this.versionAutomatic = true;
 
 			var compilers = new FindVala();
 			if (compilers == null) {
