@@ -143,6 +143,7 @@ namespace AutoVala {
 
 		private static bool addedValaBinaries;
 		private static bool addedLibraryWarning;
+		private static int counter;
 
 		private GLib.Regex regexVersion;
 		private GLib.Regex regexPackages;
@@ -239,6 +240,7 @@ namespace AutoVala {
 			this._link_libraries=new Gee.ArrayList<LibraryElement ?>();
 			ElementValaBinary.addedValaBinaries = false;
 			ElementValaBinary.addedLibraryWarning = false;
+			ElementValaBinary.counter = 1;
 			try {
 				this.regexVersion = new GLib.Regex("^[ \t]*// *project +version *= *[0-9]+.[0-9]+(.[0-9]+)?;?$");
 				this.regexPackages = new GLib.Regex("^([ \t]*// *)?[Uu]sing +[^;]+;?");
@@ -319,15 +321,19 @@ namespace AutoVala {
 			ElementBase.globalData.addExclude(dbusFolder);
 
 			// Check if there are unitary tests
-			var unitestsFolder=Path.build_filename(this._path,"unitests");
-			var files = ElementBase.getFilesFromFolder(unitestsFolder,{".vala"},true,true,"unitests");
-			foreach (var element in files) {
-				error |= this.addUnitest(element,true,null,false,-1);
+			var unitestsCompleteFolder=Path.build_filename(ElementBase.globalData.projectFolder,this._fullPath,"unitests");
+			var unitestsAccess = File.new_for_path(unitestsCompleteFolder);
+			if (unitestsAccess.query_exists()) {
+				var unitestsFolder=Path.build_filename(this._path,"unitests");
+				var files = ElementBase.getFilesFromFolder(unitestsFolder,{".vala"},true,true,"unitests");
+				foreach (var element in files) {
+					error |= this.addUnitest(element,true,null,false,-1);
+				}
+				var unitestsFullFolder=Path.build_filename(this._fullPath,"unitests");
+				ElementBase.globalData.addExclude(unitestsFullFolder);
 			}
-			unitestsFolder=Path.build_filename(this._fullPath,"unitests");
-			ElementBase.globalData.addExclude(unitestsFolder);
 
-			files = ElementBase.getFilesFromFolder(this._path,{".vala"},true,true);
+			var files = ElementBase.getFilesFromFolder(this._path,{".vala"},true,true);
 			foreach (var element in files) {
 				error |= this.addSource(element,true,null,false,-1);
 				error |= this.processSource(element);
@@ -1537,11 +1543,10 @@ namespace AutoVala {
 				// unitary tests
 				if (this._unitests.size != 0) {
 					dataStream.put_string("set (COMPILE_OPTIONS_UTEST ${COMPILE_OPTIONS} -D UNITEST)\n\n");
-					int counter = 1;
 					foreach (var unitest in this._unitests) {
-						dataStream.put_string("set (APP_SOURCES_%d ${APP_SOURCES} %s)\n".printf(counter,unitest.elementName));
-						dataStream.put_string("vala_precompile(VALA_C_%d %s\n".printf(counter,libFilename));
-						dataStream.put_string("\t${APP_SOURCES_%d}\n".printf(counter));
+						dataStream.put_string("set (APP_SOURCES_%d ${APP_SOURCES} %s)\n".printf(ElementValaBinary.counter,unitest.elementName));
+						dataStream.put_string("vala_precompile(VALA_C_%d %s\n".printf(ElementValaBinary.counter,libFilename));
+						dataStream.put_string("\t${APP_SOURCES_%d}\n".printf(ElementValaBinary.counter));
 						dataStream.put_string("PACKAGES\n");
 						dataStream.put_string("\t${VALA_PACKAGES}\n");
 						if (has_custom_VAPIs) {
@@ -1553,18 +1558,18 @@ namespace AutoVala {
 						dataStream.put_string("\t${COMPILE_OPTIONS_UTEST}\n");
 
 						dataStream.put_string("DIRECTORY\n");
-						dataStream.put_string("\t${CMAKE_CURRENT_BINARY_DIR}/unitests/test%d\n".printf(counter));
+						dataStream.put_string("\t${CMAKE_CURRENT_BINARY_DIR}/unitests/test%d\n".printf(ElementValaBinary.counter));
 
 						dataStream.put_string(")\n\n");
-						dataStream.put_string("add_executable( test%d ${VALA_C_%d})\n".printf(counter,counter));
+						dataStream.put_string("add_executable( test%d ${VALA_C_%d})\n".printf(ElementValaBinary.counter,ElementValaBinary.counter));
 						foreach (var element in this._link_libraries) {
 							printConditions.printCondition(element.condition,element.invertCondition);
-							dataStream.put_string("target_link_libraries( test%d %s)\n".printf(counter,element.elementName));
+							dataStream.put_string("target_link_libraries( test%d %s)\n".printf(ElementValaBinary.counter,element.elementName));
 						}
 						printConditions.printTail();
-						dataStream.put_string("add_test(NAME test%d COMMAND test%d)\n".printf(counter,counter));
+						dataStream.put_string("add_test(NAME test%d COMMAND test%d)\n".printf(ElementValaBinary.counter,ElementValaBinary.counter));
 						dataStream.put_string("\n");
-						counter++;
+						ElementValaBinary.counter++;
 					}
 				}
 
