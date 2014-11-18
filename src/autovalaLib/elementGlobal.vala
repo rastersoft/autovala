@@ -86,6 +86,7 @@ namespace AutoVala {
 				dataStream.put_string("enable_testing ()\n");
 				dataStream.put_string("option(ICON_UPDATE \"Update the icon cache after installing\" ON)\n");
 				dataStream.put_string("option(BUILD_VALADOC \"Build API documentation if Valadoc is available\" OFF)\n");
+
 				foreach(var element in ElementBase.globalData.globalElements) {
 					if (element.eType!=ConfigType.DEFINE) {
 						continue;
