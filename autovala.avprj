@@ -102,6 +102,7 @@ vala_local_package: AutoVala
 *pixmap: data/pixmaps/h.svg
 *pixmap: data/pixmaps/library.svg
 *pixmap: data/pixmaps/project.svg
+*pixmap: data/pixmaps/test_vala.svg
 *pixmap: data/pixmaps/vala.svg
 *pixmap: data/pixmaps/vapi.svg
 

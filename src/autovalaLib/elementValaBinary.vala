@@ -22,14 +22,14 @@ namespace AutoVala {
 
 	public enum packageType {NO_CHECK, DO_CHECK, C_DO_CHECK, LOCAL}
 
-	private class GenericElement:GLib.Object {
+	public class GenericElement:GLib.Object {
 		public string elementName;
 		public string? condition;
 		public bool invertCondition;
 		public bool automatic;
 	}
 
-	private class PackageElement:GenericElement {
+	public class PackageElement:GenericElement {
 
 		public packageType type;
 
@@ -42,7 +42,7 @@ namespace AutoVala {
 		}
 	}
 
-	private class SourceElement:GenericElement {
+	public class SourceElement:GenericElement {
 
 		public SourceElement(string source, bool automatic, string? condition, bool inverted) {
 			this.elementName=source;
@@ -52,7 +52,7 @@ namespace AutoVala {
 		}
 	}
 
-	private class VapiElement:GenericElement {
+	public class VapiElement:GenericElement {
 
 		public VapiElement(string vapi, bool automatic, string? condition, bool inverted) {
 			this.elementName=vapi;
@@ -62,7 +62,7 @@ namespace AutoVala {
 		}
 	}
 
-	private class CompileElement:GenericElement {
+	public class CompileElement:GenericElement {
 		public CompileElement(string options, bool automatic, string? condition, bool inverted) {
 			this.elementName=options;
 			this.automatic=automatic;
@@ -71,7 +71,7 @@ namespace AutoVala {
 		}
 	}
 
-	private class LibraryElement:GenericElement {
+	public class LibraryElement:GenericElement {
 		public LibraryElement(string libraries, bool automatic, string? condition, bool inverted) {
 			this.elementName=libraries;
 			this.automatic=automatic;
@@ -80,7 +80,7 @@ namespace AutoVala {
 		}
 	}
 
-	private class DBusElement:GenericElement {
+	public class DBusElement:GenericElement {
 
 		public string obj;
 		public bool systemBus;
@@ -120,6 +120,9 @@ namespace AutoVala {
 			get {return this._unitests;}
 		}
 		private Gee.List<VapiElement ?> _vapis;
+		public Gee.List<VapiElement ?> vapis {
+			get {return this._vapis;}
+		}
 		private Gee.List<CompileElement ?> _compileOptions;
 		private Gee.List<CompileElement ?> _compileCOptions;
 
