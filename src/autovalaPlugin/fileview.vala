@@ -237,6 +237,14 @@ namespace AutovalaPlugin {
 		 */
 		public void folder_changed (File file, File? other_file, FileMonitorEvent event_type) {
 
+			if (event_type == FileMonitorEvent.CHANGED) {
+				var filename = file.get_basename();
+				if (filename.has_suffix(".avprj")) {
+					this.changed_file(); // if the file that has changed is the project file, refresh the project view
+				}
+				return;
+			}
+
 			if ((event_type!=FileMonitorEvent.CREATED) &&
 				(event_type!=FileMonitorEvent.DELETED) &&
 				(event_type!=FileMonitorEvent.MOVED)) {
@@ -255,11 +263,10 @@ namespace AutovalaPlugin {
 				return;
 			}
 			this.fill_files(this.current_folder,null);
-			if(filename.has_suffix("~")) {
+/*			if(filename.has_suffix("~")) {
 				// don't inform about backup files
 				return;
-			}
-			this.changed_file();
+			}*/
 		}
 
 		/**
