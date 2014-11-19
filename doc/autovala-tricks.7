@@ -13,6 +13,21 @@
 <p>When an unitary test is being compiled, it is done with the option <strong>UNITEST</strong>, so you can use <strong>#if UNITEST</strong> and <strong>#if !UNITEST</strong> to add or remove code in the project's source that should or shouldn't go with unitary tests (an example is the <strong>main</strong> function).</p>
 <p>If an unitary test needs to use data files, it can use the <strong>Constants</strong> namespace to gain access to the original source path. When compiling the tests, there will be a new variable, called <strong>TESTSRCDIR</strong> that contains the full path to the project folder, allowing the unitary test to easily get access to all the files in the project. This variable <strong>doesn't exist</strong> when compiling an executable or library, only unitary tests.</p>
 <p>To check the tests, just run <strong>make test</strong> in the <strong>install</strong> folder.</p>
+<p>An example with two binaries:</p>
+<pre><code>    +src/
+       +unitests/
+       |  +test1.vala
+       |  +test2.vala
+       +file1.vala
+       +file2.vala
+       +binary2/
+          +file3.vala
+          +file4.vala
+          +unitests/
+             +test3.vala
+             +test4.vala
+             +test5.vala</code></pre>
+<p>Here, the first binary, created with <strong>file1.vala</strong> and <strong>file2.vala</strong>, has two unitary tests: <strong>test1.vala</strong> and <strong>test2.vala</strong>. The binary for the first unitary test will be created by compiling <strong>file1.vala</strong>, <strong>file2.vala</strong> and <strong>test1.vala</strong> in a single executable; the binary for the second unitary test will be created by compiling <strong>file1.vala</strong>, <strong>file2.vala</strong> and <strong>test2.vala</strong>. The second binary is created with <strong>file3.vala</strong> and <strong>file4.vala</strong>, and has three unitary tests: <strong>test3.vala</strong>, <strong>test4.vala</strong> and <strong>test5.vala</strong>.</p>
 <h2 id="using-the-math-library">Using the math library</h2>
 <p>GLib includes the namespace GLib.Math, that contains all the C Math library functions. To use it from C it is mandatory to pass <em>-lm</em> to the compiler.</p>
 <p>In Autovala, instead, you only need to add at the start of your code an <strong>using</strong> statement with the namespace to ensure that the library will be linked. To do so, just use:</p>

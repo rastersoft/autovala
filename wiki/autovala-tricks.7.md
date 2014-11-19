@@ -14,6 +14,24 @@ If an unitary test needs to use data files, it can use the **Constants** namespa
 
 To check the tests, just run **make test** in the **install** folder.
 
+An example with two binaries:
+
+        +src/
+           +unitests/
+           |  +test1.vala
+           |  +test2.vala
+           +file1.vala
+           +file2.vala
+           +binary2/
+              +file3.vala
+              +file4.vala
+              +unitests/
+                 +test3.vala
+                 +test4.vala
+                 +test5.vala
+
+Here, the first binary, created with **file1.vala** and **file2.vala**, has two unitary tests: **test1.vala** and **test2.vala**. The binary for the first unitary test will be created by compiling **file1.vala**, **file2.vala** and **test1.vala** in a single executable; the binary for the second unitary test will be created by compiling **file1.vala**, **file2.vala** and **test2.vala**. The second binary is created with **file3.vala** and **file4.vala**, and has three unitary tests: **test3.vala**, **test4.vala** and **test5.vala**.
+
 ## Using the math library
 
 GLib includes the namespace GLib.Math, that contains all the C Math library functions. To use it from C it is mandatory to pass *-lm* to the compiler.
