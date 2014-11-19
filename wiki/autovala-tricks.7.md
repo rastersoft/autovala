@@ -69,7 +69,7 @@ Starting from version 0.92.0, autovala can use **vala-dbus-binding-tool** to gen
 
 To add a DBus binding to an executable, just edit your *.avprj* file and, in the executable section (this is, after a *vala_binary* or *vala_library* statement), add a line like this:
 
-        dbus_interface: *connection_name* *object_path* *session/system* [*gdbus/dbus-glib*]
+        dbus_interface: connection_name  object_path  session/system  [gdbus/dbus-glib]
 
 This will tell autovala to generate bindings for the object *object_path* in the connection *connection_name*, which sits in the *session/system* bus. By default, the syntax will be for *gdbus*, unless you add an extra parameter at the end, *dbus-glib*, which will force to generate syntax for the old dbus-glib bindings.
 
