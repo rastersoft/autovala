@@ -4,6 +4,16 @@ Autovala-tricks(1)
 
 Autovala tricks - Several tricks for Autovala
 
+## Writing unitary tests
+
+To write unitary tests, just create a folder called **unitests** in the root folder of your executable/library folder. Each **.vala** source file inside it will be considered an unitary test, and will be compiled against **ALL** source files of its executable/library.
+
+When an unitary test is being compiled, it is done with the option **UNITEST**, so you can use **#if UNITEST** and **#if !UNITEST** to add or remove code in the project's source that should or shouldn't go with unitary tests (an example is the **main** function).
+
+If an unitary test needs to use data files, it can use the **Constants** namespace to gain access to the original source path. When compiling the tests, there will be a new variable, called **TESTSRCDIR** that contains the full path to the project folder, allowing the unitary test to easily get access to all the files in the project. This variable **doesn't exist** when compiling an executable or library, only unitary tests.
+
+To check the tests, just run **make test** in the **install** folder.
+
 ## Using the math library
 
 GLib includes the namespace GLib.Math, that contains all the C Math library functions. To use it from C it is mandatory to pass *-lm* to the compiler.

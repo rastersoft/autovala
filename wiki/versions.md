@@ -1,3 +1,8 @@
+* version 0.99.10 (2014-11-18)
+    * Added support for unitary tests
+* version 0.99.9 (2014-09-23)
+    * Now .gitignore also contains a line to ignore backup files (this is, files with a name ended in ~)
+    * Allows to set an specific vala version in the configuration file, or let autovala set automatically the most recent version available
 * version 0.99.8 (2014-09-18)
     * Fully fixed to avoid put as a requirement the library being built when it defines a sub-namespace of its own namespace
     * Autogenerates a .gitignore, .bzrignore and .hgignore files

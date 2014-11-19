@@ -1,5 +1,5 @@
 ### AutoVala Project ###
-autovala_version: 12
+autovala_version: 13
 project_name: autovala
 vala_version: 0.24
 
@@ -7,7 +7,7 @@ custom: data/cmake share/autovala/cmake
 
 
 vala_binary: src/autovala
-*version: 0.99.9
+*version: 0.99.10
 if DEBUG
 compile_options: -g --fatal-warnings
 end
@@ -102,6 +102,7 @@ vala_local_package: AutoVala
 *pixmap: data/pixmaps/h.svg
 *pixmap: data/pixmaps/library.svg
 *pixmap: data/pixmaps/project.svg
+*pixmap: data/pixmaps/test_vala.svg
 *pixmap: data/pixmaps/vala.svg
 *pixmap: data/pixmaps/vapi.svg
 

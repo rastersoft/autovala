@@ -12,6 +12,8 @@ The rules followed by Autovala are the following:
 
 * All **.vala** and **.c** files in a folder posessed by a binary or library belong to it. Vala files will be scanned to determine the packages needed to compile them. The **.vala** and **.c** files in the subfolders are also added, unless there is another binary or library that already posesses that folder
 
+* All **.vala** files in a folder called **unitests**, in the root of each binary or library path, will be considered unitary tests for that binary or library.
+
 * The VALA sources will be scanned to find the version number in a specific format, allowing to keep it inside the sources and avoiding the need of editing the project file manually
 
 * All **.vapi** files inside a **vapis** folder, located in a binary/library top folder will be added to that binary/library

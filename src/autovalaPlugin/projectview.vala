@@ -7,7 +7,7 @@ using AutoVala;
 
 namespace AutovalaPlugin {
 
-	public enum ProjectEntryTypes { OTHER, VALA_SOURCE_FILE, VAPI_FILE, C_SOURCE_FILE, C_HEADER_FILE, LIBRARY, EXECUTABLE, PROJECT_FILE }
+	public enum ProjectEntryTypes { VALA_SOURCE_FILE, C_SOURCE_FILE, VAPI_FILE, C_HEADER_FILE, LIBRARY, EXECUTABLE, PROJECT_FILE, UNITEST, UNKNOWN, OTHER }
 	public enum ProjectStatus { NOT_SET, OK, WARNING, ERROR}
 
 	/**
@@ -78,6 +78,8 @@ namespace AutovalaPlugin {
 				Gtk.IconTheme.add_builtin_icon("autovala-plugin-vapi",-1,pixbuf);
 				pixbuf = new Gdk.Pixbuf.from_file_at_size(Path.build_filename(AutovalaPluginConstants.DATADIR,"autovala","vala.svg"),-1,-1);
 				Gtk.IconTheme.add_builtin_icon("autovala-plugin-vala",-1,pixbuf);
+				pixbuf = new Gdk.Pixbuf.from_file_at_size(Path.build_filename(AutovalaPluginConstants.DATADIR,"autovala","test_vala.svg"),-1,-1);
+				Gtk.IconTheme.add_builtin_icon("autovala-plugin-unitestvala",-1,pixbuf);
 			} catch (GLib.Error e) {}
 
 			/*
@@ -359,49 +361,39 @@ namespace AutovalaPlugin {
 		 * @param project An Autovala project object
 		 * @param fileList A list where all the files will be stored
 		 */
-		private void fill_vala_files(bool first, string path,Gee.ArrayList<string> ignorePaths, ValaProject project,Gee.ArrayList<ElementProjectViewer> fileList) {
+		private void fill_vala_files(PublicElement element, string path, ValaProject project, Gee.ArrayList<ElementProjectViewer> fileList) {
 
-			FileEnumerator enumerator;
-			FileInfo info_file;
-
-			if (!first && (ignorePaths.contains(path))) {
+			if ((element.type != ConfigType.VALA_BINARY) && (element.type != ConfigType.VALA_LIBRARY)) {
 				return;
 			}
-
-			var directory = File.new_for_path(path);
-			try {
-				enumerator = directory.enumerate_children(GLib.FileAttribute.STANDARD_NAME+","+GLib.FileAttribute.STANDARD_TYPE,GLib.FileQueryInfoFlags.NOFOLLOW_SYMLINKS,null);
-				while ((info_file = enumerator.next_file(null)) != null) {
-					var typeinfo=info_file.get_file_type();
-					var filename=info_file.get_name();
-					if (typeinfo==FileType.DIRECTORY) {
-						var newPath=Path.build_filename(path,filename);
-						this.fill_vala_files(false,newPath,ignorePaths,project,fileList);
-						continue;
-					}
-					if (typeinfo!=FileType.REGULAR) {
-						continue;
-					}
-					// hiden files must not be added
-					if (filename[0]=='.') {
-						continue;
-					}
-					// neither the backup files
-					if (filename.has_suffix("~")) {
-						continue;
-					}
-					var fElements = filename.split(".");
-					var extension=fElements[fElements.length-1].casefold();
-					var full_path=Path.build_filename(path,filename);
-					var new_element = new ElementProjectViewer(filename,full_path,extension);
-					if (new_element.type == ProjectEntryTypes.OTHER) {
-						continue;
-					}
-
-					fileList.add(new_element);
-				}
-			} catch (Error e) {
-				return;
+			//OTHER, VALA_SOURCE_FILE, VAPI_FILE, C_SOURCE_FILE, C_HEADER_FILE, LIBRARY, EXECUTABLE, PROJECT_FILE
+			foreach (var file in element.sources) {
+				var fElements = file.elementName.split(".");
+				var extension=fElements[fElements.length-1].casefold();
+				var full_path=Path.build_filename(path,file.elementName);
+				var new_element = new ElementProjectViewer(GLib.Path.get_basename(file.elementName),full_path,extension,ProjectEntryTypes.VALA_SOURCE_FILE);
+				fileList.add(new_element);
+			}
+			foreach (var file in element.c_sources) {
+				var fElements = file.elementName.split(".");
+				var extension=fElements[fElements.length-1].casefold();
+				var full_path=Path.build_filename(path,file.elementName);
+				var new_element = new ElementProjectViewer(GLib.Path.get_basename(file.elementName),full_path,extension,ProjectEntryTypes.C_SOURCE_FILE);
+				fileList.add(new_element);
+			}
+			foreach (var file in element.unitests) {
+				var fElements = file.elementName.split(".");
+				var extension=fElements[fElements.length-1].casefold();
+				var full_path=Path.build_filename(path,file.elementName);
+				var new_element = new ElementProjectViewer(GLib.Path.get_basename(file.elementName),full_path,extension,ProjectEntryTypes.UNITEST);
+				fileList.add(new_element);
+			}
+			foreach (var file in element.vapis) {
+				var fElements = file.elementName.split(".");
+				var extension=fElements[fElements.length-1].casefold();
+				var full_path=Path.build_filename(path,file.elementName);
+				var new_element = new ElementProjectViewer(GLib.Path.get_basename(file.elementName),full_path,extension,ProjectEntryTypes.VAPI_FILE);
+				fileList.add(new_element);
 			}
 		}
 
@@ -412,6 +404,14 @@ namespace AutovalaPlugin {
 		 * @result wheter a must be before (-1), after (1) or no matter (0), b
 		 */
 		public static int CompareFiles(ElementProjectViewer a, ElementProjectViewer b) {
+
+			if (a.type < b.type) {
+				return -1;
+			}
+
+			if (a.type > b.type) {
+				return 1;
+			}
 
 			if (a.extension < b.extension) {
 				return -1;
@@ -462,8 +462,8 @@ namespace AutovalaPlugin {
 						this.searchView.append_source(item.filename,item.fullPath);
 					}
 				break;
-				case ProjectEntryTypes.C_HEADER_FILE:
-					pixbuf = "autovala-plugin-h";
+				case ProjectEntryTypes.UNITEST:
+					pixbuf = "autovala-plugin-unitestvala";
 					if (this.searchView != null) {
 						this.searchView.append_source(item.filename,item.fullPath);
 					}
@@ -512,14 +512,14 @@ namespace AutovalaPlugin {
 					fileList = new Gee.ArrayList<ElementProjectViewer>();
 					this.treeModel.append(out tmpIter,null);
 					this.treeModel.set(tmpIter,0,_("%s <b>(executable)</b>").printf(element.name),2,"autovala-plugin-executable",3,element.name,4,ProjectEntryTypes.EXECUTABLE,-1);
-					this.fill_vala_files(true,Path.build_filename(project.projectPath,element.fullPath),ignorePaths,project,fileList);
+					this.fill_vala_files(element,Path.build_filename(project.projectPath,element.fullPath),project,fileList);
 					this.add_files(tmpIter,fileList,element);
 					break;
 				case ConfigType.VALA_LIBRARY:
 					fileList = new Gee.ArrayList<ElementProjectViewer>();
 					this.treeModel.append(out tmpIter,null);
 					this.treeModel.set(tmpIter,0,_("%s <b>(library)</b>").printf(element.name),2,"autovala-plugin-library",3,element.name,4,ProjectEntryTypes.LIBRARY,-1);
-					this.fill_vala_files(true,Path.build_filename(project.projectPath,element.fullPath),ignorePaths,project,fileList);
+					this.fill_vala_files(element,Path.build_filename(project.projectPath,element.fullPath),project,fileList);
 					this.add_files(tmpIter,fileList,element);
 				break;
 				}
@@ -540,23 +540,27 @@ namespace AutovalaPlugin {
 		public string fullPath;
 		public ProjectEntryTypes type;
 
-		public ElementProjectViewer(string fName, string fPath, string ext) {
+		public ElementProjectViewer(string fName, string fPath, string ext, ProjectEntryTypes type) {
 
 			this.filename = fName;
 			this.fullPath = fPath;
 			this.extension = ext;
 			this.filename_casefold = this.filename.casefold();
 
-			if(ext == "vala".casefold()) {
-				this.type = ProjectEntryTypes.VALA_SOURCE_FILE;
-			} else if(ext == "vapi".casefold()) {
-				this.type = ProjectEntryTypes.VAPI_FILE;
-			} else if(ext == "c".casefold()) {
-				this.type = ProjectEntryTypes.C_SOURCE_FILE;
-			} else if(ext == "h".casefold()) {
-				this.type = ProjectEntryTypes.C_HEADER_FILE;
+			if (type == ProjectEntryTypes.UNKNOWN) {
+				if(ext == "vala".casefold()) {
+					this.type = ProjectEntryTypes.VALA_SOURCE_FILE;
+				} else if(ext == "vapi".casefold()) {
+					this.type = ProjectEntryTypes.VAPI_FILE;
+				} else if(ext == "c".casefold()) {
+					this.type = ProjectEntryTypes.C_SOURCE_FILE;
+				} else if(ext == "h".casefold()) {
+					this.type = ProjectEntryTypes.C_HEADER_FILE;
+				} else {
+					this.type = ProjectEntryTypes.OTHER;
+				}
 			} else {
-				this.type = ProjectEntryTypes.OTHER;
+				this.type = type;
 			}
 		}
 	}

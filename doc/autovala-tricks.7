@@ -8,6 +8,11 @@
 <p>Autovala-tricks(1)</p>
 <h1 id="name">NAME</h1>
 <p>Autovala tricks - Several tricks for Autovala</p>
+<h2 id="writing-unitary-tests">Writing unitary tests</h2>
+<p>To write unitary tests, just create a folder called <strong>unitests</strong> in the root folder of your executable/library folder. Each <strong>.vala</strong> source file inside it will be considered an unitary test, and will be compiled against <strong>ALL</strong> source files of its executable/library.</p>
+<p>When an unitary test is being compiled, it is done with the option <strong>UNITEST</strong>, so you can use <strong>#if UNITEST</strong> and <strong>#if !UNITEST</strong> to add or remove code in the project's source that should or shouldn't go with unitary tests (an example is the <strong>main</strong> function).</p>
+<p>If an unitary test needs to use data files, it can use the <strong>Constants</strong> namespace to gain access to the original source path. When compiling the tests, there will be a new variable, called <strong>TESTSRCDIR</strong> that contains the full path to the project folder, allowing the unitary test to easily get access to all the files in the project. This variable <strong>doesn't exist</strong> when compiling an executable or library, only unitary tests.</p>
+<p>To check the tests, just run <strong>make test</strong> in the <strong>install</strong> folder.</p>
 <h2 id="using-the-math-library">Using the math library</h2>
 <p>GLib includes the namespace GLib.Math, that contains all the C Math library functions. To use it from C it is mandatory to pass <em>-lm</em> to the compiler.</p>
 <p>In Autovala, instead, you only need to add at the start of your code an <strong>using</strong> statement with the namespace to ensure that the library will be linked. To do so, just use:</p>

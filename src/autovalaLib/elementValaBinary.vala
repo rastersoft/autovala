@@ -22,14 +22,14 @@ namespace AutoVala {
 
 	public enum packageType {NO_CHECK, DO_CHECK, C_DO_CHECK, LOCAL}
 
-	private class GenericElement:GLib.Object {
+	public class GenericElement:GLib.Object {
 		public string elementName;
 		public string? condition;
 		public bool invertCondition;
 		public bool automatic;
 	}
 
-	private class PackageElement:GenericElement {
+	public class PackageElement:GenericElement {
 
 		public packageType type;
 
@@ -42,7 +42,7 @@ namespace AutoVala {
 		}
 	}
 
-	private class SourceElement:GenericElement {
+	public class SourceElement:GenericElement {
 
 		public SourceElement(string source, bool automatic, string? condition, bool inverted) {
 			this.elementName=source;
@@ -52,7 +52,7 @@ namespace AutoVala {
 		}
 	}
 
-	private class VapiElement:GenericElement {
+	public class VapiElement:GenericElement {
 
 		public VapiElement(string vapi, bool automatic, string? condition, bool inverted) {
 			this.elementName=vapi;
@@ -62,7 +62,7 @@ namespace AutoVala {
 		}
 	}
 
-	private class CompileElement:GenericElement {
+	public class CompileElement:GenericElement {
 		public CompileElement(string options, bool automatic, string? condition, bool inverted) {
 			this.elementName=options;
 			this.automatic=automatic;
@@ -71,7 +71,7 @@ namespace AutoVala {
 		}
 	}
 
-	private class LibraryElement:GenericElement {
+	public class LibraryElement:GenericElement {
 		public LibraryElement(string libraries, bool automatic, string? condition, bool inverted) {
 			this.elementName=libraries;
 			this.automatic=automatic;
@@ -80,7 +80,7 @@ namespace AutoVala {
 		}
 	}
 
-	private class DBusElement:GenericElement {
+	public class DBusElement:GenericElement {
 
 		public string obj;
 		public bool systemBus;
@@ -115,7 +115,14 @@ namespace AutoVala {
 		public Gee.List<SourceElement ?> cSources {
 			get {return this._cSources;}
 		}
+		private Gee.List<SourceElement ?> _unitests;
+		public Gee.List<SourceElement ?> unitests {
+			get {return this._unitests;}
+		}
 		private Gee.List<VapiElement ?> _vapis;
+		public Gee.List<VapiElement ?> vapis {
+			get {return this._vapis;}
+		}
 		private Gee.List<CompileElement ?> _compileOptions;
 		private Gee.List<CompileElement ?> _compileCOptions;
 
@@ -139,6 +146,7 @@ namespace AutoVala {
 
 		private static bool addedValaBinaries;
 		private static bool addedLibraryWarning;
+		private static int counter;
 
 		private GLib.Regex regexVersion;
 		private GLib.Regex regexPackages;
@@ -227,6 +235,7 @@ namespace AutoVala {
 			this._packages=new Gee.ArrayList<PackageElement ?>();
 			this._sources=new Gee.ArrayList<SourceElement ?>();
 			this._cSources=new Gee.ArrayList<SourceElement ?>();
+			this._unitests=new Gee.ArrayList<SourceElement ?>();
 			this._vapis=new Gee.ArrayList<VapiElement ?>();
 			this._compileOptions=new Gee.ArrayList<CompileElement ?>();
 			this._compileCOptions=new Gee.ArrayList<CompileElement ?>();
@@ -234,6 +243,7 @@ namespace AutoVala {
 			this._link_libraries=new Gee.ArrayList<LibraryElement ?>();
 			ElementValaBinary.addedValaBinaries = false;
 			ElementValaBinary.addedLibraryWarning = false;
+			ElementValaBinary.counter = 1;
 			try {
 				this.regexVersion = new GLib.Regex("^[ \t]*// *project +version *= *[0-9]+.[0-9]+(.[0-9]+)?;?$");
 				this.regexPackages = new GLib.Regex("^([ \t]*// *)?[Uu]sing +[^;]+;?");
@@ -313,11 +323,26 @@ namespace AutoVala {
 			var dbusFolder=Path.build_filename(this._fullPath,"dbus_generated");
 			ElementBase.globalData.addExclude(dbusFolder);
 
+			// Check if there are unitary tests
+			var unitestsCompleteFolder=Path.build_filename(ElementBase.globalData.projectFolder,this._fullPath,"unitests");
+			var unitestsAccess = File.new_for_path(unitestsCompleteFolder);
+			if (unitestsAccess.query_exists()) {
+				var unitestsFolder=Path.build_filename(this._path,"unitests");
+				var files = ElementBase.getFilesFromFolder(unitestsFolder,{".vala"},true,true,"unitests");
+				foreach (var element in files) {
+					error |= this.addUnitest(element,true,null,false,-1);
+					error |= this.processSource(element);
+				}
+				var unitestsFullFolder=Path.build_filename(this._fullPath,"unitests");
+				ElementBase.globalData.addExclude(unitestsFullFolder);
+			}
+
 			var files = ElementBase.getFilesFromFolder(this._path,{".vala"},true,true);
 			foreach (var element in files) {
 				error |= this.addSource(element,true,null,false,-1);
 				error |= this.processSource(element);
 			}
+
 			files = ElementBase.getFilesFromFolder(this._path,{".c"},true,true);
 			foreach (var element in files) {
 				error |= this.addCSource(element,true,null,false,-1);
@@ -345,7 +370,7 @@ namespace AutoVala {
 			this.file_list = ElementBase.getFilesFromFolder(this._path,{".vala",".c",".pc","deps",".cmake"},true);
 			var files = ElementBase.getFilesFromFolder(GLib.Path.build_filename(this._path,"vapis"),{".vapi"},true);
 			foreach (var element in files) {
-				this.file_list+= element;
+				this.file_list += element;
 			}
 			files = ElementBase.getFilesFromFolder(GLib.Path.build_filename(this._path,"dbus_generated"),{".vala"},true);
 			foreach (var element in files) {
@@ -545,7 +570,7 @@ namespace AutoVala {
 						// remove all logical elements to get a set of DEFINEs
 						string[] elements=element.replace("&&"," ").replace("||"," ").replace("=="," ").replace("!="," ").replace("!"," ").replace("("," ").replace(")"," ").split(" ");
 						foreach(var l in elements) {
-							if ((l!="")&&(l.ascii_casecmp("true")!=0)&&(l.ascii_casecmp("false")!=0)&&(this.defines.contains(l)==false)) {
+							if ((l!="") && (l.ascii_casecmp("true")!=0) && (l.ascii_casecmp("false")!=0) && (this.defines.contains(l)==false) && (l.ascii_casecmp("UNITEST")!=0)) {
 								var define=new ElementDefine();
 								define.addNewDefine(l);
 							}
@@ -572,11 +597,13 @@ namespace AutoVala {
 			}
 			var packagesTmp=new Gee.ArrayList<PackageElement ?>();
 			var sourcesTmp=new Gee.ArrayList<SourceElement ?>();
+			var unitestsTmp=new Gee.ArrayList<SourceElement ?>();
 			var cSourcesTmp=new Gee.ArrayList<SourceElement ?>();
 			var vapisTmp=new Gee.ArrayList<VapiElement ?>();
 			var compileTmp=new Gee.ArrayList<CompileElement ?>();
 			var dbusTmp=new Gee.ArrayList<DBusElement ?>();
 			var librariesTmp=new Gee.ArrayList<LibraryElement ?>();
+
 			foreach (var e in this._packages) {
 				if (e.automatic==false) {
 					packagesTmp.add(e);
@@ -585,6 +612,11 @@ namespace AutoVala {
 			foreach (var e in this._sources) {
 				if (e.automatic==false) {
 					sourcesTmp.add(e);
+				}
+			}
+			foreach (var e in this._unitests) {
+				if (e.automatic==false) {
+					unitestsTmp.add(e);
 				}
 			}
 			foreach (var e in this._cSources) {
@@ -614,6 +646,7 @@ namespace AutoVala {
 			}
 			this._packages=packagesTmp;
 			this._sources=sourcesTmp;
+			this._unitests=unitestsTmp;
 			this._cSources=cSourcesTmp;
 			this._vapis=vapisTmp;
 			this._compileOptions=compileTmp;
@@ -648,6 +681,7 @@ namespace AutoVala {
 			this._packages.sort(AutoVala.ElementValaBinary.comparePackages);
 			this._sources.sort(AutoVala.ElementValaBinary.comparePackages);
 			this._cSources.sort(AutoVala.ElementValaBinary.comparePackages);
+			this._unitests.sort(AutoVala.ElementValaBinary.comparePackages);
 			this._vapis.sort(AutoVala.ElementValaBinary.comparePackages);
 			this._compileOptions.sort(AutoVala.ElementValaBinary.comparePackages);
 			this._dbusElements.sort(AutoVala.ElementValaBinary.comparePackages);
@@ -830,6 +864,27 @@ namespace AutoVala {
 			return false;
 		}
 
+		private bool addUnitest(string unitestFile, bool automatic, string? condition, bool invertCondition, int lineNumber) {
+
+			if (condition!=null) {
+				automatic=false; // if a source file is conditional, it MUST be manual, because conditions are not added automatically
+			}
+
+			// adding a non-automatic source to an automatic binary transforms this binary to non-automatic
+			if ((automatic==false)&&(this._automatic==true)) {
+				this.transformToNonAutomatic(false);
+			}
+
+			foreach(var element in this._unitests) {
+				if (element.elementName==unitestFile) {
+					return false;
+				}
+			}
+			var element=new SourceElement(unitestFile,automatic,condition, invertCondition);
+			this._unitests.add(element);
+			return false;
+		}
+
 		private bool addCSource(string sourceFile, bool automatic, string? condition, bool invertCondition, int lineNumber) {
 
 			if (condition!=null) {
@@ -959,6 +1014,8 @@ namespace AutoVala {
 				return this.addSource(line.substring(13).strip(),automatic,condition,invertCondition,lineNumber);
 			} else if (line.has_prefix("c_source: ")) {
 				return this.addCSource(line.substring(10).strip(),automatic,condition,invertCondition,lineNumber);
+			} else if (line.has_prefix("unitest: ")) {
+				return this.addUnitest(line.substring(9).strip(),automatic,condition,invertCondition,lineNumber);
 			} else if (line.has_prefix("vala_vapi: ")) {
 				return this.addVapi(line.substring(11).strip(),automatic,condition,invertCondition,lineNumber);
 			} else if (line.has_prefix("dbus_interface: ")) {
@@ -1080,6 +1137,7 @@ namespace AutoVala {
 					dataStream.put_string("set (CMAKE_C_FLAGS \"\")\n");
 					dataStream.put_string("set (PREFIX ${CMAKE_INSTALL_PREFIX})\n");
 					dataStream.put_string("set (VERSION \""+this.version+"\")\n");
+					dataStream.put_string("set (TESTSRCDIR \"${CMAKE_SOURCE_DIR}\")\n");
 					dataStream.put_string("set (DOLLAR \"$\")\n\n");
 					if (this._path!="") {
 						dataStream.put_string("configure_file (${CMAKE_SOURCE_DIR}/"+this._path+"/Config.vala.cmake ${CMAKE_BINARY_DIR}/"+this._path+"/Config.vala)\n");
@@ -1146,6 +1204,7 @@ namespace AutoVala {
 				dataStream2.put_string("\tpublic const string GETTEXT_PACKAGE = \"@GETTEXT_PACKAGE@\";\n");
 				dataStream2.put_string("\tpublic const string RELEASE_NAME = \"@RELEASE_NAME@\";\n");
 				dataStream2.put_string("\tpublic const string VERSION = \"@VERSION@\";\n");
+				dataStream2.put_string("#if UNITEST\n\tpublic const string TESTSRCDIR = \"@TESTSRCDIR@\";\n#endif\n");
 				dataStream2.put_string("}\n");
 				dataStream2.close();
 			} catch (GLib.Error e) {
@@ -1485,6 +1544,39 @@ namespace AutoVala {
 					dataStream.put_string(")\n\n");
 				}
 
+				// unitary tests
+				if (this._unitests.size != 0) {
+					dataStream.put_string("set (COMPILE_OPTIONS_UTEST ${COMPILE_OPTIONS} -D UNITEST)\n\n");
+					foreach (var unitest in this._unitests) {
+						dataStream.put_string("set (APP_SOURCES_%d ${APP_SOURCES} %s)\n".printf(ElementValaBinary.counter,unitest.elementName));
+						dataStream.put_string("vala_precompile(VALA_C_%d %s\n".printf(ElementValaBinary.counter,libFilename));
+						dataStream.put_string("\t${APP_SOURCES_%d}\n".printf(ElementValaBinary.counter));
+						dataStream.put_string("PACKAGES\n");
+						dataStream.put_string("\t${VALA_PACKAGES}\n");
+						if (has_custom_VAPIs) {
+							dataStream.put_string("CUSTOM_VAPIS\n");
+							dataStream.put_string("\t${CUSTOM_VAPIS_LIST}\n");
+						}
+
+						dataStream.put_string("OPTIONS\n");
+						dataStream.put_string("\t${COMPILE_OPTIONS_UTEST}\n");
+
+						dataStream.put_string("DIRECTORY\n");
+						dataStream.put_string("\t${CMAKE_CURRENT_BINARY_DIR}/unitests/test%d\n".printf(ElementValaBinary.counter));
+
+						dataStream.put_string(")\n\n");
+						dataStream.put_string("add_executable( test%d ${VALA_C_%d})\n".printf(ElementValaBinary.counter,ElementValaBinary.counter));
+						foreach (var element in this._link_libraries) {
+							printConditions.printCondition(element.condition,element.invertCondition);
+							dataStream.put_string("target_link_libraries( test%d %s)\n".printf(ElementValaBinary.counter,element.elementName));
+						}
+						printConditions.printTail();
+						dataStream.put_string("add_test(NAME test%d COMMAND test%d)\n".printf(ElementValaBinary.counter,ElementValaBinary.counter));
+						dataStream.put_string("\n");
+						ElementValaBinary.counter++;
+					}
+				}
+
 				dataStream.put_string("if(HAVE_VALADOC)\n");
 				dataStream.put_string("\tvaladoc("+libFilename+"\n");
 				dataStream.put_string("\t\t${CMAKE_BINARY_DIR}/"+Path.build_filename("valadoc",libFilename)+"\n");
@@ -1505,7 +1597,6 @@ namespace AutoVala {
 				ElementBase.globalData.addError(_("Failed to write the CMakeLists file for binary %s").printf(libFilename));
 				return true;
 			}
-
 			return false;
 		}
 
@@ -1630,6 +1721,15 @@ namespace AutoVala {
 				}
 				printConditions.printTail();
 
+				foreach(var element in this._unitests) {
+					printConditions.printCondition(element.condition,element.invertCondition);
+					if (element.automatic) {
+						dataStream.put_string("*");
+					}
+					dataStream.put_string("unitest: %s\n".printf(element.elementName));
+				}
+				printConditions.printTail();
+
 				foreach(var element in this._dbusElements) {
 					printConditions.printCondition(element.condition,element.invertCondition);
 					if (element.automatic) {
@@ -1661,6 +1761,7 @@ namespace AutoVala {
 			}
 			return subFileList;
 		}
+
 		public string[]? getCSubFiles() {
 			string[] subFileList = {};
 			foreach (var element in this._cSources) {

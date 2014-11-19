@@ -8,6 +8,7 @@ set (RELEASE_NAME "gedit_plugin")
 set (CMAKE_C_FLAGS "")
 set (PREFIX ${CMAKE_INSTALL_PREFIX})
 set (VERSION "1.0.0")
+set (TESTSRCDIR "${CMAKE_SOURCE_DIR}")
 set (DOLLAR "$")
 
 configure_file (${CMAKE_SOURCE_DIR}/src/Config.vala.cmake ${CMAKE_BINARY_DIR}/src/Config.vala)
@@ -91,6 +92,11 @@ DESTINATION
 )
 install(FILES
 	${CMAKE_CURRENT_BINARY_DIR}/autovalagedit.vapi
+DESTINATION
+	share/gedit/plugins/autovala
+)
+install(FILES
+	${CMAKE_CURRENT_BINARY_DIR}/autovalagedit.deps
 DESTINATION
 	share/gedit/plugins/autovala
 )

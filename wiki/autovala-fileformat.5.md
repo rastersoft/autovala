@@ -8,7 +8,7 @@ autovala fileformat - The syntax for autovala configuration file
 
 The project file has a very simple format. Usually you don't need to manually edit it, but when the guesses of autovala are incorrect, you can do it, and your changes will be remembered each time you refresh the file.
 
-The current version for the project file format is **12**.
+The current version for the project file format is **13**.
 
 The file is based on commands in the format:
 
@@ -80,7 +80,9 @@ After that, it comes several commands, some of them repeated several times, to s
 
    * **c_library**: this command specifies one or more C libraries which must be linked against this binary (separated by blank spaces), useful for libraries not supported with **pkg_config** like the math C library. The libraries must be specified without the 'l' preffix; this is, the math library is 'm'; the posix threads library is 'pthread', and so on.
 
-    The last eleven subcommands (compile_options, compile_c_options, vala_package, vala_check_package, c_check_package, vala_local_package, vala_source, c_source, vala_vapi, dbus_interface and c_library) can be repeated as many times as needed to specify all the sources and packages needed.
+   * **unitest**: this command specifies one VALA source file that contains an unitary test. Each one of these files will be compiled with all the source files of this executable/library as a stand-alone executable. The path must be relative to the binary/library path. For details, read the FAQ.
+
+    The last twelve subcommands (compile_options, compile_c_options, vala_package, vala_check_package, c_check_package, vala_local_package, vala_source, c_source, vala_vapi, dbus_interface and c_library) can be repeated as many times as needed to specify all the sources and packages needed.
 
  * **vala_library**: the same than vala_binary, but creates a dynamic linking library. It uses the same subcommands.
 

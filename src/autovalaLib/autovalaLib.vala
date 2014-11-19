@@ -492,35 +492,6 @@ namespace AutoVala {
 			return false;
 		}
 
-		public ValaProject ? get_binaries_list(string ?basePath = null) {
-
-			var config=new AutoVala.Configuration(basePath);
-			if (config.globalData.error) {
-				return null;
-			}
-
-			if (config.readConfiguration()) {
-				return null;
-			}
-
-			var project = new ValaProject();
-
-			project.elements = new Gee.ArrayList<PublicElement>();
-			project.projectPath = config.globalData.projectFolder;
-			project.projectName = config.globalData.projectName;
-			project.projectFile = config.globalData.configFile;
-
-			foreach (var element in config.globalData.globalElements) {
-				var newElement = new PublicElement(element.eType, element.fullPath, element.name);
-				if ((element.eType == ConfigType.VALA_LIBRARY) || (element.eType == ConfigType.VALA_BINARY)) {
-					var binElement = element as ElementValaBinary;
-					newElement.set_binary_data(binElement.get_vala_opts(),binElement.get_c_opts(),binElement.get_libraries());
-				}
-				project.elements.add(newElement);
-			}
-			return project;
-		}
-
 		public bool remove_binary(string? projectPath, string binary_name) {
 		
 			var config=new AutoVala.Configuration(projectPath);
@@ -665,6 +636,39 @@ namespace AutoVala {
 			config.saveConfiguration();
 			return null;
 		}
+		
+		public ValaProject ? get_binaries_list(string ?basePath = null) {
+
+			var config=new AutoVala.Configuration(basePath);
+			if (config.globalData.error) {
+				return null;
+			}
+
+			if (config.readConfiguration()) {
+				return null;
+			}
+
+			var project = new ValaProject();
+
+			project.elements = new Gee.ArrayList<PublicElement>();
+			project.projectPath = config.globalData.projectFolder;
+			project.projectName = config.globalData.projectName;
+			project.projectFile = config.globalData.configFile;
+
+			foreach (var element in config.globalData.globalElements) {
+				var newElement = new PublicElement(element.eType, element.fullPath, element.name);
+				if ((element.eType == ConfigType.VALA_LIBRARY) || (element.eType == ConfigType.VALA_BINARY)) {
+					var binElement = element as ElementValaBinary;
+					newElement.set_binary_data(binElement.get_vala_opts(),binElement.get_c_opts(),binElement.get_libraries());
+					newElement.sources = binElement.sources;
+					newElement.c_sources = binElement.cSources;
+					newElement.unitests = binElement.unitests;
+					newElement.vapis = binElement.vapis;
+				}
+				project.elements.add(newElement);
+			}
+			return project;
+		}
 	}
 
 	public class ValaProject : GLib.Object {
@@ -683,6 +687,10 @@ namespace AutoVala {
 		public string vala_opts;
 		public string c_opts;
 		public string libraries;
+		public Gee.List<SourceElement ?> sources;
+		public Gee.List<SourceElement ?> c_sources;
+		public Gee.List<VapiElement ?> vapis;
+		public Gee.List<SourceElement ?> unitests;
 
 		public PublicElement(ConfigType type,string? fullPath, string name) {
 			this.type = type;
@@ -691,6 +699,10 @@ namespace AutoVala {
 			this.vala_opts = "";
 			this.c_opts = "";
 			this.libraries = "";
+			this.sources = null;
+			this.c_sources = null;
+			this.vapis = null;
+			this.unitests = null;
 		}
 
 		public void set_binary_data(string vala_options,string c_options,string libraries) {
