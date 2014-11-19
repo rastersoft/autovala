@@ -331,6 +331,7 @@ namespace AutoVala {
 				var files = ElementBase.getFilesFromFolder(unitestsFolder,{".vala"},true,true,"unitests");
 				foreach (var element in files) {
 					error |= this.addUnitest(element,true,null,false,-1);
+					error |= this.processSource(element);
 				}
 				var unitestsFullFolder=Path.build_filename(this._fullPath,"unitests");
 				ElementBase.globalData.addExclude(unitestsFullFolder);
