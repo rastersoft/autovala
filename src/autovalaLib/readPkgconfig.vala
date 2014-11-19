@@ -24,9 +24,11 @@ namespace AutoVala {
 
 	private class ReadPkgConfig {
 		private Gee.Set<string> ?pkgconfigs;
+		private Gee.Map<string,string> ?paths;
 
 		public ReadPkgConfig() {
-			this.pkgconfigs=new Gee.HashSet<string>();
+			this.pkgconfigs = new Gee.HashSet<string>();
+			this.paths = new Gee.HashMap<string,string>();
 
 			this.fill_pkgconfig_files("/usr/lib");
 			this.fill_pkgconfig_files("/usr/lib64");
@@ -71,6 +73,9 @@ namespace AutoVala {
 					}
 					var final_name=fname.substring(0,fname.length-3); // remove .pc extension
 					this.pkgconfigs.add(final_name); // add to the list
+					if (!this.paths.has_key(final_name)) {
+						this.paths.set(final_name,Path.build_filename(basepath,"pkgconfig",fname)); // store the path found
+					}
 				}
 			} catch (Error e) {
 				return;
@@ -78,6 +83,12 @@ namespace AutoVala {
 		}
 		public bool contains(string element) {
 			return this.pkgconfigs.contains(element);
+		}
+		public string? find_path(string element) {
+			if (!this.paths.has_key(element)) {
+				return null;
+			}
+			return this.paths.get(element);
 		}
 	}
 }

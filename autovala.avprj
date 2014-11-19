@@ -63,6 +63,7 @@ compile_c_options: -O2
 *vala_source: findVala.vala
 *vala_source: genVapis.vala
 *vala_source: globals.vala
+*vala_source: packages.vala
 *vala_source: readPkgconfig.vala
 
 vala_library: src/autovalaPlugin/autovalaPlugin

@@ -62,6 +62,7 @@ set (APP_SOURCES ${APP_SOURCES} elementValaBinary.vala)
 set (APP_SOURCES ${APP_SOURCES} findVala.vala)
 set (APP_SOURCES ${APP_SOURCES} genVapis.vala)
 set (APP_SOURCES ${APP_SOURCES} globals.vala)
+set (APP_SOURCES ${APP_SOURCES} packages.vala)
 set (APP_SOURCES ${APP_SOURCES} readPkgconfig.vala)
 
 if (DEBUG)
