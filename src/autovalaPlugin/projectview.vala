@@ -150,6 +150,12 @@ namespace AutovalaPlugin {
 			this.changed_base_folder.connect( (path, project_file) => {
 				this.actionButtons.set_current_project_file(project_file);
 			});
+			this.actionButtons.action_refresh_project.connect( (retval) => {
+				this.refresh_project(true);
+			});
+			this.actionButtons.action_update_project.connect( (retval) => {
+				this.refresh_project(true);
+			});
 			if (this.outputView != null) {
 				this.link_output_view_internal();
 			}
