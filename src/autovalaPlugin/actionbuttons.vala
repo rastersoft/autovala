@@ -72,6 +72,7 @@ namespace AutovalaPlugin {
 
 				string? project_name;
 				string? project_path;
+				this.current_project = new AutoVala.ManageProject();
 				this.create_new_project = new CreateNewProject(this.current_project);
 				if (this.create_new_project.run(out project_name, out project_path)) {
 					this.current_project.refresh(Path.build_filename(project_path,project_name+".avprj"));
@@ -87,6 +88,7 @@ namespace AutovalaPlugin {
 				string[] msgs;
 			
 				this.output_message_clear();
+				this.current_project = new AutoVala.ManageProject();
 				var retval=this.current_project.refresh(this.current_project_file);
 
 				msgs = this.current_project.getErrors();
@@ -101,6 +103,7 @@ namespace AutovalaPlugin {
 				string[] msgs;
 			
 				this.output_message_clear();
+				this.current_project = new AutoVala.ManageProject();
 				var retval=this.current_project.refresh(this.current_project_file);
 
 				msgs = this.current_project.getErrors();
@@ -118,6 +121,7 @@ namespace AutovalaPlugin {
 			});
 
 			this.update_translations.activate.connect( () => {
+				this.current_project = new AutoVala.ManageProject();
 				var retval = this.current_project.gettext(this.current_project_file);
 				var msgs = this.current_project.getErrors();
 				foreach(var msg in msgs) {
