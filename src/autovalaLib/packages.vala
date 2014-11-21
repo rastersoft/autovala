@@ -33,7 +33,7 @@ namespace AutoVala {
 		public string[] extra_dependencies;
 		public string[] extra_source_dependencies;
 		public Configuration config;
-	
+
 		public packages(string? basePath) {
 			this.author_package = null;
 			this.email_package = null;
@@ -43,7 +43,7 @@ namespace AutoVala {
 			this.source_dependencies = {};
 			this.extra_dependencies = {};
 			this.extra_source_dependencies = {};
-			
+
 			this.config = new AutoVala.Configuration(basePath);
 			// Try to read the description from the README or README.md file
 			if (!this.read_description(Path.build_filename(this.config.globalData.projectFolder,"README"))) {
@@ -51,8 +51,60 @@ namespace AutoVala {
 					this.description = "Not available";
 				}
 			}
+			this.description = this.cut_lines(this.description,70);
 		}
-		
+
+		private string cut_lines(string text, int columns) {
+
+			var lines = text.split("\n");
+			string final_text = "";
+
+			foreach (var line in lines) {
+				final_text += this.cut_line(line,columns)+"\n";
+			}
+			return final_text;
+		}
+
+		private string cut_line(string text, int columns) {
+
+			string final_text = "";
+			string tmp2 = "";
+
+			int pos1;
+			int pos2;
+			int size = 0;
+			int size2;
+			int current_offset = 0;
+
+			while(true) {
+				pos1 = text.index_of_char(' ',current_offset);
+				if (pos1 == -1) {
+					if (size != 0) {
+						final_text += tmp2+" ";
+					}
+					final_text += text.substring(current_offset);
+					break;
+				}
+				size2 = pos1-current_offset;
+				if (size != 0) {
+					if (size+size2+1 < columns) {
+						tmp2 += " "+text.substring(current_offset,size2);
+						size += size2+1;
+					} else {
+						final_text += tmp2+"\n";
+						tmp2 = "";
+						size = 0;
+					}
+				}
+				if (size == 0) {
+					tmp2 = text.substring(current_offset,size2);
+					size = size2;
+				}
+				current_offset += size2+1;
+			}
+			return final_text;
+		}
+
 		private bool read_description(string path) {
 
 			string[] content = {};
@@ -92,7 +144,7 @@ namespace AutoVala {
 			}
 
 			// Now take only the first part in the markdown text
-			
+
 			bool started = false;
 			string[] descr = {};
 			foreach(var line in newcontent) {
@@ -145,17 +197,16 @@ namespace AutoVala {
 						after_cr = false;
 					} else {
 						if (!after_cr) {
-							text += "\n";
+							text += "\n\n";
 						}
 						after_cr = true;
 					}
 				}
 				this.description = text;
 			}
-
 			return true;
 		}
-		
+
 		private bool check_line_has_single_char(string line) {
 			if (line.length == 0) {
 				return false;
