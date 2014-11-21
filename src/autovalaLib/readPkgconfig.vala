@@ -1,5 +1,5 @@
 /*
- Copyright 2013 (C) Raster Software Vigo (Sergio Costas)
+ Copyright 2013/2014 (C) Raster Software Vigo (Sergio Costas)
 
  This file is part of AutoVala
 

@@ -126,6 +126,22 @@ install(FILES
 DESTINATION
 	${CMAKE_INSTALL_LIBDIR}/pkgconfig/
 )
+set (COMPILE_OPTIONS_UTEST ${COMPILE_OPTIONS} -D UNITEST)
+
+set (APP_SOURCES_1 ${APP_SOURCES} unitests/test1.vala)
+vala_precompile(VALA_C_1 AutoVala
+	${APP_SOURCES_1}
+PACKAGES
+	${VALA_PACKAGES}
+OPTIONS
+	${COMPILE_OPTIONS_UTEST}
+DIRECTORY
+	${CMAKE_CURRENT_BINARY_DIR}/unitests/test1
+)
+
+add_executable( test1 ${VALA_C_1})
+add_test(NAME test1 COMMAND test1)
+
 if(HAVE_VALADOC)
 	valadoc(AutoVala
 		${CMAKE_BINARY_DIR}/valadoc/AutoVala

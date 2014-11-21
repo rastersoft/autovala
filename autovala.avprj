@@ -65,6 +65,7 @@ compile_c_options: -O2
 *vala_source: globals.vala
 *vala_source: packages.vala
 *vala_source: readPkgconfig.vala
+*unitest: unitests/test1.vala
 
 vala_library: src/autovalaPlugin/autovalaPlugin
 *version: 0.99

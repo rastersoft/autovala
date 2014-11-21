@@ -1,7 +1,5 @@
 # AUTOVALA #
 
-## WHAT IS IT? ##
-
 Autovala is a program and a library designed to help in the creation of
 projects with Vala and CMake.
 
@@ -219,15 +217,3 @@ and enjoy.
     * Now also search libraries in PKG_CONFIG_PATH
 * version 0.1.0 (2013-03-29)
     * First public version
-
-
-## CONTACTING THE AUTHOR ##
-
-Sergio Costas Rodriguez
-(Raster Software Vigo)
-
-raster@rastersoft.com
-
-http://www.rastersoft.com
-
-GIT: git://github.com/rastersoft/autovala.git
