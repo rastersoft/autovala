@@ -23,6 +23,7 @@ using Posix;
 namespace AutoVala {
 
 	private class ReadPkgConfig {
+
 		private Gee.Set<string> ?pkgconfigs;
 		private Gee.Map<string,string> ?paths;
 
@@ -84,6 +85,7 @@ namespace AutoVala {
 		public bool contains(string element) {
 			return this.pkgconfigs.contains(element);
 		}
+
 		public string? find_path(string element) {
 			if (!this.paths.has_key(element)) {
 				return null;
