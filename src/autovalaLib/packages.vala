@@ -32,9 +32,14 @@ namespace AutoVala {
 		public Gee.List<string> source_dependencies;
 		public Gee.List<string> extra_dependencies;
 		public Gee.List<string> extra_source_dependencies;
-		public Configuration config;
+		protected Configuration config;
+		protected bool has_libraries;
 
-		public Gee.Map<string,string> libraries;
+		protected Gee.Map<string,string> libraries;
+
+		public void show_errors() {
+			this.config.showErrors();
+		}
 
 		public packages() {
 
@@ -48,11 +53,13 @@ namespace AutoVala {
 			this.extra_source_dependencies = new ArrayList<string>();
 
 			this.libraries = new Gee.HashMap<string,string>();
+			this.has_libraries = false;
 
 		}
 
 		/**
-		 * Second part of the initialization process. Here the class reads the configuration file
+		 * Second part of the initialization process. Here the class reads the configuration file,
+		 * fills the dependencies, and sets the compiler version.
 		 * @param basePath The configuration file to use, or null to make the class find it
 		 * @return false if everything went fine; true if there was an error
 		 */
@@ -77,6 +84,9 @@ namespace AutoVala {
 
 			// Fill the dependencies
 			foreach (var element in config.globalData.globalElements) {
+				if (element.eType == ConfigType.VALA_LIBRARY) {
+					this.has_libraries = true;
+				}
 				if ((element.eType == ConfigType.VALA_LIBRARY) || (element.eType == ConfigType.VALA_BINARY)) {
 					var binElement = element as ElementValaBinary;
 					foreach (var p in binElement.packages) {
@@ -102,10 +112,35 @@ namespace AutoVala {
 								}
 								this.dependencies.add(lpath);
 							} else {
-								GLib.stdout.printf("No encontrada %s\n",module);
+								ElementBase.globalData.addWarning(_("Failed to find dependencies for the module %s").printf(module));
 							}
 						}
 					}
+				}
+			}
+
+			var compilers = new FindVala();
+			if (compilers == null) {
+				ElementBase.globalData.addWarning(_("Failed to get installed vala compilers"));
+			} else {
+				// if the desired VALA version is installed in the system, go ahead with it
+				if (false == this.set_vala_version(compilers,this.config.globalData.valaVersionMajor,this.config.globalData.valaVersionMinor)) {
+					// if not, go ahead with the default version (it's supposed that the maintainer has checked the code against this version)
+					this.set_vala_version(compilers,compilers.defaultVersion.major,compilers.defaultVersion.minor);
+				}
+			}
+
+			return false;
+		}
+
+		private bool set_vala_version(FindVala compilers, int major, int minor) {
+
+			foreach (var element in compilers.versions) {
+				if ((element.major == major) && (element.minor == minor)) {
+					if ((!this.source_dependencies.contains(element.path)) && (!this.extra_source_dependencies.contains(element.path))) {
+						this.source_dependencies.add(element.path);
+					}
+					return true;
 				}
 			}
 			return false;
@@ -125,12 +160,15 @@ namespace AutoVala {
 
 			try {
 				if (!Process.spawn_sync (null,spawn_args,Environ.get(),SpawnFlags.SEARCH_PATH,null,out ls_stdout,null,out ls_status)) {
+					ElementBase.globalData.addWarning(_("Failed to launch pkg-config for the module %s").printf(module));
 					return {};
 				}
 				if (ls_status != 0) {
+					ElementBase.globalData.addWarning(_("Error %d when launching pkg-config for the module %s").printf(ls_status,module));
 					return {};
 				}
 			} catch (SpawnError e) {
+				ElementBase.globalData.addWarning(_("Exception '%s' when launching pkg-config for the module %s").printf(e.message,module));
 				return {};
 			}
 			var elements = ls_stdout.split(" ");
@@ -196,7 +234,7 @@ namespace AutoVala {
 				    var filename=file_info.get_name();
 				    if ((filename.has_prefix("lib")) && (filename.has_suffix(".so"))) {
 				    	if (file_info.get_is_symlink()) {
-					    	this.libraries.set(filename,Path.build_filename(path,file_info.get_symlink_target()));
+					    	this.libraries.set(filename,Path.build_filename(file_info.get_symlink_target()));
 				    	} else {
 				    		this.libraries.set(filename,Path.build_filename(path,filename));
 				    	}

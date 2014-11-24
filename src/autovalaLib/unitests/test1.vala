@@ -2,14 +2,9 @@ using GLib;
 
 int main() {
 
-	var t = new AutoVala.packages();
+	var t = new AutoVala.packages_deb();
 	t.init_all(null);
-
-	foreach (var element in t.source_dependencies) {
-		GLib.stdout.printf("Sdep: %s\n",element);
-	}
-	foreach (var element in t.dependencies) {
-		GLib.stdout.printf("Dep: %s\n",element);
-	}
+	t.create_deb_package();
+	t.show_errors();
 	return 0;
 }
