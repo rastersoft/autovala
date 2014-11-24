@@ -33,7 +33,16 @@ namespace AutoVala {
 		public Gee.List<string> extra_dependencies;
 		public Gee.List<string> extra_source_dependencies;
 		protected Configuration config;
+
 		protected bool has_libraries;
+		protected bool has_icons;
+		protected bool has_schemes;
+
+		protected string[] pre_inst;
+		protected string[] post_inst;
+		protected string[] pre_rm;
+		protected string[] post_rm;
+		
 
 		protected Gee.Map<string,string> libraries;
 
@@ -52,8 +61,15 @@ namespace AutoVala {
 			this.extra_dependencies = new ArrayList<string>();
 			this.extra_source_dependencies = new ArrayList<string>();
 
+			this.pre_inst = {};
+			this.pre_rm = {};
+			this.post_inst = {};
+			this.post_rm = {};
+
 			this.libraries = new Gee.HashMap<string,string>();
 			this.has_libraries = false;
+			this.has_icons = false;
+			this.has_schemes = false;
 
 		}
 
@@ -87,6 +103,12 @@ namespace AutoVala {
 				if (element.eType == ConfigType.VALA_LIBRARY) {
 					this.has_libraries = true;
 				}
+				if (element.eType == ConfigType.ICON) {
+					this.has_icons = true;
+				}
+				if (element.eType == ConfigType.SCHEME) {
+					this.has_schemes = true;
+				}
 				if ((element.eType == ConfigType.VALA_LIBRARY) || (element.eType == ConfigType.VALA_BINARY)) {
 					var binElement = element as ElementValaBinary;
 					foreach (var p in binElement.packages) {
@@ -117,6 +139,16 @@ namespace AutoVala {
 						}
 					}
 				}
+			}
+
+			if (this.has_libraries) {
+				this.post_inst += "ldconfig";
+				this.post_rm += "ldconfig";
+			}
+
+			if (this.has_schemes) {
+				this.post_inst += "glib-compile-schemas /usr/share/glib-2.0/schemas";
+				this.post_rm += "glib-compile-schemas /usr/share/glib-2.0/schemas";
 			}
 
 			var compilers = new FindVala();

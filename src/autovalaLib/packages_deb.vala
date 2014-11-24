@@ -58,11 +58,33 @@ namespace AutoVala {
 			this.fill_dependencies(this.extra_source_dependencies,this.source_packages);
 			this.fill_dependencies(this.dependencies,this.binary_packages);
 			this.fill_dependencies(this.extra_dependencies,this.binary_packages);
-			this.create_control(path);
+			if (this.create_control(path)) {
+				return true;
+			}
+			if (this.create_rules(path)) {
+				return true;
+			}
+			if (this.create_preinst(path)) {
+				return true;
+			}
+			if (this.create_prerm(path)) {
+				return true;
+			}
+			if (this.create_postinst(path)) {
+				return true;
+			}
+			if (this.create_postrm(path)) {
+				return true;
+			}
 
 			return false;
 		}
 
+		/**
+		 * Uses dpkg to discover to which package belongs each of the dependencies
+		 * @param origin The list with the dependency files
+		 * @param destination The list into which store the packages
+		 */
 		private void fill_dependencies(Gee.List<string> origin,Gee.List<string> destination) {
 			foreach (var element in origin) {
 				string[] spawn_args = {"dpkg", "-S", element};
@@ -91,6 +113,11 @@ namespace AutoVala {
 			}
 		}
 
+		/**
+		 * Creates de debian/control file
+		 * @param path The 'debian' path
+		 * @return false if everything went OK; true if there was an error
+		 */
 		private bool create_control(string path) {
 
 			Gee.Map<string,string> source_keys = new Gee.HashMap<string,string>();
@@ -111,7 +138,7 @@ namespace AutoVala {
 					f_control.delete();
 				}
 			} catch (Error e) {
-				ElementBase.globalData.addWarning(_("Failed to delete debian/control file"));
+				ElementBase.globalData.addWarning(_("Failed to delete debian/control file (%s)").printf(e.message));
 			}
 			try {
 				var dis = f_control.create_readwrite(GLib.FileCreateFlags.PRIVATE);
@@ -151,8 +178,186 @@ namespace AutoVala {
 //				of.put_string("\n");
 				dis.close();
 			} catch (Error e) {
+				ElementBase.globalData.addError(_("Failed to write data to debian/control file (%s)").printf(e.message));
+				return true;
 			}
 			return false;
 		}
+
+		/**
+		 * Creates de debian/rules file
+		 * @param path The 'debian' path
+		 * @return false if everything went OK; true if there was an error
+		 */
+		private bool create_rules(string path) {
+		
+			var f_rules = File.new_for_path(Path.build_filename(path,"rules"));
+			if (f_rules.query_exists()) {
+				// if the file already exists, don't touch it
+				return false;
+			}
+
+			try {
+				var dis = f_rules.create_readwrite(GLib.FileCreateFlags.PRIVATE);
+				var of = new DataOutputStream(dis.output_stream as FileOutputStream);
+				
+				var o_rules = File.new_for_path(Path.build_filename(AutoValaConstants.PKGDATADIR,"debian","rules"));
+				var dis2 = new DataInputStream (o_rules.read ());
+
+				string line;
+				while ((line = dis2.read_line (null)) != null) {
+					var line2 = line.replace("%(PROJECT_NAME)",this.config.globalData.projectName);
+					of.put_string(line2+"\n");
+				}
+				dis.close();
+				dis2.close();
+			} catch (Error e) {
+				ElementBase.globalData.addError(_("Failed to write data to debian/rules file (%s)").printf(e.message));
+				f_rules.delete();
+				return true;
+			}
+			return false;
+		}
+
+		/**
+		 * Creates de debian/preinst file
+		 * @param path The 'debian' path
+		 * @return false if everything went OK; true if there was an error
+		 */
+		private bool create_preinst(string path) {
+
+			if (this.pre_inst.length == 0) {
+				return false;
+			}
+
+			var f_rules = File.new_for_path(Path.build_filename(path,"preinst"));
+			if (f_rules.query_exists()) {
+				// if the file already exists, don't touch it
+				return false;
+			}
+
+			try {
+				var dis = f_rules.create_readwrite(GLib.FileCreateFlags.PRIVATE);
+				var of = new DataOutputStream(dis.output_stream as FileOutputStream);
+
+				of.put_string("#!/bin/sh\n\n");
+
+				foreach (var line in this.pre_inst) {
+					of.put_string(line+"\n");
+				}
+				dis.close();
+			} catch (Error e) {
+				ElementBase.globalData.addError(_("Failed to write data to debian/preinst file (%s)").printf(e.message));
+				f_rules.delete();
+				return true;
+			}
+			return false;
+		}
+
+		/**
+		 * Creates de debian/prerm file
+		 * @param path The 'debian' path
+		 * @return false if everything went OK; true if there was an error
+		 */
+		private bool create_prerm(string path) {
+
+			if (this.pre_rm.length == 0) {
+				return false;
+			}
+
+			var f_rules = File.new_for_path(Path.build_filename(path,"prerm"));
+			if (f_rules.query_exists()) {
+				// if the file already exists, don't touch it
+				return false;
+			}
+
+			try {
+				var dis = f_rules.create_readwrite(GLib.FileCreateFlags.PRIVATE);
+				var of = new DataOutputStream(dis.output_stream as FileOutputStream);
+
+				of.put_string("#!/bin/sh\n\n");
+
+				foreach (var line in this.pre_rm) {
+					of.put_string(line+"\n");
+				}
+				dis.close();
+			} catch (Error e) {
+				ElementBase.globalData.addError(_("Failed to write data to debian/prerm file (%s)").printf(e.message));
+				f_rules.delete();
+				return true;
+			}
+			return false;
+		}
+		
+		/**
+		 * Creates de debian/postinst file
+		 * @param path The 'debian' path
+		 * @return false if everything went OK; true if there was an error
+		 */
+		private bool create_postinst(string path) {
+
+			if (this.post_inst.length == 0) {
+				return false;
+			}
+
+			var f_rules = File.new_for_path(Path.build_filename(path,"postinst"));
+			if (f_rules.query_exists()) {
+				// if the file already exists, don't touch it
+				return false;
+			}
+
+			try {
+				var dis = f_rules.create_readwrite(GLib.FileCreateFlags.PRIVATE);
+				var of = new DataOutputStream(dis.output_stream as FileOutputStream);
+
+				of.put_string("#!/bin/sh\n\n");
+
+				foreach (var line in this.post_inst) {
+					of.put_string(line+"\n");
+				}
+				dis.close();
+			} catch (Error e) {
+				ElementBase.globalData.addError(_("Failed to write data to debian/postinst file (%s)").printf(e.message));
+				f_rules.delete();
+				return true;
+			}
+			return false;
+		}
+		
+		/**
+		 * Creates de debian/postrm file
+		 * @param path The 'debian' path
+		 * @return false if everything went OK; true if there was an error
+		 */
+		private bool create_postrm(string path) {
+
+			if (this.post_rm.length == 0) {
+				return false;
+			}
+
+			var f_rules = File.new_for_path(Path.build_filename(path,"postrm"));
+			if (f_rules.query_exists()) {
+				// if the file already exists, don't touch it
+				return false;
+			}
+
+			try {
+				var dis = f_rules.create_readwrite(GLib.FileCreateFlags.PRIVATE);
+				var of = new DataOutputStream(dis.output_stream as FileOutputStream);
+
+				of.put_string("#!/bin/sh\n\n");
+
+				foreach (var line in this.post_rm) {
+					of.put_string(line+"\n");
+				}
+				dis.close();
+			} catch (Error e) {
+				ElementBase.globalData.addError(_("Failed to write data to debian/postrm file (%s)").printf(e.message));
+				f_rules.delete();
+				return true;
+			}
+			return false;
+		}
+
 	}
 }

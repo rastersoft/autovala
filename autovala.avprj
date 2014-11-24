@@ -4,6 +4,7 @@ project_name: autovala
 vala_version: 0.24
 
 custom: data/cmake share/autovala/cmake
+custom: data/debian share/autovala/debian
 
 
 vala_binary: src/autovala
