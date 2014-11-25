@@ -100,6 +100,16 @@ namespace AutoVala {
 
 			// Fill the dependencies
 			foreach (var element in config.globalData.globalElements) {
+				if (element.eType == ConfigType.SOURCE_DEPENDENCY) {
+					if (!this.extra_source_dependencies.contains(element.name)) {
+						this.extra_source_dependencies.add(element.name);
+					}
+				}
+				if (element.eType == ConfigType.BINARY_DEPENDENCY) {
+					if (!this.extra_dependencies.contains(element.name)) {
+						this.extra_dependencies.add(element.name);
+					}
+				}
 				if (element.eType == ConfigType.VALA_LIBRARY) {
 					this.has_libraries = true;
 				}
@@ -109,6 +119,8 @@ namespace AutoVala {
 				if (element.eType == ConfigType.SCHEME) {
 					this.has_schemes = true;
 				}
+			}
+			foreach (var element in config.globalData.globalElements) {
 				if ((element.eType == ConfigType.VALA_LIBRARY) || (element.eType == ConfigType.VALA_BINARY)) {
 					var binElement = element as ElementValaBinary;
 					foreach (var p in binElement.packages) {

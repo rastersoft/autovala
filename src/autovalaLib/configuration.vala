@@ -47,7 +47,7 @@ namespace AutoVala {
 				Intl.bindtextdomain(AutoValaConstants.GETTEXT_PACKAGE, Path.build_filename(AutoValaConstants.DATADIR,"locale"));
 			}
 
-			this.currentVersion=13; // currently we support version 13 of the syntax
+			this.currentVersion=14; // currently we support version 14 of the syntax
 			this.version=0;
 
 			this.globalData = new AutoVala.Globals(projectName,basePath);
@@ -241,6 +241,10 @@ namespace AutoVala {
 						element = new ElementData();
 					} else if (line.has_prefix("ignore: ")) {
 						element = new ElementIgnore();
+					} else if (line.has_prefix("source_dependency: ")) {
+						element = new ElementSDepend();
+					} else if (line.has_prefix("binary_dependency: ")) {
+						element = new ElementBDepend();
 					} else if ((line.has_prefix("vala_binary: "))||(line.has_prefix("vala_library: "))) {
 						if (this.checkConditionals(cond)) {
 							error=true;
@@ -263,17 +267,13 @@ namespace AutoVala {
 						error |= this.addCondition(line.substring(3).strip());
 						ifLineNumber=this.lineNumber;
 						continue;
-					}
-					if (line.strip()=="else") {
+					} else	if (line.strip()=="else") {
 						error|=this.invertCondition();
 						continue;
-					}
-					if (line.strip()=="end") {
+					} else if (line.strip()=="end") {
 						error|=this.removeCondition();
 						continue;
-					}
-
-					if (line.has_prefix("vala_version: ")) {
+					} else if (line.has_prefix("vala_version: ")) {
 						if (this.checkConditionals(cond)) {
 							this.globalData.addError(_("Vala version can't be conditional (line %d)").printf(this.lineNumber));
 							error=true;
@@ -426,6 +426,8 @@ namespace AutoVala {
 				this.storeData(ConfigType.INCLUDE,data_stream);
 				this.storeData(ConfigType.MANPAGE,data_stream);
 				this.storeData(ConfigType.BASH_COMPLETION,data_stream);
+				this.storeData(ConfigType.SOURCE_DEPENDENCY,data_stream);
+				this.storeData(ConfigType.BINARY_DEPENDENCY,data_stream);
 			} catch (Error e) {
 				this.globalData.addError(_("Can't create the config file %s").printf(this.globalData.configFile));
 				return true;

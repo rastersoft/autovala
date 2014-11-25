@@ -1,5 +1,5 @@
 ### AutoVala Project ###
-autovala_version: 13
+autovala_version: 14
 project_name: autovala
 vala_version: 0.24
 
@@ -41,6 +41,7 @@ compile_c_options: -O2
 *vala_source: autovalaLib.vala
 *vala_source: conditionalText.vala
 *vala_source: configuration.vala
+*vala_source: elementBDepend.vala
 *vala_source: elementBase.vala
 *vala_source: elementBashCompletion.vala
 *vala_source: elementBinary.vala
@@ -59,6 +60,7 @@ compile_c_options: -O2
 *vala_source: elementManpage.vala
 *vala_source: elementPixmap.vala
 *vala_source: elementPo.vala
+*vala_source: elementSDepend.vala
 *vala_source: elementScheme.vala
 *vala_source: elementValaBinary.vala
 *vala_source: findVala.vala
