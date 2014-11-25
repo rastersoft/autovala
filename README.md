@@ -42,6 +42,8 @@ and enjoy.
 
 
 ## History of versions ##
+* version 0.99.11 (2014-11-25)
+    * Can create automagically the metadata for .deb packages
 * version 0.99.10 (2014-11-18)
     * Added support for unitary tests
 * version 0.99.9 (2014-09-23)
