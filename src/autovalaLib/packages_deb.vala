@@ -119,15 +119,50 @@ namespace AutoVala {
 			var f_control = File.new_for_path(Path.build_filename(path,"control"));
 			try {
 				if (f_control.query_exists()) {
-					/*bool source = true;
-					var dis = new DataInputStream (file.read ());
+					bool source = true;
+					var dis = new DataInputStream (f_control.read ());
 					string line;
+					string last_key = "";
+					string? key = "";
+					string data = "";
 					while ((line = dis.read_line (null)) != null) {
 						if (line == "") {
 							source = false;
+							key = null;
 							continue;
 						}
-					}*/
+						if (line[0] == '#') {
+							continue;
+						}
+						if ((line[0] == ' ') || (line[0] == '\t')) {
+							if (key == null) {
+								continue;
+							}
+							if (source) {
+								data = source_keys.get(key);
+							} else {
+								data = binary_keys.get(key);
+							}
+							data += "\n"+line;
+							if (source) {
+								source_keys.set(key,data);
+							} else {
+								binary_keys.set(key,data);
+							}
+							continue;
+						}
+						var pos = line.index_of_char(':');
+						if (pos == -1) {
+							continue;
+						}
+						key = line.substring(0,pos).strip();
+						data = line.substring(pos+1).strip();
+						if (source) {
+							source_keys.set(key,data);
+						} else {
+							binary_keys.set(key,data);
+						}
+					}
 					f_control.delete();
 				}
 			} catch (Error e) {
@@ -137,10 +172,23 @@ namespace AutoVala {
 				var dis = f_control.create_readwrite(GLib.FileCreateFlags.PRIVATE);
 				var of = new DataOutputStream(dis.output_stream as FileOutputStream);
 				bool not_first;
-				
-				of.put_string("Source: %s\n".printf(this.config.globalData.projectName));
-				of.put_string("Maintainer: %s <%s>\n".printf(this.author_package,this.email_package));
-				of.put_string("Priority: optional\n");
+
+				foreach (var key in source_keys.keys) {
+					if (key == "Build-Depends") {
+						continue;
+					}
+					of.put_string("%s: %s\n".printf(key,source_keys.get(key)));
+				}
+
+				if (!source_keys.has_key("Source")) {
+					of.put_string("Source: %s\n".printf(this.config.globalData.projectName));
+				}
+				if (!source_keys.has_key("Maintainer")) {
+					of.put_string("Maintainer: %s <%s>\n".printf(this.author_package,this.email_package));
+				}
+				if (!source_keys.has_key("Priority")) {
+					of.put_string("Priority: optional\n");
+				}
 				of.put_string("Build-Depends: ");
 				not_first = false;
 				foreach(var element in this.source_packages) {
@@ -153,10 +201,22 @@ namespace AutoVala {
 
 				of.put_string("\n\n");
 
-				of.put_string("Package: %s\n".printf(this.config.globalData.projectName));
-				of.put_string("Architecture: any\n");
+				foreach (var key in binary_keys.keys) {
+					if ((key == "Depends") || (key == "Description")) {
+						continue;
+					}
+					of.put_string("%s: %s\n".printf(key,binary_keys.get(key)));
+				}
+
+				if (!binary_keys.has_key("Package")) {
+					of.put_string("Package: %s\n".printf(this.config.globalData.projectName));
+				}
+				if (!binary_keys.has_key("Architecture")) {
+					of.put_string("Architecture: any\n");
+				}
 				of.put_string("Depends: ");
 				not_first = false;
+
 				foreach(var element in this.binary_packages) {
 					if (not_first) {
 						of.put_string(", ");
@@ -164,9 +224,18 @@ namespace AutoVala {
 					not_first = true;
 					of.put_string(element);
 				}
-				of.put_string("\nDescription:");
-				foreach(var line in this.description.split("\n")) {
-					of.put_string(" %s\n".printf(line));
+
+				of.put_string("\n");
+				if (!binary_keys.has_key("Description")) {
+					of.put_string("Description:");
+					foreach(var line in this.description.split("\n")) {
+						if (line.strip() == "") {
+							line = ".";
+						}
+						of.put_string(" %s\n".printf(line));
+					}
+				} else {
+					of.put_string("Description: %s\n".printf(binary_keys.get("Description")));
 				}
 //				of.put_string("\n");
 				dis.close();
@@ -183,7 +252,7 @@ namespace AutoVala {
 		 * @return false if everything went OK; true if there was an error
 		 */
 		private bool create_rules(string path) {
-		
+
 			var f_rules = File.new_for_path(Path.build_filename(path,"rules"));
 			if (f_rules.query_exists()) {
 				// if the file already exists, don't touch it
@@ -193,7 +262,7 @@ namespace AutoVala {
 			try {
 				var dis = f_rules.create_readwrite(GLib.FileCreateFlags.PRIVATE);
 				var of = new DataOutputStream(dis.output_stream as FileOutputStream);
-				
+
 				var o_rules = File.new_for_path(Path.build_filename(AutoValaConstants.PKGDATADIR,"debian","rules"));
 				var dis2 = new DataInputStream (o_rules.read ());
 
@@ -281,7 +350,7 @@ namespace AutoVala {
 			}
 			return false;
 		}
-		
+
 		/**
 		 * Creates de debian/postinst file
 		 * @param path The 'debian' path
@@ -316,7 +385,7 @@ namespace AutoVala {
 			}
 			return false;
 		}
-		
+
 		/**
 		 * Creates de debian/postrm file
 		 * @param path The 'debian' path

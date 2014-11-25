@@ -42,7 +42,7 @@ namespace AutoVala {
 		protected string[] post_inst;
 		protected string[] pre_rm;
 		protected string[] post_rm;
-		
+
 
 		protected Gee.Map<string,string> libraries;
 
@@ -80,7 +80,7 @@ namespace AutoVala {
 		 * @return false if everything went fine; true if there was an error
 		 */
 		public bool init_all(string? basePath) {
-		
+
 			this.config = new AutoVala.Configuration(basePath);
 			if (this.config.readConfiguration()) {
 				return true;
@@ -251,11 +251,11 @@ namespace AutoVala {
 		 * @param path The path into which search for libraries
 		 */
 		private void fill_libraries(string path) {
-		
+
 			if (path.has_prefix("/usr/local")) {
 				return; // /usr/local is not stored in packages
 			}
-		
+
 			try {
 				var directory = File.new_for_path (path);
 
@@ -474,7 +474,8 @@ namespace AutoVala {
 						after_cr = true;
 					}
 				}
-				this.description = text;
+				this.description = text.strip();
+
 			}
 			return true;
 		}
