@@ -41,14 +41,6 @@ namespace AutoVala {
 			var path = Path.build_filename(this.config.globalData.projectFolder,"debian");
 			var fpath = File.new_for_path(path);
 
-			// just in case there is a file called "debian"
-			try {
-				if (fpath.query_exists()) {
-					fpath.delete();
-				}
-			} catch (Error e) {
-			}
-
 			try {
 				fpath.make_directory_with_parents();
 			} catch (Error e) {
@@ -58,6 +50,7 @@ namespace AutoVala {
 			this.fill_dependencies(this.extra_source_dependencies,this.source_packages);
 			this.fill_dependencies(this.dependencies,this.binary_packages);
 			this.fill_dependencies(this.extra_dependencies,this.binary_packages);
+
 			if (this.create_control(path)) {
 				return true;
 			}
