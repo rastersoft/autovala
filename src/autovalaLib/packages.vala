@@ -24,27 +24,37 @@ namespace AutoVala {
 
 	private class packages : Object {
 
+		// Contains the author of the package, as will be put in the metadata
 		public string? author_package;
+		// Contains the author's email, as will be put in the metadata
 		public string? email_package;
-		public string? web;
+		// Contains the description to add to the package.
 		public string? description;
+		// A list of the files needed for running the project, extracted automatically by autovala
 		public Gee.List<string> dependencies;
+		// A list of the files needed for building the project, extracted automatically by autovala
 		public Gee.List<string> source_dependencies;
+		// A list of the files needed for running the project, added manually in the .avprj file
 		public Gee.List<string> extra_dependencies;
+		// A list of the files needed for building the project, added manually in the .avprj file
 		public Gee.List<string> extra_source_dependencies;
-		protected Configuration config;
 
-		protected bool has_libraries;
-		protected bool has_icons;
-		protected bool has_schemes;
-
+		// The system command to run before installing the package
 		protected string[] pre_inst;
+		// The system command to run after installing the package
 		protected string[] post_inst;
+		// The system command to run before removing the package
 		protected string[] pre_rm;
+		// The system command to run after removing the package
 		protected string[] post_rm;
 
 
-		protected Gee.Map<string,string> libraries;
+		protected Configuration config;
+		private bool has_libraries;
+		private bool has_icons;
+		private bool has_schemes;
+
+		private Gee.Map<string,string> libraries;
 
 		public void show_errors() {
 			this.config.showErrors();
@@ -54,7 +64,6 @@ namespace AutoVala {
 
 			this.author_package = null;
 			this.email_package = null;
-			this.web = null;
 			this.description = null;
 			this.dependencies = new ArrayList<string>();
 			this.source_dependencies = new ArrayList<string>();

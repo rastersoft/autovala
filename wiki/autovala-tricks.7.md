@@ -4,6 +4,31 @@ Autovala-tricks(1)
 
 Autovala tricks - Several tricks for Autovala
 
+
+## Creating packages for linux distributions
+
+AutoVala can create the metadata files for creating .deb source packages. It should be easy to add support for other package systems, like .rpm.
+
+To generate those files, just run **autovala deb**. It will create a folder called **debian** and inside will be the **control** and **rules** files, and, if needed, **preinst**, **prerm**, **postinst** and **postrm**. The **control** file will have only the bare minimum, but autovala will include inside the dependencies needed both for building the package, and for running the project. These dependencies are generated automatically from the information extracted from the project.
+
+The **rules** file is designed to be compatible with **launchpad**.
+
+If the project needs an extra package that can't be determined automatically by autovala, it is possible to mark it in a distro-agnostic way, by using the commands **source_dependency** and **binary_dependency** in the **.avprj** file. The first one points to a file in the system that is needed for building the project; when generating the package metadata, autovala will add as a Build-Dependency the package that contains that file. The second one points to a file in the system that is needed for using the project; when generating the package metadata, autovala will add as a Dependency the package that contains that file.
+
+There are several fields extracted from the source itself. The **Description** is extracted from the **README** or **README.md** file. If the file is a pure text one, all it will be used; if it is a markdown one, only the first section will be used.
+
+The package name will be set to the project name.
+
+Finally, the author's name and email will be asked the first time a package is created, but it will be stored at **$HOME/.config/autovala** to be used when creating new packages.
+
+When the **control** file is edited, the changes will be kept except the ones in the **Dependencies** and **Build-Dependencies** fields, that will be overwritten each time the package metadata is recreated. The other files are created only if they didn't exists; if they are already in the folder, they won't be modified, so it is possible to edit them without loosing the changes.
+
+
+## Adding more package types
+
+As commented, Autovala can generate the metadata por .deb source packages. To add more package types, only a new class, derived from **packages** class, must be created. After initializing it and calling **init_all** method, the class should generate the files needed by the packaging system. To help into it, there are several properties that contains useful data, like a list of files needed to build the project (.vapi and .pc files), and for running it (like libraries). The class must use the package utilities to discover which packages contains those files, and use them for generating the dependencies.
+
+
 ## Writing unitary tests
 
 To write unitary tests, just create a folder called **unitests** in the root folder of your executable/library folder. Each **.vala** source file inside it will be considered an unitary test, and will be compiled against **ALL** source files of its executable/library.
@@ -32,6 +57,7 @@ An example with two binaries:
 
 Here, the first binary, created with **file1.vala** and **file2.vala**, has two unitary tests: **test1.vala** and **test2.vala**. The binary for the first unitary test will be created by compiling **file1.vala**, **file2.vala** and **test1.vala** in a single executable; the binary for the second unitary test will be created by compiling **file1.vala**, **file2.vala** and **test2.vala**. The second binary is created with **file3.vala** and **file4.vala**, and has three unitary tests: **test3.vala**, **test4.vala** and **test5.vala**.
 
+
 ## Using the math library
 
 GLib includes the namespace GLib.Math, that contains all the C Math library functions. To use it from C it is mandatory to pass *-lm* to the compiler.
@@ -42,13 +68,16 @@ In Autovala, instead, you only need to add at the start of your code an **using*
 
 (you can put it inside a comment, and Autovala will also understand it).
 
+
 ## Creating an Autovala plugin for a GTK3 text editor
 
 Version 0.97 includes a library with two widgets, ProjectViewer and FileViewer, that greatly simplifies the task of creating a plugin for manage Autovala projects. An example of its use can be seen in the Gedit plugin for Autovala, available in a folder with the Autovala source code.
 
+
 ## Updating projects with new versions of Autovala
 
 Every time autovala gets updated, doing "autovala update" or "autovala cmake" will update the *CMaleLists.txt* for that project, so it will take advantage of all the new features added in the new Autovala version.
+
 
 ## Rules followed by autovala to decide which valac version to use
 
@@ -62,6 +91,7 @@ Until version 0.95.0, autovala projects could not be compiled under these distro
 These rules are used for default compilation. It is possible to manually force an specific valac binary for compilation with:
 
         cmake .. -DUSE_VALA_BINARY=/path/to/a/valac/binary
+
 
 ## Autogenerating DBus bindings
 
@@ -79,9 +109,11 @@ An example: the following line
 
 will generate bindings for the */org/freedesktop/ConsoleKit/Manager* object.
 
+
 ## Using the **Constants** namespace and variables
 
 Autovala will create a **Constants** namespace with several strings in it that specifies things like the project version or the final directory. These strings allow to simplify several things, like initializing the **gettext** functions, getting access to the version number set in the code, or getting access to **glade** files, as explained in the following entries.
+
 
 ## Setting the version number
 
@@ -109,6 +141,7 @@ This new method allows to set the version number in libraries too, without symbo
 
         GLib.stdout.printf("Library version: %s\n",exampleLibraryConstants.VERSION);
 
+
 ## Using GETTEXT
 
 To initialize **gettext** it is mandatory to specify both the package name and the folder with the **.mo** files. This is as simple as using the **Constants** namespace with this code:
@@ -124,12 +157,14 @@ For libraries, you must call only:
 
 being **LibraryConstants** the library Constants namespace. The package name is the same than the project's name.
 
+
 ## Using GLADE files
 
 **Glade** files are stored at **/usr/share/PROJECT_NAME/** or **/usr/local/share/PROJECT_NAME/**. To get access to them, just use the Constants namespace. As an example, to load the **example.ui** glade file, just do:
 
         var data = new Builder();
         data.add_from_file(GLib.Path.build_filename(Constants.PKGDATADIR,"example.ui"));
+
 
 ## Creating several binaries
 
@@ -185,6 +220,7 @@ Libraries also can have the constants namespace, but modified to avoid clash bet
 
 An example: if your library uses the namespace **aBeautifulNameSpace**, then the namespace for the constants will be **aBeautifulNameSpaceConstants**.
 
+
 ## Linking an executable against a library from the same project
 
 Let's say that the project contains one or more libraries and an executable, and the executable must use that library we are creating in the same project.
@@ -220,6 +256,7 @@ Run **autovala update**, **cmake ..**, and everything should compile fine.
 
 Of course, if your executable needs several local libraries, you have to add one **vala_local_package** statement per library.
 
+
 ## Compiling Valadoc in Ubuntu
 
 At the time of writing this, the version of Valadoc shipped with Ubuntu 12.10 has a bug and sometimes fails. The solution is to manually compile it from the sources.
@@ -234,6 +271,7 @@ Then, don't forget to uninstall the **valadoc** and **libvaladoc1** packages, in
         make
         sudo make install
         sudo ldconfig
+
 
 ## Using D-Bus service files
 
@@ -251,6 +289,7 @@ An example (extracted from Cronopete):
 
 In this file, the **com.rastersoft.cronopete** service is provided by the binary **cronopete**. The specific folder ( **local** or not **local** ) will be determined automatically by Autovala.
 
+
 ## Installing a project in a different final folder
 
 You can set the **CMAKE_INSTALL_PREFIX** variable to define where to install the project. So, if you run
@@ -263,6 +302,7 @@ the project will be installed in **/usr** instead of **/usr/local**. Also, if yo
 
 the project will be installed in your personal directory.
 
+
 ## Creating packages for a Linux distro
 
 To create packages, you must set the install prefix to **/usr** like in the previous entry, and also specify to install everything in a temporal folder. This is made with the **DESTDIR** statement when running **make install**. For example, to create a package in the folder **$HOME/tmpfolder**, you should do:
@@ -271,9 +311,11 @@ To create packages, you must set the install prefix to **/usr** like in the prev
             make
             make install DESTDIR=$HOME/tmpfolder
 
+
 ## Using GIO, GIO-unix, GObject, GModule or Math packages
 
 There are some exceptions for **using** and package autodetection. Since the packages **GIO**, **GIO-unix**, **GObject**, **GModule** and **Math** are included inside the **GLib** namespace, Autovala requires them to be manually marked by adding **//using [package name]**. Since it is a comment, it won't be processed by Valac, but will be understood by Autovala and add the required **-pkg** command (or **-lm** in the case of Math).
+
 
 ## Using conditional compilation to allow to use GTK2 and GTK3
 
@@ -306,6 +348,7 @@ Finally, if you have different **glade** files for each library version, use als
 		glade: data/interface/file3.ui
 		end
 
+
 ## Mixing VALA and C source files
 
 It is possible to mix in the same binary or library VALA and C source files, but is mandatory to manually create a **.vapi** file to access from VALA to the C functions.
@@ -314,9 +357,11 @@ To access from C to the Vala functions, just include the corresponding header fi
 
 To add libraries needed only for the C sources, just use **c_check_package** instead of **vala_check_package**.
 
+
 # SEE ALSO
 
 [autovala(1)](autovala.1) [autovala-fileformat(5)](autovala-fileformat.5) [autovala-keep-changes(7)](autovala-keep-changes.7) [autovala-rules(7)](autovala-rules.7)
+
 
 # AUTHOR
 
