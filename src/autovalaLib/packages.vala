@@ -79,12 +79,9 @@ namespace AutoVala {
 		 * @param basePath The configuration file to use, or null to make the class find it
 		 * @return false if everything went fine; true if there was an error
 		 */
-		public bool init_all(string? basePath) {
+		public bool init_all(Configuration config) {
 
-			this.config = new AutoVala.Configuration(basePath);
-			if (this.config.readConfiguration()) {
-				return true;
-			}
+			this.config = config;
 
 			// Try to read the description from the README or README.md file
 			if (!this.read_description(Path.build_filename(this.config.globalData.projectFolder,"README"))) {
@@ -173,7 +170,6 @@ namespace AutoVala {
 					this.set_vala_version(compilers,compilers.defaultVersion.major,compilers.defaultVersion.minor);
 				}
 			}
-
 			return false;
 		}
 

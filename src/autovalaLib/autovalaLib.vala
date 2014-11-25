@@ -362,7 +362,7 @@ namespace AutoVala {
 			error|=ElementValaBinary.autoGenerate();
 
 			if (error==false) {
-				error|=config.saveConfiguration();
+				error|=this.config.saveConfiguration();
 			}
 			return error;
 		}
@@ -376,7 +376,7 @@ namespace AutoVala {
 				return null; // if there was at least one error during initialization, return
 			}
 
-			var error=config.readConfiguration();
+			var error=this.config.readConfiguration();
 			if (error) {
 				return null;
 			}
@@ -412,7 +412,7 @@ namespace AutoVala {
 				return true; // if there was at least one error during initialization, return
 			}
 
-			bool error=config.readConfiguration();
+			bool error=this.config.readConfiguration();
 			if (error) {
 				return true;
 			}
@@ -478,12 +478,11 @@ namespace AutoVala {
 
 		public bool clear(string ?basePath = null) {
 
-			var config=new AutoVala.Configuration(basePath);
+			this.config=new AutoVala.Configuration(basePath);
 			if(config.globalData.error) {
 				return true; // if there was at least one error during initialization, return
 			}
 			var retval=config.readConfiguration();
-			config.showErrors();
 			if (retval) {
 				return true;
 			}
@@ -493,7 +492,7 @@ namespace AutoVala {
 		}
 
 		public bool remove_binary(string? projectPath, string binary_name) {
-		
+
 			var config=new AutoVala.Configuration(projectPath);
 			if (config.globalData.error) {
 				return true;
@@ -535,7 +534,7 @@ namespace AutoVala {
 			string base_path2;
 			string base_path3 = "";
 			string projectPath2;
-			
+
 			if (base_path.has_suffix(Path.DIR_SEPARATOR_S)) {
 				base_path2 = base_path;
 			} else {
@@ -636,10 +635,10 @@ namespace AutoVala {
 			config.saveConfiguration();
 			return null;
 		}
-		
+
 		public ValaProject ? get_binaries_list(string ?basePath = null) {
 
-			var config=new AutoVala.Configuration(basePath);
+			this.config=new AutoVala.Configuration(basePath);
 			if (config.globalData.error) {
 				return null;
 			}
@@ -669,6 +668,29 @@ namespace AutoVala {
 			}
 			return project;
 		}
+
+		public bool create_deb(string ? basePath = null) {
+
+			bool retval;
+
+			this.config=new AutoVala.Configuration(basePath);
+			if (config.globalData.error) {
+				return true;
+			}
+
+			if (config.readConfiguration()) {
+				return true;
+			}
+
+			var t = new AutoVala.packages_deb();
+
+			retval = t.init_all(config);
+			if (!retval) {
+				retval = t.create_deb_package();
+			}
+			return retval;
+		}
+
 	}
 
 	public class ValaProject : GLib.Object {
