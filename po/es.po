@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-11-25 19:39+0100\n"
+"POT-Creation-Date: 2014-11-26 13:16+0100\n"
 "PO-Revision-Date: 2014-11-25 19:45+0100\n"
 "Last-Translator: Sergio Costas <rastersoft@gmail.com>\n"
 "Language-Team: Español; Castellano <>\n"
@@ -60,23 +60,23 @@ msgstr ""
 "paquete .deb\n"
 "\n"
 
-#: src/autovala.vala:71 src/autovala.vala:85 src/autovala.vala:99
-#: src/autovala.vala:116 src/autovala.vala:123 src/autovala.vala:138
-#: src/autovala.vala:152 src/autovala.vala:166 src/autovala.vala:180
+#: src/autovala.vala:59 src/autovala.vala:73 src/autovala.vala:87
+#: src/autovala.vala:104 src/autovala.vala:111 src/autovala.vala:126
+#: src/autovala.vala:140 src/autovala.vala:154 src/autovala.vala:168
 msgid "Aborting\n"
 msgstr "Abortando\n"
 
-#: src/autovala.vala:74 src/autovala.vala:88 src/autovala.vala:127
-#: src/autovala.vala:141 src/autovala.vala:155 src/autovala.vala:169
-#: src/autovala.vala:183
+#: src/autovala.vala:62 src/autovala.vala:76 src/autovala.vala:115
+#: src/autovala.vala:129 src/autovala.vala:143 src/autovala.vala:157
+#: src/autovala.vala:171
 msgid "Done\n"
 msgstr "Hecho\n"
 
-#: src/autovala.vala:112
+#: src/autovala.vala:100
 msgid "Updating project file\n"
 msgstr "Actualizando el fichero de proyecto\n"
 
-#: src/autovala.vala:119
+#: src/autovala.vala:107
 msgid "Updating CMake files\n"
 msgstr "Actualizando los ficheros de CMake\n"
 
@@ -696,81 +696,81 @@ msgstr "Error: %s"
 msgid "Warning: %s"
 msgstr "Aviso: %s"
 
-#: src/autovalaLib/packages.vala:146
+#: src/autovalaLib/packages.vala:160
 #, c-format
 msgid "Failed to find dependencies for the module %s"
 msgstr "No se han podido encontrar las dependencias del módulo %s"
 
-#: src/autovalaLib/packages.vala:165
+#: src/autovalaLib/packages.vala:187
 msgid "Failed to get installed vala compilers"
 msgstr "Incapaz de obtener los compiladores de vala instalados"
 
-#: src/autovalaLib/packages.vala:203
+#: src/autovalaLib/packages.vala:225
 #, c-format
 msgid "Failed to launch pkg-config for the module %s"
 msgstr "No se ha podido lanzar pkg-config para el módulo %s"
 
-#: src/autovalaLib/packages.vala:207
+#: src/autovalaLib/packages.vala:229
 #, c-format
 msgid "Error %d when launching pkg-config for the module %s"
 msgstr "Error %d al lanzar pkg-config para el módulo %s"
 
-#: src/autovalaLib/packages.vala:211
+#: src/autovalaLib/packages.vala:233
 #, c-format
 msgid "Exception '%s' when launching pkg-config for the module %s"
 msgstr "Excepción '%s' al lanzar pkg-config para el módulo %s"
 
-#: src/autovalaLib/packages_deb.vala:89
+#: src/autovalaLib/packages_deb.vala:87
 #, c-format
 msgid "Failed to launch dpkg for the file %s"
 msgstr "Incapaz de lanzar dpkg para el fichero %s"
 
-#: src/autovalaLib/packages_deb.vala:93
+#: src/autovalaLib/packages_deb.vala:91
 #, c-format
 msgid "Error %d when launching dpkg for the file %s"
 msgstr "Error %d al lanzar dpkg para el fichero %s"
 
-#: src/autovalaLib/packages_deb.vala:97
+#: src/autovalaLib/packages_deb.vala:95
 #, c-format
 msgid "Exception '%s' when launching dpkg for the file %s"
 msgstr "Excepción '%s' al lanzar dpkg para el fichero %s"
 
-#: src/autovalaLib/packages_deb.vala:102
+#: src/autovalaLib/packages_deb.vala:100
 #, c-format
 msgid "Can't find a package for the file %s"
 msgstr "No se ha podido encontrar un paquete para el fichero %s"
 
-#: src/autovalaLib/packages_deb.vala:169
+#: src/autovalaLib/packages_deb.vala:167
 #, c-format
 msgid "Failed to delete debian/control file (%s)"
 msgstr "No se ha podido borrar el fichero debian/control (%s)"
 
-#: src/autovalaLib/packages_deb.vala:243
+#: src/autovalaLib/packages_deb.vala:241
 #, c-format
 msgid "Failed to write data to debian/control file (%s)"
 msgstr "Incapaz de escribir datos en el fichero debian/control (%s)"
 
-#: src/autovalaLib/packages_deb.vala:277
+#: src/autovalaLib/packages_deb.vala:275
 #, c-format
 msgid "Failed to write data to debian/rules file (%s)"
 msgstr "Incapaz de escribir datos en el fichero debian/rules (%s)"
 
-#: src/autovalaLib/packages_deb.vala:312
+#: src/autovalaLib/packages_deb.vala:310
 #, c-format
 msgid "Failed to write data to debian/preinst file (%s)"
 msgstr "Incapaz de escribir datos en el fichero debian/preinst (%s)"
 
-#: src/autovalaLib/packages_deb.vala:347
+#: src/autovalaLib/packages_deb.vala:345
 #, c-format
 msgid "Failed to write data to debian/prerm file (%s)"
 msgstr "Incapaz de escribir datos en el fichero debian/prerm (%s)"
 
-#: src/autovalaLib/packages_deb.vala:382
+#: src/autovalaLib/packages_deb.vala:380
 #, c-format
 msgid "Failed to write data to debian/postinst file (%s)"
 msgstr "Incapaz de escribir datos en el fichero debian/postinst (%s)"
 
-#: src/autovalaLib/packages_deb.vala:417
+#: src/autovalaLib/packages_deb.vala:415
 #, c-format
 msgid "Failed to write data to debian/postrm file (%s)"
 msgstr "Incapaz de escribir datos en el fichero debian/postrm (%s)"

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-11-25 19:39+0100\n"
+"POT-Creation-Date: 2014-11-26 13:16+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -39,23 +39,23 @@ msgid ""
 "\n"
 msgstr ""
 
-#: src/autovala.vala:71 src/autovala.vala:85 src/autovala.vala:99
-#: src/autovala.vala:116 src/autovala.vala:123 src/autovala.vala:138
-#: src/autovala.vala:152 src/autovala.vala:166 src/autovala.vala:180
+#: src/autovala.vala:59 src/autovala.vala:73 src/autovala.vala:87
+#: src/autovala.vala:104 src/autovala.vala:111 src/autovala.vala:126
+#: src/autovala.vala:140 src/autovala.vala:154 src/autovala.vala:168
 msgid "Aborting\n"
 msgstr ""
 
-#: src/autovala.vala:74 src/autovala.vala:88 src/autovala.vala:127
-#: src/autovala.vala:141 src/autovala.vala:155 src/autovala.vala:169
-#: src/autovala.vala:183
+#: src/autovala.vala:62 src/autovala.vala:76 src/autovala.vala:115
+#: src/autovala.vala:129 src/autovala.vala:143 src/autovala.vala:157
+#: src/autovala.vala:171
 msgid "Done\n"
 msgstr ""
 
-#: src/autovala.vala:112
+#: src/autovala.vala:100
 msgid "Updating project file\n"
 msgstr ""
 
-#: src/autovala.vala:119
+#: src/autovala.vala:107
 msgid "Updating CMake files\n"
 msgstr ""
 
@@ -641,81 +641,81 @@ msgstr ""
 msgid "Warning: %s"
 msgstr ""
 
-#: src/autovalaLib/packages.vala:146
+#: src/autovalaLib/packages.vala:160
 #, c-format
 msgid "Failed to find dependencies for the module %s"
 msgstr ""
 
-#: src/autovalaLib/packages.vala:165
+#: src/autovalaLib/packages.vala:187
 msgid "Failed to get installed vala compilers"
 msgstr ""
 
-#: src/autovalaLib/packages.vala:203
+#: src/autovalaLib/packages.vala:225
 #, c-format
 msgid "Failed to launch pkg-config for the module %s"
 msgstr ""
 
-#: src/autovalaLib/packages.vala:207
+#: src/autovalaLib/packages.vala:229
 #, c-format
 msgid "Error %d when launching pkg-config for the module %s"
 msgstr ""
 
-#: src/autovalaLib/packages.vala:211
+#: src/autovalaLib/packages.vala:233
 #, c-format
 msgid "Exception '%s' when launching pkg-config for the module %s"
 msgstr ""
 
-#: src/autovalaLib/packages_deb.vala:89
+#: src/autovalaLib/packages_deb.vala:87
 #, c-format
 msgid "Failed to launch dpkg for the file %s"
 msgstr ""
 
-#: src/autovalaLib/packages_deb.vala:93
+#: src/autovalaLib/packages_deb.vala:91
 #, c-format
 msgid "Error %d when launching dpkg for the file %s"
 msgstr ""
 
-#: src/autovalaLib/packages_deb.vala:97
+#: src/autovalaLib/packages_deb.vala:95
 #, c-format
 msgid "Exception '%s' when launching dpkg for the file %s"
 msgstr ""
 
-#: src/autovalaLib/packages_deb.vala:102
+#: src/autovalaLib/packages_deb.vala:100
 #, c-format
 msgid "Can't find a package for the file %s"
 msgstr ""
 
-#: src/autovalaLib/packages_deb.vala:169
+#: src/autovalaLib/packages_deb.vala:167
 #, c-format
 msgid "Failed to delete debian/control file (%s)"
 msgstr ""
 
-#: src/autovalaLib/packages_deb.vala:243
+#: src/autovalaLib/packages_deb.vala:241
 #, c-format
 msgid "Failed to write data to debian/control file (%s)"
 msgstr ""
 
-#: src/autovalaLib/packages_deb.vala:277
+#: src/autovalaLib/packages_deb.vala:275
 #, c-format
 msgid "Failed to write data to debian/rules file (%s)"
 msgstr ""
 
-#: src/autovalaLib/packages_deb.vala:312
+#: src/autovalaLib/packages_deb.vala:310
 #, c-format
 msgid "Failed to write data to debian/preinst file (%s)"
 msgstr ""
 
-#: src/autovalaLib/packages_deb.vala:347
+#: src/autovalaLib/packages_deb.vala:345
 #, c-format
 msgid "Failed to write data to debian/prerm file (%s)"
 msgstr ""
 
-#: src/autovalaLib/packages_deb.vala:382
+#: src/autovalaLib/packages_deb.vala:380
 #, c-format
 msgid "Failed to write data to debian/postinst file (%s)"
 msgstr ""
 
-#: src/autovalaLib/packages_deb.vala:417
+#: src/autovalaLib/packages_deb.vala:415
 #, c-format
 msgid "Failed to write data to debian/postrm file (%s)"
 msgstr ""

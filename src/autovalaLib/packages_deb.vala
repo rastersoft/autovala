@@ -33,9 +33,7 @@ namespace AutoVala {
 			this.binary_packages = new Gee.ArrayList<string>();
 
 			// These packages are always needed to build this package
-			this.source_packages.add("cmake");
 			this.source_packages.add("build-essential");
-			this.source_packages.add("gettext");
 			this.source_packages.add("po-debconf");
 
 			var path = Path.build_filename(this.config.globalData.projectFolder,"debian");

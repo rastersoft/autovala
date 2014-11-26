@@ -53,6 +53,7 @@ namespace AutoVala {
 		private bool has_libraries;
 		private bool has_icons;
 		private bool has_schemes;
+		private bool has_manpages;
 
 		private Gee.Map<string,string> libraries;
 
@@ -79,6 +80,7 @@ namespace AutoVala {
 			this.has_libraries = false;
 			this.has_icons = false;
 			this.has_schemes = false;
+			this.has_manpages = false;
 
 		}
 
@@ -125,6 +127,9 @@ namespace AutoVala {
 				if (element.eType == ConfigType.SCHEME) {
 					this.has_schemes = true;
 				}
+				if (element.eType == ConfigType.MANPAGE) {
+					this.has_manpages = true;
+				}
 			}
 			foreach (var element in config.globalData.globalElements) {
 				if ((element.eType == ConfigType.VALA_LIBRARY) || (element.eType == ConfigType.VALA_BINARY)) {
@@ -167,6 +172,14 @@ namespace AutoVala {
 			if (this.has_schemes) {
 				this.post_inst += "glib-compile-schemas /usr/share/glib-2.0/schemas";
 				this.post_rm += "glib-compile-schemas /usr/share/glib-2.0/schemas";
+			}
+
+			this.source_dependencies.add("/usr/bin/cmake");
+			this.source_dependencies.add("/usr/bin/xgettext");
+			this.source_dependencies.add("/usr/bin/pkg-config");
+
+			if (this.has_manpages) {
+				this.source_dependencies.add("/usr/bin/pandoc");
 			}
 
 			var compilers = new FindVala();
