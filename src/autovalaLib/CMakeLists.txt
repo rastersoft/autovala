@@ -25,6 +25,7 @@ ensure_vala_version ("0.20" MINIMUM)
 include (ValaPrecompile)
 
 set (VALA_PACKAGES ${VALA_PACKAGES} posix)
+set (VALA_PACKAGES ${VALA_PACKAGES} readline)
 set (VALA_PACKAGES ${VALA_PACKAGES} cairo)
 set (VALA_PACKAGES ${VALA_PACKAGES} gdk-3.0)
 set (VALA_PACKAGES ${VALA_PACKAGES} gdk-pixbuf-2.0)

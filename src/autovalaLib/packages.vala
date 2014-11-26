@@ -93,6 +93,24 @@ namespace AutoVala {
 		public bool init_all(Configuration config) {
 
 			this.config = config;
+			int major;
+			int minor;
+
+			var compilers = new FindVala();
+			if (compilers == null) {
+				ElementBase.globalData.addError(_("Failed to get installed vala compilers"));
+				return true;
+			} else {
+				// if the desired VALA version is installed in the system, go ahead with it
+				major = this.config.globalData.valaVersionMajor;
+				minor = this.config.globalData.valaVersionMinor;
+				if (false == this.set_vala_version(compilers,this.config.globalData.valaVersionMajor,this.config.globalData.valaVersionMinor)) {
+					// if not, go ahead with the default version (it's supposed that the maintainer has checked the code against this version)
+					this.set_vala_version(compilers,compilers.defaultVersion.major,compilers.defaultVersion.minor);
+					major = compilers.defaultVersion.major;
+					minor = compilers.defaultVersion.minor;
+				}
+			}
 
 			// Try to read the description from the README or README.md file
 			if (!this.read_description(Path.build_filename(this.config.globalData.projectFolder,"README"))) {
@@ -135,11 +153,23 @@ namespace AutoVala {
 				if ((element.eType == ConfigType.VALA_LIBRARY) || (element.eType == ConfigType.VALA_BINARY)) {
 					var binElement = element as ElementValaBinary;
 					foreach (var p in binElement.packages) {
-						if ((p.type != packageType.DO_CHECK) && (p.type != packageType.C_DO_CHECK)) {
+
+						if ((p.type != packageType.DO_CHECK) && (p.type != packageType.C_DO_CHECK) && (p.type != packageType.NO_CHECK)) {
 							continue;
 						}
 
 						var module = p.elementName;
+
+						// find the .vapi file and check what .h files are needed
+						if (p.type == packageType.NO_CHECK) {
+							if (this.check_module("/usr/share/vala",module)) {
+								if (this.check_module("/usr/share/vala-%d.%d".printf(major,minor),module)) {
+									ElementBase.globalData.addWarning(_("Failed to find dependencies for the non-check module %s").printf(module));
+								}
+							}
+							continue;
+						}
+
 						var library = Globals.vapiList.get_pc_path(module);
 						if (library == null) {
 							continue;
@@ -157,8 +187,20 @@ namespace AutoVala {
 								}
 								this.dependencies.add(lpath);
 							} else {
-								ElementBase.globalData.addWarning(_("Failed to find dependencies for the module %s").printf(module));
+								ElementBase.globalData.addWarning(_("Failed to find dependencies for the module %s, library %s").printf(module,fullname));
 							}
+						}
+					}
+					foreach (var p in binElement.link_libraries) {
+						var fullname = "lib"+p.elementName+".so";
+						if (this.libraries.has_key(fullname)) {
+							var lpath = this.libraries.get(fullname);
+							if ((this.dependencies.contains(lpath)) || (this.extra_dependencies.contains(lpath))) {
+								continue;
+							}
+							this.dependencies.add(lpath);
+						} else {
+							ElementBase.globalData.addWarning(_("Failed to add library %s to dependencies").printf(fullname));
 						}
 					}
 				}
@@ -182,15 +224,44 @@ namespace AutoVala {
 				this.source_dependencies.add("/usr/bin/pandoc");
 			}
 
-			var compilers = new FindVala();
-			if (compilers == null) {
-				ElementBase.globalData.addWarning(_("Failed to get installed vala compilers"));
-			} else {
-				// if the desired VALA version is installed in the system, go ahead with it
-				if (false == this.set_vala_version(compilers,this.config.globalData.valaVersionMajor,this.config.globalData.valaVersionMinor)) {
-					// if not, go ahead with the default version (it's supposed that the maintainer has checked the code against this version)
-					this.set_vala_version(compilers,compilers.defaultVersion.major,compilers.defaultVersion.minor);
+			return false;
+		}
+
+		private bool check_module(string path,string module) {
+
+			Gee.List<string> not_found = new Gee.ArrayList<string>();
+
+			var file = File.new_for_path(Path.build_filename(path,"vapi",module+".vapi"));
+			if (!file.query_exists()) {
+				return true;
+			}
+			try {
+				var dis = new DataInputStream(file.read());
+				string line;
+				while ((line = dis.read_line (null)) != null) {
+					var pos = line.index_of("cheader_filename");
+					if (pos == -1) {
+						continue;
+					}
+					var pos2 = line.index_of_char('"',pos);
+					var pos3 = line.index_of_char('"',pos2+1);
+					if ((pos2 == -1) || (pos3 == -1)) {
+						continue;
+					}
+					var data = line.substring(pos2+1,pos3-pos2-1).split(",");
+					foreach (var element in data) {
+						var fullpath = Path.build_filename("/usr/include",element);
+						var file2 = File.new_for_path(fullpath);
+						if (!file2.query_exists()) {
+							continue;
+						}
+						if ((!this.source_dependencies.contains(fullpath)) && (!this.extra_source_dependencies.contains(fullpath))) {
+							this.source_dependencies.add(fullpath);
+						}
+					}
 				}
+			} catch (Error e) {
+				ElementBase.globalData.addWarning(_("Failed to process %s.vapi to find dependencies").printf(module));
 			}
 			return false;
 		}

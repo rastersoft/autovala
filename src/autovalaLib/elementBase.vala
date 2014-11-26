@@ -99,7 +99,7 @@ namespace AutoVala {
 		 */
 
 		public static string[] getFilesFromFolder(string folder, string[]? extensions, bool recursive,bool removeFolder=false, string ? masterFolder=null) {
-			
+
 			string[] files = {};
 
 			var dirPath=File.new_for_path(Path.build_filename(ElementBase.globalData.projectFolder,folder));
@@ -187,7 +187,7 @@ namespace AutoVala {
 
 			string? fullPath=fullPathP;
 			if (fullPath != null) {
-				
+
 				if (fullPath.has_suffix(Path.DIR_SEPARATOR_S)) {
 					fullPath=fullPathP.substring(0,fullPathP.length-1);
 				}

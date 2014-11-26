@@ -19,6 +19,7 @@
 using GLib;
 using Gee;
 using Posix;
+using Readline;
 
 // project version=0.99
 
@@ -669,7 +670,7 @@ namespace AutoVala {
 			return project;
 		}
 
-		public bool create_deb(string ? basePath = null) {
+		public bool create_deb(bool ask = false, string ? basePath = null) {
 
 			bool retval;
 
@@ -686,6 +687,34 @@ namespace AutoVala {
 
 			retval = t.init_all(config);
 			if (!retval) {
+				if (ask) {
+					if ((t.author_package != null) && (t.email_package != null)) {
+						var name = Readline.readline ("Please enter your name (%s <%s>): ".printf(t.author_package,t.email_package));
+						if (name != "") {
+							t.author_package = name;
+							t.email_package = null;
+						}
+					}
+					if (t.author_package == null) {
+						t.email_package = null;
+						do {
+							var name = Readline.readline ("Please enter your name: ");
+							if (name != "") {
+								t.author_package = name;
+								break;
+							}
+						} while (true);
+					}
+					if (t.email_package == null) {
+						do {
+							var name = Readline.readline ("Please enter your e-mail: ");
+							if (name != "") {
+								t.email_package = name;
+								break;
+							}
+						} while (true);
+					}
+				}
 				retval = t.create_deb_package();
 			}
 			return retval;

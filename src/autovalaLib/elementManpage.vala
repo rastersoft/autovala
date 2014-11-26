@@ -105,7 +105,7 @@ namespace AutoVala {
 		}
 
 		public override bool autoConfigure(string? path=null) {
-			
+
 			if (path==null) {
 				return false;
 			}

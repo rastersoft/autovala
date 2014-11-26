@@ -29,6 +29,8 @@ namespace AutoVala {
 
 		public bool create_deb_package() {
 
+			this.write_defaults();
+
 			this.source_packages = new Gee.ArrayList<string>();
 			this.binary_packages = new Gee.ArrayList<string>();
 
@@ -171,22 +173,23 @@ namespace AutoVala {
 				var of = new DataOutputStream(dis.output_stream as FileOutputStream);
 				bool not_first;
 
+				if (!source_keys.has_key("Source")) {
+					of.put_string("Source: %s\n".printf(this.config.globalData.projectName));
+				} else {
+					of.put_string("Source: %s\n".printf(source_keys.get("Source")));
+				}
+				of.put_string("Maintainer: %s <%s>\n".printf(this.author_package,this.email_package));
+				if (!source_keys.has_key("Priority")) {
+					of.put_string("Priority: optional\n");
+				}
+
 				foreach (var key in source_keys.keys) {
-					if (key == "Build-Depends") {
+					if ((key == "Build-Depends") || (key == "Maintainer") || (key == "Source")) {
 						continue;
 					}
 					of.put_string("%s: %s\n".printf(key,source_keys.get(key)));
 				}
 
-				if (!source_keys.has_key("Source")) {
-					of.put_string("Source: %s\n".printf(this.config.globalData.projectName));
-				}
-				if (!source_keys.has_key("Maintainer")) {
-					of.put_string("Maintainer: %s <%s>\n".printf(this.author_package,this.email_package));
-				}
-				if (!source_keys.has_key("Priority")) {
-					of.put_string("Priority: optional\n");
-				}
 				of.put_string("Build-Depends: ");
 				not_first = false;
 				foreach(var element in this.source_packages) {
@@ -235,7 +238,6 @@ namespace AutoVala {
 				} else {
 					of.put_string("Description: %s\n".printf(binary_keys.get("Description")));
 				}
-//				of.put_string("\n");
 				dis.close();
 			} catch (Error e) {
 				ElementBase.globalData.addError(_("Failed to write data to debian/control file (%s)").printf(e.message));

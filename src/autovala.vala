@@ -162,7 +162,7 @@ int main(string[] argv) {
 			return -1;
 		}
 		var gen = new AutoVala.ManageProject();
-		retval=gen.create_deb();
+		retval = gen.create_deb(true);
 		gen.showErrors();
 		if (retval) {
 			GLib.stderr.printf(_("Aborting\n"));
