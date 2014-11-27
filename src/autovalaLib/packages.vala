@@ -38,6 +38,8 @@ namespace AutoVala {
 		public Gee.List<string> extra_dependencies;
 		// A list of the files needed for building the project, added manually in the .avprj file
 		public Gee.List<string> extra_source_dependencies;
+		// The version string in the main executable (if available)
+		public string version;
 
 		// The system command to run before installing the package
 		protected string[] pre_inst;
@@ -70,6 +72,7 @@ namespace AutoVala {
 			this.source_dependencies = new ArrayList<string>();
 			this.extra_dependencies = new ArrayList<string>();
 			this.extra_source_dependencies = new ArrayList<string>();
+			this.version = "1.0.0";
 
 			this.pre_inst = {};
 			this.pre_rm = {};
@@ -134,6 +137,14 @@ namespace AutoVala {
 				if (element.eType == ConfigType.BINARY_DEPENDENCY) {
 					if (!this.extra_dependencies.contains(element.name)) {
 						this.extra_dependencies.add(element.name);
+					}
+				}
+				if ((element.eType == ConfigType.VALA_BINARY) || (element.eType == ConfigType.VALA_LIBRARY)) {
+					if (element.path == "src") {
+						var binElement = element as ElementValaBinary;
+						if (binElement.version != "") {
+							this.version = binElement.version;
+						}
 					}
 				}
 				if (element.eType == ConfigType.VALA_LIBRARY) {

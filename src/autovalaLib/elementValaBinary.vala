@@ -99,7 +99,7 @@ namespace AutoVala {
 
 	private class ElementValaBinary : ElementBase {
 
-		private string version;
+		public string version;
 		private bool versionSet;
 		private bool versionAutomatic;
 

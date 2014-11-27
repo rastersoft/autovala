@@ -67,6 +67,7 @@ set (APP_SOURCES ${APP_SOURCES} genVapis.vala)
 set (APP_SOURCES ${APP_SOURCES} globals.vala)
 set (APP_SOURCES ${APP_SOURCES} packages.vala)
 set (APP_SOURCES ${APP_SOURCES} packages_deb.vala)
+set (APP_SOURCES ${APP_SOURCES} packages_rpm.vala)
 set (APP_SOURCES ${APP_SOURCES} readPkgconfig.vala)
 
 if (DEBUG)
@@ -105,6 +106,8 @@ install(TARGETS
 LIBRARY DESTINATION
 	${CMAKE_INSTALL_LIBDIR}/
 )
+target_link_libraries( AutoVala readline )
+
 install(FILES
 	${CMAKE_CURRENT_BINARY_DIR}/AutoVala.h
 DESTINATION

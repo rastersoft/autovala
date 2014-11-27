@@ -54,7 +54,6 @@ OPTIONS
 )
 
 add_executable(autovala ${VALA_C})
-target_link_libraries( autovala readline )
 
 install(TARGETS
 	autovala

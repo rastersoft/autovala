@@ -18,7 +18,6 @@ vala_local_package: AutoVala
 vala_check_package: gio-2.0
 *vala_check_package: gee-0.8
 *vala_check_package: glib-2.0
-c_library: readline
 *vala_source: autovala.vala
 
 
@@ -71,6 +70,7 @@ c_library: readline
 *vala_source: globals.vala
 *vala_source: packages.vala
 *vala_source: packages_deb.vala
+*vala_source: packages_rpm.vala
 *vala_source: readPkgconfig.vala
 
 vala_library: src/autovalaPlugin/autovalaPlugin

@@ -1,5 +1,5 @@
 ### AutoVala Project ###
-autovala_version: 13
+autovala_version: 14
 project_name: gedit_plugin
 vala_version: 0.24
 
@@ -39,6 +39,7 @@ end
 *vala_check_package: pango
 *vala_check_package: pangocairo
 *vala_check_package: x11
+c_library: readline
 *vala_source: gedit_plugin.vala
 
 *po: po
