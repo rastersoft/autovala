@@ -139,7 +139,7 @@ namespace AutoVala {
 						if (line == "") {
 							continue;
 						}
-						
+
 						if (line[0] == '%') { // multiline entry
 							key = line.substring(1);
 							multiline = true;
@@ -234,7 +234,7 @@ namespace AutoVala {
 				if (!multi_keys.has_key("install")) {
 					of.put_string("%install\nmake install -C installdir\n\n");
 				}
-				
+
 				if ((!multi_keys.has_key("pre")) && (this.pre_inst.length != 0)) {
 					of.put_string("%pre\n");
 					foreach(var line in this.pre_inst) {
@@ -277,7 +277,7 @@ namespace AutoVala {
 					}
 					of.put_string("%%%s\n%s\n".printf(key,multi_keys.get(key)));
 				}
-				
+
 				dis.close();
 			} catch (Error e) {
 				ElementBase.globalData.addError(_("Failed to write data to rpmbuild/SPECS/SPEC file (%s)").printf(e.message));

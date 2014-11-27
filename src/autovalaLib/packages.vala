@@ -406,18 +406,18 @@ namespace AutoVala {
 
 				FileInfo file_info;
 				while ((file_info = enumerator.next_file ()) != null) {
-				    var filename=file_info.get_name();
-				    if ((filename.has_prefix("lib")) && (filename.has_suffix(".so"))) {
-				    	if (file_info.get_is_symlink()) {
-				    		var final_name = file_info.get_symlink_target();
-				    		if (!Path.is_dir_separator(final_name[0])) {
-				    			final_name = Path.build_filename(path,final_name);
-				    		}
-					    	this.libraries.set(filename,final_name);
-				    	} else {
-				    		this.libraries.set(filename,Path.build_filename(path,filename));
-				    	}
-				    }
+					var filename=file_info.get_name();
+					if ((filename.has_prefix("lib")) && (filename.has_suffix(".so"))) {
+						if (file_info.get_is_symlink()) {
+							var final_name = file_info.get_symlink_target();
+							if (!Path.is_dir_separator(final_name[0])) {
+								final_name = Path.build_filename(path,final_name);
+							}
+							this.libraries.set(filename,final_name);
+						} else {
+							this.libraries.set(filename,Path.build_filename(path,filename));
+						}
+					}
 				}
 			} catch (Error e) {
 			}
