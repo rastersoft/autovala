@@ -170,6 +170,20 @@ int main(string[] argv) {
 		}
 		GLib.stderr.printf(_("Done\n"));
 		break;
+	case "rpm":
+		if (argv.length!=2) {
+			help();
+			return -1;
+		}
+		var gen = new AutoVala.ManageProject();
+		retval = gen.create_rpm(true);
+		gen.showErrors();
+		if (retval) {
+			GLib.stderr.printf(_("Aborting\n"));
+			return -1;
+		}
+		GLib.stderr.printf(_("Done\n"));
+		break;
 	default:
 		help();
 		return -1;

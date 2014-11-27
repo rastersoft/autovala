@@ -99,55 +99,61 @@ namespace AutoVala {
 		 */
 		private bool create_spec(string path) {
 
-			Gee.Map<string,string> source_keys = new Gee.HashMap<string,string>();
-			Gee.Map<string,string> binary_keys = new Gee.HashMap<string,string>();
+			string[] definitions = {};
+			Gee.Map<string,string> single_keys = new Gee.HashMap<string,string>();
+			Gee.Map<string,string> multi_keys = new Gee.HashMap<string,string>();
 
 			var f_control = File.new_for_path(Path.build_filename(path,"%s.spec".printf(this.config.globalData.projectName)));
 			try {
 				if (f_control.query_exists()) {
+					// store the original file to keep manually-added fields
 					bool source = true;
 					var dis = new DataInputStream (f_control.read ());
 					string line;
-					string last_key = "";
-					string? key = "";
+					string? key = null;
 					string data = "";
+					var defs = true;
+					var multiline = false;
+
 					while ((line = dis.read_line (null)) != null) {
+						if (line.has_prefix("#")) {
+							continue;
+						}
+						if (defs && (line.has_prefix("%define"))) {
+							definitions += line;
+							continue;
+						}
+						defs = false;
+
+						if (multiline) {
+							if (line == "") {
+								multiline = false;
+								multi_keys.set(key,data);
+								data = "";
+							} else {
+								data += line+"\n";
+							}
+							continue;
+						}
+
 						if (line == "") {
-							source = false;
-							key = null;
 							continue;
 						}
-						if (line[0] == '#') {
+						
+						if (line[0] == '%') { // multiline entry
+							key = line.substring(1);
+							multiline = true;
+							data = "";
 							continue;
 						}
-						if ((line[0] == ' ') || (line[0] == '\t')) {
-							if (key == null) {
-								continue;
-							}
-							if (source) {
-								data = source_keys.get(key);
-							} else {
-								data = binary_keys.get(key);
-							}
-							data += "\n"+line;
-							if (source) {
-								source_keys.set(key,data);
-							} else {
-								binary_keys.set(key,data);
-							}
-							continue;
-						}
+
 						var pos = line.index_of_char(':');
 						if (pos == -1) {
 							continue;
 						}
 						key = line.substring(0,pos).strip();
 						data = line.substring(pos+1).strip();
-						if (source) {
-							source_keys.set(key,data);
-						} else {
-							binary_keys.set(key,data);
-						}
+						single_keys.set(key,data);
 					}
 					f_control.delete();
 				}
@@ -159,81 +165,119 @@ namespace AutoVala {
 				var of = new DataOutputStream(dis.output_stream as FileOutputStream);
 				bool not_first;
 
-				if (!source_keys.has_key("Name")) {
+				foreach (var def in definitions) {
+					of.put_string(def+"\n");
+				}
+				if (definitions.length > 0) {
+					of.put_string("\n");
+				}
+
+				if (!single_keys.has_key("Name")) {
 					of.put_string("Name: %s\n".printf(this.config.globalData.projectName));
 				} else {
-					of.put_string("Name: %s\n".printf(source_keys.get("Name")));
+					of.put_string("Name: %s\n".printf(single_keys.get("Name")));
 				}
-
-				if (!source_keys.has_key("Version")) {
+				if (!single_keys.has_key("Version")) {
 					of.put_string("Version: %s\n".printf(this.version));
 				} else {
-					of.put_string("Version: %s\n".printf(source_keys.get("Version")));
+					of.put_string("Version: %s\n".printf(single_keys.get("Version")));
 				}
-
-				if (!source_keys.has_key("Release")) {
+				if (!single_keys.has_key("Release")) {
 					of.put_string("Release: 1\n");
 				} else {
-					of.put_string("Release: %s\n".printf(source_keys.get("Release")));
+					of.put_string("Release: %s\n".printf(single_keys.get("Release")));
+				}
+				if (!single_keys.has_key("Maintainer")) {
+					of.put_string("Maintainer: %s<%s>\n".printf(this.author_package,this.email_package));
+				} else {
+					of.put_string("Maintainer: %s\n".printf(single_keys.get("Maintainer")));
 				}
 
-				foreach (var key in source_keys.keys) {
-					if ((key == "Build-Depends") || (key == "Maintainer") || (key == "Source")) {
+				foreach (var key in single_keys.keys) {
+					if ((key == "Requires") || (key == "BuildRequires") || (key == "Name") || (key == "Version") || (key == "Release") || (key == "Maintainer")) {
 						continue;
 					}
-					of.put_string("%s: %s\n".printf(key,source_keys.get(key)));
-				}
-
-				of.put_string("Build-Depends: ");
-				not_first = false;
-				foreach(var element in this.source_packages) {
-					if (not_first) {
-						of.put_string(", ");
-					}
-					not_first = true;
-					of.put_string(element);
-				}
-
-				of.put_string("\n\n");
-
-				foreach (var key in binary_keys.keys) {
-					if ((key == "Name") || (key == "Version") || (key == "Release")) {
-						continue;
-					}
-					of.put_string("%s: %s\n".printf(key,binary_keys.get(key)));
-				}
-
-				if (!binary_keys.has_key("Package")) {
-					of.put_string("Package: %s\n".printf(this.config.globalData.projectName));
-				}
-
-				if (!binary_keys.has_key("Architecture")) {
-					of.put_string("Architecture: any\n");
-				}
-				of.put_string("Depends: ");
-				not_first = false;
-
-				foreach(var element in this.binary_packages) {
-					if (not_first) {
-						of.put_string(", ");
-					}
-					not_first = true;
-					of.put_string(element);
+					of.put_string("%s: %s\n".printf(key,single_keys.get(key)));
 				}
 				of.put_string("\n");
 
-				if (!binary_keys.has_key("Description")) {
-					of.put_string("Description:");
+				foreach(var element in this.source_packages) {
+					of.put_string("BuildRequires: %s\n".printf(element));
+				}
+				of.put_string("\n");
+				foreach(var element in this.binary_packages) {
+					of.put_string("Requires: %s\n".printf(element));
+				}
+				of.put_string("\n");
+
+				if (multi_keys.has_key("%description")) {
+					of.put_string("%%description\n%s\n".printf(multi_keys.get("description")));
+				} else {
+					of.put_string("%description\n");
 					foreach(var line in this.description.split("\n")) {
 						if (line.strip() == "") {
 							line = ".";
 						}
-						of.put_string(" %s\n".printf(line));
+						of.put_string("%s\n".printf(line));
 					}
-				} else {
-					of.put_string("Description: %s\n".printf(binary_keys.get("Description")));
+					of.put_string("\n");
 				}
 
+				if (!multi_keys.has_key("prep")) {
+					of.put_string("%prep\n%setup -q\n\n");
+				}
+
+				if (!multi_keys.has_key("build")) {
+					of.put_string("%build\n%configure\nmkdir installdir\ncd installdir ; cmake -DCMAKE_INSTALL_PREFIX=/usr -DGSETTINGS_COMPILE=OFF -DICON_UPDATE=OFF ..\nmake -C installdir\n\n");
+				}
+
+				if (!multi_keys.has_key("install")) {
+					of.put_string("%install\nmake install -C installdir\n\n");
+				}
+				
+				if ((!multi_keys.has_key("pre")) && (this.pre_inst.length != 0)) {
+					of.put_string("%pre\n");
+					foreach(var line in this.pre_inst) {
+						of.put_string(line+"\n");
+					}
+					of.put_string("\n");
+				}
+
+				if ((!multi_keys.has_key("post")) && (this.post_inst.length != 0)) {
+					of.put_string("%post\n");
+					foreach(var line in this.post_inst) {
+						of.put_string(line+"\n");
+					}
+					of.put_string("\n");
+				}
+
+				if ((!multi_keys.has_key("preun")) && (this.pre_rm.length != 0)) {
+					of.put_string("%preun\n");
+					foreach(var line in this.pre_rm) {
+						of.put_string(line+"\n");
+					}
+					of.put_string("\n");
+				}
+
+				if ((!multi_keys.has_key("postun")) && (this.post_rm.length != 0)) {
+					of.put_string("%postun\n");
+					foreach(var line in this.post_rm) {
+						of.put_string(line+"\n");
+					}
+					of.put_string("\n");
+				}
+
+				if (!multi_keys.has_key("clean")) {
+					of.put_string("%clean\nrm -rf %{buildroot}\n\n");
+				}
+
+				foreach (var key in multi_keys.keys) {
+					if (key == "description") {
+						continue;
+					}
+					of.put_string("%%%s\n%s\n".printf(key,multi_keys.get(key)));
+				}
+				
 				dis.close();
 			} catch (Error e) {
 				ElementBase.globalData.addError(_("Failed to write data to rpmbuild/SPECS/SPEC file (%s)").printf(e.message));
@@ -241,181 +285,5 @@ namespace AutoVala {
 			}
 			return false;
 		}
-
-		/**
-		 * Creates de debian/rules file
-		 * @param path The 'debian' path
-		 * @return false if everything went OK; true if there was an error
-		 */
-		private bool create_rules(string path) {
-
-			var f_rules = File.new_for_path(Path.build_filename(path,"rules"));
-			if (f_rules.query_exists()) {
-				// if the file already exists, don't touch it
-				return false;
-			}
-
-			try {
-				var dis = f_rules.create_readwrite(GLib.FileCreateFlags.PRIVATE);
-				var of = new DataOutputStream(dis.output_stream as FileOutputStream);
-
-				var o_rules = File.new_for_path(Path.build_filename(AutoValaConstants.PKGDATADIR,"debian","rules"));
-				var dis2 = new DataInputStream (o_rules.read ());
-
-				string line;
-				while ((line = dis2.read_line (null)) != null) {
-					var line2 = line.replace("%(PROJECT_NAME)",this.config.globalData.projectName);
-					of.put_string(line2+"\n");
-				}
-				dis.close();
-				dis2.close();
-			} catch (Error e) {
-				ElementBase.globalData.addError(_("Failed to write data to debian/rules file (%s)").printf(e.message));
-				f_rules.delete();
-				return true;
-			}
-			return false;
-		}
-
-		/**
-		 * Creates de debian/preinst file
-		 * @param path The 'debian' path
-		 * @return false if everything went OK; true if there was an error
-		 */
-		private bool create_preinst(string path) {
-
-			if (this.pre_inst.length == 0) {
-				return false;
-			}
-
-			var f_rules = File.new_for_path(Path.build_filename(path,"preinst"));
-			if (f_rules.query_exists()) {
-				// if the file already exists, don't touch it
-				return false;
-			}
-
-			try {
-				var dis = f_rules.create_readwrite(GLib.FileCreateFlags.PRIVATE);
-				var of = new DataOutputStream(dis.output_stream as FileOutputStream);
-
-				of.put_string("#!/bin/sh\n\n");
-
-				foreach (var line in this.pre_inst) {
-					of.put_string(line+"\n");
-				}
-				dis.close();
-			} catch (Error e) {
-				ElementBase.globalData.addError(_("Failed to write data to debian/preinst file (%s)").printf(e.message));
-				f_rules.delete();
-				return true;
-			}
-			return false;
-		}
-
-		/**
-		 * Creates de debian/prerm file
-		 * @param path The 'debian' path
-		 * @return false if everything went OK; true if there was an error
-		 */
-		private bool create_prerm(string path) {
-
-			if (this.pre_rm.length == 0) {
-				return false;
-			}
-
-			var f_rules = File.new_for_path(Path.build_filename(path,"prerm"));
-			if (f_rules.query_exists()) {
-				// if the file already exists, don't touch it
-				return false;
-			}
-
-			try {
-				var dis = f_rules.create_readwrite(GLib.FileCreateFlags.PRIVATE);
-				var of = new DataOutputStream(dis.output_stream as FileOutputStream);
-
-				of.put_string("#!/bin/sh\n\n");
-
-				foreach (var line in this.pre_rm) {
-					of.put_string(line+"\n");
-				}
-				dis.close();
-			} catch (Error e) {
-				ElementBase.globalData.addError(_("Failed to write data to debian/prerm file (%s)").printf(e.message));
-				f_rules.delete();
-				return true;
-			}
-			return false;
-		}
-
-		/**
-		 * Creates de debian/postinst file
-		 * @param path The 'debian' path
-		 * @return false if everything went OK; true if there was an error
-		 */
-		private bool create_postinst(string path) {
-
-			if (this.post_inst.length == 0) {
-				return false;
-			}
-
-			var f_rules = File.new_for_path(Path.build_filename(path,"postinst"));
-			if (f_rules.query_exists()) {
-				// if the file already exists, don't touch it
-				return false;
-			}
-
-			try {
-				var dis = f_rules.create_readwrite(GLib.FileCreateFlags.PRIVATE);
-				var of = new DataOutputStream(dis.output_stream as FileOutputStream);
-
-				of.put_string("#!/bin/sh\n\n");
-
-				foreach (var line in this.post_inst) {
-					of.put_string(line+"\n");
-				}
-				dis.close();
-			} catch (Error e) {
-				ElementBase.globalData.addError(_("Failed to write data to debian/postinst file (%s)").printf(e.message));
-				f_rules.delete();
-				return true;
-			}
-			return false;
-		}
-
-		/**
-		 * Creates de debian/postrm file
-		 * @param path The 'debian' path
-		 * @return false if everything went OK; true if there was an error
-		 */
-		private bool create_postrm(string path) {
-
-			if (this.post_rm.length == 0) {
-				return false;
-			}
-
-			var f_rules = File.new_for_path(Path.build_filename(path,"postrm"));
-			if (f_rules.query_exists()) {
-				// if the file already exists, don't touch it
-				return false;
-			}
-
-			try {
-				var dis = f_rules.create_readwrite(GLib.FileCreateFlags.PRIVATE);
-				var of = new DataOutputStream(dis.output_stream as FileOutputStream);
-
-				of.put_string("#!/bin/sh\n\n");
-
-				foreach (var line in this.post_rm) {
-					of.put_string(line+"\n");
-				}
-				dis.close();
-			} catch (Error e) {
-				ElementBase.globalData.addError(_("Failed to write data to debian/postrm file (%s)").printf(e.message));
-				f_rules.delete();
-				return true;
-			}
-			return false;
-		}
-
 	}
 }

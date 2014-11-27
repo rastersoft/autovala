@@ -688,38 +688,37 @@ namespace AutoVala {
 			retval = t.init_all(config);
 			if (!retval) {
 				if (ask) {
-					if ((t.author_package != null) && (t.email_package != null)) {
-						var name = Readline.readline ("Please enter your name (%s <%s>): ".printf(t.author_package,t.email_package));
-						if (name != "") {
-							t.author_package = name;
-							t.email_package = null;
-						}
-					}
-					if (t.author_package == null) {
-						t.email_package = null;
-						do {
-							var name = Readline.readline ("Please enter your name: ");
-							if (name != "") {
-								t.author_package = name;
-								break;
-							}
-						} while (true);
-					}
-					if (t.email_package == null) {
-						do {
-							var name = Readline.readline ("Please enter your e-mail: ");
-							if (name != "") {
-								t.email_package = name;
-								break;
-							}
-						} while (true);
-					}
+					t.ask_name();
 				}
 				retval = t.create_deb_package();
 			}
 			return retval;
 		}
+		
+		public bool create_rpm(bool ask = false, string ? basePath = null) {
 
+			bool retval;
+
+			this.config=new AutoVala.Configuration(basePath);
+			if (config.globalData.error) {
+				return true;
+			}
+
+			if (config.readConfiguration()) {
+				return true;
+			}
+
+			var t = new AutoVala.packages_rpm();
+
+			retval = t.init_all(config);
+			if (!retval) {
+				if (ask) {
+					t.ask_name();
+				}
+				retval = t.create_rpm_package();
+			}
+			return retval;
+		}
 	}
 
 	public class ValaProject : GLib.Object {

@@ -125,6 +125,7 @@ namespace AutoVala {
 			this.read_defaults();
 			this.fill_libraries("/lib");
 			this.fill_libraries("/usr/lib");
+			this.fill_libraries("/usr/lib64");
 			this.read_library_paths("/etc/ld.so.conf");
 
 			// Fill the dependencies
@@ -236,6 +237,36 @@ namespace AutoVala {
 			}
 
 			return false;
+		}
+
+		public void ask_name() {
+
+			if ((this.author_package != null) && (this.email_package != null)) {
+				var name = Readline.readline ("Please enter your name (%s <%s>): ".printf(this.author_package,this.email_package));
+				if (name != "") {
+					this.author_package = name;
+					this.email_package = null;
+				}
+			}
+			if (this.author_package == null) {
+				this.email_package = null;
+				do {
+					var name = Readline.readline ("Please enter your name: ");
+					if (name != "") {
+						this.author_package = name;
+						break;
+					}
+				} while (true);
+			}
+			if (this.email_package == null) {
+				do {
+					var name = Readline.readline ("Please enter your e-mail: ");
+					if (name != "") {
+						this.email_package = name;
+						break;
+					}
+				} while (true);
+			}
 		}
 
 		private bool check_module(string path,string module) {
@@ -378,7 +409,11 @@ namespace AutoVala {
 				    var filename=file_info.get_name();
 				    if ((filename.has_prefix("lib")) && (filename.has_suffix(".so"))) {
 				    	if (file_info.get_is_symlink()) {
-					    	this.libraries.set(filename,Path.build_filename(file_info.get_symlink_target()));
+				    		var final_name = file_info.get_symlink_target();
+				    		if (!Path.is_dir_separator(final_name[0])) {
+				    			final_name = Path.build_filename(path,final_name);
+				    		}
+					    	this.libraries.set(filename,final_name);
 				    	} else {
 				    		this.libraries.set(filename,Path.build_filename(path,filename));
 				    	}
