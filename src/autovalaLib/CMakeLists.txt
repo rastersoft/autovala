@@ -95,6 +95,7 @@ GENERATE_HEADER
 
 add_library(AutoVala SHARED ${VALA_C})
 
+target_link_libraries( AutoVala readline )
 set_target_properties( AutoVala PROPERTIES
 VERSION
 	0.99
@@ -106,8 +107,6 @@ install(TARGETS
 LIBRARY DESTINATION
 	${CMAKE_INSTALL_LIBDIR}/
 )
-target_link_libraries( AutoVala readline )
-
 install(FILES
 	${CMAKE_CURRENT_BINARY_DIR}/AutoVala.h
 DESTINATION
