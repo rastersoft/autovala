@@ -1449,6 +1449,12 @@ namespace AutoVala {
 				if (this._type == ConfigType.VALA_LIBRARY) {
 					dataStream.put_string("add_library("+libFilename+" SHARED ${VALA_C})\n\n");
 
+					foreach (var element in this._link_libraries) {
+						printConditions.printCondition(element.condition,element.invertCondition);
+						dataStream.put_string("target_link_libraries( "+libFilename+" "+element.elementName+" )\n");
+					}
+					printConditions.printTail();
+
 					// Set library version number
 					dataStream.put_string("set_target_properties( "+libFilename+" PROPERTIES\n");
 					dataStream.put_string("VERSION\n");
