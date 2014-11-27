@@ -7,11 +7,13 @@ Autovala tricks - Several tricks for Autovala
 
 ## Creating packages for linux distributions
 
-AutoVala can create the metadata files for creating .deb source packages. It should be easy to add support for other package systems, like .rpm.
+AutoVala can create the metadata files for creating .deb and .rpm source packages. It should be easy to add support for other package systems.
 
-To generate those files, just run **autovala deb**. It will create a folder called **debian** and inside will be the **control** and **rules** files, and, if needed, **preinst**, **prerm**, **postinst** and **postrm**. The **control** file will have only the bare minimum, but autovala will include inside the dependencies needed both for building the package, and for running the project. These dependencies are generated automatically from the information extracted from the project.
+To generate .deb files, just run **autovala deb**. It will create a folder called **debian** and inside will be the **control** and **rules** files, and, if needed, **preinst**, **prerm**, **postinst** and **postrm**. The **control** file will have only the bare minimum, but autovala will include inside the dependencies needed both for building the package, and for running the project. These dependencies are generated automatically from the information extracted from the project.
 
 The **rules** file is designed to be compatible with **launchpad**.
+
+To generate .rpm files, just run **autovala rpm**. It will create the folders **rpmbuild/SPECS/**, and inside will be the **.spec** file with the metadata.
 
 If the project needs an extra package that can't be determined automatically by autovala, it is possible to mark it in a distro-agnostic way, by using the commands **source_dependency** and **binary_dependency** in the **.avprj** file. The first one points to a file in the system that is needed for building the project; when generating the package metadata, autovala will add as a Build-Dependency the package that contains that file. The second one points to a file in the system that is needed for using the project; when generating the package metadata, autovala will add as a Dependency the package that contains that file.
 
@@ -21,12 +23,12 @@ The package name will be set to the project name.
 
 Finally, the author's name and email will be asked the first time a package is created, but it will be stored at **$HOME/.config/autovala** to be used when creating new packages.
 
-When the **control** file is edited, the changes will be kept except the ones in the **Dependencies** and **Build-Dependencies** fields, that will be overwritten each time the package metadata is recreated. The other files are created only if they didn't exists; if they are already in the folder, they won't be modified, so it is possible to edit them without loosing the changes.
+When the metadata files are edited, the changes will be kept except the dependencies build-dependencies fields, that will be overwritten each time the package metadata is recreated. The other files (if they exist) are created only if they didn't exists; if they are already in the folder, they won't be modified, so it is possible to edit them without loosing the changes.
 
 
 ## Adding more package types
 
-As commented, Autovala can generate the metadata por .deb source packages. To add more package types, only a new class, derived from **packages** class, must be created. After initializing it and calling **init_all** method, the class should generate the files needed by the packaging system. To help into it, there are several properties that contains useful data, like a list of files needed to build the project (.vapi and .pc files), and for running it (like libraries). The class must use the package utilities to discover which packages contains those files, and use them for generating the dependencies.
+As commented, Autovala can generate the metadata por .deb and .rpm source packages. To add more package types, only a new class, derived from **packages** class, must be created. After initializing it and calling **init_all** method, the class should generate the files needed by the packaging system. To help into it, there are several properties that contains useful data, like a list of files needed to build the project (.vapi and .pc files), and for running it (like libraries). The class must use the package utilities to discover which packages contains those files, and use them for generating the dependencies.
 
 
 ## Writing unitary tests
