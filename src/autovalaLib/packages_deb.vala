@@ -253,31 +253,31 @@ namespace AutoVala {
 		 */
 		private bool create_rules(string path) {
 
-			var f_rules = File.new_for_path(Path.build_filename(path,"rules"));
-			if (f_rules.query_exists()) {
-				// if the file already exists, don't touch it
-				return false;
-			}
+			var fname = Path.build_filename(path,"rules");
+			var f_rules = File.new_for_path(fname);
+			// if the file already exists, don't touch it
+			if (!f_rules.query_exists()) {
+				try {
+					var dis = f_rules.create_readwrite(GLib.FileCreateFlags.PRIVATE);
+					var of = new DataOutputStream(dis.output_stream as FileOutputStream);
 
-			try {
-				var dis = f_rules.create_readwrite(GLib.FileCreateFlags.PRIVATE);
-				var of = new DataOutputStream(dis.output_stream as FileOutputStream);
+					var o_rules = File.new_for_path(Path.build_filename(AutoValaConstants.PKGDATADIR,"debian","rules"));
+					var dis2 = new DataInputStream (o_rules.read ());
 
-				var o_rules = File.new_for_path(Path.build_filename(AutoValaConstants.PKGDATADIR,"debian","rules"));
-				var dis2 = new DataInputStream (o_rules.read ());
-
-				string line;
-				while ((line = dis2.read_line (null)) != null) {
-					var line2 = line.replace("%(PROJECT_NAME)",this.config.globalData.projectName);
-					of.put_string(line2+"\n");
+					string line;
+					while ((line = dis2.read_line (null)) != null) {
+						var line2 = line.replace("%(PROJECT_NAME)",this.config.globalData.projectName);
+						of.put_string(line2+"\n");
+					}
+					dis.close();
+					dis2.close();
+				} catch (Error e) {
+					ElementBase.globalData.addError(_("Failed to write data to debian/rules file (%s)").printf(e.message));
+					f_rules.delete();
+					return true;
 				}
-				dis.close();
-				dis2.close();
-			} catch (Error e) {
-				ElementBase.globalData.addError(_("Failed to write data to debian/rules file (%s)").printf(e.message));
-				f_rules.delete();
-				return true;
 			}
+			GLib.FileUtils.chmod(fname,0x1ED); // 755 permissions (octal)
 			return false;
 		}
 
