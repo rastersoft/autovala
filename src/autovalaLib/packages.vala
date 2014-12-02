@@ -290,7 +290,7 @@ namespace AutoVala {
 				} while (true);
 			}
 			string? tmp = null;
-			this.check_dual(this.author_package, out tmp, out this.email_package);
+			this.check_dual(this.author_package, this.email_package, out tmp, out this.email_package);
 			this.author_package = tmp;
 			if (this.email_package == null) {
 				do {
@@ -304,10 +304,10 @@ namespace AutoVala {
 		}
 
 
-		private void check_dual(string data, out string? s1, out string? s2) {
+		private void check_dual(string data, string data2, out string? s1, out string? s2) {
 
 			s1 = data;
-			s2 = null;
+			s2 = data2;
 
 			var pos1 = this.author_package.index_of_char('<');
 			if (pos1 == -1) {
