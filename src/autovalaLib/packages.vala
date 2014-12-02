@@ -41,6 +41,12 @@ namespace AutoVala {
 		// The version string in the main executable (if available)
 		public string version;
 
+		// The distro name
+		public string? distro_name;
+		// The distro version name
+		public string? distro_version_name;
+
+
 		// The system command to run before installing the package
 		protected string[] pre_inst;
 		// The system command to run after installing the package
@@ -84,7 +90,32 @@ namespace AutoVala {
 			this.has_icons = false;
 			this.has_schemes = false;
 			this.has_manpages = false;
+			var ls_stdout = this.read_lines_from_exec({ "lsb_release","-i"});
+			var pos = ls_stdout.index_of_char(':');
+			if (pos != -1) {
+				this.distro_name = ls_stdout.substring(pos+1).strip().replace(" ","");
+			}
+			ls_stdout = this.read_lines_from_exec({ "lsb_release","-c"});
+			pos = ls_stdout.index_of_char(':');
+			if (pos != -1) {
+				this.distro_version_name = ls_stdout.substring(pos+1).strip();
+			}
+		}
 
+		public string read_lines_from_exec(string[] spawn_args) {
+
+			string ls_stdout;
+			int ls_status;
+
+			try {
+				if (Process.spawn_sync (null,spawn_args,Environ.get(),SpawnFlags.SEARCH_PATH,null,out ls_stdout,null,out ls_status)) {
+					if (ls_status == 0) {
+						return ls_stdout;
+					}
+				}
+			} catch (SpawnError e) {
+			}
+			return "";
 		}
 
 		/**
@@ -242,7 +273,7 @@ namespace AutoVala {
 		public void ask_name() {
 
 			if ((this.author_package != null) && (this.email_package != null)) {
-				var name = Readline.readline ("Please enter your name (%s <%s>): ".printf(this.author_package,this.email_package));
+				var name = Readline.readline (_("Please enter your name (%s <%s>): ").printf(this.author_package,this.email_package));
 				if (name != "") {
 					this.author_package = name;
 					this.email_package = null;
@@ -251,21 +282,80 @@ namespace AutoVala {
 			if (this.author_package == null) {
 				this.email_package = null;
 				do {
-					var name = Readline.readline ("Please enter your name: ");
+					var name = Readline.readline (_("Please enter your name: "));
 					if (name != "") {
 						this.author_package = name;
 						break;
 					}
 				} while (true);
 			}
+			string? tmp = null;
+			this.check_dual(this.author_package, out tmp, out this.email_package);
+			this.author_package = tmp;
 			if (this.email_package == null) {
 				do {
-					var name = Readline.readline ("Please enter your e-mail: ");
+					var name = Readline.readline (_("Please enter your e-mail: "));
 					if (name != "") {
 						this.email_package = name;
 						break;
 					}
 				} while (true);
+			}
+		}
+
+
+		private void check_dual(string data, out string? s1, out string? s2) {
+
+			s1 = data;
+			s2 = null;
+
+			var pos1 = this.author_package.index_of_char('<');
+			if (pos1 == -1) {
+				return;
+			}
+			var pos2 = this.author_package.index_of_char('>',pos1);
+			if (pos2 == -1) {
+				return;
+			}
+			s1 = data.substring(0,pos1).strip();
+			s2 = data.substring(pos1+1,pos2-pos1-1).strip();
+		}
+
+
+		public void ask_distro() {
+
+			if (this.distro_name == null) {
+				do {
+					var name = Readline.readline (_("Please enter your OS distribution name: "));
+					if (name != "") {
+						this.distro_name = name;
+						break;
+					}
+				} while (true);
+			} else {
+				var name = Readline.readline (_("Please enter your OS distribution name (%s): ").printf(this.distro_name));
+				if (name != "") {
+					this.distro_name = name;
+				}
+			}
+		}
+
+
+		public void ask_distro_version() {
+
+			if (this.distro_version_name == null) {
+				do {
+					var name = Readline.readline (_("Please enter your OS version name: "));
+					if (name != "") {
+						this.distro_version_name = name;
+						break;
+					}
+				} while (true);
+			} else {
+				var name = Readline.readline (_("Please enter your OS version name (%s): ").printf(this.distro_version_name));
+				if (name != "") {
+					this.distro_version_name = name;
+				}
 			}
 		}
 

@@ -69,7 +69,9 @@ namespace AutoVala {
 			if (this.create_postrm(path)) {
 				return true;
 			}
-
+			if (this.create_changelog(path)) {
+				return true;
+			}
 			return false;
 		}
 
@@ -420,6 +422,155 @@ namespace AutoVala {
 			}
 			return false;
 		}
+
+		/**
+		 * Creates de debian/changelog file
+		 * @param path The 'debian' path
+		 * @return false if everything went OK; true if there was an error
+		 */
+		private bool create_changelog(string path) {
+
+			var fname = Path.build_filename(path,"changelog");
+			var f_changelog = File.new_for_path(fname);
+
+			string[] lines = {};
+			bool version_found = false;
+
+			// if the file already exists, check for the current version number
+			if (f_changelog.query_exists()) {
+				var dis = new DataInputStream (f_changelog.read ());
+				string line;
+				while ((line = dis.read_line (null)) != null) {
+					lines += line;
+					if (version_found) {
+						continue;
+					}
+					if (line.length==0) {
+						continue;
+					}
+					if ((line[0] == ' ') || (line[0] == '\t')) {
+						continue;
+					}
+					var pos1 = line.index_of_char('(');
+					if (pos1 == -1) {
+						continue;
+					}
+					var pos2 = line.index_of_char(')',pos1);
+					if (pos2 == -1) {
+						continue;
+					}
+					var version = line.substring(pos1+1,pos2-pos1-1);
+					var pos3 = version.last_index_of_char('-');
+					if (pos3 != -1) { // remove the debian_revision field
+						version = version.substring(0,pos3);
+					}
+					if (version == this.version) {
+						version_found = true;
+					}
+				}
+				dis.close();
+				f_changelog.delete();
+			}
+
+			try {
+				var dis = f_changelog.create_readwrite(GLib.FileCreateFlags.PRIVATE);
+				var of = new DataOutputStream(dis.output_stream as FileOutputStream);
+
+				if (!version_found) {
+					var now = new GLib.DateTime.now_local ();
+					string day = "";
+					string month = "";
+					switch (now.get_day_of_week()) {
+					case 1:
+						day = "Mon";
+					break;
+					case 2:
+						day = "Tue";
+					break;
+					case 3:
+						day = "Wed";
+					break;
+					case 4:
+						day = "Thu";
+					break;
+					case 5:
+						day = "Fri";
+					break;
+					case 6:
+						day = "Sat";
+					break;
+					case 7:
+						day = "Sun";
+					break;
+					}
+					switch (now.get_month()) {
+					case 1:
+						month = "Jan";
+					break;
+					case 2:
+						month = "Feb";
+					break;
+					case 3:
+						month = "Mar";
+					break;
+					case 4:
+						month = "Apr";
+					break;
+					case 5:
+						month = "May";
+					break;
+					case 6:
+						month = "Jun";
+					break;
+					case 7:
+						month = "Jul";
+					break;
+					case 8:
+						month = "Aug";
+					break;
+					case 9:
+						month = "Sep";
+					break;
+					case 10:
+						month = "Oct";
+					break;
+					case 11:
+						month = "Nov";
+					break;
+					case 12:
+						month = "Dec";
+					break;
+					}
+
+					var offset = now.get_utc_offset();
+					int offset1 = (int) (offset/GLib.TimeSpan.HOUR);
+					int offset2 = (int) ((offset%GLib.TimeSpan.HOUR)/GLib.TimeSpan.MINUTE);
+					char sign = '+';
+					if (offset1 < 0) {
+						sign = '-';
+						offset1 = -offset1;
+					}
+					if (offset2 < 0) {
+						sign = '-';
+						offset2 = -offset2;
+					}
+					of.put_string("%s (%s-%s1) %s; urgency=low\n\n  * Changes made\n\n -- %s <%s>  %s, %02d %s %04d %02d:%02d:%02d %c%02d%02d\n\n".printf(this.config.globalData.projectName,
+												this.version,this.distro_name,this.distro_version_name,this.author_package,this.email_package,
+												day, now.get_day_of_month(),month,now.get_year(),now.get_hour(),now.get_minute(),now.get_second(),sign,offset1,offset2));
+				}
+				foreach (var line in lines) {
+					of.put_string(line+"\n");
+				}
+				dis.close();
+			} catch (Error e) {
+				ElementBase.globalData.addError(_("Failed to write data to debian/changelog file (%s)").printf(e.message));
+				f_changelog.delete();
+				return true;
+			}
+
+			return false;
+		}
+
 
 	}
 }

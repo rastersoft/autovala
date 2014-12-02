@@ -689,6 +689,8 @@ namespace AutoVala {
 			if (!retval) {
 				if (ask) {
 					t.ask_name();
+					t.ask_distro();
+					t.ask_distro_version();
 				}
 				retval = t.create_deb_package();
 			}
