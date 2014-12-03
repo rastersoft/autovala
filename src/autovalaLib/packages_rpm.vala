@@ -187,14 +187,20 @@ namespace AutoVala {
 				} else {
 					of.put_string("Release: %s\n".printf(single_keys.get("Release")));
 				}
-				if (!single_keys.has_key("Maintainer")) {
-					of.put_string("Maintainer: %s<%s>\n".printf(this.author_package,this.email_package));
+				if (!single_keys.has_key("License")) {
+					of.put_string("License: Unknown/not set\n");
 				} else {
-					of.put_string("Maintainer: %s\n".printf(single_keys.get("Maintainer")));
+					of.put_string("License: %s\n".printf(single_keys.get("License")));
+				}
+
+				if (!single_keys.has_key("Summary")) {
+					of.put_string("Summary: %s\n".printf(this.summary));
+				} else {
+					of.put_string("Summary: %s\n".printf(single_keys.get("Summary")));
 				}
 
 				foreach (var key in single_keys.keys) {
-					if ((key == "Requires") || (key == "BuildRequires") || (key == "Name") || (key == "Version") || (key == "Release") || (key == "Maintainer")) {
+					if ((key == "Requires") || (key == "BuildRequires") || (key == "Name") || (key == "Version") || (key == "Release") || (key == "License") || (key == "Summary")) {
 						continue;
 					}
 					of.put_string("%s: %s\n".printf(key,single_keys.get(key)));
@@ -210,7 +216,7 @@ namespace AutoVala {
 				}
 				of.put_string("\n");
 
-				if (multi_keys.has_key("%description")) {
+				if (multi_keys.has_key("description")) {
 					of.put_string("%%description\n%s\n".printf(multi_keys.get("description")));
 				} else {
 					of.put_string("%description\n");
@@ -223,16 +229,16 @@ namespace AutoVala {
 					of.put_string("\n");
 				}
 
-				if (!multi_keys.has_key("prep")) {
-					of.put_string("%prep\n%setup -q\n\n");
+				if (!multi_keys.has_key("files")) {
+					of.put_string("%files\n/*\n\n");
 				}
 
 				if (!multi_keys.has_key("build")) {
-					of.put_string("%build\n%configure\nmkdir installdir\ncd installdir ; cmake -DCMAKE_INSTALL_PREFIX=/usr -DGSETTINGS_COMPILE=OFF -DICON_UPDATE=OFF ..\nmake -C installdir\n\n");
+					of.put_string("%build\nmkdir -p ${RPM_BUILD_DIR}\ncd ${RPM_BUILD_DIR}; cmake -DCMAKE_INSTALL_PREFIX=/usr -DGSETTINGS_COMPILE=OFF -DICON_UPDATE=OFF ../..\nmake -C ${RPM_BUILD_DIR}\n\n");
 				}
 
 				if (!multi_keys.has_key("install")) {
-					of.put_string("%install\nmake install -C installdir\n\n");
+					of.put_string("%install\nmake install -C ${RPM_BUILD_DIR} DESTDIR=%{buildroot}\n\n");
 				}
 
 				if ((!multi_keys.has_key("pre")) && (this.pre_inst.length != 0)) {

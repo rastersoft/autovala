@@ -30,6 +30,8 @@ namespace AutoVala {
 		public string? email_package;
 		// Contains the description to add to the package.
 		public string? description;
+		// Contains the summary to add to the package. Usually the first line of the description.
+		public string? summary;
 		// A list of the files needed for running the project, extracted automatically by autovala
 		public Gee.List<string> dependencies;
 		// A list of the files needed for building the project, extracted automatically by autovala
@@ -90,16 +92,6 @@ namespace AutoVala {
 			this.has_icons = false;
 			this.has_schemes = false;
 			this.has_manpages = false;
-			var ls_stdout = this.read_lines_from_exec({ "lsb_release","-i"});
-			var pos = ls_stdout.index_of_char(':');
-			if (pos != -1) {
-				this.distro_name = ls_stdout.substring(pos+1).strip().replace(" ","");
-			}
-			ls_stdout = this.read_lines_from_exec({ "lsb_release","-c"});
-			pos = ls_stdout.index_of_char(':');
-			if (pos != -1) {
-				this.distro_version_name = ls_stdout.substring(pos+1).strip();
-			}
 		}
 
 		public string read_lines_from_exec(string[] spawn_args) {
@@ -108,7 +100,7 @@ namespace AutoVala {
 			int ls_status;
 
 			try {
-				if (Process.spawn_sync (null,spawn_args,Environ.get(),SpawnFlags.SEARCH_PATH,null,out ls_stdout,null,out ls_status)) {
+				if (Process.spawn_sync (this.config.globalData.projectFolder,spawn_args,Environ.get(),SpawnFlags.SEARCH_PATH,null,out ls_stdout,null,out ls_status)) {
 					if (ls_status == 0) {
 						return ls_stdout;
 					}
@@ -130,6 +122,17 @@ namespace AutoVala {
 			int major;
 			int minor;
 
+			var ls_stdout = this.read_lines_from_exec({ "lsb_release","-i"});
+			var pos = ls_stdout.index_of_char(':');
+			if (pos != -1) {
+				this.distro_name = ls_stdout.substring(pos+1).strip().replace(" ","");
+			}
+			ls_stdout = this.read_lines_from_exec({ "lsb_release","-c"});
+			pos = ls_stdout.index_of_char(':');
+			if (pos != -1) {
+				this.distro_version_name = ls_stdout.substring(pos+1).strip();
+			}
+
 			var compilers = new FindVala();
 			if (compilers == null) {
 				ElementBase.globalData.addError(_("Failed to get installed vala compilers"));
@@ -146,11 +149,15 @@ namespace AutoVala {
 				}
 			}
 
+			this.summary = null;
 			// Try to read the description from the README or README.md file
 			if (!this.read_description(Path.build_filename(this.config.globalData.projectFolder,"README"))) {
 				if (!this.read_description(Path.build_filename(this.config.globalData.projectFolder,"README.md"))) {
 					this.description = "Not available";
 				}
+			}
+			if (this.summary == null) {
+				this.summary = this.description.split("\n")[0];
 			}
 			this.description = this.cut_lines(this.description,70);
 			this.read_defaults();
@@ -304,7 +311,7 @@ namespace AutoVala {
 		}
 
 
-		private void check_dual(string data, string data2, out string? s1, out string? s2) {
+		private void check_dual(string data, string? data2, out string? s1, out string? s2) {
 
 			s1 = data;
 			s2 = data2;
@@ -712,7 +719,6 @@ namespace AutoVala {
 					}
 				}
 				this.description = text.strip();
-
 			}
 			return true;
 		}

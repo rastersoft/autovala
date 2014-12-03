@@ -15,7 +15,9 @@
 <pre><code>./debian/rules clean
 ./debian/rules build
 ./debian/rules binary-arch</code></pre>
-<p>To generate .rpm files, just run <strong>autovala rpm</strong>. It will create the folders <strong>rpmbuild/SPECS/</strong>, and inside will be the <strong>.spec</strong> file with the metadata.</p>
+<p>To generate .rpm files, just run <strong>autovala rpm</strong>. It will create the folders <strong>rpmbuild/SPECS/</strong>, and inside will be the <strong>.spec</strong> file with the metadata. Then, edit that file to set some of the fields that can't be automatically filled (like the LICENSE one), go to <strong>rpmbuild</strong> folder and run:</p>
+<pre><code>rpmbuild --define &quot;_topdir `pwd`&quot; -ba SPECS/PROJECT_NAME.spec</code></pre>
+<p>This will create the RPM package in <strong>rpmbuild/RPMS</strong>. At this moment, the source RPM package at <strong>rpmbuild/SRPMS</strong> is empty, so don't use it.</p>
 <p>If the project needs an extra package that can't be determined automatically by autovala, it is possible to mark it in a distro-agnostic way, by using the commands <strong>source_dependency</strong> and <strong>binary_dependency</strong> in the <strong>.avprj</strong> file. The first one points to a file in the system that is needed for building the project; when generating the package metadata, autovala will add as a Build-Dependency the package that contains that file. The second one points to a file in the system that is needed for using the project; when generating the package metadata, autovala will add as a Dependency the package that contains that file.</p>
 <p>There are several fields extracted from the source itself. The <strong>Description</strong> is extracted from the <strong>README</strong> or <strong>README.md</strong> file. If the file is a pure text one, all it will be used; if it is a markdown one, only the first section will be used.</p>
 <p>The package name will be set to the project name.</p>

@@ -17,7 +17,11 @@ The **rules** file is designed to be compatible with **launchpad**. Also it is p
     ./debian/rules build
     ./debian/rules binary-arch
 
-To generate .rpm files, just run **autovala rpm**. It will create the folders **rpmbuild/SPECS/**, and inside will be the **.spec** file with the metadata.
+To generate .rpm files, just run **autovala rpm**. It will create the folders **rpmbuild/SPECS/**, and inside will be the **.spec** file with the metadata. Then, edit that file to set some of the fields that can't be automatically filled (like the LICENSE one), go to **rpmbuild** folder and run:
+
+    rpmbuild --define "_topdir `pwd`" -ba SPECS/PROJECT_NAME.spec
+
+This will create the RPM package in **rpmbuild/RPMS**. At this moment, the source RPM package at **rpmbuild/SRPMS** is empty, so don't use it.
 
 If the project needs an extra package that can't be determined automatically by autovala, it is possible to mark it in a distro-agnostic way, by using the commands **source_dependency** and **binary_dependency** in the **.avprj** file. The first one points to a file in the system that is needed for building the project; when generating the package metadata, autovala will add as a Build-Dependency the package that contains that file. The second one points to a file in the system that is needed for using the project; when generating the package metadata, autovala will add as a Dependency the package that contains that file.
 
