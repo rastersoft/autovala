@@ -5,6 +5,8 @@ vala_version: 0.24
 
 custom: data/cmake share/autovala/cmake
 
+*define: GTK_OLD
+
 
 vala_binary: src/autovala
 *version: 0.99.10
