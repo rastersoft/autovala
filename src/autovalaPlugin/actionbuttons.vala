@@ -13,7 +13,9 @@ namespace AutovalaPlugin {
 	public class ActionButtons : Gtk.Box {
 
 		private Gtk.Button new_project;
+#if !GTK_OLD
 		private Gtk.MenuButton expand_menu;
+#endif
 		private Gtk.Menu popupMenu;
 		private Gtk.MenuItem refresh_project;
 		private Gtk.MenuItem update_project;
@@ -56,8 +58,10 @@ namespace AutovalaPlugin {
 			this.new_project.tooltip_text =_("Creates a new Autovala project");
 			this.pack_start(this.new_project,false,false);
 
+#if !GTK_OLD
 			this.expand_menu = new Gtk.MenuButton();
 			this.pack_start(this.expand_menu,false,false);
+#endif
 
 			this.popupMenu = new Gtk.Menu();
 
@@ -130,11 +134,13 @@ namespace AutovalaPlugin {
 				this.action_update_gettext(retval);
 			});
 
+#if !GTK_OLD
 			this.popupMenu.append(this.refresh_project);
 			this.popupMenu.append(this.update_project);
 			this.popupMenu.append(this.update_translations);
 			this.popupMenu.show_all();
 			this.expand_menu.set_popup(this.popupMenu);
+#endif
 			this.show_all();
 		}
 		

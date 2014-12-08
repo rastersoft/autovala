@@ -6,6 +6,8 @@ vala_version: 0.20
 custom: data/cmake share/autovala/cmake
 custom: data/debian share/autovala/debian
 
+*define: GTK_OLD
+
 
 vala_binary: src/autovala
 *version: 0.99.11

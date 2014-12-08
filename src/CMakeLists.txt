@@ -33,6 +33,9 @@ set (APP_SOURCES ${APP_SOURCES} autovala.vala)
 
 set (CUSTOM_VAPIS_LIST ${CUSTOM_VAPIS_LIST} ${CMAKE_BINARY_DIR}/src/autovalaLib/AutoVala.vapi)
 
+if (GTK_OLD)
+	set (COMPILE_OPTIONS ${COMPILE_OPTIONS} -D GTK_OLD)
+endif ()
 if (DEBUG)
 	set (COMPILE_OPTIONS ${COMPILE_OPTIONS} -D DEBUG)
 endif ()

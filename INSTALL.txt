@@ -1,4 +1,4 @@
-HOW TO INSTALL
+# HOW TO INSTALL
 
 You need CMake, Vala 0.20 or later, libgee and gtk+.
 The repository includes a version of CMake for Vala
@@ -26,13 +26,24 @@ and type:
     sudo make install
     sudo ldconfig
 
-The Gedit plugin is compiled and installed separately.
-Just do:
+If you are using GTK 3.4 or previous, you must specify it
+to avoid the plugins to use newer widgets, not supported
+in old GTK versions:
 
-    cd autovala_gedit
     mkdir install
     cd install
-    cmake ..
+    cmake .. -DGTK_OLD=on
     make
     sudo make install
+    sudo ldconfig
 
+Also, if you are using ElementaryOS Luna, the pandoc version
+available is also too old, so you must install the one from
+ubuntu 14.04 at least. The packages needed are pandoc,
+pandoc-data and libicu52, which can be downloaded from
+
+    http://packages.ubuntu.com
+
+The Gedit and Scratch plugins are compiled and installed
+separately. Just follow the instructions available in each
+folder.
