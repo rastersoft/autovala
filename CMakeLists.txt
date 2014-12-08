@@ -8,6 +8,7 @@ list (APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 enable_testing ()
 option(ICON_UPDATE "Update the icon cache after installing" ON)
 option(BUILD_VALADOC "Build API documentation if Valadoc is available" OFF)
+option(GTK_OLD "GTK_OLD" OFF)
 option(DEBUG "DEBUG" OFF)
 
 include(GNUInstallDirs)
