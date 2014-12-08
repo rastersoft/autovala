@@ -1,4 +1,5 @@
 posix
+readline
 cairo
 gdk-3.0
 gdk-pixbuf-2.0

@@ -2,6 +2,7 @@ src/autovala.vala
 src/autovalaLib/autovalaLib.vala
 src/autovalaLib/conditionalText.vala
 src/autovalaLib/configuration.vala
+src/autovalaLib/elementBDepend.vala
 src/autovalaLib/elementBase.vala
 src/autovalaLib/elementBashCompletion.vala
 src/autovalaLib/elementBinary.vala
@@ -20,11 +21,15 @@ src/autovalaLib/elementInclude.vala
 src/autovalaLib/elementManpage.vala
 src/autovalaLib/elementPixmap.vala
 src/autovalaLib/elementPo.vala
+src/autovalaLib/elementSDepend.vala
 src/autovalaLib/elementScheme.vala
 src/autovalaLib/elementValaBinary.vala
 src/autovalaLib/findVala.vala
 src/autovalaLib/genVapis.vala
 src/autovalaLib/globals.vala
+src/autovalaLib/packages.vala
+src/autovalaLib/packages_deb.vala
+src/autovalaLib/packages_rpm.vala
 src/autovalaLib/readPkgconfig.vala
 src/autovalaPlugin/PanedPercentage.vala
 src/autovalaPlugin/actionbuttons.vala

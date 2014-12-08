@@ -51,6 +51,7 @@ if ( NOT WHERE_PANDOC )
 endif()
 
 add_subdirectory(doc)
+add_subdirectory(data/debian)
 add_subdirectory(po)
 add_subdirectory(data/pixmaps)
 add_subdirectory(src/autovalaLib)

@@ -201,13 +201,13 @@ namespace AutoVala {
 					allProcessed=true;
 					foreach(var path in paths.keys) {
 						var element=paths.get(path);
-						if (element.eType==ConfigType.DEFINE) {
+						if ((element.eType==ConfigType.DEFINE) || (element.eType == ConfigType.SOURCE_DEPENDENCY) || (element.eType == ConfigType.BINARY_DEPENDENCY)) {
 							continue;
 						}
 						if (element.processed) {
 							continue;
 						}
-						if ((element.eType!=ConfigType.VALA_LIBRARY)&&(element.eType!=ConfigType.VALA_BINARY)) {
+						if ((element.eType!=ConfigType.VALA_LIBRARY) && (element.eType!=ConfigType.VALA_BINARY)) {
 							element.processed=true;
 							this.addFolderToMainCMakeLists(path,dataStream);
 							addedOne=true;
