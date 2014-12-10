@@ -2,6 +2,7 @@
     * Can create automagically the metadata for .deb and .rpm packages
     * Now honors the c_library parameters also in libraries
     * Now only updates the project view in editor plugins when the project file has changed.
+    * Added support for GTK 3.4 (needed to allow to compile under Elementary OS Luna)
 * version 0.99.10 (2014-11-18)
     * Added support for unitary tests
 * version 0.99.9 (2014-09-23)
