@@ -22,7 +22,7 @@ Autovala greatly simplifies the process of working with Vala because:
 
   * Automatically determines the vala packages and libraries needed to compile
     and run the project, by inspecting the source code
-  * Automatically generates the .vala and pkg-config files for libraries
+  * Automatically generates the .vapi and pkg-config files for libraries
   * Automatically determinates the final destination for an icon, by checking
     its type (svg or png) and, in the later case, its size.
   * Automatically generates manpages from text files in several possible input
