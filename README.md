@@ -18,6 +18,25 @@ This is what Autovala does. This process is done in three steps:
     project file), it uses that project file to generate the needed CMakeLists
     files
 
+Autovala greatly simplifies the process of working with Vala because:
+
+  * Automatically determines the vala packages and libraries needed to compile
+    and run the project, by inspecting the source code
+  * Automatically generates the .vala and pkg-config files for libraries
+  * Automatically determinates the final destination for an icon, by checking
+    its type (svg or png) and, in the later case, its size.
+  * Automatically generates manpages from text files in several possible input
+    format (markdown, html, latex...).
+  * Greatly simplifies creating libraries in Vala, or a project with a binary
+    that uses a library defined in the same project.
+  * Automatically generates the metadata files to create .DEB and .RPM packages.
+  * Easily integrates unitary tests for each binary in the project.
+  * Can generate automatically DBUS bindings by using the DBUS introspection
+    capabilities.
+  * Automatically generates the list of source files for GETTEXT.
+  * Simplifies mixing C and Vala source files.
+
+
 ## COMPILING AUTOVALA ##
 
 Details about how to compile autovala are available in the INSTALL.md file.
