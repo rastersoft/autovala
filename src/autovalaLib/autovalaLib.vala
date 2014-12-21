@@ -149,6 +149,38 @@ namespace AutoVala {
 			return false;
 		}
 
+		private bool copy_cmake(string configPath) {
+
+			string? origin = GLib.Environment.get_variable("AUTOVALA_CMAKE_SCRIPT");
+			if ((origin != null) && (origin != "")) {
+				var folderTmp = File.new_for_path(origin);
+				if ((folderTmp.query_exists() == false) || (folderTmp.query_file_type(FileQueryInfoFlags.NONE) != FileType.DIRECTORY)) {
+					origin = null;
+				}
+			} else {
+				origin = null;
+			}
+
+			if (origin != null) {
+				ElementBase.globalData.addWarning(_("Copying CMAKE scripts from %s").printf(origin));
+			} else {
+				origin = Path.build_filename(AutoValaConstants.PKGDATADIR,"cmake");
+			}
+			string destiny = Path.build_filename(configPath,"cmake");
+			var folder=File.new_for_path(destiny);
+			var folder2=File.new_for_path(origin);
+			if (folder2.query_exists()) {
+				if (folder.query_exists()) {
+					this.delete_recursive(destiny);
+				}
+				this.copy_recursive(origin,destiny);
+			} else {
+				ElementBase.globalData.addError(_("Folder %s doesn't exists. Autovala is incorrectly installed").printf(origin));
+				return true;
+			}
+			return false;
+		}
+
 		public bool init(string projectName,string ?basePath = null) {
 
 			bool error=false;
@@ -184,7 +216,7 @@ namespace AutoVala {
 			if (folder.query_exists()) {
 				ElementBase.globalData.addWarning(_("The 'cmake' folder already exists"));
 			} else {
-				this.copy_recursive(Path.build_filename(AutoValaConstants.PKGDATADIR,"cmake"),Path.build_filename(configPath,"cmake"));
+				this.copy_cmake(configPath);
 			}
 
 			error|=this.createPath(configPath,"src");
@@ -241,17 +273,7 @@ namespace AutoVala {
 			}
 
 			string configPath=this.config.globalData.projectFolder;
-			string origin = Path.build_filename(AutoValaConstants.PKGDATADIR,"cmake");
-			string destiny = Path.build_filename(configPath,"cmake");
-			var folder=File.new_for_path(destiny);
-			var folder2=File.new_for_path(origin);
-			if (folder2.query_exists()) {
-				if (folder.query_exists()) {
-					this.delete_recursive(destiny);
-				}
-				this.copy_recursive(origin,destiny);
-			} else {
-				ElementBase.globalData.addError(_("Folder %s doesn't exists. Autovala is incorrectly installed").printf(origin));
+			if (this.copy_cmake(configPath)) {
 				return true;
 			}
 

@@ -123,6 +123,8 @@ If you want to remove all the automatically added lines in the project file, lea
 
 These commands can be called from any of the folders or subfolders of the project, because it will search for the first **.avprj** file located in the current folder or upstream.
 
+Everytime you run **autovala cmake** or **autovala update**, the CMAKE scripts contained in the **cmake** folder will be refreshed; this allows to get advantage of new capabilities available in more recent versions of autovala. The scripts are copied, by default, from the autovala's system-wide installation folder, unless the environment variable **AUTOVALA_CMAKE_SCRIPT** is defined with the path to a folder containing an alternative script.
+
 # OPTIONS
 
 **autovala init PROJECT_NAME**
