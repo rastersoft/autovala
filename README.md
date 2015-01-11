@@ -54,7 +54,10 @@ and enjoy.
 
 
 ## History of versions ##
-* version 0.99.11 (2014-11-27)
+* version 0.99.12 (2015-01-11)
+    * Fixed a bug when using development versions of Vala compiler
+    * Allows to use alternative CMAKE files
+* version 0.99.11 (2014-12-12)
     * Can create automagically the metadata for .deb and .rpm packages
     * Now honors the c_library parameters also in libraries
     * Now only updates the project view in editor plugins when the project file has changed.

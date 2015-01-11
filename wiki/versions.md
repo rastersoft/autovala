@@ -1,3 +1,6 @@
+* version 0.99.12 (2015-01-11)
+    * Fixed a bug when using development versions of Vala compiler
+    * Allows to use alternative CMAKE files
 * version 0.99.11 (2014-11-25)
     * Can create automagically the metadata for .deb and .rpm packages
     * Now honors the c_library parameters also in libraries

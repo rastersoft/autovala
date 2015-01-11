@@ -6,6 +6,11 @@
 <div class="main_frame">
 <p><a href="index.html">Home</a></p>
 <ul>
+<li><p>version 0.99.12 (2015-01-11)</p>
+<ul>
+<li>Fixed a bug when using development versions of Vala compiler<br /></li>
+<li>Allows to use alternative CMAKE files<br /></li>
+</ul></li>
 <li><p>version 0.99.11 (2014-11-25)</p>
 <ul>
 <li>Can create automagically the metadata for .deb and .rpm packages<br /></li>

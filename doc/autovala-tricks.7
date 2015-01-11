@@ -8,6 +8,8 @@
 <p>Autovala-tricks(1)</p>
 <h1 id="name">NAME</h1>
 <p>Autovala tricks - Several tricks for Autovala</p>
+<h2 id="using-alternative-cmake-files">Using alternative CMAKE files</h2>
+<p>When updating the CMAKE files for Vala, Autovala will check if the <strong>AUTOVALA_CMAKE_SCRIPT</strong> environment variable is defined with a path. If that is the case, it will copy from that path the CMAKE scripts for the project, instead of using the default ones.</p>
 <h2 id="creating-packages-for-linux-distributions">Creating packages for linux distributions</h2>
 <p>AutoVala can create the metadata files for creating .deb and .rpm source packages. It should be easy to add support for other package systems.</p>
 <p>To generate .deb files, just run <strong>autovala deb</strong>. It will create a folder called <strong>debian</strong> and inside will be the <strong>control</strong>, <strong>changelog</strong> and <strong>rules</strong> files, and, if needed, <strong>preinst</strong>, <strong>prerm</strong>, <strong>postinst</strong> and <strong>postrm</strong>. The <strong>control</strong> file will have only the bare minimum, but autovala will include inside the dependencies needed both for building the package, and for running the project. These dependencies are generated automatically from the information extracted from the project. The <strong>changelog</strong> will add a boilerplate line only if there is no line for the current version, so it is strongly recommended to edit and complete this file after doing the automatic generation.</p>

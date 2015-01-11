@@ -5,6 +5,11 @@ Autovala-tricks(1)
 Autovala tricks - Several tricks for Autovala
 
 
+## Using alternative CMAKE files
+
+When updating the CMAKE files for Vala, Autovala will check if the **AUTOVALA_CMAKE_SCRIPT** environment variable is defined with a path. If that is the case, it will copy from that path the CMAKE scripts for the project, instead of using the default ones.
+
+
 ## Creating packages for linux distributions
 
 AutoVala can create the metadata files for creating .deb and .rpm source packages. It should be easy to add support for other package systems.
