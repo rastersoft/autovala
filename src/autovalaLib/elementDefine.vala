@@ -50,6 +50,11 @@ namespace AutoVala {
 					return false; // this DEFINE already exists
 				}
 			}
+			// A define with a value "true", "false", "0" or "1" must not be counted as a configuration parameter
+			if ((data == "0") || (data == "1") || (data.ascii_casecmp("true") == 0) || (data.ascii_casecmp("false") == 0)) {
+				return false;
+			}
+
 			return this.configureElement(null,data,data,automatic,null,false);
 		}
 
