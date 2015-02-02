@@ -112,7 +112,7 @@ namespace AutoVala {
 					return true;
 				}
 				try {
-					dataStream.put_string("install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/%s DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/%d/%s/)\n".printf(this.name,size,this.iconCathegory));
+					dataStream.put_string("install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/%s DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/%dx%d/%s/)\n".printf(this.name,size,size,this.iconCathegory));
 				} catch (Error e) {
 					ElementBase.globalData.addError(_("Failed to write the CMakeLists file for icon %s").printf(fullPath));
 					return true;
