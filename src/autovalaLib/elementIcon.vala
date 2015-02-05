@@ -25,14 +25,16 @@ namespace AutoVala {
 
 		private string iconCathegory;
 		private string[] appendText;
-		private static bool addedSuffix;
+		private string iconTheme;
+		private static bool addedSuffix=false;
+		private static string[]? themes = {};
 
 		public ElementIcon() {
 			this._type = ConfigType.ICON;
 			this.appendText = {};
 			this.iconCathegory = "";
-			ElementIcon.addedSuffix=false;
-			this.command = "icon";
+			this.iconTheme = "hicolor"; // default value
+			this.command = "full_icon";
 		}
 
 		public static bool autoGenerate() {
@@ -50,26 +52,58 @@ namespace AutoVala {
 			return error;
 		}
 
+		private void add_theme(string theme) {
+
+			foreach(var t in ElementIcon.themes) {
+				if (theme == t) {
+					return;
+				}
+			}
+			ElementIcon.themes += theme;
+		}
+
 		public override bool configureLine(string line, bool automatic, string? condition, bool invertCondition, int lineNumber) {
 
-			if (false == line.has_prefix("icon: ")) {
+			if ((false == line.has_prefix("icon: ")) && (false == line.has_prefix("full_icon: "))) {
 				var badCommand = line.split(": ")[0];
 				ElementBase.globalData.addError(_("Invalid command %s after command %s (line %d)").printf(badCommand,this.command, lineNumber));
 				return true;
 			}
-			// The line starts with 'icon: '
-			var data=line.substring(6).strip();
-			var pos=data.index_of(" ");
-			if (pos!=-1) { // there is a cathegory for the icon; use it instead the default one
-				this.iconCathegory=data.substring(0,pos);
-				data=data.substring(pos+1).strip();
-			} else {
-				if (data.has_suffix("-symbolic.svg")) {
-					this.iconCathegory="status";
+			string data;
+			if (line.has_prefix("icon: ")) {
+				// The line starts with 'icon: '
+				data=line.substring(6).strip();
+				var pos=data.index_of(" ");
+				if (pos!=-1) { // there is a cathegory for the icon; use it instead the default one
+					this.iconCathegory=data.substring(0,pos);
+					data=data.substring(pos+1).strip();
 				} else {
-					this.iconCathegory="apps";
+					if (data.has_suffix("-symbolic.svg")) {
+						this.iconCathegory="status";
+					} else {
+						this.iconCathegory="apps";
+					}
 				}
+			} else {
+				// The line starts with 'full_icon: '
+				data=line.substring(11).strip();
+				var pos=data.index_of(" ");
+				if (pos==-1) { // there is no theme for the icon; it is an error
+					ElementBase.globalData.addError(_("full_icon must have a cathegory and a theme (line %d)").printf(lineNumber));
+					return true;
+				}
+
+				var pos2=data.index_of(" ",pos+1);
+				if (pos2==-1) { // there is no cathegory for the icon; it is an error
+					ElementBase.globalData.addError(_("full_icon must have a cathegory and a theme (line %d)").printf(lineNumber));
+					return true;
+				}
+				this.iconTheme = data.substring(0,pos).strip();
+				this.iconCathegory = data.substring(pos+1,pos2-pos-1).strip();
+				data=data.substring(pos2+1).strip();
 			}
+
+			this.add_theme(this.iconTheme);
 
 			return this.configureElement(data,null,null,automatic,condition,invertCondition);
 		}
@@ -85,6 +119,7 @@ namespace AutoVala {
 			} else {
 				this.iconCathegory="apps";
 			}
+			this.add_theme(this.iconTheme);
 			return this.configureElement(path,null,null,true,null,false);
 		}
 
@@ -112,14 +147,14 @@ namespace AutoVala {
 					return true;
 				}
 				try {
-					dataStream.put_string("install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/%s DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/%dx%d/%s/)\n".printf(this.name,size,size,this.iconCathegory));
+					dataStream.put_string("install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/%s DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/%s/%dx%d/%s/)\n".printf(this.name,this.iconTheme,size,size,this.iconCathegory));
 				} catch (Error e) {
 					ElementBase.globalData.addError(_("Failed to write the CMakeLists file for icon %s").printf(fullPath));
 					return true;
 				}
 			} else if (this.name.has_suffix(".svg")) {
 				try {
-					dataStream.put_string("install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/%s DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/scalable/%s/)\n".printf(this.name,this.iconCathegory));
+					dataStream.put_string("install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/%s DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/%s/scalable/%s/)\n".printf(this.name,this.iconTheme,this.iconCathegory));
 				} catch (Error e) {
 					ElementBase.globalData.addError(_("Failed to write the CMakeLists file for icon %s").printf(fullPath));
 					return true;
@@ -139,7 +174,9 @@ namespace AutoVala {
 				try {
 					ElementIcon.addedSuffix=true;
 					dataStream.put_string("IF( NOT (${ICON_UPDATE} STREQUAL \"OFF\" ))\n");
-					dataStream.put_string("\tinstall (CODE \"execute_process ( COMMAND /usr/bin/gtk-update-icon-cache-3.0 -t ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor )\" )\n");
+					foreach(var theme in ElementIcon.themes) {
+						dataStream.put_string("\tinstall (CODE \"execute_process ( COMMAND /usr/bin/gtk-update-icon-cache-3.0 -t ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATAROOTDIR}/icons/%s )\" )\n".printf(theme));
+					}
 					dataStream.put_string("ENDIF()\n");
 				} catch (Error e) {
 					ElementBase.globalData.addError(_("Failed to write the PostData for icons at %s").printf(fullPath));
@@ -151,6 +188,7 @@ namespace AutoVala {
 
 		public override void endedCMakeFile() {
 			ElementIcon.addedSuffix=false;
+			ElementIcon.themes={};
 		}
 
 		public override bool storeConfig(DataOutputStream dataStream,ConditionalText printConditions) {
@@ -159,7 +197,7 @@ namespace AutoVala {
 				if (this._automatic) {
 					dataStream.put_string("*");
 				}
-				dataStream.put_string("icon: %s %s\n".printf(this.iconCathegory,this.fullPath));
+				dataStream.put_string("full_icon: %s %s %s\n".printf(this.iconTheme,this.iconCathegory,this.fullPath));
 			} catch (Error e) {
 				ElementBase.globalData.addError(_("Failed to store 'icon: %s' at config").printf(this.fullPath));
 				return true;

@@ -1,5 +1,5 @@
 ### AutoVala Project ###
-autovala_version: 14
+autovala_version: 15
 project_name: autovala
 vala_version: 0.20
 
@@ -10,7 +10,7 @@ custom: data/debian share/autovala/debian
 
 
 vala_binary: src/autovala
-*version: 0.99.13
+*version: 0.99.14
 compile_c_options: -O2
 vala_local_package: AutoVala
 *vala_package: posix

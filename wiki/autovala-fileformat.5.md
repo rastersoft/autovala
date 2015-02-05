@@ -90,9 +90,9 @@ After that, it comes several commands, some of them repeated several times, to s
 
  * **binary**: specifies that the file is a precompiled binary (or a shell script) that must be copied as-is to vbin/**
 
- * **icon**: followed by the category and the icon path/name. Autovala will determine the icon size and use it to copy it to the right place (only if it is a **.png** file; it it is a **.svg** will copy to "scalable"). Also, by default, the cathegory will be **apps**, unless it is a **.svg** with **-symbolic**; in that case will be put in the **status** category. Example:
+ * **full_icon**: followed by the theme, the category and the icon path/name. Autovala will determine the icon size and use it to copy it to the right place (only if it is a **.png** file; it it is a **.svg** will copy to "scalable"). Also, by default, the cathegory will be **apps**, unless it is a **.svg** with **-symbolic**; in that case will be put in the **status** category. Example:
 
-            icon: apps finger.svg
+            full_icon: hicolor apps finger.svg
 
  * **pixmap**: followed by a picture filename. Will be copied to **share/pixmaps**
 

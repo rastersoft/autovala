@@ -6,6 +6,8 @@
 <div class="main_frame">
 <p><a href="index.html">Home</a></p>
 <ul>
+<li>version 0.99.14 (2015-02-05)<br /></li>
+<li>Allows to specify a different theme for icons<br /></li>
 <li>version 0.99.13 (2015-02-02)<br /></li>
 <li>Now doesn't take into account DEFINE parameters named &quot;true&quot;, &quot;false&quot;, &quot;0&quot; or &quot;1&quot;<br /></li>
 <li>Fixed the final directory name for bitmap icons<br /></li>

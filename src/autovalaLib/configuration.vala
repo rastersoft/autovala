@@ -47,7 +47,7 @@ namespace AutoVala {
 				Intl.bindtextdomain(AutoValaConstants.GETTEXT_PACKAGE, Path.build_filename(AutoValaConstants.DATADIR,"locale"));
 			}
 
-			this.currentVersion=14; // currently we support version 14 of the syntax
+			this.currentVersion=15; // currently we support version 15 of the syntax
 			this.version=0;
 
 			this.globalData = new AutoVala.Globals(projectName,basePath);
@@ -215,7 +215,7 @@ namespace AutoVala {
 						element = new ElementBashCompletion();
 					} else if (line.has_prefix("binary: ")) {
 						element = new ElementBinary();
-					} else if (line.has_prefix("icon: ")) {
+					} else if ((line.has_prefix("icon: ")) || (line.has_prefix("full_icon: "))) {
 						element = new ElementIcon();
 					} else if (line.has_prefix("manpage: ")) {
 						element = new ElementManPage();
