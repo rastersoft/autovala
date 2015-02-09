@@ -8,7 +8,7 @@ autovala fileformat - The syntax for autovala configuration file
 
 The project file has a very simple format. Usually you don't need to manually edit it, but when the guesses of autovala are incorrect, you can do it, and your changes will be remembered each time you refresh the file.
 
-The current version for the project file format is **14**.
+The current version for the project file format is **15**.
 
 The file is based on commands in the format:
 
@@ -74,6 +74,8 @@ After that, it comes several commands, some of them repeated several times, to s
 
    * **c_source**: this command specifies one C source file that belongs to this binary. The path must be relative to the binary/library path.
 
+   * **h_folder**: this command specifies one folder containing .h files that must be included when compiling the C source files in this binary. The path must be relative to the binary/library path.
+
    * **vala_vapi**: this command specifies one custom **.vapi** file, needed to compile your project. Each file must be prepended by the relative path from the project folder. The path must be relative to the binary/library path.
 
    * **dbus_interface**: this command specifies a DBus interface to be automatically extracted using introspection, and to generate a source file with it. It must be followed by the connection name (e.g. org.freedesktop.ConsoleKit), the object path (e.g. /org/freedesktop/ConsoleKit/Manager), and whether it must connect to the **system** or **session** bus. Finally, it can have an extra parameter specifying if the generated interface must be for **gdbus** (the default option) or for the obsolete **dbus-glib** library.
@@ -92,7 +94,7 @@ After that, it comes several commands, some of them repeated several times, to s
 
  * **full_icon**: followed by the theme, the category and the icon path/name. Autovala will determine the icon size and use it to copy it to the right place (only if it is a **.png** file; it it is a **.svg** will copy to "scalable"). Also, by default, the cathegory will be **apps**, unless it is a **.svg** with **-symbolic**; in that case will be put in the **status** category. Example:
 
-            full_icon: hicolor apps finger.svg
+            full_icon: Hicolor Applications finger.svg
 
  * **pixmap**: followed by a picture filename. Will be copied to **share/pixmaps**
 
@@ -127,19 +129,19 @@ After that, it comes several commands, some of them repeated several times, to s
             ignore: src/OTHER will ignore the folder OTHER when creating binaries
 
  * **custom**: followed by a path/filename and another path. Installs the specified file in the path. If the path is given in relative format (this is, if it doesn't start with an slash) the file will be installed relative to the PREFIX (**/usr** or **/usr/local**); but if it is given in absolute format (this is, the path starts with a slash) the file will be installed in that precise folder. Examples:
- 
+
             custom: data/config_system.txt share/ will install the file **config_system.txt** in **/usr/share** or **/usr/local/share**
 
             custom: data/config_system.txt /etc/myfolder will install the file **config_system.txt** in **/etc/myfolder**
 
  * **manpage**: followed by a path/filename, and optionally a language and a page section. Specifies that the file is a man page in the specified language (**default** to install it in the default folder), and for the specified section. If the section is not specified, it will be assumed to be section 1. If the language is not specified, it will be assumed **default**. If the file ends in **.md**, Autovala will presume that it is a **markdown** file, and will convert it to groff before. Other supported formats and its extensions are HTML (**.html**), ReStructured Text (**.rst**), LaTeX (**.tex**), JSON version of native AST format (**.json**), TexTile/RedCloth (**.rdoc**), DocBook format (**.xml**) and MediaWiki (**.txt**). Examples:
- 
+
             manpage: data/man/autovala.1   will install the file **data/man/autovala** in **/usr/local/share/man/man1**
             manpage: data/man/autovala-rules.7.md es 7   will install the file **data/man/autovala-rules** in **/usr/local/share/man/es/man7**
             manpage: data/man/autovala-modifying.5.md default 5   will install the file **data/man/autovala-modifying** in **/usr/local/share/man/man5**
 
  * **source_dependency**: followed by a path/filename, it defines a system file needed for compiling the source, so, when creating a system package, the package that contains that file will be added to the build dependencies list.
- 
+
  * **binary_dependency**: followed by a path/filename, it defines a system file needed for running the project, so, when creating a system package, the package that contains that file will be added to the dependencies list.
 
 It is also possible to add conditions to nearly all of these commands (more specifically, all can be conditional with the exception of **vala_version**, **vala_binary**, **vala_library**, **version**, **namespace**, **include**, **project_name**, **vala_destination**, **define**, **source_dependency**, **binary_dependency** and **autovala_version**). To do so, you can use the commands **if CONDITION**, **else** and **end**. The format for the **CONDITION** string is the CMake format (statements that can be true or false, parenteses, and AND, OR and NOT operators).

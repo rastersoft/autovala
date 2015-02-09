@@ -82,7 +82,7 @@ if (DEBUG)
 endif ()
 
 
-set (CMAKE_C_FLAGS ${CMAKE_C_FLAGS} " -O2 " )
+set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O2 " )
 
 vala_precompile(VALA_C AutoVala
 	${APP_SOURCES}

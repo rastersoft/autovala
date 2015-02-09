@@ -10,7 +10,7 @@
 <p>autovala fileformat - The syntax for autovala configuration file</p>
 <h1 id="description">DESCRIPTION</h1>
 <p>The project file has a very simple format. Usually you don't need to manually edit it, but when the guesses of autovala are incorrect, you can do it, and your changes will be remembered each time you refresh the file.</p>
-<p>The current version for the project file format is <strong>14</strong>.</p>
+<p>The current version for the project file format is <strong>15</strong>.</p>
 <p>The file is based on commands in the format:</p>
 <pre><code>    command: data</code></pre>
 <p>one in each line. Every line that starts with # is ignored (is a comment), but also will be removed when the file is recreated.</p>
@@ -48,6 +48,7 @@
 <li><p><strong>vala_local_package</strong>: is like <strong>vala_package</strong>, but these packages aren't installed in the system. Instead, they belong to this project, and will be compiled automatically before this binary/library.</p></li>
 <li><p><strong>vala_source</strong>: this command specifies one VALA source file that belongs to this binary. The path must be relative to the binary/library path.</p></li>
 <li><p><strong>c_source</strong>: this command specifies one C source file that belongs to this binary. The path must be relative to the binary/library path.</p></li>
+<li><p><strong>h_folder</strong>: this command specifies one folder containing .h files that must be included when compiling the C source files in this binary. The path must be relative to the binary/library path.</p></li>
 <li><p><strong>vala_vapi</strong>: this command specifies one custom <strong>.vapi</strong> file, needed to compile your project. Each file must be prepended by the relative path from the project folder. The path must be relative to the binary/library path.</p></li>
 <li><p><strong>dbus_interface</strong>: this command specifies a DBus interface to be automatically extracted using introspection, and to generate a source file with it. It must be followed by the connection name (e.g. org.freedesktop.ConsoleKit), the object path (e.g. /org/freedesktop/ConsoleKit/Manager), and whether it must connect to the <strong>system</strong> or <strong>session</strong> bus. Finally, it can have an extra parameter specifying if the generated interface must be for <strong>gdbus</strong> (the default option) or for the obsolete <strong>dbus-glib</strong> library.</p></li>
 <li><p><strong>c_library</strong>: this command specifies one or more C libraries which must be linked against this binary (separated by blank spaces), useful for libraries not supported with <strong>pkg_config</strong> like the math C library. The libraries must be specified without the 'l' preffix; this is, the math library is 'm'; the posix threads library is 'pthread', and so on.</p></li>
@@ -57,7 +58,7 @@
 <li><p><strong>bash_completion</strong>: specifies that the file is a bash_completion stript that must be copied to where <strong>pkg-config --variable=completionsdir bash-completion</strong> specifies (usually /usr/share/bash-completion/completions). To allow to do installations in the HOME directory, these files won't be installed if <em>CMAKE_INSTALL_PREFIX</em> starts with <em>/home</em>.</p></li>
 <li><p><strong>binary</strong>: specifies that the file is a precompiled binary (or a shell script) that must be copied as-is to vbin/**</p></li>
 <li><p><strong>full_icon</strong>: followed by the theme, the category and the icon path/name. Autovala will determine the icon size and use it to copy it to the right place (only if it is a <strong>.png</strong> file; it it is a <strong>.svg</strong> will copy to &quot;scalable&quot;). Also, by default, the cathegory will be <strong>apps</strong>, unless it is a <strong>.svg</strong> with <strong>-symbolic</strong>; in that case will be put in the <strong>status</strong> category. Example:</p>
-<pre><code>    full_icon: hicolor apps finger.svg</code></pre></li>
+<pre><code>    full_icon: Hicolor Applications finger.svg</code></pre></li>
 <li><p><strong>pixmap</strong>: followed by a picture filename. Will be copied to <strong>share/pixmaps</strong></p></li>
 <li><p><strong>glade</strong>: the file specified is a glade UI file, that will be installed in <strong>share/project_name/</strong> These files, and the <strong>.vala</strong> source files, will be used with gettext to get the translatable strings.</p></li>
 <li><p><strong>dbus_service</strong>: the file specified is a D-Bus service. The file must be written as a classic D-Bus service file, but prefixing the binary filename with <script type="text/javascript">

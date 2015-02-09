@@ -115,6 +115,10 @@ namespace AutoVala {
 		public Gee.List<SourceElement ?> cSources {
 			get {return this._cSources;}
 		}
+		private Gee.List<SourceElement ?> _hFolders;
+		public Gee.List<SourceElement ?> hFolders {
+			get {return this._hFolders;}
+		}
 		private Gee.List<SourceElement ?> _unitests;
 		public Gee.List<SourceElement ?> unitests {
 			get {return this._unitests;}
@@ -235,6 +239,7 @@ namespace AutoVala {
 			this._packages=new Gee.ArrayList<PackageElement ?>();
 			this._sources=new Gee.ArrayList<SourceElement ?>();
 			this._cSources=new Gee.ArrayList<SourceElement ?>();
+			this._hFolders=new Gee.ArrayList<SourceElement ?>();
 			this._unitests=new Gee.ArrayList<SourceElement ?>();
 			this._vapis=new Gee.ArrayList<VapiElement ?>();
 			this._compileOptions=new Gee.ArrayList<CompileElement ?>();
@@ -599,6 +604,7 @@ namespace AutoVala {
 			var sourcesTmp=new Gee.ArrayList<SourceElement ?>();
 			var unitestsTmp=new Gee.ArrayList<SourceElement ?>();
 			var cSourcesTmp=new Gee.ArrayList<SourceElement ?>();
+			var hFoldersTmp=new Gee.ArrayList<SourceElement ?>();
 			var vapisTmp=new Gee.ArrayList<VapiElement ?>();
 			var compileTmp=new Gee.ArrayList<CompileElement ?>();
 			var dbusTmp=new Gee.ArrayList<DBusElement ?>();
@@ -622,6 +628,11 @@ namespace AutoVala {
 			foreach (var e in this._cSources) {
 				if (e.automatic==false) {
 					cSourcesTmp.add(e);
+				}
+			}
+			foreach (var e in this._hFolders) {
+				if (e.automatic==false) {
+					hFoldersTmp.add(e);
 				}
 			}
 			foreach (var e in this._vapis) {
@@ -648,6 +659,7 @@ namespace AutoVala {
 			this._sources=sourcesTmp;
 			this._unitests=unitestsTmp;
 			this._cSources=cSourcesTmp;
+			this._hFolders=hFoldersTmp;
 			this._vapis=vapisTmp;
 			this._compileOptions=compileTmp;
 			this._dbusElements=dbusTmp;
@@ -681,6 +693,7 @@ namespace AutoVala {
 			this._packages.sort(AutoVala.ElementValaBinary.comparePackages);
 			this._sources.sort(AutoVala.ElementValaBinary.comparePackages);
 			this._cSources.sort(AutoVala.ElementValaBinary.comparePackages);
+			this._hFolders.sort(AutoVala.ElementValaBinary.comparePackages);
 			this._unitests.sort(AutoVala.ElementValaBinary.comparePackages);
 			this._vapis.sort(AutoVala.ElementValaBinary.comparePackages);
 			this._compileOptions.sort(AutoVala.ElementValaBinary.comparePackages);
@@ -984,6 +997,27 @@ namespace AutoVala {
 			return false;
 		}
 
+		private bool addHFolder(string includeFolder, bool automatic, string? condition, bool invertCondition, int lineNumber) {
+
+			if (condition!=null) {
+				automatic=false; // if an include folder is conditional, it MUST be manual, because conditions are not added automatically
+			}
+
+			// adding a non-automatic source to an automatic binary transforms this binary to non-automatic
+			if ((automatic==false)&&(this._automatic==true)) {
+				this.transformToNonAutomatic(false);
+			}
+
+			foreach(var element in this._hFolders) {
+				if (element.elementName==includeFolder) {
+					return false;
+				}
+			}
+			var element=new SourceElement(includeFolder,automatic,condition, invertCondition);
+			this._hFolders.add(element);
+			return false;
+		}
+
 		public override bool configureLine(string line, bool automatic, string? condition, bool invertCondition, int lineNumber) {
 
 			if (line.has_prefix("vala_binary: ")) {
@@ -1022,6 +1056,8 @@ namespace AutoVala {
 				return this.addDBus(line.substring(16).strip(),automatic,condition,invertCondition,lineNumber);
 			} else if (line.has_prefix("c_library: ")) {
 				return this.setCLibrary(line.substring(11).strip(),automatic,condition,invertCondition,lineNumber);
+			} else if (line.has_prefix("h_folder: ")) {
+				return this.addHFolder(line.substring(10).strip(),automatic,condition,invertCondition,lineNumber);
 			} else {
 				var badCommand = line.split(": ")[0];
 				ElementBase.globalData.addError(_("Invalid command %s after command %s (line %d)").printf(badCommand,this.command, lineNumber));
@@ -1407,6 +1443,12 @@ namespace AutoVala {
 					dataStream.put_string("set (CMAKE_C_FLAGS \"${CMAKE_C_FLAGS} %s \" )\n".printf(element.elementName));
 				}
 				printConditions.printTail();
+
+				foreach(var element in this._hFolders) {
+					addedCFlags=true;
+					printConditions.printCondition(element.condition,element.invertCondition);
+					dataStream.put_string("include_directories (AFTER %s )\n".printf(element.elementName));
+				}
 				if (addedCFlags) {
 					dataStream.put_string("\n");
 				}
@@ -1751,6 +1793,15 @@ namespace AutoVala {
 						dataStream.put_string("*");
 					}
 					dataStream.put_string("c_source: %s\n".printf(element.elementName));
+				}
+				printConditions.printTail();
+
+				foreach(var element in this._hFolders) {
+					printConditions.printCondition(element.condition,element.invertCondition);
+					if (element.automatic) {
+						dataStream.put_string("*");
+					}
+					dataStream.put_string("h_folder: %s\n".printf(element.elementName));
 				}
 				printConditions.printTail();
 			} catch (GLib.Error e) {

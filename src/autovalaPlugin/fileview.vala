@@ -279,7 +279,10 @@ namespace AutovalaPlugin {
 		 * @param top If true, this is the top folder, so the TreeView will be cleared and the
 		 * file monitors will be destroyed before starting. If false, it is being called recursively
 		 */
-		private void fill_files(string path, TreeIter? iter=null, bool top=true) {
+		private void fill_files(string? path, TreeIter? iter=null, bool top=true) {
+			if (path == null) {
+				return;
+			}
 			if (top) {
 				this.cancel_monitors();
 				this.treeModel.clear();
