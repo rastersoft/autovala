@@ -1404,7 +1404,7 @@ namespace AutoVala {
 				foreach(var element in this._compileCOptions) {
 					addedCFlags=true;
 					printConditions.printCondition(element.condition,element.invertCondition);
-					dataStream.put_string("set (CMAKE_C_FLAGS ${CMAKE_C_FLAGS} \" %s \" )\n".printf(element.elementName));
+					dataStream.put_string("set (CMAKE_C_FLAGS \"${CMAKE_C_FLAGS} %s \" )\n".printf(element.elementName));
 				}
 				printConditions.printTail();
 				if (addedCFlags) {
