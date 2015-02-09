@@ -18,8 +18,190 @@
 
 using GLib;
 using Gdk;
+using Gee;
 
 namespace AutoVala {
+
+	enum IconTypes {Fixed, Scalable, Thresold}
+
+	private class IconEntry : Object {
+
+		public string path;
+		public int size;
+		public int minsize;
+		public int maxsize;
+		public string context;
+		public IconTypes type;
+
+		public IconEntry(string path, string context, IconTypes type, int size, int minsize=-1, int maxsize=-1) {
+			this.path = path;
+			this.context = context;
+			this.type = type;
+			this.size = size;
+			if (type == IconTypes.Scalable) {
+				this.minsize = minsize == -1 ? size : minsize;
+				this.maxsize = maxsize == -1 ? size : maxsize;
+			} else {
+				this.minsize = size;
+				this.maxsize = size;
+			}
+		}
+
+		public bool check_size(string context, int size,bool scalable) {
+			if (context != this.context) {
+				return false;
+			}
+			if (scalable) {
+				if (this.type == IconTypes.Scalable) {
+					return true;
+				}
+			} else {
+				if (size == this.size) {
+					return true;
+				}
+			}
+			return false;
+		}
+	}
+
+	private class Theme : Object {
+
+		public string folder_name;
+		public string ?name;
+		string basePath;
+		Gee.List<IconEntry ?> entries;
+
+		public Theme(string basepath, string folder_name) {
+			this.entries = new Gee.ArrayList<IconEntry ?>();
+			this.basePath = basepath;
+			this.folder_name = folder_name;
+			this.name = null;
+			this.fill_theme();
+		}
+
+		private void fill_theme() {
+
+			var indexFile = GLib.Path.build_filename(this.basePath,"index.theme");
+			var file = File.new_for_path(indexFile);
+			if (!file.query_exists()) {
+				return;
+			}
+			var data = new GLib.KeyFile();
+			if (!data.load_from_file(indexFile,KeyFileFlags.NONE)) {
+				return;
+			}
+			if ((!data.has_group("Icon Theme")) || (!data.has_key("Icon Theme","Name")) || (!data.has_key("Icon Theme","Directories"))) {
+				return;
+			}
+			this.name = data.get_string("Icon Theme","Name");
+			var dirs = data.get_string("Icon Theme","Directories").split(",");
+			foreach(var group in dirs) {
+				if ((!data.has_group(group)) || (!data.has_key(group,"Size"))) {
+					continue; // just to avoid problems with malformed index.theme files
+				}
+				string context = "Actions";
+				IconTypes type = IconTypes.Thresold;
+				int size = data.get_integer(group,"Size");
+				int minsize = -1;
+				int maxsize = -1;
+				if (data.has_key(group,"Context")) {
+					context = data.get_string(group,"Context");
+				}
+				if (data.has_key(group,"Type")) {
+					var tmptype = data.get_string(group,"Type");
+					switch (tmptype) {
+					case "Fixed":
+						type = IconTypes.Fixed;
+					break;
+					case "Scalable":
+						type = IconTypes.Scalable;
+					break;
+					default:
+						type = IconTypes.Thresold;
+					break;
+					}
+				}
+				if (type == IconTypes.Scalable) {
+					if (data.has_key(group,"MinSize")) {
+						minsize = data.get_integer(group,"MinSize");
+					}
+					if (data.has_key(group,"MaxSize")) {
+						maxsize = data.get_integer(group,"MaxSize");
+					}
+				}
+				var element = new IconEntry(group,context, type, size, minsize, maxsize);
+				this.entries.add(element);
+			}
+		}
+
+		public IconEntry? check_size(string context, int size,bool scalable) {
+			IconEntry? tmpentry = null;
+			foreach(var entry in this.entries) {
+				if (entry.check_size(context,size,scalable)) {
+					if (scalable) {
+						if (!entry.path.contains("scalable")) {
+							if (tmpentry == null) {
+								tmpentry = entry;
+							}
+							continue;
+						}
+					}
+					return entry;
+				}
+			}
+
+			if (tmpentry != null) {
+				return tmpentry;
+			}
+			return null;
+		}
+	}
+
+	private class ThemeList : Object {
+
+		private Gee.List<Theme ?> themes;
+
+		public ThemeList() {
+
+			this.themes = new Gee.ArrayList<Theme ?>();
+			var pathvar = GLib.Environment.get_variable("XDG_DATA_DIRS");
+			if (pathvar != null) {
+				var paths = pathvar.split(":");
+
+				foreach (var path in paths) {
+					var fullpath = GLib.Path.build_filename(path,"icons");
+					var directory = File.new_for_path(fullpath);
+					if ((!directory.query_exists()) || (directory.query_file_type(GLib.FileQueryInfoFlags.NONE) != GLib.FileType.DIRECTORY)) {
+						continue;
+					}
+					try {
+						var enumerator = directory.enumerate_children (FileAttribute.STANDARD_NAME+","+FileAttribute.STANDARD_TYPE, 0);
+
+						FileInfo file_info;
+						while ((file_info = enumerator.next_file ()) != null) {
+							if (file_info.get_file_type() != GLib.FileType.DIRECTORY) {
+								continue;
+							}
+							var theme = new Theme(GLib.Path.build_filename(fullpath,file_info.get_name()),file_info.get_name());
+							if (theme.name != null) {
+								this.themes.add(theme);
+							}
+						}
+					} catch (Error e) {
+					}
+				}
+			}
+		}
+
+		public Theme? find_theme(string name) {
+			foreach(var theme in this.themes) {
+				if ((theme.name == name) || (theme.folder_name == name)) {
+					return theme;
+				}
+			}
+			return null;
+		}
+	}
 
 	private class ElementIcon : ElementBase {
 
@@ -27,13 +209,14 @@ namespace AutoVala {
 		private string[] appendText;
 		private string iconTheme;
 		private static bool addedSuffix=false;
-		private static string[]? themes = {};
+		private static string[] updateThemes = {};
+		private static ThemeList themes = new ThemeList();
 
 		public ElementIcon() {
 			this._type = ConfigType.ICON;
 			this.appendText = {};
 			this.iconCathegory = "";
-			this.iconTheme = "hicolor"; // default value
+			this.iconTheme = "Hicolor"; // default value
 			this.command = "full_icon";
 		}
 
@@ -54,12 +237,12 @@ namespace AutoVala {
 
 		private void add_theme(string theme) {
 
-			foreach(var t in ElementIcon.themes) {
+			foreach(var t in ElementIcon.updateThemes) {
 				if (theme == t) {
 					return;
 				}
 			}
-			ElementIcon.themes += theme;
+			ElementIcon.updateThemes += theme;
 		}
 
 		public override bool configureLine(string line, bool automatic, string? condition, bool invertCondition, int lineNumber) {
@@ -79,9 +262,9 @@ namespace AutoVala {
 					data=data.substring(pos+1).strip();
 				} else {
 					if (data.has_suffix("-symbolic.svg")) {
-						this.iconCathegory="status";
+						this.iconCathegory="Status";
 					} else {
-						this.iconCathegory="apps";
+						this.iconCathegory="Applications";
 					}
 				}
 			} else {
@@ -115,9 +298,9 @@ namespace AutoVala {
 			}
 
 			if (path.has_suffix("-symbolic.svg")) {
-				this.iconCathegory="status";
+				this.iconCathegory="Status";
 			} else {
-				this.iconCathegory="apps";
+				this.iconCathegory="Applications";
 			}
 			this.add_theme(this.iconTheme);
 			return this.configureElement(path,null,null,true,null,false);
@@ -127,6 +310,12 @@ namespace AutoVala {
 
 			var fullPath=Path.build_filename(ElementBase.globalData.projectFolder,this._fullPath);
 			int size=0;
+
+			var theme = ElementIcon.themes.find_theme(this.iconTheme);
+			if (theme == null) {
+				ElementBase.globalData.addWarning(_("The icon theme %s isn't installed in the system; can't get its data").printf(this.iconTheme));
+				return true;
+			}
 
 			// For each PNG file, find the icon size to which it belongs
 			if (this.name.has_suffix(".png")) {
@@ -146,15 +335,25 @@ namespace AutoVala {
 					ElementBase.globalData.addError(_("Can't get the size for icon %s").printf(fullPath));
 					return true;
 				}
+				var entry = theme.check_size(this.iconCathegory,size,false);
+				if (entry == null) {
+					ElementBase.globalData.addWarning(_("Can't find a suitable entry size in theme %s for the icon %s with size %d in context %s").printf(this.iconTheme,this.name,size,this.iconCathegory));
+					return true;
+				}
 				try {
-					dataStream.put_string("install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/%s DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/%s/%dx%d/%s/)\n".printf(this.name,this.iconTheme,size,size,this.iconCathegory));
+					dataStream.put_string("install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/%s DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/%s/)\n".printf(this.name,GLib.Path.build_filename(theme.folder_name,entry.path)));
 				} catch (Error e) {
 					ElementBase.globalData.addError(_("Failed to write the CMakeLists file for icon %s").printf(fullPath));
 					return true;
 				}
 			} else if (this.name.has_suffix(".svg")) {
+				var entry = theme.check_size(this.iconCathegory,0,true);
+				if (entry == null) {
+					ElementBase.globalData.addWarning(_("Can't find an scalable entry in theme %s for the icon %s in context %s").printf(this.iconTheme,this.name,this.iconCathegory));
+					return true;
+				}
 				try {
-					dataStream.put_string("install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/%s DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/%s/scalable/%s/)\n".printf(this.name,this.iconTheme,this.iconCathegory));
+					dataStream.put_string("install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/%s DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/%s/)\n".printf(this.name,GLib.Path.build_filename(theme.folder_name,entry.path)));
 				} catch (Error e) {
 					ElementBase.globalData.addError(_("Failed to write the CMakeLists file for icon %s").printf(fullPath));
 					return true;
@@ -174,7 +373,7 @@ namespace AutoVala {
 				try {
 					ElementIcon.addedSuffix=true;
 					dataStream.put_string("IF( NOT (${ICON_UPDATE} STREQUAL \"OFF\" ))\n");
-					foreach(var theme in ElementIcon.themes) {
+					foreach(var theme in ElementIcon.updateThemes) {
 						dataStream.put_string("\tinstall (CODE \"execute_process ( COMMAND /usr/bin/gtk-update-icon-cache-3.0 -t ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATAROOTDIR}/icons/%s )\" )\n".printf(theme));
 					}
 					dataStream.put_string("ENDIF()\n");
@@ -188,7 +387,7 @@ namespace AutoVala {
 
 		public override void endedCMakeFile() {
 			ElementIcon.addedSuffix=false;
-			ElementIcon.themes={};
+			ElementIcon.updateThemes={};
 		}
 
 		public override bool storeConfig(DataOutputStream dataStream,ConditionalText printConditions) {
