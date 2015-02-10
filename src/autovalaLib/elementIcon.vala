@@ -135,6 +135,7 @@ namespace AutoVala {
 		}
 
 		public IconEntry? check_size(string context, int size,bool scalable) {
+
 			IconEntry? tmpentry = null;
 			foreach(var entry in this.entries) {
 				if (entry.check_size(context,size,scalable)) {
@@ -155,6 +156,28 @@ namespace AutoVala {
 			}
 			return null;
 		}
+
+		public IconEntry? find_nearest(string context, int size, bool scalable) {
+
+			if (!scalable) {
+				return null;
+			}
+
+			// for scalable icons, return the biggest one in the specified context
+			int tmpsize = -1;
+			IconEntry? tmpentry = null;
+			foreach(var entry in this.entries) {
+				if ((entry.context != context) || (entry.type == IconTypes.Scalable)) {
+					continue;
+				}
+				if ((tmpsize == -1) || (entry.size > tmpsize)) {
+					tmpentry = entry;
+					tmpsize = entry.size;
+				}
+			}
+			return tmpentry;
+		}
+
 	}
 
 	private class ThemeList : Object {
@@ -338,7 +361,7 @@ namespace AutoVala {
 				var entry = theme.check_size(this.iconCathegory,size,false);
 				if (entry == null) {
 					ElementBase.globalData.addWarning(_("Can't find a suitable entry size in theme %s for the icon %s with size %d in context %s").printf(this.iconTheme,this.name,size,this.iconCathegory));
-					return true;
+					return false;
 				}
 				try {
 					dataStream.put_string("install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/%s DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/%s/)\n".printf(this.name,GLib.Path.build_filename(theme.folder_name,entry.path)));
@@ -349,8 +372,12 @@ namespace AutoVala {
 			} else if (this.name.has_suffix(".svg")) {
 				var entry = theme.check_size(this.iconCathegory,0,true);
 				if (entry == null) {
-					ElementBase.globalData.addWarning(_("Can't find an scalable entry in theme %s for the icon %s in context %s").printf(this.iconTheme,this.name,this.iconCathegory));
-					return true;
+					ElementBase.globalData.addWarning(_("Can't find an scalable entry in theme %s for the icon %s in context %s. Trying fixed size entries.").printf(this.iconTheme,this.name,this.iconCathegory));
+					entry = theme.find_nearest(this.iconCathegory,0,true);
+					if (entry == null) {
+						ElementBase.globalData.addWarning(_("Can't find a valid entry in context %s to install the icon %s in theme %s").printf(this.iconCathegory, this.name,this.iconTheme));
+						return false;
+					}
 				}
 				try {
 					dataStream.put_string("install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/%s DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/%s/)\n".printf(this.name,GLib.Path.build_filename(theme.folder_name,entry.path)));
