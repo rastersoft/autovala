@@ -369,19 +369,19 @@ namespace AutoVala {
 				element.autoConfigure();
 			}
 
-			error|=ElementPo.autoGenerate();
-			error|=ElementIcon.autoGenerate();
-			error|=ElementPixmap.autoGenerate();
-			error|=ElementDesktop.autoGenerate();
-			error|=ElementDBusService.autoGenerate();
-			error|=ElementEosPlug.autoGenerate();
-			error|=ElementScheme.autoGenerate();
-			error|=ElementGlade.autoGenerate();
+			error|=ElementBashCompletion.autoGenerate();
 			error|=ElementBinary.autoGenerate();
 			error|=ElementData.autoGenerate();
+			error|=ElementDBusService.autoGenerate();
+			error|=ElementDesktop.autoGenerate();
 			error|=ElementDoc.autoGenerate();
+			error|=ElementEosPlug.autoGenerate();
+			error|=ElementGlade.autoGenerate();
+			error|=ElementIcon.autoGenerate();
 			error|=ElementManPage.autoGenerate();
-			error|=ElementBashCompletion.autoGenerate();
+			error|=ElementPixmap.autoGenerate();
+			error|=ElementPo.autoGenerate();
+			error|=ElementScheme.autoGenerate();
 			error|=ElementValaBinary.autoGenerate();
 
 			if (error==false) {

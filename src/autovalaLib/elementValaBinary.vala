@@ -353,6 +353,11 @@ namespace AutoVala {
 				error |= this.addCSource(element,true,null,false,-1);
 			}
 
+			files = ElementBase.getFilesFromFolder(this._path,{".h"},true,true);
+			foreach (var element in files) {
+				error |= this.addHFolder(GLib.Path.get_dirname(element),true,null,false,-1);
+			}
+
 			ElementBase.globalData.addExclude(this._path);
 			return error;
 		}
@@ -372,7 +377,7 @@ namespace AutoVala {
 
 			this.file_list = {};
 
-			this.file_list = ElementBase.getFilesFromFolder(this._path,{".vala",".c",".pc","deps",".cmake"},true);
+			this.file_list = ElementBase.getFilesFromFolder(this._path,{".vala",".c",".h",".pc","deps",".cmake"},true);
 			var files = ElementBase.getFilesFromFolder(GLib.Path.build_filename(this._path,"vapis"),{".vapi"},true);
 			foreach (var element in files) {
 				this.file_list += element;
