@@ -1,5 +1,6 @@
 * version 0.99.14 (2015-02-05)
    * Allows to specify a different theme for icons
+   * Allows to specify extra folders where to search for .h files when compiling the C source files
 * version 0.99.13 (2015-02-02)
    * Now doesn't take into account DEFINE parameters named "true", "false", "0" or "1"
    * Fixed the final directory name for bitmap icons

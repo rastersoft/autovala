@@ -10,7 +10,11 @@ The rules followed by Autovala are the following:
 
 * All **.vala** and **.c** files in the **src/** folder belong to a binary called like the project name. Vala files will be scanned to determine the packages needed to compile them. The **.vala** and **.c** files in the subfolders are also added, unless there is another binary or library that already posesses that folder
 
+* All folders that contains a **.h** file inside the **src/** folder will be added to the list of folders where to search for include files in that project.
+
 * All **.vala** and **.c** files in a folder posessed by a binary or library belong to it. Vala files will be scanned to determine the packages needed to compile them. The **.vala** and **.c** files in the subfolders are also added, unless there is another binary or library that already posesses that folder
+
+* All folders that contains a **.h** file inside a folder posessed by a binary or library will be added to the list of folders where to search for include files in that project.
 
 * All **.vala** files in a folder called **unitests**, in the root of each binary or library path, will be considered unitary tests for that binary or library.
 
@@ -18,7 +22,7 @@ The rules followed by Autovala are the following:
 
 * All **.vapi** files inside a **vapis** folder, located in a binary/library top folder will be added to that binary/library
 
-* All **.png** or **.svg** files in the folder **data/icons/** (and subfolders) are considered icons, so Autovala will determine automatically the best-fitting standard icon size (in the case of **.png**; for **.svg** it will put them always in **scalable**) and install them in the corresponding folder: **apps** by default, unless it is a **.svg** file with a filename ended in **-symbolic.svg**; in that case it will go to **status**. The user can modify the final folder manually for the icons (s)he wishes.
+* All **.png** or **.svg** files in the folder **data/icons/** (and subfolders) are considered icons, so Autovala will determine automatically the best-fitting standard icon size (in the case of **.png**; for **.svg** it will try to put them in an scalable group with **scalable** in the name; if it doesn't exists, it will try to put them in an scalable group; if neither exist, it will be installed in the biggest size group available in de desired cathegory) and install them in the corresponding cathegory: **Applications** by default, unless it is a **.svg** file with a filename ended in **-symbolic.svg**; in that case it will go to **Status**. The user can modify the final cathegory and icon theme manually for the icons (s)he wishes.
 
 * All **.png**, **.jpg** or **.svg** files in the folder **data/pixmaps/** (and subfolders) are considered pixmaps, and will be installed in **share/pixmaps/**.
 
