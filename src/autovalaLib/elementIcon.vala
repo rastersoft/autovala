@@ -453,8 +453,8 @@ namespace AutoVala {
 				}
 
 				// The width is between pos5 and pos6, and the height between pos7 and pos8
-				w = (int)(double.parse(data.substring(pos5+1,pos6-pos5-2))+0.5);
-				h = (int)(double.parse(data.substring(pos7+1,pos8-pos7-2))+0.5);
+				w = (int)(double.parse(data.substring(pos5+1,pos6-pos5-1))+0.5);
+				h = (int)(double.parse(data.substring(pos7+1,pos8-pos7-1))+0.5);
 				return true;
 
 			} catch (Error e) {
@@ -477,7 +477,7 @@ namespace AutoVala {
 
 		public override bool generateCMakePostData(DataOutputStream dataStream) {
 
-			if (ElementIcon.addedSuffix==false) {
+			if ((ElementIcon.addedSuffix==false) && (ElementIcon.updateThemes.length!=0)) {
 				// Refresh the icon cache (but only if ICON_UPDATE is not OFF; that means we are building a package)
 				try {
 					ElementIcon.addedSuffix=true;
