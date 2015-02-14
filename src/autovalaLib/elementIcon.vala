@@ -159,11 +159,23 @@ namespace AutoVala {
 
 		public IconEntry? find_nearest(string context, int size, bool scalable) {
 
+			// for non-scalable, return the smallest one where this size fits
 			if (!scalable) {
-				return null;
+				int tmpsize = -1;
+				IconEntry? tmpentry = null;
+				foreach(var entry in this.entries) {
+					if ((entry.context != context) || (entry.type == IconTypes.Scalable)) {
+						continue;
+					}
+					if ((entry.size >= size) && ((tmpsize == -1) || (entry.size < tmpsize))) {
+						tmpentry = entry;
+						tmpsize = entry.size;
+					}
+				}
+				return tmpentry;
 			}
 
-			// for scalable icons, return the biggest one in the specified context
+			// for scalable, return the biggest one in the specified context
 			int tmpsize = -1;
 			IconEntry? tmpentry = null;
 			foreach(var entry in this.entries) {
@@ -344,16 +356,7 @@ namespace AutoVala {
 			if (this.name.has_suffix(".png")) {
 				try {
 					var picture=new Gdk.Pixbuf.from_file(fullPath);
-					int w=picture.width;
-					int h=picture.height;
-					int[] sizes = {16, 22, 24, 32, 36, 48, 64, 72, 96, 128, 192, 256};
-					size=512;
-					foreach (var s in sizes) {
-						if ((w<=s) && (h<=s)) {
-							size=s;
-							break;
-						}
-					}
+					size = this.get_nearest_size(picture.width,picture.height);
 				} catch (Error e) {
 					ElementBase.globalData.addError(_("Can't get the size for icon %s").printf(fullPath));
 					return true;
@@ -372,12 +375,22 @@ namespace AutoVala {
 			} else if (this.name.has_suffix(".svg")) {
 				var entry = theme.check_size(this.iconCathegory,0,true);
 				if (entry == null) {
-					ElementBase.globalData.addWarning(_("Can't find an scalable entry in theme %s for the icon %s in context %s. Trying fixed size entries.").printf(this.iconTheme,this.name,this.iconCathegory));
-					entry = theme.find_nearest(this.iconCathegory,0,true);
-					if (entry == null) {
-						ElementBase.globalData.addWarning(_("Can't find a valid entry in context %s to install the icon %s in theme %s").printf(this.iconCathegory, this.name,this.iconTheme));
-						return false;
+					// there are no SCALABLE entries, so let's try with the canvas size
+					int w;
+					int h;
+					string local_path = GLib.Path.build_filename(ElementBase.globalData.projectFolder,this.fullPath);
+					if (this.get_svg_size(local_path,out w, out h)) {
+						size = this.get_nearest_size(w,h);
+						entry = theme.find_nearest(this.iconCathegory,size,false);
 					}
+				}
+				if (entry == null) {
+					// If the icon doesn't have width or height info, or there is no valid entry for that size, put it in the biggest one
+					entry = theme.find_nearest(this.iconCathegory,0,true);
+				}
+				if (entry == null) {
+					ElementBase.globalData.addWarning(_("Can't find a valid entry in context %s to install the icon %s in theme %s").printf(this.iconCathegory, this.name,this.iconTheme));
+					return false;
 				}
 				try {
 					dataStream.put_string("install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/%s DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/%s/)\n".printf(this.name,GLib.Path.build_filename(theme.folder_name,entry.path)));
@@ -391,6 +404,75 @@ namespace AutoVala {
 			}
 
 			return false;
+		}
+
+		private bool get_svg_size(string filename, out int w, out int h) {
+
+			w = 0;
+			h = 0;
+			var file=File.new_for_path(filename);
+			if (!file.query_exists()) {
+				return false;
+			}
+			try {
+				var dis = new DataInputStream(file.read());
+				string line;
+				string data = "";
+				while((line = dis.read_line(null))!=null) {
+					data+=line+" ";
+				}
+				var pos1 = data.index_of("<svg");
+				if (pos1 == -1) {
+					return false; // it is not an SVG file
+				}
+				var pos2 = data.index_of_char('>',pos1);
+				if (pos2 == -1) {
+					return false; // it is not a valid SVG file
+				}
+				data = data.substring(pos1,pos2-pos1);
+				var pos3 = data.index_of("width");
+				var pos4 = data.index_of("height");
+				if ((pos3==-1)||(pos4==-1)) {
+					return false; // no width or height values
+				}
+				var pos5 = data.index_of("\"",pos3);
+				if (pos5 == -1) {
+					return false; // malformed SVG file
+				}
+				var pos6 = data.index_of("\"",pos5+1);
+				if (pos6 == -1) {
+					return false; // malformed SVG file
+				}
+				var pos7 = data.index_of("\"",pos4);
+				if (pos7 == -1) {
+					return false; // malformed SVG file
+				}
+				var pos8 = data.index_of("\"",pos7+1);
+				if (pos8 == -1) {
+					return false; // malformed SVG file
+				}
+
+				// The width is between pos5 and pos6, and the height between pos7 and pos8
+				w = (int)(double.parse(data.substring(pos5+1,pos6-pos5-2))+0.5);
+				h = (int)(double.parse(data.substring(pos7+1,pos8-pos7-2))+0.5);
+				return true;
+
+			} catch (Error e) {
+				return false;
+			}
+		}
+
+		private int get_nearest_size(int w, int h) {
+
+			int[] sizes = {16, 22, 24, 32, 36, 48, 64, 72, 96, 128, 192, 256};
+			int size=512;
+			foreach (var s in sizes) {
+				if ((w<=s) && (h<=s)) {
+					size=s;
+					break;
+				}
+			}
+			return (size);
 		}
 
 		public override bool generateCMakePostData(DataOutputStream dataStream) {
