@@ -33,10 +33,20 @@ namespace AutoVala {
 			this.config.showErrors();
 		}
 
+		/**
+		 * Returns a list with all the errors generated during the process, and clears the error list
+		 * @return A list with the errors and warnings, one on each element.
+		 */
 		public string[] getErrors() {
 			return this.config.getErrors();
 		}
 
+		/**
+		 * Copy recursively all the files in a folder to another
+		 * @param srcS The source folder
+		 * @param destS The destination folder
+		 * @return TRUE if there was an error; FALSE if everything went fine
+		 */
 		private bool copy_recursive (string srcS, string destS) {
 
 			var src=File.new_for_path(srcS);
@@ -181,6 +191,13 @@ namespace AutoVala {
 			return false;
 		}
 
+
+		/**
+		 * Creates a new Autovala project in an specified path
+		 * @param projectName The name for the project
+		 * @param basePath The path where to create the project, or NULL to create in the working path
+		 * @return TRUE if there was an error; FALSE if everything went fine
+		 */
 		public bool init(string projectName,string ?basePath = null) {
 
 			bool error=false;
@@ -257,6 +274,11 @@ namespace AutoVala {
 			return error;
 		}
 
+		/**
+		 * Generates the CMAKE files for a project
+		 * @param basePath A base file or folder; the code will check if that file is a valid .avprj file; if not (or if it is a folder) will search in the folder containing it if there is a valid .avprj file. If not, will search upwards until a valid .avprj file is found, or the root is reached. NULL means to start searching in the current working directory
+		 * @return TRUE if there was an error; FALSE if everything went fine
+		 */
 		public bool cmake(string ?basePath = null) {
 
 			bool error;
@@ -348,6 +370,12 @@ namespace AutoVala {
 			return error;
 		}
 
+
+		/**
+		 * Updates the .avprj file of a project
+		 * @param basePath A base file or folder; the code will check if that file is a valid .avprj file; if not (or if it is a folder) will search in the folder containing it if there is a valid .avprj file. If not, will search upwards until a valid .avprj file is found, or the root is reached. NULL means to start searching in the current working directory
+		 * @return TRUE if there was an error; FALSE if everything went fine
+		 */
 		public bool refresh(string ?basePath = null) {
 
 			bool error;
@@ -390,6 +418,11 @@ namespace AutoVala {
 			return error;
 		}
 
+		/**
+		 * Returns all the files belonging to a project. Useful for version control systems.
+		 * @param basePath A base file or folder; the code will check if that file is a valid .avprj file; if not (or if it is a folder) will search in the folder containing it if there is a valid .avprj file. If not, will search upwards until a valid .avprj file is found, or the root is reached. NULL means to start searching in the current working directory
+		 * @return A list with all the files, relative to the project's root, or NULL if there was an error
+		 */
 		public string[]? get_files(string ?basePath = null) {
 
 			string[] all_files = {};
@@ -427,6 +460,11 @@ namespace AutoVala {
 			return all_files;
 		}
 
+		/**
+		 * Generates the PO files for a project, using gettext for extracting the strings from the source files
+		 * @param basePath A base file or folder; the code will check if that file is a valid .avprj file; if not (or if it is a folder) will search in the folder containing it if there is a valid .avprj file. If not, will search upwards until a valid .avprj file is found, or the root is reached. NULL means to start searching in the current working directory
+		 * @return TRUE if there was an error; FALSE if everything went fine
+		 */
 		public bool gettext(string ?basePath = null) {
 			// run xgettext to generate the basic pot file
 
@@ -498,7 +536,11 @@ namespace AutoVala {
 			return error;
 		}
 
-
+		/**
+		 * Clears the .avprj file, removing all the automatic elements and leaving only the manually added ones
+		 * @param basePath A base file or folder; the code will check if that file is a valid .avprj file; if not (or if it is a folder) will search in the folder containing it if there is a valid .avprj file. If not, will search upwards until a valid .avprj file is found, or the root is reached. NULL means to start searching in the current working directory
+		 * @return TRUE if there was an error; FALSE if everything went fine
+		 */
 		public bool clear(string ?basePath = null) {
 
 			this.config=new AutoVala.Configuration(basePath);
@@ -514,6 +556,12 @@ namespace AutoVala {
 			return false;
 		}
 
+		/**
+		 * Removes a binary from a project
+		 * @param projectPath A base file or folder; the code will check if that file is a valid .avprj file; if not (or if it is a folder) will search in the folder containing it if there is a valid .avprj file. If not, will search upwards until a valid .avprj file is found, or the root is reached. NULL means to start searching in the current working directory
+		 * @param binary_name The name of the binary to remove
+		 * @return TRUE if there was an error; FALSE if everything went fine
+		 */
 		public bool remove_binary(string? projectPath, string binary_name) {
 
 			var config=new AutoVala.Configuration(projectPath);
@@ -541,6 +589,18 @@ namespace AutoVala {
 			return false;
 		}
 
+		/**
+		 * Allows to add or modify a binary in a project
+		 * @param original_name The name of the binary to modify, or NULL to create a new one
+		 * @param projectPath A base file or folder; the code will check if that file is a valid .avprj file; if not (or if it is a folder) will search in the folder containing it if there is a valid .avprj file. If not, will search upwards until a valid .avprj file is found, or the root is reached. NULL means to start searching in the current working directory
+		 * @param binary_name The name of the binary to create, or the new name for an existing binary
+		 * @param is_library TRUE if the binary is a library; FALSE if it is an executable
+		 * @param base_path The root path for the binary, where all the source files will be searched
+		 * @param vala_options A list of options to pass to the Vala compiler
+		 * @param c_options A list of options to pass to the C compiler
+		 * @param libraries A list of C libraries (separated with blank spaces) needed to compile this binary
+		 * @return NULL if everything went fine, or an string with several messages specifying the errors ocurred during the process
+		 */
 		public string ? process_binary(string? original_name, string? projectPath, string binary_name, bool is_library, string base_path, string vala_options, string c_options, string libraries) {
 
 			string retval = "";
@@ -659,6 +719,11 @@ namespace AutoVala {
 			return null;
 		}
 
+		/**
+		 * Returns an object with all the binaries in this project and its source files
+		 * @param basePath A base file or folder; the code will check if that file is a valid .avprj file; if not (or if it is a folder) will search in the folder containing it if there is a valid .avprj file. If not, will search upwards until a valid .avprj file is found, or the root is reached. NULL means to start searching in the current working directory
+		 * @return NULL if there was an error; or a ValaProject object with the data of this project
+		 */
 		public ValaProject ? get_binaries_list(string ?basePath = null) {
 
 			this.config=new AutoVala.Configuration(basePath);
@@ -672,7 +737,6 @@ namespace AutoVala {
 
 			var project = new ValaProject();
 
-			project.elements = new Gee.ArrayList<PublicElement>();
 			project.projectPath = config.globalData.projectFolder;
 			project.projectName = config.globalData.projectName;
 			project.projectFile = config.globalData.configFile;
@@ -692,6 +756,12 @@ namespace AutoVala {
 			return project;
 		}
 
+		/**
+		 * Creates the metadata for a DEB package
+		 * @param ask If TRUE, will ask using the command line data like the packager's name, the linux distribution name, or the version; if FALSE, it will presume that the data is available in the user's configuration file (at ~/.config/autovala/packages.cfg)
+		 * @param projectPath A base file or folder; the code will check if that file is a valid .avprj file; if not (or if it is a folder) will search in the folder containing it if there is a valid .avprj file. If not, will search upwards until a valid .avprj file is found, or the root is reached. NULL means to start searching in the current working directory
+		 * @return TRUE if there was an error; FALSE if everything went fine
+		 */
 		public bool create_deb(bool ask = false, string ? basePath = null) {
 
 			bool retval;
@@ -718,7 +788,13 @@ namespace AutoVala {
 			}
 			return retval;
 		}
-		
+
+		/**
+		 * Creates the metadata for an RPM package
+		 * @param ask If TRUE, will ask using the command line data like the packager's name, the linux distribution name, or the version; if FALSE, it will presume that the data is available in the user's configuration file (at ~/.config/autovala/packages.cfg)
+		 * @param projectPath A base file or folder; the code will check if that file is a valid .avprj file; if not (or if it is a folder) will search in the folder containing it if there is a valid .avprj file. If not, will search upwards until a valid .avprj file is found, or the root is reached. NULL means to start searching in the current working directory
+		 * @return TRUE if there was an error; FALSE if everything went fine
+		 */
 		public bool create_rpm(bool ask = false, string ? basePath = null) {
 
 			bool retval;
@@ -751,6 +827,10 @@ namespace AutoVala {
 		public string projectName;
 		public string projectFile;
 		public Gee.List<PublicElement>? elements;
+
+		public ValaProject() {
+			this.elements = new Gee.ArrayList<PublicElement>();
+		}
 	}
 
 	public class PublicElement : GLib.Object {

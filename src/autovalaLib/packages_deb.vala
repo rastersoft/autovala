@@ -124,7 +124,6 @@ namespace AutoVala {
 					bool source = true;
 					var dis = new DataInputStream (f_control.read ());
 					string line;
-					string last_key = "";
 					string? key = "";
 					string data = "";
 					while ((line = dis.read_line (null)) != null) {

@@ -368,8 +368,6 @@ namespace AutoVala {
 
 		private bool check_module(string path,string module) {
 
-			Gee.List<string> not_found = new Gee.ArrayList<string>();
-
 			var file = File.new_for_path(Path.build_filename(path,"vapi",module+".vapi"));
 			if (!file.query_exists()) {
 				return true;
@@ -587,7 +585,6 @@ namespace AutoVala {
 			string tmp2 = "";
 
 			int pos1;
-			int pos2;
 			int size = 0;
 			int size2;
 			int current_offset = 0;
@@ -684,7 +681,6 @@ namespace AutoVala {
 
 			if (descr.length != 0) {
 				string text = "";
-				bool with_spaces = false;
 				bool after_cr = true;
 				foreach(var line in descr) {
 					if (line != "") {

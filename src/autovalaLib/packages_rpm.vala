@@ -107,7 +107,6 @@ namespace AutoVala {
 			try {
 				if (f_control.query_exists()) {
 					// store the original file to keep manually-added fields
-					bool source = true;
 					var dis = new DataInputStream (f_control.read ());
 					string line;
 					string? key = null;
@@ -163,7 +162,6 @@ namespace AutoVala {
 			try {
 				var dis = f_control.create_readwrite(GLib.FileCreateFlags.PRIVATE);
 				var of = new DataOutputStream(dis.output_stream as FileOutputStream);
-				bool not_first;
 
 				foreach (var def in definitions) {
 					of.put_string(def+"\n");
