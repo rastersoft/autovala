@@ -54,6 +54,8 @@ and enjoy.
 
 
 ## History of versions ##
+* version 0.99.15 (2015-02-15)
+   * Can use the canvas size of a SVG file to determine the size entry where to put it
 * version 0.99.14 (2015-02-12)
    * Allows to specify a different theme for icons
    * Now parses the INDEX.THEME file from an icon theme to know where to put an icon

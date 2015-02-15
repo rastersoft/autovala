@@ -243,6 +243,7 @@ namespace AutoVala {
 		private string iconCathegory;
 		private string[] appendText;
 		private string iconTheme;
+		private bool fixed_size;
 		private static bool addedSuffix=false;
 		private static string[] updateThemes = {};
 		private static ThemeList themes = new ThemeList();
@@ -282,13 +283,14 @@ namespace AutoVala {
 
 		public override bool configureLine(string line, bool automatic, string? condition, bool invertCondition, int lineNumber) {
 
-			if ((false == line.has_prefix("icon: ")) && (false == line.has_prefix("full_icon: "))) {
-				var badCommand = line.split(": ")[0];
-				ElementBase.globalData.addError(_("Invalid command %s after command %s (line %d)").printf(badCommand,this.command, lineNumber));
+			var command = line.split(": ")[0];
+			if ((command != "icon") && (command != "full_icon") && (command != "fixed_size_icon")) {
+				ElementBase.globalData.addError(_("Invalid command %s after command %s (line %d)").printf(command,this.command, lineNumber));
 				return true;
 			}
 			string data;
-			if (line.has_prefix("icon: ")) {
+			this.fixed_size = false;
+			if (command == "icon") {
 				// The line starts with 'icon: '
 				data=line.substring(6).strip();
 				var pos=data.index_of(" ");
@@ -303,17 +305,23 @@ namespace AutoVala {
 					}
 				}
 			} else {
-				// The line starts with 'full_icon: '
-				data=line.substring(11).strip();
+				if (command == "full_icon") {
+					// The line starts with 'full_icon: '
+					data=line.substring(11).strip();
+				} else {
+					// The line starts with 'fixed_size_icon: '
+					data=line.substring(17).strip();
+					this.fixed_size = true;
+				}
 				var pos=data.index_of(" ");
 				if (pos==-1) { // there is no theme for the icon; it is an error
-					ElementBase.globalData.addError(_("full_icon must have a cathegory and a theme (line %d)").printf(lineNumber));
+					ElementBase.globalData.addError(_("%s must have a cathegory and a theme (line %d)").printf(command,lineNumber));
 					return true;
 				}
 
 				var pos2=data.index_of(" ",pos+1);
 				if (pos2==-1) { // there is no cathegory for the icon; it is an error
-					ElementBase.globalData.addError(_("full_icon must have a cathegory and a theme (line %d)").printf(lineNumber));
+					ElementBase.globalData.addError(_("%s must have a cathegory and a theme (line %d)").printf(command,lineNumber));
 					return true;
 				}
 				this.iconTheme = data.substring(0,pos).strip();
@@ -323,7 +331,8 @@ namespace AutoVala {
 
 			this.add_theme(this.iconTheme);
 
-			return this.configureElement(data,null,null,automatic,condition,invertCondition);
+			// fixed_size_icon must be always manually added
+			return this.configureElement(data,null,null,this.fixed_size ? false : automatic,condition,invertCondition);
 		}
 
 		public override bool autoConfigure(string? path=null) {
@@ -373,7 +382,10 @@ namespace AutoVala {
 					return true;
 				}
 			} else if (this.name.has_suffix(".svg")) {
-				var entry = theme.check_size(this.iconCathegory,0,true);
+				IconEntry? entry = null;
+				if (!this.fixed_size) {
+					entry = theme.check_size(this.iconCathegory,0,true);
+				}
 				if (entry == null) {
 					// there are no SCALABLE entries, so let's try with the canvas size
 					int w;
@@ -386,6 +398,7 @@ namespace AutoVala {
 				}
 				if (entry == null) {
 					// If the icon doesn't have width or height info, or there is no valid entry for that size, put it in the biggest one
+					ElementBase.globalData.addWarning(_("Can't get the canvas size for the icon %s; putting it in the biggest entry in context %s, theme %s").printf(this.name, this.iconCathegory,this.iconTheme));
 					entry = theme.find_nearest(this.iconCathegory,0,true);
 				}
 				if (entry == null) {
@@ -505,7 +518,11 @@ namespace AutoVala {
 				if (this._automatic) {
 					dataStream.put_string("*");
 				}
-				dataStream.put_string("full_icon: %s %s %s\n".printf(this.iconTheme,this.iconCathegory,this.fullPath));
+				if (this.fixed_size) {
+					dataStream.put_string("fixed_size_icon: %s %s %s\n".printf(this.iconTheme,this.iconCathegory,this.fullPath));
+				} else {
+					dataStream.put_string("full_icon: %s %s %s\n".printf(this.iconTheme,this.iconCathegory,this.fullPath));
+				}
 			} catch (Error e) {
 				ElementBase.globalData.addError(_("Failed to store 'icon: %s' at config").printf(this.fullPath));
 				return true;

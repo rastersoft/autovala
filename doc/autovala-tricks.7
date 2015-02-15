@@ -8,6 +8,8 @@
 <p>Autovala-tricks(1)</p>
 <h1 id="name">NAME</h1>
 <p>Autovala tricks - Several tricks for Autovala</p>
+<h2 id="using-svg-icons-for-several-sizes-of-the-same-icon">Using SVG icons for several sizes of the same icon</h2>
+<p>Sometimes it is a good idea to have diferent pictures for the same icon, using one or another for diferent sizes. When the icons are in <strong>png</strong> format, there are no problems, but with <strong>svg</strong> icons, if the final theme has scalable entries, all of them will go there. To avoid this, just open the <strong>.avprj</strong> file and replace the command <strong>full_icon</strong> with <strong>fixed_size_icon</strong>. This command will always use the canvas size of the <strong>svg</strong> file to determine the fixed size entry where to put it, and will never place an <strong>svg</strong> icon in an scalable entry. For <strong>png</strong> files it works exactly the same that <strong>full_icon</strong>.</p>
 <h2 id="using-alternative-cmake-files">Using alternative CMAKE files</h2>
 <p>When updating the CMAKE files for Vala, Autovala will check if the <strong>AUTOVALA_CMAKE_SCRIPT</strong> environment variable is defined with a path. If that is the case, it will copy from that path the CMAKE scripts for the project, instead of using the default ones.</p>
 <h2 id="creating-packages-for-linux-distributions">Creating packages for linux distributions</h2>

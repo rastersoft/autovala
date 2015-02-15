@@ -4,6 +4,10 @@ Autovala-tricks(1)
 
 Autovala tricks - Several tricks for Autovala
 
+## Using SVG icons for several sizes of the same icon
+
+Sometimes it is a good idea to have diferent pictures for the same icon, using one or another for diferent sizes. When the icons are in **png** format, there are no problems, but with **svg** icons, if the final theme has scalable entries, all of them will go there. To avoid this, just open the **.avprj** file and replace the command **full_icon** with **fixed_size_icon**. This command will always use the canvas size of the **svg** file to determine the fixed size entry where to put it, and will never place an **svg** icon in an scalable entry. For **png** files it works exactly the same that **full_icon**.
+
 
 ## Using alternative CMAKE files
 

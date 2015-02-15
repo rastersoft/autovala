@@ -10,7 +10,7 @@
 <p>autovala fileformat - The syntax for autovala configuration file</p>
 <h1 id="description">DESCRIPTION</h1>
 <p>The project file has a very simple format. Usually you don't need to manually edit it, but when the guesses of autovala are incorrect, you can do it, and your changes will be remembered each time you refresh the file.</p>
-<p>The current version for the project file format is <strong>15</strong>.</p>
+<p>The current version for the project file format is <strong>16</strong>.</p>
 <p>The file is based on commands in the format:</p>
 <pre><code>    command: data</code></pre>
 <p>one in each line. Every line that starts with # is ignored (is a comment), but also will be removed when the file is recreated.</p>
@@ -59,6 +59,7 @@
 <li><p><strong>binary</strong>: specifies that the file is a precompiled binary (or a shell script) that must be copied as-is to vbin/**</p></li>
 <li><p><strong>full_icon</strong>: followed by the theme, the category and the icon path/name. Autovala will determine the icon size and use it to copy it to the right place (only if it is a <strong>.png</strong> file; it it is a <strong>.svg</strong> will copy to &quot;scalable&quot;). Also, by default, the cathegory will be <strong>apps</strong>, unless it is a <strong>.svg</strong> with <strong>-symbolic</strong>; in that case will be put in the <strong>status</strong> category. Example:</p>
 <pre><code>    full_icon: Hicolor Applications finger.svg</code></pre></li>
+<li><p><strong>fixed_size_icon</strong>: similar to full_icon, but for <strong>svg</strong> icons, they will be put always in a fixed size entry, based on the canvas size; will never be put in an scalable entry. This is useful when there are several SVG pictures for different sizes of the same icon.</p></li>
 <li><p><strong>pixmap</strong>: followed by a picture filename. Will be copied to <strong>share/pixmaps</strong></p></li>
 <li><p><strong>glade</strong>: the file specified is a glade UI file, that will be installed in <strong>share/project_name/</strong> These files, and the <strong>.vala</strong> source files, will be used with gettext to get the translatable strings.</p></li>
 <li><p><strong>dbus_service</strong>: the file specified is a D-Bus service. The file must be written as a classic D-Bus service file, but prefixing the binary filename with <script type="text/javascript">

@@ -8,7 +8,7 @@ autovala fileformat - The syntax for autovala configuration file
 
 The project file has a very simple format. Usually you don't need to manually edit it, but when the guesses of autovala are incorrect, you can do it, and your changes will be remembered each time you refresh the file.
 
-The current version for the project file format is **15**.
+The current version for the project file format is **16**.
 
 The file is based on commands in the format:
 
@@ -95,6 +95,8 @@ After that, it comes several commands, some of them repeated several times, to s
  * **full_icon**: followed by the theme, the category and the icon path/name. Autovala will determine the icon size and use it to copy it to the right place (only if it is a **.png** file; it it is a **.svg** will copy to "scalable"). Also, by default, the cathegory will be **apps**, unless it is a **.svg** with **-symbolic**; in that case will be put in the **status** category. Example:
 
             full_icon: Hicolor Applications finger.svg
+
+ * **fixed_size_icon**: similar to full_icon, but for **svg** icons, they will be put always in a fixed size entry, based on the canvas size; will never be put in an scalable entry. This is useful when there are several SVG pictures for different sizes of the same icon.
 
  * **pixmap**: followed by a picture filename. Will be copied to **share/pixmaps**
 
