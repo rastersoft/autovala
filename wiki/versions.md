@@ -1,3 +1,5 @@
+* version 0.99.16 (2015-02-17)
+   * Added preliminary support to export Autovala project files to Valama project files
 * version 0.99.15 (2015-02-15)
    * Can use the canvas size of a SVG file to determine the size entry where to put it
 * version 0.99.14 (2015-02-12)

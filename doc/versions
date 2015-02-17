@@ -6,6 +6,8 @@
 <div class="main_frame">
 <p><a href="index.html">Home</a></p>
 <ul>
+<li>version 0.99.16 (2015-02-17)<br /></li>
+<li>Added preliminary support to export Autovala project files to Valama project files<br /></li>
 <li>version 0.99.15 (2015-02-15)<br /></li>
 <li>Can use the canvas size of a SVG file to determine the size entry where to put it<br /></li>
 <li>version 0.99.14 (2015-02-12)<br /></li>

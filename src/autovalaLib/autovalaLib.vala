@@ -720,43 +720,6 @@ namespace AutoVala {
 		}
 
 		/**
-		 * Returns an object with all the binaries in this project and its source files
-		 * @param basePath A base file or folder; the code will check if that file is a valid .avprj file; if not (or if it is a folder) will search in the folder containing it if there is a valid .avprj file. If not, will search upwards until a valid .avprj file is found, or the root is reached. NULL means to start searching in the current working directory
-		 * @return NULL if there was an error; or a ValaProject object with the data of this project
-		 */
-		public ValaProject ? get_binaries_list(string ?basePath = null) {
-
-			this.config=new AutoVala.Configuration(basePath);
-			if (config.globalData.error) {
-				return null;
-			}
-
-			if (config.readConfiguration()) {
-				return null;
-			}
-
-			var project = new ValaProject();
-
-			project.projectPath = config.globalData.projectFolder;
-			project.projectName = config.globalData.projectName;
-			project.projectFile = config.globalData.configFile;
-
-			foreach (var element in config.globalData.globalElements) {
-				var newElement = new PublicElement(element.eType, element.fullPath, element.name);
-				if ((element.eType == ConfigType.VALA_LIBRARY) || (element.eType == ConfigType.VALA_BINARY)) {
-					var binElement = element as ElementValaBinary;
-					newElement.set_binary_data(binElement.get_vala_opts(),binElement.get_c_opts(),binElement.get_libraries());
-					newElement.sources = binElement.sources;
-					newElement.c_sources = binElement.cSources;
-					newElement.unitests = binElement.unitests;
-					newElement.vapis = binElement.vapis;
-				}
-				project.elements.add(newElement);
-			}
-			return project;
-		}
-
-		/**
 		 * Creates the metadata for a DEB package
 		 * @param ask If TRUE, will ask using the command line data like the packager's name, the linux distribution name, or the version; if FALSE, it will presume that the data is available in the user's configuration file (at ~/.config/autovala/packages.cfg)
 		 * @param projectPath A base file or folder; the code will check if that file is a valid .avprj file; if not (or if it is a folder) will search in the folder containing it if there is a valid .avprj file. If not, will search upwards until a valid .avprj file is found, or the root is reached. NULL means to start searching in the current working directory
@@ -819,6 +782,41 @@ namespace AutoVala {
 			}
 			return retval;
 		}
+
+		/**
+		 * Returns an object with all the binaries in this project and its source files
+		 * @param basePath A base file or folder; the code will check if that file is a valid .avprj file; if not (or if it is a folder) will search in the folder containing it if there is a valid .avprj file. If not, will search upwards until a valid .avprj file is found, or the root is reached. NULL means to start searching in the current working directory
+		 * @return NULL if there was an error; or a ValaProject object with the data of this project
+		 */
+		public ValaProject ? get_binaries_list(string ?basePath = null) {
+
+			this.config=new AutoVala.Configuration(basePath);
+			if (config.globalData.error) {
+				return null;
+			}
+
+			if (config.readConfiguration()) {
+				return null;
+			}
+
+			var project = new ValaProjectInternal();
+
+			project.projectPath = config.globalData.projectFolder;
+			project.projectName = config.globalData.projectName;
+			project.projectFile = config.globalData.configFile;
+
+			foreach (var element in config.globalData.globalElements) {
+				if ((element.eType == ConfigType.VALA_LIBRARY) || (element.eType == ConfigType.VALA_BINARY)) {
+					project.add_binary(element as ElementValaBinary);
+					continue;
+				}
+				if (element.eType == ConfigType.GLADE) {
+					project.add_glade(element as ElementGlade);
+					continue;
+				}
+			}
+			return project;
+		}
 	}
 
 	public class ValaProject : GLib.Object {
@@ -826,16 +824,51 @@ namespace AutoVala {
 		public string projectPath;
 		public string projectName;
 		public string projectFile;
-		public Gee.List<PublicElement>? elements;
+		public Gee.List<PublicBinary>? binaries;
+		public Gee.List<PublicGlade>? ui;
 
 		public ValaProject() {
-			this.elements = new Gee.ArrayList<PublicElement>();
+			this.binaries = new Gee.ArrayList<PublicBinary>();
+			this.ui = new Gee.ArrayList<PublicGlade>();
 		}
 	}
 
-	public class PublicElement : GLib.Object {
+	/**
+	 * This class allows to use private classes as parameters to initialize a ValaProject object
+	 */
+	private class ValaProjectInternal : ValaProject {
+
+		public void add_binary(ElementValaBinary binElement) {
+
+			var newElement = new PublicBinary(binElement.eType, binElement.fullPath, binElement.name, binElement.currentNamespace);
+			newElement.set_binary_data(binElement.get_vala_opts(),binElement.get_c_opts(),binElement.get_libraries());
+			newElement.sources = binElement.sources;
+			newElement.c_sources = binElement.cSources;
+			newElement.unitests = binElement.unitests;
+			newElement.vapis = binElement.vapis;
+			newElement.packages = binElement.packages;
+			this.binaries.add(newElement);
+		}
+
+		public void add_glade(ElementGlade element) {
+			var newElement = new PublicGlade(element.fullPath);
+			this.ui.add(newElement);
+		}
+	}
+
+	public class PublicGlade : GLib.Object {
+
+		public string fullPath;
+
+		public PublicGlade(string path) {
+			this.fullPath = path;
+		}
+	}
+
+	public class PublicBinary : GLib.Object {
 
 		public ConfigType type;
+		public string? library_namespace;
 		public string? fullPath;
 		public string name;
 		public string vala_opts;
@@ -845,8 +878,12 @@ namespace AutoVala {
 		public Gee.List<SourceElement ?> c_sources;
 		public Gee.List<VapiElement ?> vapis;
 		public Gee.List<SourceElement ?> unitests;
+		public Gee.List<PackageElement ?> packages;
+		public int major=0;
+		public int minor=0;
+		public int revision=0;
 
-		public PublicElement(ConfigType type,string? fullPath, string name) {
+		public PublicBinary(ConfigType type,string? fullPath, string name, string? current_namespace) {
 			this.type = type;
 			this.fullPath = fullPath;
 			this.name = name;
@@ -857,6 +894,7 @@ namespace AutoVala {
 			this.c_sources = null;
 			this.vapis = null;
 			this.unitests = null;
+			this.library_namespace = current_namespace;
 		}
 
 		public void set_binary_data(string vala_options,string c_options,string libraries) {

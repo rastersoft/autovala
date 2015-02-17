@@ -367,7 +367,7 @@ namespace AutovalaPlugin {
 		 * @param project An Autovala project object
 		 * @param fileList A list where all the files will be stored
 		 */
-		private void fill_vala_files(PublicElement element, string path, ValaProject project, Gee.ArrayList<ElementProjectViewer> fileList) {
+		private void fill_vala_files(PublicBinary element, string path, ValaProject project, Gee.ArrayList<ElementProjectViewer> fileList) {
 
 			if ((element.type != ConfigType.VALA_BINARY) && (element.type != ConfigType.VALA_LIBRARY)) {
 				return;
@@ -441,7 +441,7 @@ namespace AutovalaPlugin {
 		 * @param fileList The list of files to add
 		 * @param element The data of the parent binary element
 		 */
-		private void add_files(TreeIter tmpIter,Gee.ArrayList<ElementProjectViewer> fileList, AutoVala.PublicElement? element) {
+		private void add_files(TreeIter tmpIter,Gee.ArrayList<ElementProjectViewer> fileList, AutoVala.PublicBinary? element) {
 
 			string? pixbuf = null;
 			TreeIter? elementIter = null;
@@ -500,7 +500,7 @@ namespace AutovalaPlugin {
 			}
 			
 			var ignorePaths = new Gee.ArrayList<string>();
-			var list = project.elements;
+			var list = project.binaries;
 
 			this.treeModel.append(out tmpIter,null);
 			this.treeModel.set(tmpIter,0,_("%s <b>(Project file)</b>").printf(GLib.Path.get_basename(project.projectFile)),1,project.projectFile,2,"autovala-plugin-project",4,ProjectEntryTypes.PROJECT_FILE,-1);
@@ -690,7 +690,7 @@ namespace AutovalaPlugin {
 			if(this.editing) {
 				var project_data = project.get_binaries_list(project_file);
 				if (project_data != null) {
-					foreach(var element in project_data.elements) {
+					foreach(var element in project_data.binaries) {
 						if (((element.type == AutoVala.ConfigType.VALA_BINARY) || (element.type == AutoVala.ConfigType.VALA_LIBRARY)) && (element.name == binary_name)) {
 							this.name.text = element.name;
 							this.path.set_filename(Path.build_filename(project_data.projectPath,element.fullPath));
