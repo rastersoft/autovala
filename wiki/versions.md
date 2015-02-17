@@ -1,3 +1,5 @@
+* version 0.99.17 (2015-02-17)
+   * Better support for exporting Autovala projects to Valama
 * version 0.99.16 (2015-02-17)
    * Added preliminary support to export Autovala project files to Valama project files
 * version 0.99.15 (2015-02-15)

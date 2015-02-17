@@ -8,6 +8,14 @@
 <p>Autovala-tricks(1)</p>
 <h1 id="name">NAME</h1>
 <p>Autovala tricks - Several tricks for Autovala</p>
+<h2 id="using-valama">Using Valama</h2>
+<p>Autovala can export a project to a Valama project, allowing to use this great editor. Unfortunately, the integration is still quite poor. Currently, the workflow is:</p>
+<ul>
+<li>Refresh your Autovala project with <em>autovala refresh</em> and export the project with <em>autovala valama</em>. This will generate a Valama project with the same packages and sources than the Autovala project<br /></li>
+<li>Open that project and work<br /></li>
+<li>Every time you do a change that modifies the package list (like adding or removing a Using), or add or delete a source file, you need to refresh the Autovala project. If you want to get the changes in the package list reflected in Valama, you must export the project again and reload it</li>
+</ul>
+<p>I hope to have a much better integration in a near future.</p>
 <h2 id="using-svg-icons-for-several-sizes-of-the-same-icon">Using SVG icons for several sizes of the same icon</h2>
 <p>Sometimes it is a good idea to have diferent pictures for the same icon, using one or another for diferent sizes. When the icons are in <strong>png</strong> format, there are no problems, but with <strong>svg</strong> icons, if the final theme has scalable entries, all of them will go there. To avoid this, just open the <strong>.avprj</strong> file and replace the command <strong>full_icon</strong> with <strong>fixed_size_icon</strong>. This command will always use the canvas size of the <strong>svg</strong> file to determine the fixed size entry where to put it, and will never place an <strong>svg</strong> icon in an scalable entry. For <strong>png</strong> files it works exactly the same that <strong>full_icon</strong>.</p>
 <h2 id="using-alternative-cmake-files">Using alternative CMAKE files</h2>

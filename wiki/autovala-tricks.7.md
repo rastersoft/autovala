@@ -4,6 +4,17 @@ Autovala-tricks(1)
 
 Autovala tricks - Several tricks for Autovala
 
+## Using Valama
+
+Autovala can export a project to a Valama project, allowing to use this great editor. Unfortunately, the integration is still quite poor. Currently, the workflow is:
+
+  * Refresh your Autovala project with *autovala refresh* and export the project with *autovala valama*. This will generate a Valama project with the same packages and sources than the Autovala project
+  * Open that project and work
+  * Every time you do a change that modifies the package list (like adding or removing a Using), or add or delete a source file, you need to refresh the Autovala project. If you want to get the changes in the package list reflected in Valama, you must export the project again and reload it
+
+I hope to have a much better integration in a near future.
+
+
 ## Using SVG icons for several sizes of the same icon
 
 Sometimes it is a good idea to have diferent pictures for the same icon, using one or another for diferent sizes. When the icons are in **png** format, there are no problems, but with **svg** icons, if the final theme has scalable entries, all of them will go there. To avoid this, just open the **.avprj** file and replace the command **full_icon** with **fixed_size_icon**. This command will always use the canvas size of the **svg** file to determine the fixed size entry where to put it, and will never place an **svg** icon in an scalable entry. For **png** files it works exactly the same that **full_icon**.
