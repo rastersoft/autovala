@@ -6,14 +6,13 @@ Autovala tricks - Several tricks for Autovala
 
 ## Using Valama
 
-Autovala can export a project to a Valama project, allowing to use this great editor. Unfortunately, the integration is still quite poor. Currently, the workflow is:
+Autovala can export a project to a Valama project, allowing to use this great editor.
 
-  * Refresh your Autovala project with *autovala refresh* and export the project with *autovala valama*. This will generate a Valama project with the same packages and sources than the Autovala project
-  * Open that project and work
-  * Every time you do a change that modifies the package list (like adding or removing a Using), or add or delete a source file, you need to refresh the Autovala project. If you want to get the changes in the package list reflected in Valama, you must export the project again and reload it
+It is a good idea to refresh the data in the Autovala project using *autovala refresh* before exporting it with *autovala valama*.
 
-I hope to have a much better integration in a near future.
+When the Autovala project contains several binaries, it will generate one Valama project for each one. Also, if one binary depends of another one, both will be added in the same Valama project. This allows to better edit both. An example is Autovala itself: it is a main library, *autovalaLib*, used by the main executable, *autovala*, and another library, *autovalaPlugin*.
 
+Remember that, currently, this support is extremely limited. This means that you must update your Autovala project with *autovala update* manually from command line, and sometimes you will have to use again *autovala valama* and open again the Valama project to reflect some changes in the editor. I hope to add, in a near future, more support.
 
 ## Using SVG icons for several sizes of the same icon
 
