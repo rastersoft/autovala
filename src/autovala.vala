@@ -1,5 +1,5 @@
 /*
- Copyright 2013-2014 (C) Raster Software Vigo (Sergio Costas)
+ Copyright 2013-2015 (C) Raster Software Vigo (Sergio Costas)
 
  This file is part of AutoVala
 
@@ -20,7 +20,7 @@ using GLib;
 using Gee;
 using Posix;
 
-//project version = 0.99.16
+//project version = 0.99.17
 
 void help() {
 
@@ -197,7 +197,7 @@ int main(string[] argv) {
 			return -1;
 		}
 		foreach(var element in data.binaries) {
-			generate_valama(data.projectPath,element,data.ui);
+			generate_valama(element,data);
 		}
 		GLib.stderr.printf(_("Done\n"));
 		break;
@@ -208,9 +208,9 @@ int main(string[] argv) {
 	return 0;
 }
 
-bool generate_valama(string project_path, AutoVala.PublicBinary element, Gee.List<AutoVala.PublicGlade>? ui) {
+bool generate_valama(AutoVala.PublicBinary element, AutoVala.ValaProject data) {
 
-	var tmpdata = GLib.Path.build_filename(project_path,"valama.tmp",element.name);
+	var tmpdata = GLib.Path.build_filename(data.projectPath,"valama.tmp",element.name);
 	var tmpfile = File.new_for_path(tmpdata);
 	if (!tmpfile.query_exists()) {
 		try {
@@ -243,37 +243,19 @@ bool generate_valama(string project_path, AutoVala.PublicBinary element, Gee.Lis
 		return true;
 	}
 
-	var path = GLib.Path.build_filename(project_path,element.name+".vlp");
-
-	Gee.List<string> sources = new Gee.ArrayList<string>();
-	foreach (var source in element.sources) {
-		add_directory(element.fullPath,source.elementName,sources);
-	}
-	foreach (var source in element.vapis) {
-		add_directory(element.fullPath,source.elementName,sources);
-	}
-	foreach (var source in element.unitests) {
-		add_directory(element.fullPath,source.elementName,sources);
-	}
+	var path = GLib.Path.build_filename(data.projectPath,element.name+".vlp");
 
 	Gee.List<string> ui_files = new Gee.ArrayList<string>();
-	foreach (var ui_element in ui) {
+	foreach (var ui_element in data.ui) {
 		add_directory(null,ui_element.fullPath,ui_files);
 	}
 
+	Gee.List<string> sources = new Gee.ArrayList<string>();
 	Gee.List<string> packages = new Gee.ArrayList<string>();
-	foreach (var package in element.packages) {
-		if ((package.type != AutoVala.packageType.DO_CHECK) && (package.type != AutoVala.packageType.NO_CHECK)) {
-			continue;
-		}
-		packages.add(package.elementName);
-	}
-	if (-1 == packages.index_of("glib-2.0")) {
-		packages.add("glib-2.0");
-	}
-	if (-1 == packages.index_of("gobject-2.0")) {
-		packages.add("gobject-2.0");
-	}
+	packages.add("glib-2.0");
+	packages.add("gobject-2.0");
+
+	get_data_for_binary(element,data,sources,packages);
 
 	var file=File.new_for_path(path);
 	if (file.query_exists()) {
@@ -305,19 +287,56 @@ bool generate_valama(string project_path, AutoVala.PublicBinary element, Gee.Lis
 		foreach (var folder in sources) {
 			data_stream.put_string("\t\t<directory>%s</directory>\n".printf(folder));
 		}
-		data_stream.put_string("\t\t<directory>%s</directory>\n".printf(GLib.Path.build_filename("valama.tmp",element.name)));
 		data_stream.put_string("\t</source-directories>\n");
 		data_stream.put_string("\t<ui-directories>\n");
 		foreach (var folder in ui_files) {
 			data_stream.put_string("\t\t<directory>%s</directory>\n".printf(folder));
 		}
 		data_stream.put_string("\t</ui-directories>\n");
+		data_stream.put_string("\t<data-files>\n");
+		data_stream.put_string("\t\t<file>%s</file>\n".printf(GLib.Path.get_basename(data.projectFile)));
+		data_stream.put_string("\t</data-files>\n");
 		data_stream.put_string("</project>\n");
 	} catch (Error e) {
 		GLib.stderr.printf(_("Failed to write to valama project file %s"),path);
 		return true;
 	}
 	return false;
+}
+
+void get_data_for_binary(AutoVala.PublicBinary element, AutoVala.ValaProject data, Gee.List<string> sources, Gee.List<string> packages) {
+
+	foreach (var source in element.sources) {
+		add_directory(element.fullPath,source.elementName,sources);
+	}
+	foreach (var source in element.vapis) {
+		add_directory(element.fullPath,source.elementName,sources);
+	}
+	foreach (var source in element.unitests) {
+		add_directory(element.fullPath,source.elementName,sources);
+	}
+	var constants = GLib.Path.build_filename("valama.tmp",element.name);
+	if (sources.index_of(constants) == -1) {
+		sources.add(constants);
+	}
+
+	foreach (var package in element.packages) {
+		if (package.type == AutoVala.packageType.LOCAL) {
+			foreach (var subelement in data.binaries) {
+				if (subelement.library_namespace == package.elementName) {
+					get_data_for_binary(subelement,data,sources,packages);
+					break;
+				}
+			}
+			continue;
+		}
+		if ((package.type != AutoVala.packageType.DO_CHECK) && (package.type != AutoVala.packageType.NO_CHECK)) {
+			continue;
+		}
+		if (packages.index_of(package.elementName) == -1) {
+			packages.add(package.elementName);
+		}
+	}
 }
 
 void add_directory(string? base_path,string file_path, Gee.List<string> list) {
