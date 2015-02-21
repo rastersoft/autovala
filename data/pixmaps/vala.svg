@@ -9,11 +9,11 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="99.017601"
-   height="102.92968"
+   width="16"
+   height="16"
    id="svg2"
    version="1.1"
-   inkscape:version="0.48.4 r9939"
+   inkscape:version="0.91 r13725"
    sodipodi:docname="vala.svg">
   <defs
      id="defs4" />
@@ -24,14 +24,14 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="5.6482455"
-     inkscape:cx="47.657445"
-     inkscape:cy="50.856311"
+     inkscape:zoom="49.625"
+     inkscape:cx="8"
+     inkscape:cy="8"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
-     inkscape:window-width="1680"
-     inkscape:window-height="984"
+     inkscape:window-width="1920"
+     inkscape:window-height="1022"
      inkscape:window-x="0"
      inkscape:window-y="27"
      inkscape:window-maximized="1"
@@ -55,14 +55,14 @@
      inkscape:label="Capa 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(-144.67772,-312.46094)">
+     transform="translate(-144.67772,-399.39062)">
     <g
-       transform="matrix(-1,0,0,1,390.36719,0)"
-       style="font-size:40px;font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Arial;-inkscape-font-specification:Arial Italic"
+       transform="matrix(-0.15231152,0,0,0.15231152,182.55942,351.90115)"
+       style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:40px;line-height:125%;font-family:Arial;-inkscape-font-specification:'Arial Italic';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none"
        id="flowRoot2985">
       <path
          d="m 232.48437,322.19531 -13.0209,91.19531 -10.96875,0 -52.2291,-92.03906 -4.71436,0 -2.87939,-6.89062 34.45313,0 2.87938,6.89062 -12.16063,0 c -0.51567,0.0938 -0.96098,0.4454 -1.33594,1.05469 -0.32817,0.60946 -0.46879,1.12509 -0.42187,1.54687 l 40.78281,71.15625 8.7875,-70.875 c 0.28116,-0.56241 0.25772,-1.14834 -0.0703,-1.75781 -0.28135,-0.65616 -0.72666,-0.96085 -1.33594,-1.05469 l -5.17772,0 -2.87939,-6.96093 28.61719,0 2.87938,6.96093 -11.20509,0"
-         style="font-size:144px;font-weight:bold;font-family:Abyssinica SIL;-inkscape-font-specification:Abyssinica SIL Bold Italic"
+         style="font-weight:bold;font-size:144px;font-family:'Abyssinica SIL';-inkscape-font-specification:'Abyssinica SIL Bold Italic'"
          id="path2994"
          inkscape:connector-curvature="0"
          sodipodi:nodetypes="cccccccccccccccccccc" />

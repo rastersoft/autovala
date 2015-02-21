@@ -496,7 +496,10 @@ namespace AutoVala {
 					ElementIcon.addedSuffix=true;
 					dataStream.put_string("IF( NOT (${ICON_UPDATE} STREQUAL \"OFF\" ))\n");
 					foreach(var theme in ElementIcon.updateThemes) {
-						dataStream.put_string("\tinstall (CODE \"execute_process ( COMMAND /usr/bin/gtk-update-icon-cache-3.0 -t ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATAROOTDIR}/icons/%s )\" )\n".printf(theme));
+						var th = ElementIcon.themes.find_theme(theme);
+						if (th!=null) {
+							dataStream.put_string("\tinstall (CODE \"execute_process ( COMMAND /usr/bin/gtk-update-icon-cache-3.0 -t ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATAROOTDIR}/icons/%s )\" )\n".printf(th.folder_name));
+						}
 					}
 					dataStream.put_string("ENDIF()\n");
 				} catch (Error e) {
