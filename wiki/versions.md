@@ -1,3 +1,6 @@
+* version 0.99.18 (2015-02-23)
+   * Now calls gtk-update-icon-cache with the right path
+   * Updated spanish translation and translatable strings
 * version 0.99.17 (2015-02-17)
    * Better support for exporting Autovala projects to Valama
 * version 0.99.16 (2015-02-17)
