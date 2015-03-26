@@ -1414,6 +1414,8 @@ namespace AutoVala {
 						addDefines=true;
 						dataStream.put_string("if (%s)\n".printf(element.name));
 						dataStream.put_string("\tset (COMPILE_OPTIONS ${COMPILE_OPTIONS} -D %s)\n".printf(element.name));
+                        dataStream.put_string("\tset (CMAKE_C_FLAGS \"${CMAKE_C_FLAGS} -D%s \" )\n".printf(element.name));
+                        dataStream.put_string("\tset (CMAKE_CXX_FLAGS \"${CMAKE_CXX_FLAGS} -D%s \" )\n".printf(element.name));
 						dataStream.put_string("endif ()\n");
 					}
 				}
