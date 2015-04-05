@@ -20,7 +20,7 @@ using GLib;
 using Gee;
 using Posix;
 
-//project version = 0.99.18
+//project version = 0.99.19
 
 void help() {
 
@@ -201,11 +201,31 @@ int main(string[] argv) {
 		}
 		GLib.stderr.printf(_("Done\n"));
 		break;
+	case "valamang":
+		if (argv.length!=2) {
+			help();
+			return -1;
+		}
+		var gen = new AutoVala.ManageProject();
+		var data = gen.get_binaries_list();
+		gen.showErrors();
+		if (data == null) {
+			GLib.stderr.printf(_("Aborting\n"));
+			return -1;
+		}
+		generate_valamang(data);
+		GLib.stderr.printf(_("Done\n"));
+		break;
 	default:
 		help();
 		return -1;
 	}
 	return 0;
+}
+
+bool generate_valamang(AutoVala.ValaProject ?data) {
+
+    return false;
 }
 
 bool generate_valama(AutoVala.PublicBinary element, AutoVala.ValaProject data) {

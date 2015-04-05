@@ -54,6 +54,9 @@ and enjoy.
 
 
 ## History of versions ##
+* version 0.99.19 (2015-04-06)
+   * Now also passes the definitions set in CMAKE with -D to the C source files
+   * Adds again the GLADE mimetype to the POTFILES.in .ui files, to ensure that intltool-update recognizes them
 * version 0.99.18 (2015-02-23)
    * Now calls gtk-update-icon-cache with the right path
    * Updated spanish translation and translatable strings
