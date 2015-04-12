@@ -45,6 +45,10 @@ set(MODULES_TO_CHECK ${MODULES_TO_CHECK} x11)
 
 pkg_check_modules(DEPS REQUIRED ${MODULES_TO_CHECK})
 
+if ( NOT EXISTS "/usr/include/readline/readline.h" )
+	message(FATAL_ERROR "Can't find the file /usr/include/readline/readline.h")
+endif()
+
 find_program ( WHERE_PANDOC pandoc )
 if ( NOT WHERE_PANDOC )
 	MESSAGE(FATAL_ERROR "Error! PANDOC is not installed.")

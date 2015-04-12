@@ -54,6 +54,9 @@ and enjoy.
 
 
 ## History of versions ##
+* version 0.99.20 (2015-04-12)
+   * Now adds the field VERSION in the DEBIAN/CONTROL file
+   * Allows to set files that must be present during build (needed for readline, since it doesn't have pkg-config file)
 * version 0.99.19 (2015-04-06)
    * Now also passes the definitions set in CMAKE with -D to the C source files
    * Adds again the GLADE mimetype to the POTFILES.in .ui files, to ensure that intltool-update recognizes them

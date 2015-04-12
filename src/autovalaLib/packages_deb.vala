@@ -213,6 +213,9 @@ namespace AutoVala {
 				if (!binary_keys.has_key("Package")) {
 					of.put_string("Package: %s\n".printf(this.config.globalData.projectName));
 				}
+				if (!binary_keys.has_key("Version")) {
+					of.put_string("Version: %s\n".printf(this.version));
+				}
 				if (!binary_keys.has_key("Architecture")) {
 					of.put_string("Architecture: any\n");
 				}

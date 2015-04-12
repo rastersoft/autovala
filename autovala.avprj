@@ -10,7 +10,7 @@ custom: data/debian share/autovala/debian
 
 
 vala_binary: src/autovala
-*version: 0.99.19
+*version: 0.99.20
 compile_c_options: -O2
 vala_local_package: AutoVala
 *vala_package: posix
@@ -120,4 +120,6 @@ manpage: wiki/autovala-tricks.7.md default 7
 manpage: wiki/autovala.1.md
 
 *bash_completion: data/bash_completion/autovala
+
+source_dependency: /usr/include/readline/readline.h
 

@@ -6,6 +6,12 @@
 <div class="main_frame">
 <p><a href="index.html">Home</a></p>
 <ul>
+<li>version 0.99.20 (2015-04-12)<br /></li>
+<li>Now adds the field VERSION in the DEBIAN/CONTROL file<br /></li>
+<li>Allows to set files that must be present during build (needed for readline, since it doesn't have pkg-config file)<br /></li>
+<li>version 0.99.19 (2015-04-06)<br /></li>
+<li>Now also passes the definitions set in CMAKE with -D to the C source files<br /></li>
+<li>Adds again the GLADE mimetype to the POTFILES.in .ui files, to ensure that intltool-update recognizes them<br /></li>
 <li>version 0.99.18 (2015-02-23)<br /></li>
 <li>Now calls gtk-update-icon-cache with the right path<br /></li>
 <li>Updated spanish translation and translatable strings<br /></li>

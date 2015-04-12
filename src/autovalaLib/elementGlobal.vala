@@ -166,6 +166,17 @@ namespace AutoVala {
 					}
 				}
 
+                // Check for files that must be available
+                foreach(var element in ElementBase.globalData.globalElements) {
+					if ((element.eType != ConfigType.SOURCE_DEPENDENCY) && (element.eType!=ConfigType.BINARY_DEPENDENCY)) {
+						continue;
+					}
+				    printConditions.printCondition(element.condition,element.invertCondition);
+					dataStream.put_string("if ( NOT EXISTS \"%s\" )\n\tmessage(FATAL_ERROR \"Can't find the file %s\")\nendif()\n".printf(element.path,element.path));
+					printConditions.printTail();
+					dataStream.put_string("\n");
+				}
+
 				// check for PANDOC, but only if there are man pages in non-groff format
 				foreach(var element in ElementBase.globalData.globalElements) {
 					if (element.eType!=ConfigType.MANPAGE) {
