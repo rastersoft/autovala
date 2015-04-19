@@ -64,6 +64,7 @@ namespace AutoVala {
 		private bool has_icons;
 		private bool has_schemes;
 		private bool has_manpages;
+		private bool has_bash_completion;
 
 		private Gee.Map<string,string> libraries;
 
@@ -92,6 +93,7 @@ namespace AutoVala {
 			this.has_icons = false;
 			this.has_schemes = false;
 			this.has_manpages = false;
+			this.has_bash_completion = false;
 		}
 
 		public string read_lines_from_exec(string[] spawn_args) {
@@ -198,6 +200,9 @@ namespace AutoVala {
 				if (element.eType == ConfigType.MANPAGE) {
 					this.has_manpages = true;
 				}
+				if (element.eType == ConfigType.BASH_COMPLETION) {
+					this.has_bash_completion = true;
+				}
 			}
 			foreach (var element in config.globalData.globalElements) {
 				if ((element.eType == ConfigType.VALA_LIBRARY) || (element.eType == ConfigType.VALA_BINARY)) {
@@ -269,9 +274,17 @@ namespace AutoVala {
 			this.source_dependencies.add("/usr/bin/cmake");
 			this.source_dependencies.add("/usr/bin/xgettext");
 			this.source_dependencies.add("/usr/bin/pkg-config");
+			this.source_dependencies.add("/usr/bin/gcc");
+			this.source_dependencies.add("/usr/bin/g++");
+			this.source_dependencies.add("/usr/bin/make");
+			this.source_dependencies.add("/usr/bin/intltool-update");
 
 			if (this.has_manpages) {
 				this.source_dependencies.add("/usr/bin/pandoc");
+			}
+
+			if (this.has_bash_completion) {
+			    this.source_dependencies.add("/usr/share/pkgconfig/bash-completion.pc");
 			}
 
 			return false;
