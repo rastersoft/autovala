@@ -278,6 +278,7 @@ namespace AutoVala {
 			this.source_dependencies.add("/usr/bin/g++");
 			this.source_dependencies.add("/usr/bin/make");
 			this.source_dependencies.add("/usr/bin/intltool-update");
+			this.source_dependencies.add("/usr/bin/msgfmt");
 
 			if (this.has_manpages) {
 				this.source_dependencies.add("/usr/bin/pandoc");

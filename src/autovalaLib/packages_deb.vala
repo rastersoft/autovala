@@ -184,6 +184,10 @@ namespace AutoVala {
 					of.put_string("Priority: optional\n");
 				}
 
+                if (!source_keys.has_key("Section")) {
+					of.put_string("Section: misc\n");
+				}
+
 				foreach (var key in source_keys.keys) {
 					if ((key == "Build-Depends") || (key == "Maintainer") || (key == "Source")) {
 						continue;
