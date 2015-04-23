@@ -6,6 +6,11 @@
 <div class="main_frame">
 <p><a href="index.html">Home</a></p>
 <ul>
+<li>version 0.99.21 (2015-04-23)<br /></li>
+<li>Now sets the right permissions to DEB and RPM files<br /></li>
+<li>Added msgfmt as dependency for programs<br /></li>
+<li>Now fills the SECTION field in DEB packages<br /></li>
+<li>Add bash-completion.pc as dependency when there are bash-completion files<br /></li>
 <li>version 0.99.20 (2015-04-12)<br /></li>
 <li>Now adds the field VERSION in the DEBIAN/CONTROL file<br /></li>
 <li>Allows to set files that must be present during build (needed for readline, since it doesn't have pkg-config file)<br /></li>

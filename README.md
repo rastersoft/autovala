@@ -54,6 +54,11 @@ and enjoy.
 
 
 ## History of versions ##
+* version 0.99.21 (2015-04-23)
+   * Now sets the right permissions to DEB and RPM files
+   * Added msgfmt as dependency for programs
+   * Now fills the SECTION field in DEB packages
+   * Add bash-completion.pc as dependency when there are bash-completion files
 * version 0.99.20 (2015-04-12)
    * Now adds the field VERSION in the DEBIAN/CONTROL file
    * Allows to set files that must be present during build (needed for readline, since it doesn't have pkg-config file)
