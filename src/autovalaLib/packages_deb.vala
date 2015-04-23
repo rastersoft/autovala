@@ -118,7 +118,8 @@ namespace AutoVala {
 			Gee.Map<string,string> source_keys = new Gee.HashMap<string,string>();
 			Gee.Map<string,string> binary_keys = new Gee.HashMap<string,string>();
 
-			var f_control = File.new_for_path(Path.build_filename(path,"control"));
+            var f_control_path = Path.build_filename(path,"control");
+			var f_control = File.new_for_path(f_control_path);
 			try {
 				if (f_control.query_exists()) {
 					bool source = true;
@@ -247,6 +248,7 @@ namespace AutoVala {
 					of.put_string("Description: %s\n".printf(binary_keys.get("Description")));
 				}
 				dis.close();
+				Posix.chmod(f_control_path,420); // 644 permissions)
 			} catch (Error e) {
 				ElementBase.globalData.addError(_("Failed to write data to debian/control file (%s)").printf(e.message));
 				return true;
@@ -279,6 +281,7 @@ namespace AutoVala {
 					}
 					dis.close();
 					dis2.close();
+					Posix.chmod(fname,493); // 755 permissions)
 				} catch (Error e) {
 					ElementBase.globalData.addError(_("Failed to write data to debian/rules file (%s)").printf(e.message));
 					f_rules.delete();
@@ -300,7 +303,8 @@ namespace AutoVala {
 				return false;
 			}
 
-			var f_rules = File.new_for_path(Path.build_filename(path,"preinst"));
+            var f_rules_path = Path.build_filename(path,"preinst");
+			var f_rules = File.new_for_path(f_rules_path);
 			if (f_rules.query_exists()) {
 				// if the file already exists, don't touch it
 				return false;
@@ -316,6 +320,7 @@ namespace AutoVala {
 					of.put_string(line+"\n");
 				}
 				dis.close();
+				Posix.chmod(f_rules_path,493); // 755 permissions)
 			} catch (Error e) {
 				ElementBase.globalData.addError(_("Failed to write data to debian/preinst file (%s)").printf(e.message));
 				f_rules.delete();
@@ -335,7 +340,8 @@ namespace AutoVala {
 				return false;
 			}
 
-			var f_rules = File.new_for_path(Path.build_filename(path,"prerm"));
+            var f_rules_path = Path.build_filename(path,"prerm");
+			var f_rules = File.new_for_path(f_rules_path);
 			if (f_rules.query_exists()) {
 				// if the file already exists, don't touch it
 				return false;
@@ -351,6 +357,7 @@ namespace AutoVala {
 					of.put_string(line+"\n");
 				}
 				dis.close();
+				Posix.chmod(f_rules_path,493); // 755 permissions)
 			} catch (Error e) {
 				ElementBase.globalData.addError(_("Failed to write data to debian/prerm file (%s)").printf(e.message));
 				f_rules.delete();
@@ -370,7 +377,8 @@ namespace AutoVala {
 				return false;
 			}
 
-			var f_rules = File.new_for_path(Path.build_filename(path,"postinst"));
+            var f_rules_path = Path.build_filename(path,"postinst");
+			var f_rules = File.new_for_path(f_rules_path);
 			if (f_rules.query_exists()) {
 				// if the file already exists, don't touch it
 				return false;
@@ -386,6 +394,7 @@ namespace AutoVala {
 					of.put_string(line+"\n");
 				}
 				dis.close();
+				Posix.chmod(f_rules_path,493); // 755 permissions)
 			} catch (Error e) {
 				ElementBase.globalData.addError(_("Failed to write data to debian/postinst file (%s)").printf(e.message));
 				f_rules.delete();
@@ -405,7 +414,8 @@ namespace AutoVala {
 				return false;
 			}
 
-			var f_rules = File.new_for_path(Path.build_filename(path,"postrm"));
+            var f_rules_path = Path.build_filename(path,"postrm");
+			var f_rules = File.new_for_path(f_rules_path);
 			if (f_rules.query_exists()) {
 				// if the file already exists, don't touch it
 				return false;
@@ -421,6 +431,7 @@ namespace AutoVala {
 					of.put_string(line+"\n");
 				}
 				dis.close();
+				Posix.chmod(f_rules_path,493); // 755 permissions)
 			} catch (Error e) {
 				ElementBase.globalData.addError(_("Failed to write data to debian/postrm file (%s)").printf(e.message));
 				f_rules.delete();
@@ -568,6 +579,7 @@ namespace AutoVala {
 					of.put_string(line+"\n");
 				}
 				dis.close();
+				Posix.chmod(fname,420); // 644 permissions)
 			} catch (Error e) {
 				ElementBase.globalData.addError(_("Failed to write data to debian/changelog file (%s)").printf(e.message));
 				f_changelog.delete();
@@ -576,7 +588,5 @@ namespace AutoVala {
 
 			return false;
 		}
-
-
 	}
 }

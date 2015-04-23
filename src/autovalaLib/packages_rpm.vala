@@ -103,7 +103,8 @@ namespace AutoVala {
 			Gee.Map<string,string> single_keys = new Gee.HashMap<string,string>();
 			Gee.Map<string,string> multi_keys = new Gee.HashMap<string,string>();
 
-			var f_control = File.new_for_path(Path.build_filename(path,"%s.spec".printf(this.config.globalData.projectName)));
+            var f_control_path = Path.build_filename(path,"%s.spec".printf(this.config.globalData.projectName));
+			var f_control = File.new_for_path(f_control_path);
 			try {
 				if (f_control.query_exists()) {
 					// store the original file to keep manually-added fields
@@ -283,6 +284,7 @@ namespace AutoVala {
 				}
 
 				dis.close();
+				Posix.chmod(f_control_path,420); // 644 permissions
 			} catch (Error e) {
 				ElementBase.globalData.addError(_("Failed to write data to rpmbuild/SPECS/SPEC file (%s)").printf(e.message));
 				return true;
