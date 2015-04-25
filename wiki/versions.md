@@ -1,3 +1,5 @@
+* version 0.99.22 (2015-04-26)
+   * Better use of the VERSION field in packages
 * version 0.99.21 (2015-04-23)
    * Now sets the right permissions to DEB and RPM files
    * Added msgfmt as dependency for programs

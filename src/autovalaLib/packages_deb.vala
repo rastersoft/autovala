@@ -190,7 +190,7 @@ namespace AutoVala {
 				}
 
 				foreach (var key in source_keys.keys) {
-					if ((key == "Build-Depends") || (key == "Maintainer") || (key == "Source")) {
+					if ((key == "Build-Depends") || (key == "Maintainer") || (key == "Source") || (key == "Version")) {
 						continue;
 					}
 					of.put_string("%s: %s\n".printf(key,source_keys.get(key)));
@@ -209,7 +209,7 @@ namespace AutoVala {
 				of.put_string("\n\n");
 
 				foreach (var key in binary_keys.keys) {
-					if ((key == "Depends") || (key == "Description")) {
+					if ((key == "Depends") || (key == "Description") || (key == "Version")) {
 						continue;
 					}
 					of.put_string("%s: %s\n".printf(key,binary_keys.get(key)));
@@ -218,9 +218,7 @@ namespace AutoVala {
 				if (!binary_keys.has_key("Package")) {
 					of.put_string("Package: %s\n".printf(this.config.globalData.projectName));
 				}
-				if (!binary_keys.has_key("Version")) {
-					of.put_string("Version: %s\n".printf(this.version));
-				}
+				of.put_string("Version: %s\n".printf(this.version));
 				if (!binary_keys.has_key("Architecture")) {
 					of.put_string("Architecture: any\n");
 				}

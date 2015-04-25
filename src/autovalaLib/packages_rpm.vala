@@ -176,11 +176,7 @@ namespace AutoVala {
 				} else {
 					of.put_string("Name: %s\n".printf(single_keys.get("Name")));
 				}
-				if (!single_keys.has_key("Version")) {
-					of.put_string("Version: %s\n".printf(this.version));
-				} else {
-					of.put_string("Version: %s\n".printf(single_keys.get("Version")));
-				}
+    			of.put_string("Version: %s\n".printf(this.version));
 				if (!single_keys.has_key("Release")) {
 					of.put_string("Release: 1\n");
 				} else {
