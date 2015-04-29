@@ -24,7 +24,7 @@ using Posix;
 
 void help() {
 
-	GLib.stdout.printf(_("Autovala. Usage:\n\tautovala help: shows this help\n\tautovala version: shows the current version\n\tautovala init project_name: initializates a new Vala CMake project and creates an initial project file\n\tautovala refresh: tries to guess the type for each file in the folders and adds them to the project file\n\tautovala cmake: creates the CMake files from the project file\n\tautovala update: the same than 'refresh'+'cmake'\n\tautovala po: updates translatable strings\n\tautovala clear: removes the automatic parts in the project file, leaving only the manual ones.\n\tautovala project_files: lists all the files belonging to the project (with paths relative to the project's root). Useful for adding all the files to a versioning system like git, bazaar or subversion\n\tautovala deb: creates the 'debian' folder for packaging the project as a .deb package\n\tautovala rpm: creates the 'rpmbuild' folder for packaging the project as a .rpm package\n\tautovala valama: exports the project to a VALAMA project file\n\n"));
+	GLib.stdout.printf(_("Autovala. Usage:\n\tautovala help: shows this help\n\tautovala version: shows the current version\n\tautovala init project_name: initializates a new Vala CMake project and creates an initial project file\n\tautovala refresh: tries to guess the type for each file in the folders and adds them to the project file\n\tautovala cmake: creates the CMake files from the project file\n\tautovala update: the same than 'refresh'+'cmake'\n\tautovala po: updates translatable strings\n\tautovala clear: removes the automatic parts in the project file, leaving only the manual ones.\n\tautovala project_files: lists all the files belonging to the project (with paths relative to the project's root). Useful for adding all the files to a versioning system like git, bazaar or subversion\n\tautovala deb: creates the 'debian' folder for packaging the project as a .deb package\n\tautovala rpm: creates the 'rpmbuild' folder for packaging the project as a .rpm package\n\tautovala pacman: creates a package for PACMAN package manager\n\tautovala valama: exports the project to a VALAMA project file\n\n"));
 }
 
 int main(string[] argv) {
@@ -177,6 +177,20 @@ int main(string[] argv) {
 		}
 		var gen = new AutoVala.ManageProject();
 		retval = gen.create_rpm(true);
+		gen.showErrors();
+		if (retval) {
+			GLib.stderr.printf(_("Aborting\n"));
+			return -1;
+		}
+		GLib.stderr.printf(_("Done\n"));
+		break;
+	case "pacman":
+		if (argv.length!=2) {
+			help();
+			return -1;
+		}
+		var gen = new AutoVala.ManageProject();
+		retval = gen.create_pacman(true);
 		gen.showErrors();
 		if (retval) {
 			GLib.stderr.printf(_("Aborting\n"));
