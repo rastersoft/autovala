@@ -69,6 +69,7 @@ c_library: readline
 *vala_source: globals.vala
 *vala_source: packages.vala
 *vala_source: packages_deb.vala
+*vala_source: packages_pacman.vala
 *vala_source: packages_rpm.vala
 *vala_source: readPkgconfig.vala
 

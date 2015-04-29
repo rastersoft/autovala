@@ -783,6 +783,34 @@ namespace AutoVala {
 			return retval;
 		}
 
+        /**
+		 * Creates the metadata for a PACMAN package
+		 * @param ask If TRUE, will ask using the command line data like the packager's name, the linux distribution name, or the version; if FALSE, it will presume that the data is available in the user's configuration file (at ~/.config/autovala/packages.cfg)
+		 * @param projectPath A base file or folder; the code will check if that file is a valid .avprj file; if not (or if it is a folder) will search in the folder containing it if there is a valid .avprj file. If not, will search upwards until a valid .avprj file is found, or the root is reached. NULL means to start searching in the current working directory
+		 * @return TRUE if there was an error; FALSE if everything went fine
+		 */
+		public bool create_pacman(bool ask = false, string ? basePath = null) {
+
+			bool retval;
+
+			this.config=new AutoVala.Configuration(basePath);
+			if (config.globalData.error) {
+				return true;
+			}
+
+			if (config.readConfiguration()) {
+				return true;
+			}
+
+			var t = new AutoVala.packages_pacman();
+
+			retval = t.init_all(config);
+			if (!retval) {
+				retval = t.create_pacman_package();
+			}
+			return retval;
+		}
+
 		/**
 		 * Returns an object with all the binaries in this project and its source files
 		 * @param basePath A base file or folder; the code will check if that file is a valid .avprj file; if not (or if it is a folder) will search in the folder containing it if there is a valid .avprj file. If not, will search upwards until a valid .avprj file is found, or the root is reached. NULL means to start searching in the current working directory
