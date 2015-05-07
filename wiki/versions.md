@@ -1,3 +1,7 @@
+* version 0.99.23 (2015-05-07)
+   * Added support for creating preliminar PACMAN's PKGBUILD files
+   * Fixed bug when extracting translation strings in non-ascii, UTF-8 format
+   * Removed (hope this one for all) the [type: gettext/glade] entry
 * version 0.99.22 (2015-04-26)
    * Better use of the VERSION field in packages
 * version 0.99.21 (2015-04-23)

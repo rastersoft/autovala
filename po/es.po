@@ -8,10 +8,10 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-02-20 16:09+0100\n"
-"PO-Revision-Date: 2015-02-20 16:19+0100\n"
+"POT-Creation-Date: 2015-05-07 23:15+0200\n"
+"PO-Revision-Date: 2015-05-07 23:15+0200\n"
 "Last-Translator: Sergio Costas <rastersoft@gmail.com>\n"
-"Language-Team: Español; Castellano <>\n"
+"Language-Team: Español; Castellano <rastersoft@gmail.com>\n"
 "Language: en_US\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -40,6 +40,7 @@ msgid ""
 "deb package\n"
 "\tautovala rpm: creates the 'rpmbuild' folder for packaging the project as "
 "a .rpm package\n"
+"\tautovala pacman: creates a package for PACMAN package manager\n"
 "\tautovala valama: exports the project to a VALAMA project file\n"
 "\n"
 msgstr ""
@@ -63,19 +64,23 @@ msgstr ""
 "paquete .deb\n"
 "\tautovala rpm: crea la carpeta 'rpmbuild' para empaquetar el proyecto como "
 "un paquete .rpm\n"
+"\tautovala pacman: crea el fichero PKGBUILD para empaquetar el proyecto para "
+"PACMAN de Arch\n"
 "\tautovala valama: exporta el proyecto a un fichero de proyecto apto para "
 "VALAMA\n"
 
 #: src/autovala.vala:59 src/autovala.vala:73 src/autovala.vala:87
 #: src/autovala.vala:104 src/autovala.vala:111 src/autovala.vala:126
 #: src/autovala.vala:140 src/autovala.vala:154 src/autovala.vala:168
-#: src/autovala.vala:182 src/autovala.vala:196
+#: src/autovala.vala:182 src/autovala.vala:196 src/autovala.vala:210
+#: src/autovala.vala:227
 msgid "Aborting\n"
 msgstr "Abortando\n"
 
 #: src/autovala.vala:62 src/autovala.vala:76 src/autovala.vala:115
 #: src/autovala.vala:129 src/autovala.vala:143 src/autovala.vala:157
-#: src/autovala.vala:171 src/autovala.vala:185 src/autovala.vala:202
+#: src/autovala.vala:171 src/autovala.vala:185 src/autovala.vala:199
+#: src/autovala.vala:216 src/autovala.vala:231
 msgid "Done\n"
 msgstr "Hecho\n"
 
@@ -87,27 +92,27 @@ msgstr "Actualizando el fichero de proyecto\n"
 msgid "Updating CMake files\n"
 msgstr "Actualizando los ficheros de CMake\n"
 
-#: src/autovala.vala:219
+#: src/autovala.vala:253
 #, c-format
 msgid "Failed to create the folder %s"
 msgstr "Falló la creación del directorio %s"
 
-#: src/autovala.vala:228
+#: src/autovala.vala:262
 #, c-format
 msgid "Failed to delete the old valama Config.vala file at %s"
 msgstr "No se ha podido borrar el viejo fichero Config.vala de valama en %s"
 
-#: src/autovala.vala:242
+#: src/autovala.vala:276
 #, c-format
 msgid "Failed to write to valama Config.vala file at %s"
 msgstr "Falló la creación del fichero Config.vala para valama en %s"
 
-#: src/autovala.vala:265
+#: src/autovala.vala:299
 #, c-format
 msgid "Failed to delete the old valama project file %s"
 msgstr "No se ha podido borrar el viejo fichero de configuración de valama %s"
 
-#: src/autovala.vala:301
+#: src/autovala.vala:335
 #, c-format
 msgid "Failed to write to valama project file %s"
 msgstr "Incapaz de escribir datos en el fichero de proyecto de valama %s"
@@ -459,11 +464,11 @@ msgstr "Incapaz de añadir el fichero glade %s"
 msgid "Can't add subdirectory %s"
 msgstr "No ha sido posible añadir el subdirectorio %s"
 
-#: src/autovalaLib/elementGlobal.vala:238
+#: src/autovalaLib/elementGlobal.vala:249
 msgid "The following local dependencies cannot be satisfied:"
 msgstr "No se han podido satisfacer las siguientes dependencias locales:"
 
-#: src/autovalaLib/elementGlobal.vala:245
+#: src/autovalaLib/elementGlobal.vala:256
 #, c-format
 msgid ""
 "\n"
@@ -472,7 +477,7 @@ msgstr ""
 "\n"
 "\tBiblioteca %s, paquetes:"
 
-#: src/autovalaLib/elementGlobal.vala:247
+#: src/autovalaLib/elementGlobal.vala:258
 #, c-format
 msgid ""
 "\n"
@@ -481,11 +486,11 @@ msgstr ""
 "\n"
 "\tBinario %s, paquetes:"
 
-#: src/autovalaLib/elementGlobal.vala:261
+#: src/autovalaLib/elementGlobal.vala:272
 msgid "Failed to generate the main CMakeLists.txt file"
 msgstr "Falló la creación del fichero CMakeLists principal"
 
-#: src/autovalaLib/elementGlobal.vala:271
+#: src/autovalaLib/elementGlobal.vala:282
 msgid "Failed to store a header"
 msgstr "No se ha podido almacenar una cabecera"
 
@@ -543,12 +548,12 @@ msgid "Unknown icon type %s. Must be .png or .svg (in lowercase)"
 msgstr ""
 "Tipo de icono %s desconocido. Tiene que ser .png or .svg (en minúsculas)"
 
-#: src/autovalaLib/elementIcon.vala:503
+#: src/autovalaLib/elementIcon.vala:506
 #, c-format
 msgid "Failed to write the PostData for icons at %s"
 msgstr "Incapaz de escribir la PostData para los iconos en %s"
 
-#: src/autovalaLib/elementIcon.vala:527
+#: src/autovalaLib/elementIcon.vala:530
 #, c-format
 msgid "Failed to store 'icon: %s' at config"
 msgstr "No se ha podido almacenar 'icon: %s' en la configuración"
@@ -733,19 +738,19 @@ msgstr "Falló la creación del fichero .DEPS"
 msgid "Can't set package %s for binary %s"
 msgstr "No ha sido posible asignar el paquete %s para el binario %s"
 
-#: src/autovalaLib/elementValaBinary.vala:1428
+#: src/autovalaLib/elementValaBinary.vala:1430
 #, c-format
 msgid "No namespace specified in library %s; GIR file will not be generated"
 msgstr ""
 "No se ha especificado un namespace en la biblioteca %s; no se creará el "
 "fichero GIR"
 
-#: src/autovalaLib/elementValaBinary.vala:1650
+#: src/autovalaLib/elementValaBinary.vala:1652
 #, c-format
 msgid "Failed to write the CMakeLists file for binary %s"
 msgstr "Incapaz de escribir el fichero CMakeLists del binario %s"
 
-#: src/autovalaLib/elementValaBinary.vala:1813
+#: src/autovalaLib/elementValaBinary.vala:1815
 #, c-format
 msgid "Failed to store ': %s' at config"
 msgstr "Incapaz de almacenar ':%s' en la configuración"
@@ -771,74 +776,74 @@ msgstr "Error: %s"
 msgid "Warning: %s"
 msgstr "Aviso: %s"
 
-#: src/autovalaLib/packages.vala:138
+#: src/autovalaLib/packages.vala:140
 msgid "Failed to get installed vala compilers"
 msgstr "Incapaz de obtener los compiladores de vala instalados"
 
-#: src/autovalaLib/packages.vala:217
+#: src/autovalaLib/packages.vala:222
 #, c-format
 msgid "Failed to find dependencies for the non-check module %s"
 msgstr "No se han podido encontrar las dependencias del módulo %s"
 
-#: src/autovalaLib/packages.vala:240
+#: src/autovalaLib/packages.vala:245
 #, c-format
 msgid "Failed to find dependencies for the module %s, library %s"
 msgstr ""
 "No se han podido encontrar las dependencias del módulo %s, biblioteca %s"
 
-#: src/autovalaLib/packages.vala:253
+#: src/autovalaLib/packages.vala:258
 #, c-format
 msgid "Failed to add library %s to dependencies"
 msgstr "Incapaz de añadir la biblioteca %s a las dependencias"
 
-#: src/autovalaLib/packages.vala:283
+#: src/autovalaLib/packages.vala:297
 #, c-format
 msgid "Please enter your name (%s <%s>): "
 msgstr "Por favor, teclee su nombre (%s <%s>):"
 
-#: src/autovalaLib/packages.vala:292
+#: src/autovalaLib/packages.vala:306
 msgid "Please enter your name: "
 msgstr "Por favor, teclee su nombre:"
 
-#: src/autovalaLib/packages.vala:304
+#: src/autovalaLib/packages.vala:318
 msgid "Please enter your e-mail: "
 msgstr "Por favor, teclee su correo-e:"
 
-#: src/autovalaLib/packages.vala:336
+#: src/autovalaLib/packages.vala:350
 msgid "Please enter your OS distribution name: "
 msgstr "Por favor, teclee el nombre de su distribución:"
 
-#: src/autovalaLib/packages.vala:343
+#: src/autovalaLib/packages.vala:357
 #, c-format
 msgid "Please enter your OS distribution name (%s): "
 msgstr "Por favor, teclee el nombre de su distribución (%s):"
 
-#: src/autovalaLib/packages.vala:355
+#: src/autovalaLib/packages.vala:369
 msgid "Please enter your OS version name: "
 msgstr "Por favor, teclee el nombre de la versión de su sistema operativo:"
 
-#: src/autovalaLib/packages.vala:362
+#: src/autovalaLib/packages.vala:376
 #, c-format
 msgid "Please enter your OS version name (%s): "
 msgstr ""
 "Por favor, teclee el nombre de la versión de su sistema operativo (%s):"
 
-#: src/autovalaLib/packages.vala:401
+#: src/autovalaLib/packages.vala:415
 #, c-format
 msgid "Failed to process %s.vapi to find dependencies"
 msgstr "Incapaz de procesar %s.vapi para encontrar sus dependencias"
 
-#: src/autovalaLib/packages.vala:433
+#: src/autovalaLib/packages.vala:447
 #, c-format
 msgid "Failed to launch pkg-config for the module %s"
 msgstr "No se ha podido lanzar pkg-config para el módulo %s"
 
-#: src/autovalaLib/packages.vala:437
+#: src/autovalaLib/packages.vala:451
 #, c-format
 msgid "Error %d when launching pkg-config for the module %s"
 msgstr "Error %d al lanzar pkg-config para el módulo %s"
 
-#: src/autovalaLib/packages.vala:441
+#: src/autovalaLib/packages.vala:455
 #, c-format
 msgid "Exception '%s' when launching pkg-config for the module %s"
 msgstr "Excepción '%s' al lanzar pkg-config para el módulo %s"
@@ -858,50 +863,73 @@ msgstr "Error %d al lanzar dpkg para el fichero %s"
 msgid "Exception '%s' when launching dpkg for the file %s"
 msgstr "Excepción '%s' al lanzar dpkg para el fichero %s"
 
-#: src/autovalaLib/packages_deb.vala:104 src/autovalaLib/packages_rpm.vala:88
+#: src/autovalaLib/packages_deb.vala:104
+#: src/autovalaLib/packages_pacman.vala:76
+#: src/autovalaLib/packages_rpm.vala:88
 #, c-format
 msgid "Can't find a package for the file %s"
 msgstr "No se ha podido encontrar un paquete para el fichero %s"
 
-#: src/autovalaLib/packages_deb.vala:170
+#: src/autovalaLib/packages_deb.vala:171
 #, c-format
 msgid "Failed to delete debian/control file (%s)"
 msgstr "No se ha podido borrar el fichero debian/control (%s)"
 
-#: src/autovalaLib/packages_deb.vala:244
+#: src/autovalaLib/packages_deb.vala:251
+#: src/autovalaLib/packages_pacman.vala:216
 #, c-format
 msgid "Failed to write data to debian/control file (%s)"
 msgstr "Incapaz de escribir datos en el fichero debian/control (%s)"
 
-#: src/autovalaLib/packages_deb.vala:276
+#: src/autovalaLib/packages_deb.vala:284
 #, c-format
 msgid "Failed to write data to debian/rules file (%s)"
 msgstr "Incapaz de escribir datos en el fichero debian/rules (%s)"
 
-#: src/autovalaLib/packages_deb.vala:313
+#: src/autovalaLib/packages_deb.vala:323
 #, c-format
 msgid "Failed to write data to debian/preinst file (%s)"
 msgstr "Incapaz de escribir datos en el fichero debian/preinst (%s)"
 
-#: src/autovalaLib/packages_deb.vala:348
+#: src/autovalaLib/packages_deb.vala:360
 #, c-format
 msgid "Failed to write data to debian/prerm file (%s)"
 msgstr "Incapaz de escribir datos en el fichero debian/prerm (%s)"
 
-#: src/autovalaLib/packages_deb.vala:383
+#: src/autovalaLib/packages_deb.vala:397
 #, c-format
 msgid "Failed to write data to debian/postinst file (%s)"
 msgstr "Incapaz de escribir datos en el fichero debian/postinst (%s)"
 
-#: src/autovalaLib/packages_deb.vala:418
+#: src/autovalaLib/packages_deb.vala:434
 #, c-format
 msgid "Failed to write data to debian/postrm file (%s)"
 msgstr "Incapaz de escribir datos en el fichero debian/postrm (%s)"
 
-#: src/autovalaLib/packages_deb.vala:565
+#: src/autovalaLib/packages_deb.vala:582
 #, c-format
 msgid "Failed to write data to debian/changelog file (%s)"
 msgstr "Incapaz de escribir datos en el fichero debian/changelog (%s)"
+
+#: src/autovalaLib/packages_pacman.vala:61
+#, c-format
+msgid "Failed to launch pacman for the file %s"
+msgstr "Incapaz de lanzar pacman para el fichero %s"
+
+#: src/autovalaLib/packages_pacman.vala:65
+#, c-format
+msgid "Error %d when launching pacman for the file %s"
+msgstr "Error %d al lanzar pacman para el fichero %s"
+
+#: src/autovalaLib/packages_pacman.vala:69
+#, c-format
+msgid "Exception '%s' when launching pacman for the file %s"
+msgstr "Excepción '%s' al lanzar pacman para el fichero %s"
+
+#: src/autovalaLib/packages_pacman.vala:143
+#, c-format
+msgid "Failed to delete PKGBUILD file (%s)"
+msgstr "No se ha podido borrar el fichero PKGBUILD (%s)"
 
 #: src/autovalaLib/packages_rpm.vala:75
 #, c-format
@@ -918,12 +946,12 @@ msgstr "Error %d al lanzar rpm para el fichero %s"
 msgid "Exception '%s' when launching rpm for the file %s"
 msgstr "Excepción '%s' al lanzar rpm para el fichero %s"
 
-#: src/autovalaLib/packages_rpm.vala:160
+#: src/autovalaLib/packages_rpm.vala:161
 #, c-format
 msgid "Failed to delete rpmbuild/SPECS/SPEC file (%s)"
 msgstr "No se ha podido borrar el fichero rpmbuild/SPECS/SPEC (%s)"
 
-#: src/autovalaLib/packages_rpm.vala:287
+#: src/autovalaLib/packages_rpm.vala:285
 #, c-format
 msgid "Failed to write data to rpmbuild/SPECS/SPEC file (%s)"
 msgstr "Incapaz de escribir datos en el fichero rpmbuild/SPECS/SPEC (%s)"
