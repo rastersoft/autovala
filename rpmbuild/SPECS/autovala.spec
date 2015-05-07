@@ -1,7 +1,7 @@
 Name: autovala
-Version: 0.99.22
+Version: 0.99.23
 Release: 1
-License: Unknown/not set
+License: GPLv3
 Summary: Autovala is a program and a library designed to help in the creation of projects with Vala and CMake.
 
 BuildRequires: gcc
@@ -75,11 +75,11 @@ introspection capabilities.
 * Simplifies mixing C and Vala source files.
 .
 
-%post
-ldconfig
-
 %clean
 rm -rf %{buildroot}
+
+%post
+ldconfig
 
 %build
 mkdir -p ${RPM_BUILD_DIR}
