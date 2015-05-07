@@ -93,55 +93,63 @@ namespace AutoVala {
 			Gee.Map<string,string> element_keys = new Gee.HashMap<string,string>();
 
             var f_control_path = Path.build_filename(path,"PKGBUILD");
+            var f_control_path_base = Path.build_filename(path,"PKGBUILD.base");
 			var f_control = File.new_for_path(f_control_path);
-			try {
-				if (f_control.query_exists()) {
-				    string ? multiline_key = null;
-				    string ? multiline_data = null;
-					var dis = new DataInputStream (f_control.read ());
-					string line;
-					string? key = "";
-					string data = "";
-					while ((line = dis.read_line (null)) != null) {
-					    if (multiline_key != null) {
-                            multiline_data += line.replace("\"","") + "\n";
-                            if (line.index_of_char('"') != -1) {
-                                element_keys.set(multiline_key,multiline_data.strip());
-                                multiline_key = null;
-                                multiline_data = null;
-                            }
-                            continue;
-					    }
-						if (line.strip() == "") {
-							continue;
-						}
-						if (line[0] == '#') {
-							continue;
-						}
-						var pos = line.index_of_char('=');
-						if (pos != -1) {
-							key = line.substring(0,pos).strip();
-    						data = line.substring(pos+1);
-    						if (data[0] == '"') {
-    						    pos = data.index_of_char('"',1);
-    						    if (pos == -1) { // multiline
-    						        multiline_key = key;
-    						        multiline_data = data.substring(1) + "\n";
-    						        continue;
-    						    }
-    						    data = data.replace("\"","");
-    						}
-    						element_keys.set(key,data.strip());
-						}
+			var f_control_base = File.new_for_path(f_control_path_base);
+
+            if (f_control.query_exists() && (!f_control_base.query_exists())) {
+                f_control.copy(f_control_base,FileCopyFlags.NOFOLLOW_SYMLINKS);
+            }
+
+			if (f_control_base.query_exists()) {
+			    string ? multiline_key = null;
+			    string ? multiline_data = null;
+				var dis = new DataInputStream (f_control_base.read ());
+				string line;
+				string? key = "";
+				string data = "";
+				while ((line = dis.read_line (null)) != null) {
+				    if (multiline_key != null) {
+                        multiline_data += line.replace("\"","") + "\n";
+                        if (line.index_of_char('"') != -1) {
+                            element_keys.set(multiline_key,multiline_data.strip());
+                            multiline_key = null;
+                            multiline_data = null;
+                        }
+                        continue;
+				    }
+					if (line.strip() == "") {
+						continue;
 					}
-					f_control.delete();
-					foreach(var nkey in element_keys.keys) {
-					    print("Key %s: '%s'\n".printf(nkey,element_keys.get(nkey)));
+					if (line[0] == '#') {
+						continue;
+					}
+					var pos = line.index_of_char('=');
+					if (pos != -1) {
+						key = line.substring(0,pos).strip();
+						data = line.substring(pos+1);
+						if (data[0] == '"') {
+						    pos = data.index_of_char('"',1);
+						    if (pos == -1) { // multiline
+						        multiline_key = key;
+						        multiline_data = data.substring(1) + "\n";
+						        continue;
+						    }
+						    data = data.replace("\"","");
+						}
+						element_keys.set(key,data.strip());
 					}
 				}
+			}
+
+			try {
+			    if (f_control.query_exists()) {
+        			f_control.delete();
+			    }
 			} catch (Error e) {
 				ElementBase.globalData.addWarning(_("Failed to delete PKGCONFIG file (%s)").printf(e.message));
 			}
+
 			try {
 				var dis = f_control.create_readwrite(GLib.FileCreateFlags.PRIVATE);
 				var of = new DataOutputStream(dis.output_stream as FileOutputStream);

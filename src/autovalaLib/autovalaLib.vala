@@ -489,7 +489,7 @@ namespace AutoVala {
 			foreach (var element in ElementBase.globalData.globalElements) {
 				if (element.eType==ConfigType.PO) {
 					try {
-						string callString = "xgettext -d %s -o %s -p %s --keyword='_' -f po/POTFILES.in".printf(ElementBase.globalData.projectName,ElementBase.globalData.projectName+".pot",element.path);
+						string callString = "xgettext --from-code=UTF-8 -d %s -o %s -p %s --keyword='_' -f po/POTFILES.in".printf(ElementBase.globalData.projectName,ElementBase.globalData.projectName+".pot",element.path);
 						ElementBase.globalData.addMessage(_("Launching command %s").printf(callString));
 						retVal=GLib.Process.spawn_command_line_sync(callString,out ls_stdout,out ls_stderr, out ls_status);
 					} catch (GLib.SpawnError e) {

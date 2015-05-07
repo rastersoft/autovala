@@ -39,8 +39,8 @@ introspection capabilities.
 * Simplifies mixing C and Vala source files.
 "
 arch=('i686' 'x86_64')
-depends=( 'glib2' 'libgee' 'cairo' 'gtk3' 'pango' 'gdk-pixbuf2' 'readline' 'atk' 'libx11' 'pandoc' )
-makedepends=( 'vala' 'glibc' 'glib2' 'libgee' 'readline' 'cairo' 'gtk3' 'gdk-pixbuf2' 'pango' 'atk' 'libx11' 'cmake' 'gettext' 'pkg-config' 'gcc' 'make' 'intltool' 'pandoc' )
+depends=( 'glib2' 'libgee' 'cairo' 'gtk3' 'pango' 'gdk-pixbuf2' 'readline' 'atk' 'libx11' 'pandoc-bin' )
+makedepends=( 'vala' 'glibc' 'glib2' 'libgee' 'readline' 'cairo' 'gtk3' 'gdk-pixbuf2' 'pango' 'atk' 'libx11' 'cmake' 'gettext' 'pkg-config' 'gcc' 'make' 'intltool' 'pandoc-bin' )
 source=()
 noextract=()
 md5sums=()
