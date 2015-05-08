@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-05-07 23:02+0200\n"
+"POT-Creation-Date: 2015-05-07 23:15+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -806,7 +806,7 @@ msgid "Failed to delete debian/control file (%s)"
 msgstr ""
 
 #: src/autovalaLib/packages_deb.vala:251
-#: src/autovalaLib/packages_pacman.vala:224
+#: src/autovalaLib/packages_pacman.vala:216
 #, c-format
 msgid "Failed to write data to debian/control file (%s)"
 msgstr ""
@@ -856,9 +856,9 @@ msgstr ""
 msgid "Exception '%s' when launching pacman for the file %s"
 msgstr ""
 
-#: src/autovalaLib/packages_pacman.vala:150
+#: src/autovalaLib/packages_pacman.vala:143
 #, c-format
-msgid "Failed to delete PKGCONFIG file (%s)"
+msgid "Failed to delete PKGBUILD file (%s)"
 msgstr ""
 
 #: src/autovalaLib/packages_rpm.vala:75

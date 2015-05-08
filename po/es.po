@@ -11,7 +11,7 @@ msgstr ""
 "POT-Creation-Date: 2015-05-07 23:02+0200\n"
 "PO-Revision-Date: 2015-02-20 16:19+0100\n"
 "Last-Translator: Sergio Costas <rastersoft@gmail.com>\n"
-"Language-Team: Español; Castellano <>\n"
+"Language-Team: Español; Castellano <rastersoft@gmail.com>\n"
 "Language: en_US\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -65,6 +65,8 @@ msgstr ""
 "paquete .deb\n"
 "\tautovala rpm: crea la carpeta 'rpmbuild' para empaquetar el proyecto como "
 "un paquete .rpm\n"
+"\tautovala pacman: crea el fichero PKGBUILD para empaquetar el proyecto para "
+"PACMAN de Arch\n"
 "\tautovala valama: exporta el proyecto a un fichero de proyecto apto para "
 "VALAMA\n"
 
@@ -911,24 +913,24 @@ msgid "Failed to write data to debian/changelog file (%s)"
 msgstr "Incapaz de escribir datos en el fichero debian/changelog (%s)"
 
 #: src/autovalaLib/packages_pacman.vala:61
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to launch pacman for the file %s"
-msgstr "Incapaz de lanzar rpm para el fichero %s"
+msgstr "Incapaz de lanzar pacman para el fichero %s"
 
 #: src/autovalaLib/packages_pacman.vala:65
-#, fuzzy, c-format
+#, c-format
 msgid "Error %d when launching pacman for the file %s"
-msgstr "Error %d al lanzar rpm para el fichero %s"
+msgstr "Error %d al lanzar pacman para el fichero %s"
 
 #: src/autovalaLib/packages_pacman.vala:69
-#, fuzzy, c-format
+#, c-format
 msgid "Exception '%s' when launching pacman for the file %s"
-msgstr "Excepción '%s' al lanzar rpm para el fichero %s"
+msgstr "Excepción '%s' al lanzar pacman para el fichero %s"
 
-#: src/autovalaLib/packages_pacman.vala:150
-#, fuzzy, c-format
-msgid "Failed to delete PKGCONFIG file (%s)"
-msgstr "No se ha podido borrar el fichero rpmbuild/SPECS/SPEC (%s)"
+#: src/autovalaLib/packages_pacman.vala:143
+#, c-format
+msgid "Failed to delete PKGBUILD file (%s)"
+msgstr "No se ha podido borrar el fichero PKGBUILD (%s)"
 
 #: src/autovalaLib/packages_rpm.vala:75
 #, c-format

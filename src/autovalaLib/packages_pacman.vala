@@ -147,7 +147,7 @@ namespace AutoVala {
         			f_control.delete();
 			    }
 			} catch (Error e) {
-				ElementBase.globalData.addWarning(_("Failed to delete PKGCONFIG file (%s)").printf(e.message));
+				ElementBase.globalData.addWarning(_("Failed to delete PKGBUILD file (%s)").printf(e.message));
 			}
 
 			try {

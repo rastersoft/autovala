@@ -26,7 +26,7 @@ When updating the CMAKE files for Vala, Autovala will check if the **AUTOVALA_CM
 
 ## Creating packages for linux distributions
 
-AutoVala can create the metadata files for creating .deb and .rpm source packages. It should be easy to add support for other package systems.
+AutoVala can create the metadata files for creating .deb and .rpm source packages (also Arch's pacman packages, but it is still experimental). It should be easy to add support for other package systems.
 
 To generate .deb files, just run **autovala deb**. It will create a folder called **debian** and inside will be the **control**, **changelog** and **rules** files, and, if needed, **preinst**, **prerm**, **postinst** and **postrm**. The **control** file will have only the bare minimum, but autovala will include inside the dependencies needed both for building the package, and for running the project. These dependencies are generated automatically from the information extracted from the project. The **changelog** will add a boilerplate line only if there is no line for the current version, so it is strongly recommended to edit and complete this file after doing the automatic generation.
 
