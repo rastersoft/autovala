@@ -183,7 +183,8 @@ namespace AutoVala {
 				var makedepends = new Gee.ArrayList<string>();
 				if (element_keys.has_key("depends")) {
 					var l = element_keys.get("depends").replace("'","").replace("(","").replace(")","").split(" ");
-					foreach (var d in l) {
+					foreach (var d2 in l) {
+						var d = d2.strip();
 						if ((d != "") && (!this.binary_packages.contains(d))){
 							this.binary_packages.add(d);
 						}
