@@ -93,11 +93,11 @@ namespace AutoVala {
 			Gee.Map<string,string> element_keys = new Gee.HashMap<string,string>();
 
 			var f_control_path = Path.build_filename(path,"PKGBUILD");
-			var f_control_path_base = Path.build_filename(path,"PKGBUILD.base");
+			var f_control_path_base = Path.build_filename(this.config.globalData.projectFolder,"packages","PKGBUILD.base");
 			var f_control = File.new_for_path(f_control_path);
 			var f_control_base = File.new_for_path(f_control_path_base);
 
-			string[] valid_keys = {"depends","makedepends","pkgdesc","arch","url","license","groups","provides","conflicts","replaces","backup","options","install","changelog"};
+			string[] valid_keys = {"pkgname","depends","makedepends","pkgdesc","arch","url","license","groups","provides","conflicts","replaces","backup","options","install","changelog"};
 
 			if (f_control_base.query_exists()) {
 				string ? multiline_key = null;

@@ -119,6 +119,7 @@ namespace AutoVala {
 			Gee.Map<string,string> binary_keys = new Gee.HashMap<string,string>();
 
             var f_control_path = Path.build_filename(path,"control");
+            var f_control_bases_path = Path.build_filename(this.config.globalData.projectFolder,"packages","control");
 			var f_control = File.new_for_path(f_control_path);
 			try {
 				if (f_control.query_exists()) {
