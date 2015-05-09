@@ -70,15 +70,15 @@ namespace AutoVala {
 					return;
 				}
 
-                var pos = ls_stdout.index_of("is owned by");
+				var pos = ls_stdout.index_of("is owned by");
 
 				if (pos == -1) {
 					ElementBase.globalData.addWarning(_("Can't find a package for the file %s").printf(element));
 				} else {
-				    var package_name = ls_stdout.substring(pos+11).strip().split(" ")[0];
-				    if (!destination.contains(package_name)) {
-    					destination.add(package_name);
-    				}
+					var package_name = ls_stdout.substring(pos+11).strip().split(" ")[0];
+					if (!destination.contains(package_name)) {
+						destination.add(package_name);
+					}
 				}
 			}
 		}
@@ -92,32 +92,35 @@ namespace AutoVala {
 
 			Gee.Map<string,string> element_keys = new Gee.HashMap<string,string>();
 
-            var f_control_path = Path.build_filename(path,"PKGBUILD");
-            var f_control_path_base = Path.build_filename(path,"PKGBUILD.base");
+			var f_control_path = Path.build_filename(path,"PKGBUILD");
+			var f_control_path_base = Path.build_filename(path,"PKGBUILD.base");
 			var f_control = File.new_for_path(f_control_path);
 			var f_control_base = File.new_for_path(f_control_path_base);
 
-            if (f_control.query_exists() && (!f_control_base.query_exists())) {
-                f_control.copy(f_control_base,FileCopyFlags.NOFOLLOW_SYMLINKS);
-            }
+			string[] valid_keys = {"depends","makedepends","pkgdesc","arch","url","license","groups","provides","conflicts","replaces","backup","options","install","changelog"};
 
 			if (f_control_base.query_exists()) {
-			    string ? multiline_key = null;
-			    string ? multiline_data = null;
+				string ? multiline_key = null;
+				string ? multiline_data = null;
 				var dis = new DataInputStream (f_control_base.read ());
 				string line;
 				string? key = "";
 				string data = "";
 				while ((line = dis.read_line (null)) != null) {
-				    if (multiline_key != null) {
-                        multiline_data += line.replace("\"","") + "\n";
-                        if (line.index_of_char('"') != -1) {
-                            element_keys.set(multiline_key,multiline_data.strip());
-                            multiline_key = null;
-                            multiline_data = null;
-                        }
-                        continue;
-				    }
+					if (multiline_key != null) {
+						multiline_data += line.replace("\"","") + "\n";
+						if (line.index_of_char('"') != -1) {
+							foreach (var l in valid_keys) {
+								if (l == multiline_key) {
+									element_keys.set(multiline_key,"\""+multiline_data.strip()+"\"");
+									break;
+								}
+							}
+							multiline_key = null;
+							multiline_data = null;
+						}
+						continue;
+					}
 					if (line.strip() == "") {
 						continue;
 					}
@@ -129,23 +132,28 @@ namespace AutoVala {
 						key = line.substring(0,pos).strip();
 						data = line.substring(pos+1);
 						if (data[0] == '"') {
-						    pos = data.index_of_char('"',1);
-						    if (pos == -1) { // multiline
-						        multiline_key = key;
-						        multiline_data = data.substring(1) + "\n";
-						        continue;
-						    }
-						    data = data.replace("\"","");
+							pos = data.index_of_char('"',1);
+							if (pos == -1) { // multiline
+								multiline_key = key;
+								multiline_data = data.substring(1) + "\n";
+								continue;
+							}
+							data = data.replace("\"","");
 						}
-						element_keys.set(key,data.strip());
+						foreach (var l in valid_keys) {
+							if (l == key) {
+								element_keys.set(key,data.strip());
+								break;
+							}
+						}
 					}
 				}
 			}
 
 			try {
-			    if (f_control.query_exists()) {
-        			f_control.delete();
-			    }
+				if (f_control.query_exists()) {
+					f_control.delete();
+				}
 			} catch (Error e) {
 				ElementBase.globalData.addWarning(_("Failed to delete PKGBUILD file (%s)").printf(e.message));
 			}
@@ -155,68 +163,58 @@ namespace AutoVala {
 				var of = new DataOutputStream(dis.output_stream as FileOutputStream);
 				bool not_first;
 
-                of.put_string("pkgname=%s\n".printf(this.config.globalData.projectName));
-                of.put_string("pkgver=%s\n".printf(this.version));
-                of.put_string("pkgrel=1\n");
-                if (element_keys.has_key("pkgdesc")) {
-                    of.put_string("pkgdesc=\"%s\"\n".printf(element_keys.get("pkgdesc")));
-                } else {
-                    of.put_string("pkgdesc=\"%s\"\n".printf(this.description.replace("\"","")));
-                }
-                if (element_keys.has_key("arch")) {
-                    of.put_string("arch=%s\n".printf(element_keys.get("arch")));
-                } else {
-                    of.put_string("arch=('i686' 'x86_64')\n");
-                }
+				of.put_string("pkgname=%s\n".printf(this.config.globalData.projectName));
+				of.put_string("pkgver=%s\n".printf(this.version));
+				of.put_string("pkgrel=1\n");
+				if (!element_keys.has_key("pkgdesc")) {
+					of.put_string("pkgdesc=\"%s\"\n".printf(this.description.replace("\"","")));
+				}
+				if (!element_keys.has_key("arch")) {
+					of.put_string("arch=('i686' 'x86_64')\n");
+				}
 
-                if (element_keys.has_key("url")) {
-                    of.put_string("url=%s\n".printf(element_keys.get("url")));
-                }
-                if (element_keys.has_key("license")) {
-                    of.put_string("license=%s\n".printf(element_keys.get("license")));
-                }
-                if (element_keys.has_key("groups")) {
-                    of.put_string("groups=%s\n".printf(element_keys.get("groups")));
-                }
+				foreach (var key in element_keys.keys) {
+					if ((key != "depends") && (key != "makedepends")) {
+						of.put_string("%s=%s\n".printf(key,element_keys.get(key)));
+					}
+				}
 
-                of.put_string("depends=(");
-                foreach(var dep in this.binary_packages) {
-                    of.put_string(" '%s'".printf(dep));
-                }
-                of.put_string(" )\n");
-                of.put_string("makedepends=(");
-                foreach(var dep in this.source_packages) {
-                    of.put_string(" '%s'".printf(dep));
-                }
-                of.put_string(" )\n");
+				var depends = new Gee.ArrayList<string>();
+				var makedepends = new Gee.ArrayList<string>();
+				if (element_keys.has_key("depends")) {
+					var l = element_keys.get("depends").replace("'","").replace("(","").replace(")","").split(" ");
+					foreach (var d in l) {
+						if ((d != "") && (!this.binary_packages.contains(d))){
+							this.binary_packages.add(d);
+						}
+					}
+				}
+				if (element_keys.has_key("makedepends")) {
+					var l = element_keys.get("makedepends").replace("'","").replace("(","").replace(")","").split(" ");
+					foreach (var d in l) {
+						if ((d != "") && (!this.source_packages.contains(d))){
+							this.source_packages.add(d);
+						}
+					}
+				}
 
-                if (element_keys.has_key("provides")) {
-                    of.put_string("provides=%s\n".printf(element_keys.get("provides")));
-                }
-                if (element_keys.has_key("conflicts")) {
-                    of.put_string("conflicts=%s\n".printf(element_keys.get("conflicts")));
-                }
-                if (element_keys.has_key("replaces")) {
-                    of.put_string("replaces=%s\n".printf(element_keys.get("replaces")));
-                }
-                if (element_keys.has_key("backup")) {
-                    of.put_string("backup=%s\n".printf(element_keys.get("backup")));
-                }
-                if (element_keys.has_key("options")) {
-                    of.put_string("options=%s\n".printf(element_keys.get("options")));
-                }
-                if (element_keys.has_key("install")) {
-                    of.put_string("install=%s\n".printf(element_keys.get("install")));
-                }
-                if (element_keys.has_key("changelog")) {
-                    of.put_string("changelog=%s\n".printf(element_keys.get("changelog")));
-                }
-                of.put_string("source=()\n");
-                of.put_string("noextract=()\n");
-                of.put_string("md5sums=()\n");
-                of.put_string("validpgpkeys=()\n\n");
-                of.put_string("build() {\n\trm -rf ${startdir}/install\n\tmkdir ${startdir}/install\n\tcd ${startdir}/install\n\tcmake .. -DCMAKE_INSTALL_PREFIX=/usr\n\tmake\n}\n\n");
-                of.put_string("package() {\n\tcd ${startdir}/install\n\tmake DESTDIR=\"$pkgdir/\" install\n}\n");
+				of.put_string("depends=(");
+				foreach(var dep in this.binary_packages) {
+					of.put_string(" '%s'".printf(dep));
+				}
+				of.put_string(" )\n");
+				of.put_string("makedepends=(");
+				foreach(var dep in this.source_packages) {
+					of.put_string(" '%s'".printf(dep));
+				}
+				of.put_string(" )\n");
+
+				of.put_string("source=()\n");
+				of.put_string("noextract=()\n");
+				of.put_string("md5sums=()\n");
+				of.put_string("validpgpkeys=()\n\n");
+				of.put_string("build() {\n\trm -rf ${startdir}/install\n\tmkdir ${startdir}/install\n\tcd ${startdir}/install\n\tcmake .. -DCMAKE_INSTALL_PREFIX=/usr\n\tmake\n}\n\n");
+				of.put_string("package() {\n\tcd ${startdir}/install\n\tmake DESTDIR=\"$pkgdir/\" install\n}\n");
 
 				dis.close();
 				Posix.chmod(f_control_path,420); // 644 permissions)

@@ -1,6 +1,7 @@
 pkgname=autovala
-pkgver=0.99.22
+pkgver=0.99.23
 pkgrel=1
+arch=('i686' 'x86_64')
 pkgdesc="Autovala is a program and a library designed to help in the creation
 of projects with Vala and CMake.
 
@@ -18,29 +19,9 @@ project file with the type of each file
 they need, and generate automagically that list
 * After that (and after allowing the user to check, if (s)he wishes,
 the project file), it uses that project file to generate the needed
-CMakeLists files
-
-Autovala greatly simplifies the process of working with Vala because:
-
-* Automatically determines the vala packages and libraries needed to
-compile and run the project, by inspecting the source code
-* Automatically generates the .vapi and pkg-config files for libraries
-* Automatically determinates the final destination for an icon, by
-checking its type (svg or png) and, in the later case, its size.
-* Automatically generates manpages from text files in several
-possible input format (markdown, html, latex...).
-* Greatly simplifies creating libraries in Vala, or a project with a
-binary that uses a library defined in the same project.
-* Automatically generates the metadata files to create .DEB and .RPM packages.
-* Easily integrates unitary tests for each binary in the project.
-* Can generate automatically DBUS bindings by using the DBUS
-introspection capabilities.
-* Automatically generates the list of source files for GETTEXT.
-* Simplifies mixing C and Vala source files.
-"
-arch=('i686' 'x86_64')
+CMakeLists files"
 depends=( 'glib2' 'libgee' 'cairo' 'gtk3' 'pango' 'gdk-pixbuf2' 'readline' 'atk' 'libx11' 'pandoc-bin' )
-makedepends=( 'vala' 'glibc' 'glib2' 'libgee' 'readline' 'cairo' 'gtk3' 'gdk-pixbuf2' 'pango' 'atk' 'libx11' 'cmake' 'gettext' 'pkg-config' 'gcc' 'make' 'intltool' 'pandoc-bin' )
+makedepends=( 'vala' 'glibc' 'glib2' 'libgee' 'readline' 'cairo' 'gtk3' 'gdk-pixbuf2' 'pango' 'atk' 'libx11' 'cmake' 'gettext' 'pkg-config' 'gcc' 'make' 'intltool' 'pandoc-bin' 'bash-completion' )
 source=()
 noextract=()
 md5sums=()
