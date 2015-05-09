@@ -128,7 +128,7 @@ namespace AutoVala {
 			Gee.HashMultiMap<string,string> multi_keys = new Gee.HashMultiMap<string,string>();
 
             var f_control_path = Path.build_filename(path,"%s.spec".printf(this.config.globalData.projectName));
-            var f_control_base_path = Path.build_filename(this.config.globalData.projectFolder,"packages","rpm.spec");
+            var f_control_base_path = Path.build_filename(this.config.globalData.projectFolder,"packages","rpm.spec.base");
 			var f_control = File.new_for_path(f_control_path);
 			var f_control_base = File.new_for_path(f_control_base_path);
 			try {
