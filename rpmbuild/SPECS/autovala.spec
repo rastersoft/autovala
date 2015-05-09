@@ -1,7 +1,7 @@
 Name: autovala
 Version: 0.99.23
 Release: 1
-License: GPLv3
+License: Unknown/not set
 Summary: Autovala is a program and a library designed to help in the creation of projects with Vala and CMake.
 
 BuildRequires: gcc
@@ -35,6 +35,7 @@ Requires: cairo-gobject
 Requires: readline
 Requires: atk
 Requires: libX11
+Requires: pandoc
 
 %description
 Autovala is a program and a library designed to help in the creation
@@ -75,23 +76,23 @@ introspection capabilities.
 * Simplifies mixing C and Vala source files.
 .
 
-%clean
-rm -rf %{buildroot}
-
-%post
-ldconfig
+%files
+*
 
 %build
 mkdir -p ${RPM_BUILD_DIR}
 cd ${RPM_BUILD_DIR}; cmake -DCMAKE_INSTALL_PREFIX=/usr -DGSETTINGS_COMPILE=OFF -DICON_UPDATE=OFF ../..
 make -C ${RPM_BUILD_DIR}
 
+%install
+make install -C ${RPM_BUILD_DIR} DESTDIR=%{buildroot}
+
+%post
+ldconfig
+
 %postun
 ldconfig
 
-%files
-/*
-
-%install
-make install -C ${RPM_BUILD_DIR} DESTDIR=%{buildroot}
+%clean
+rm -rf %{buildroot}
 

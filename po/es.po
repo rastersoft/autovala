@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-05-07 23:15+0200\n"
-"PO-Revision-Date: 2015-05-07 23:15+0200\n"
+"POT-Creation-Date: 2015-05-07 23:02+0200\n"
+"PO-Revision-Date: 2015-02-20 16:19+0100\n"
 "Last-Translator: Sergio Costas <rastersoft@gmail.com>\n"
 "Language-Team: Español; Castellano <rastersoft@gmail.com>\n"
 "Language: en_US\n"
@@ -20,6 +20,7 @@ msgstr ""
 "X-Generator: Gtranslator 2.91.6\n"
 
 #: src/autovala.vala:27
+#, fuzzy
 msgid ""
 "Autovala. Usage:\n"
 "\tautovala help: shows this help\n"
@@ -876,7 +877,7 @@ msgid "Failed to delete debian/control file (%s)"
 msgstr "No se ha podido borrar el fichero debian/control (%s)"
 
 #: src/autovalaLib/packages_deb.vala:251
-#: src/autovalaLib/packages_pacman.vala:216
+#: src/autovalaLib/packages_pacman.vala:224
 #, c-format
 msgid "Failed to write data to debian/control file (%s)"
 msgstr "Incapaz de escribir datos en el fichero debian/control (%s)"

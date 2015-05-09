@@ -241,6 +241,7 @@ namespace AutoVala {
 			error|=this.createPath(configPath,"po");
 			error|=this.createPath(configPath,"doc");
 			error|=this.createPath(configPath,"install");
+			error|=this.createPath(configPath,"packages");
 			error|=this.createPath(configPath,"data");
 			error|=this.createPath(configPath,"data/icons");
 			error|=this.createPath(configPath,"data/pixmaps");

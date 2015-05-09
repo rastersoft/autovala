@@ -49,6 +49,10 @@ if ( NOT EXISTS "/usr/include/readline/readline.h" )
 	message(FATAL_ERROR "Can't find the file /usr/include/readline/readline.h")
 endif()
 
+if ( NOT EXISTS "/usr/bin/pandoc" )
+	message(FATAL_ERROR "Can't find the file /usr/bin/pandoc")
+endif()
+
 find_program ( WHERE_PANDOC pandoc )
 if ( NOT WHERE_PANDOC )
 	MESSAGE(FATAL_ERROR "Error! PANDOC is not installed.")

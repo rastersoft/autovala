@@ -108,6 +108,17 @@ namespace AutoVala {
 			}
 		}
 
+
+		private void print_key(DataOutputStream of,Gee.Map<string,string> keylist,string key,string val) {
+
+			if (!keylist.has_key(key)) {
+				of.put_string("%s: %s\n".printf(key,val));
+			} else {
+				of.put_string("%s: %s\n".printf(key,keylist.get(key)));
+			}
+		}
+
+
 		/**
 		 * Creates de debian/control file
 		 * @param path The 'debian' path
@@ -119,11 +130,15 @@ namespace AutoVala {
 			Gee.Map<string,string> binary_keys = new Gee.HashMap<string,string>();
 
             var f_control_path = Path.build_filename(path,"control");
-			var f_control = File.new_for_path(f_control_path);
+            var f_control = File.new_for_path(f_control_path);
+            var f_control_base_path = Path.build_filename(this.config.globalData.projectFolder,"packages","control.base");
+			var f_control_base = File.new_for_path(f_control_base_path);
+
 			try {
-				if (f_control.query_exists()) {
+				if (f_control_base.query_exists()) {
+					string[] not_valid_keys = {"Version"};
 					bool source = true;
-					var dis = new DataInputStream (f_control.read ());
+					var dis = new DataInputStream (f_control_base.read ());
 					string line;
 					string? key = "";
 					string data = "";
@@ -140,16 +155,25 @@ namespace AutoVala {
 							if (key == null) {
 								continue;
 							}
-							if (source) {
-								data = source_keys.get(key);
-							} else {
-								data = binary_keys.get(key);
+							bool found = false;
+							foreach (var l in not_valid_keys) {
+								if (l == key) {
+									found = true;
+									break;
+								}
 							}
-							data += "\n"+line;
-							if (source) {
-								source_keys.set(key,data);
-							} else {
-								binary_keys.set(key,data);
+							if (!found) {
+								if (source) {
+									data = source_keys.get(key);
+								} else {
+									data = binary_keys.get(key);
+								}
+								data += "\n"+line;
+								if (source) {
+									source_keys.set(key,data);
+								} else {
+									binary_keys.set(key,data);
+								}
 							}
 							continue;
 						}
@@ -159,41 +183,68 @@ namespace AutoVala {
 						}
 						key = line.substring(0,pos).strip();
 						data = line.substring(pos+1).strip();
-						if (source) {
-							source_keys.set(key,data);
-						} else {
-							binary_keys.set(key,data);
+						bool found = false;
+						foreach (var l in not_valid_keys) {
+							if (l == key) {
+								found = true;
+								break;
+							}
 						}
+						if (!found) {
+							if (source) {
+								source_keys.set(key,data);
+							} else {
+								binary_keys.set(key,data);
+							}
+						}
+						continue;
 					}
-					f_control.delete();
 				}
 			} catch (Error e) {
 				ElementBase.globalData.addWarning(_("Failed to delete debian/control file (%s)").printf(e.message));
+			}
+			if (f_control.query_exists()) {
+				f_control.delete();
 			}
 			try {
 				var dis = f_control.create_readwrite(GLib.FileCreateFlags.PRIVATE);
 				var of = new DataOutputStream(dis.output_stream as FileOutputStream);
 				bool not_first;
 
-				if (!source_keys.has_key("Source")) {
-					of.put_string("Source: %s\n".printf(this.config.globalData.projectName));
-				} else {
-					of.put_string("Source: %s\n".printf(source_keys.get("Source")));
-				}
-				of.put_string("Maintainer: %s <%s>\n".printf(this.author_package,this.email_package));
-				if (!source_keys.has_key("Priority")) {
-					of.put_string("Priority: optional\n");
-				}
-
-                if (!source_keys.has_key("Section")) {
-					of.put_string("Section: misc\n");
-				}
+				this.print_key(of,source_keys,"Source",this.config.globalData.projectName);
+				this.print_key(of,source_keys,"Maintainer","%s <%s>".printf(this.author_package,this.email_package));
+				this.print_key(of,source_keys,"Priority","optional");
+				this.print_key(of,source_keys,"Section","misc");
 
 				foreach (var key in source_keys.keys) {
-					if ((key == "Build-Depends") || (key == "Maintainer") || (key == "Source") || (key == "Version")) {
+					if ((key == "Source") || (key == "Maintainer") || (key == "Priority") || (key == "Section") || (key == "Build-Depends")) {
 						continue;
 					}
 					of.put_string("%s: %s\n".printf(key,source_keys.get(key)));
+				}
+
+				if (source_keys.has_key("Build-Depends")) {
+					var elements = source_keys.get("Build-Depends").split(",");
+					foreach (var dep in elements) {
+						var fulldep = dep.strip();
+						if (fulldep == "") {
+							continue;
+						}
+						if (fulldep.index_of_char('|') != -1) {
+							this.source_packages.add(fulldep);
+							continue;
+						}
+						var pos = fulldep.index_of_char('(');
+						var dep2 = "";
+						if (pos != -1) {
+							dep2 = fulldep.substring(0,pos).strip();
+						} else {
+							dep2 = fulldep;
+						}
+						if (this.source_packages.index_of(dep2) == -1) {
+							this.source_packages.add(fulldep);
+						}
+					}
 				}
 
 				of.put_string("Build-Depends: ");
@@ -208,20 +259,41 @@ namespace AutoVala {
 
 				of.put_string("\n\n");
 
+				this.print_key(of,binary_keys,"Package",this.config.globalData.projectName);
+				this.print_key(of,binary_keys,"Architecture","any");
+				of.put_string("Version: %s\n".printf(this.version));
+
 				foreach (var key in binary_keys.keys) {
-					if ((key == "Depends") || (key == "Description") || (key == "Version")) {
+					if ((key == "Package") || (key == "Architecture") || (key == "Version") || (key == "Depends") || (key == "Description")) {
 						continue;
 					}
 					of.put_string("%s: %s\n".printf(key,binary_keys.get(key)));
 				}
 
-				if (!binary_keys.has_key("Package")) {
-					of.put_string("Package: %s\n".printf(this.config.globalData.projectName));
+				if (binary_keys.has_key("Depends")) {
+					var elements = binary_keys.get("Depends").split(",");
+					foreach (var dep in elements) {
+						var fulldep = dep.strip();
+						if (fulldep == "") {
+							continue;
+						}
+						if (fulldep.index_of_char('|') != -1) {
+							this.binary_packages.add(fulldep);
+							continue;
+						}
+						var pos = fulldep.index_of_char('(');
+						var dep2 = "";
+						if (pos != -1) {
+							dep2 = fulldep.substring(0,pos).strip();
+						} else {
+							dep2 = fulldep;
+						}
+						if (this.binary_packages.index_of(dep2) == -1) {
+							this.binary_packages.add(fulldep);
+						}
+					}
 				}
-				of.put_string("Version: %s\n".printf(this.version));
-				if (!binary_keys.has_key("Architecture")) {
-					of.put_string("Architecture: any\n");
-				}
+
 				of.put_string("Depends: ");
 				not_first = false;
 

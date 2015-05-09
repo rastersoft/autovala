@@ -4,6 +4,46 @@ Autovala-tricks(1)
 
 Autovala tricks - Several tricks for Autovala
 
+## Creating packages for linux distributions
+
+AutoVala can create the metadata files for creating .deb, .rpm and pacman source packages. It should be easy to add support for other package systems.
+
+To generate .deb files, just run **autovala deb**. It will create a folder called **debian** and inside will be the **control**, **changelog** and **rules** files, and, if needed, **preinst**, **prerm**, **postinst** and **postrm**. The **control** file will have only the bare minimum, but autovala will include inside the dependencies needed both for building the package, and for running the project. These dependencies are generated automatically from the information extracted from the project. The **changelog** will add a boilerplate line only if there is no line for the current version, so it is strongly recommended to edit and complete this file after doing the automatic generation.
+
+The **rules** file is designed to be compatible with **launchpad**. Also it is possible to manually generate a binary package by running, from the project's root folder, these commands:
+
+    ./debian/rules clean
+    ./debian/rules build
+    ./debian/rules binary-arch
+
+It is possible to create a template control file at **packages/control.base**. In this file you can manually add entries that you want to be included in the final **control** file. Its syntax is exactly the same than the final **control** file. Autovala will honor these entries and will use them instead the ones generated automatically, with one exception: the dependencies defined in this file will not overrule the automatic ones, but will be added to them. That way, if autovala is unable to detect that your program needs, let's say, *pandoc* to be run, you can put it in this file and it will be added to the dependency list.
+
+You can manually edit the files **preinst**, **prerm**, **postinst** and **postrm** in the **debian** folder, and the changes will be kept if you run again the package generation.
+
+To generate .rpm files, just run **autovala rpm**. It will create the folders **rpmbuild/SPECS/**, and inside will be the **.spec** file with the metadata. Then, go to **rpmbuild** folder and run:
+
+    rpmbuild --define "_topdir `pwd`" -ba SPECS/PROJECT_NAME.spec
+
+This will create the RPM package in **rpmbuild/RPMS**. At this moment, the source RPM package at **rpmbuild/SRPMS** is empty, so don't use it.
+
+It is possible to create a template file called **packages/rpm.specs.base** to set values that autovala can't automatically get. Its syntax is the same than a regular **.specs** file. This works the same than the template file for debian packages.
+
+To generate .PKGBUILD files for pacman file manager, just run **autovala pacman**. It will create the file. It also will use a template file, if available, that must be called **packages/PKGBUILD.base**. Its syntax is the same than the PKGBUILD file.
+
+If the project needs an extra package that can't be determined automatically by autovala, it is possible to mark it in a distro-agnostic way, by using the commands **source_dependency** and **binary_dependency** in the **.avprj** file. The first one points to a file in the system that is needed for building the project; when generating the package metadata, autovala will add as a Build-Dependency the package that contains that file. The second one points to a file in the system that is needed for using the project; when generating the package metadata, autovala will add as a Dependency the package that contains that file.
+
+There are several fields extracted from the source itself. The **Description** is extracted from the **README** or **README.md** file. If the file is a pure text one, all it will be used; if it is a markdown one, only the first section will be used.
+
+The package name will be set to the project name. The same for the version number. Also, the version number can't be overriden with the template file (but the package name can be).
+
+Finally, the author's name and email will be asked the first time a package is created, but it will be stored at **$HOME/.config/autovala** to be used when creating new packages.
+
+
+## Adding more package types
+
+As commented, Autovala can generate the metadata por .deb and .rpm source packages. To add more package types, only a new class, derived from **packages** class, must be created. After initializing it and calling **init_all** method, the class should generate the files needed by the packaging system. To help into it, there are several properties that contains useful data, like a list of files needed to build the project (.vapi and .pc files), and for running it (like libraries). The class must use the package utilities to discover which packages contains those files, and use them for generating the dependencies.
+
+
 ## Using Valama
 
 Autovala can export a project to a Valama project, allowing to use this great editor.
@@ -22,40 +62,6 @@ Sometimes it is a good idea to have diferent pictures for the same icon, using o
 ## Using alternative CMAKE files
 
 When updating the CMAKE files for Vala, Autovala will check if the **AUTOVALA_CMAKE_SCRIPT** environment variable is defined with a path. If that is the case, it will copy from that path the CMAKE scripts for the project, instead of using the default ones.
-
-
-## Creating packages for linux distributions
-
-AutoVala can create the metadata files for creating .deb and .rpm source packages (also Arch's pacman packages, but it is still experimental). It should be easy to add support for other package systems.
-
-To generate .deb files, just run **autovala deb**. It will create a folder called **debian** and inside will be the **control**, **changelog** and **rules** files, and, if needed, **preinst**, **prerm**, **postinst** and **postrm**. The **control** file will have only the bare minimum, but autovala will include inside the dependencies needed both for building the package, and for running the project. These dependencies are generated automatically from the information extracted from the project. The **changelog** will add a boilerplate line only if there is no line for the current version, so it is strongly recommended to edit and complete this file after doing the automatic generation.
-
-The **rules** file is designed to be compatible with **launchpad**. Also it is possible to manually generate a binary package by running, from the project's root folder, these commands:
-
-    ./debian/rules clean
-    ./debian/rules build
-    ./debian/rules binary-arch
-
-To generate .rpm files, just run **autovala rpm**. It will create the folders **rpmbuild/SPECS/**, and inside will be the **.spec** file with the metadata. Then, edit that file to set some of the fields that can't be automatically filled (like the LICENSE one), go to **rpmbuild** folder and run:
-
-    rpmbuild --define "_topdir `pwd`" -ba SPECS/PROJECT_NAME.spec
-
-This will create the RPM package in **rpmbuild/RPMS**. At this moment, the source RPM package at **rpmbuild/SRPMS** is empty, so don't use it.
-
-If the project needs an extra package that can't be determined automatically by autovala, it is possible to mark it in a distro-agnostic way, by using the commands **source_dependency** and **binary_dependency** in the **.avprj** file. The first one points to a file in the system that is needed for building the project; when generating the package metadata, autovala will add as a Build-Dependency the package that contains that file. The second one points to a file in the system that is needed for using the project; when generating the package metadata, autovala will add as a Dependency the package that contains that file.
-
-There are several fields extracted from the source itself. The **Description** is extracted from the **README** or **README.md** file. If the file is a pure text one, all it will be used; if it is a markdown one, only the first section will be used.
-
-The package name will be set to the project name.
-
-Finally, the author's name and email will be asked the first time a package is created, but it will be stored at **$HOME/.config/autovala** to be used when creating new packages.
-
-When the metadata files are edited, the changes will be kept except the dependencies build-dependencies fields, that will be overwritten each time the package metadata is recreated. The other files (if they exist) are created only if they didn't exists; if they are already in the folder, they won't be modified, so it is possible to edit them without loosing the changes.
-
-
-## Adding more package types
-
-As commented, Autovala can generate the metadata por .deb and .rpm source packages. To add more package types, only a new class, derived from **packages** class, must be created. After initializing it and calling **init_all** method, the class should generate the files needed by the packaging system. To help into it, there are several properties that contains useful data, like a list of files needed to build the project (.vapi and .pc files), and for running it (like libraries). The class must use the package utilities to discover which packages contains those files, and use them for generating the dependencies.
 
 
 ## Writing unitary tests

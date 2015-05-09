@@ -54,6 +54,8 @@ and enjoy.
 
 
 ## History of versions ##
+* version 0.99.24 (2015-05-09)
+   * Now uses separated .base files when creating deb, rpm or pacman packages
 * version 0.99.23 (2015-05-07)
    * Added support for creating preliminar PACMAN's PKGBUILD files
    * Fixed bug when extracting translation strings in non-ascii, UTF-8 format
