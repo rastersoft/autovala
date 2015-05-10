@@ -45,7 +45,7 @@ build() {
 	rm -rf ${startdir}/install
 	mkdir ${startdir}/install
 	cd ${startdir}/install
-	cmake .. -DCMAKE_INSTALL_PREFIX=/usr
+	cmake .. -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_INSTALL_LIBDIR=/usr/lib
 	make
 }
 

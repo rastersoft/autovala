@@ -307,7 +307,7 @@ namespace AutoVala {
 					of.put_string("\trm -rf install\n");
 					of.put_string("\tmkdir install\n");
 					of.put_string("\tcd install\n");
-					of.put_string("\tcmake .. -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_INSTALL_LIBDIR=/lib\n");
+					of.put_string("\tcmake .. -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_INSTALL_LIBDIR=/usr/lib\n");
 					of.put_string("\tmake\n");
 					of.put_string("}\n\n");
 					of.put_string("package() {\n");
@@ -322,7 +322,7 @@ namespace AutoVala {
 					of.put_string("\trm -rf ${startdir}/install\n");
 					of.put_string("\tmkdir ${startdir}/install\n");
 					of.put_string("\tcd ${startdir}/install\n");
-					of.put_string("\tcmake .. -DCMAKE_INSTALL_PREFIX=/usr\n");
+					of.put_string("\tcmake .. -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_INSTALL_LIBDIR=/usr/lib\n");
 					of.put_string("\tmake\n}\n\n");
 					of.put_string("package() {\n\tcd ${startdir}/install\n\tmake DESTDIR=\"$pkgdir/\" install\n}\n");
 				}
