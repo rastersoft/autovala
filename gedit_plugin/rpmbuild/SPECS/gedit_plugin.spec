@@ -8,6 +8,22 @@ BuildRequires: gcc
 BuildRequires: gcc-c++
 BuildRequires: vala
 BuildRequires: gedit-devel
+BuildRequires: atk-devel
+BuildRequires: cairo-devel
+BuildRequires: gtk3-devel
+BuildRequires: gdk-pixbuf2-devel
+BuildRequires: libgee-devel
+BuildRequires: glib2-devel
+BuildRequires: gobject-introspection-devel
+BuildRequires: gtksourceview3-devel
+BuildRequires: libpeas-devel
+BuildRequires: pango-devel
+BuildRequires: libX11-devel
+BuildRequires: cmake
+BuildRequires: gettext
+BuildRequires: pkgconfig
+BuildRequires: make
+BuildRequires: intltool
 BuildRequires: autovala
 
 Requires: gtksourceview3
@@ -20,6 +36,8 @@ Requires: cairo
 Requires: gdk-pixbuf2
 Requires: glib2
 Requires: gobject-introspection
+Requires: libgee
+Requires: libX11
 Requires: autovala
 
 %description
