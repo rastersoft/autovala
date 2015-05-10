@@ -1,5 +1,5 @@
 Name: autovala
-Version: 0.99.25
+Version: 0.99.26
 Release: 1
 License: Unknown/not set
 Summary: Autovala is a program and a library designed to help in the creation of projects with Vala and CMake.
@@ -36,6 +36,7 @@ Requires: readline
 Requires: atk
 Requires: libX11
 Requires: pandoc
+Requires: curl
 
 %description
 Autovala is a program and a library designed to help in the creation
