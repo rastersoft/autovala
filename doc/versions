@@ -6,6 +6,11 @@
 <div class="main_frame">
 <p><a href="index.html">Home</a></p>
 <ul>
+<li>version 0.99.25 (2015-05-10)</li>
+<li>Now allows to generate PKGBUILD files for Arch's Pacman that support to download the sources from a repository (like GitHub)</li>
+<li>Added packaging files for the Gedit-Plugin</li>
+<li>Now, if it is not possible to determine to which package belongs a file, the package generation process will not be stopped</li>
+<li>Fixed some extra bugs in the PGBUILD generation process</li>
 <li>version 0.99.24 (2015-05-09)</li>
 <li>Now uses separated .base files when creating deb, rpm or pacman packages</li>
 <li>version 0.99.23 (2015-05-07)</li>

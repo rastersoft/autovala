@@ -1,0 +1,24 @@
+Source: gedit_plugin
+Maintainer: Sergio Costas <rastersoft@gmail.com>
+Priority: optional
+Section: misc
+Build-Depends: build-essential, po-debconf, valac-0.26, gedit-dev, autovala
+
+Package: gedit_plugin
+Architecture: any
+Version: 1.0.0
+Depends: libgtksourceview-3.0-1, libpeas-1.0-0, libgtk-3-0, libpangocairo-1.0-0, libpango-1.0-0, libatk1.0-0, libcairo-gobject2, libcairo2, libgdk-pixbuf2.0-0, libglib2.0-0, libgirepository-1.0-1, libgee-0.8-2, libx11-6, autovala
+Description: This is a plugin for GEdit 3 that integrates the project manager
+ AutoVala, allowing to use GEdit as a fully-fledged IDE for creating
+ projects in VALA language.
+ .
+ The plugin adds a left panel which shows the binaries and libraries
+ being created by an AutoVala project and its source files, allowing
+ to choose them just by clicking on each. It also shows all the other
+ files in the project (doc, po, data...) and the AVPRJ file.
+ .
+ To open an AutoVala project, just open any of the files belonging to
+ it, and the plugin will autodetect the project and show all the data.
+ .
+ Remember that you need Autovala installed in your system.
+ .

@@ -54,6 +54,11 @@ and enjoy.
 
 
 ## History of versions ##
+* version 0.99.25 (2015-05-10)
+   * Now allows to generate PKGBUILD files for Arch's Pacman that support to download the sources from a repository (like GitHub)
+   * Added packaging files for the Gedit-Plugin
+   * Now, if it is not possible to determine to which package belongs a file, the package generation process will not be stopped
+   * Fixed some extra bugs in the PGBUILD generation process
 * version 0.99.24 (2015-05-09)
    * Now uses separated .base files when creating deb, rpm or pacman packages
 * version 0.99.23 (2015-05-07)

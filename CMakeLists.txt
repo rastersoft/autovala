@@ -53,6 +53,10 @@ if ( NOT EXISTS "/usr/bin/pandoc" )
 	message(FATAL_ERROR "Can't find the file /usr/bin/pandoc")
 endif()
 
+if ( NOT EXISTS "/usr/bin/curl" )
+	message(FATAL_ERROR "Can't find the file /usr/bin/curl")
+endif()
+
 find_program ( WHERE_PANDOC pandoc )
 if ( NOT WHERE_PANDOC )
 	MESSAGE(FATAL_ERROR "Error! PANDOC is not installed.")

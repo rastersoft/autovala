@@ -59,15 +59,18 @@ namespace AutoVala {
 				try {
 					if (!Process.spawn_sync (null,spawn_args,Environ.get(),SpawnFlags.SEARCH_PATH,null,out ls_stdout,null,out ls_status)) {
 						ElementBase.globalData.addWarning(_("Failed to launch pacman for the file %s").printf(element));
-						return;
+						ElementBase.globalData.addWarning(_("Can't find a package for the file %s").printf(element));
+						continue;
 					}
 					if (ls_status != 0) {
 						ElementBase.globalData.addWarning(_("Error %d when launching pacman for the file %s").printf(ls_status,element));
-						return;
+						ElementBase.globalData.addWarning(_("Can't find a package for the file %s").printf(element));
+						continue;
 					}
 				} catch (SpawnError e) {
 					ElementBase.globalData.addWarning(_("Exception '%s' when launching pacman for the file %s").printf(e.message,element));
-					return;
+					ElementBase.globalData.addWarning(_("Can't find a package for the file %s").printf(element));
+					continue;
 				}
 
 				var pos = ls_stdout.index_of("is owned by");
@@ -83,6 +86,70 @@ namespace AutoVala {
 			}
 		}
 
+		private void print_key(DataOutputStream of,Gee.Map<string,string> keylist,string key,string val) {
+
+			if (!keylist.has_key(key)) {
+				if (-1 == val.index_of_char('\n')) {
+					of.put_string("%s=%s\n".printf(key,val));
+				} else {
+					of.put_string("%s=\"%s\"\n".printf(key,val));
+				}
+			} else {
+				if (-1 == keylist.get(key).index_of_char('\n')) {
+					of.put_string("%s=%s\n".printf(key,keylist.get(key)));
+				} else {
+					of.put_string("%s=\"%s\"\n".printf(key,keylist.get(key)));
+				}
+			}
+		}
+
+		private string? get_md5sum(string name) {
+
+			string[] spawn_args = {"curl", "-L", "--fail", name};
+			string[] spawn_env = Environ.get ();
+			Pid child_pid;
+			int exit_status = 0;
+
+			int standard_output;
+
+			if (!Process.spawn_async_with_pipes ("/",spawn_args, spawn_env, SpawnFlags.SEARCH_PATH | SpawnFlags.DO_NOT_REAP_CHILD, null, out child_pid,	null, out standard_output, null)) {
+				return null;
+			}
+
+			MainLoop loop = new MainLoop ();
+
+			ChildWatch.add (child_pid, (pid, status) => {
+				Process.close_pid (pid);
+				exit_status = status;
+				loop.quit();
+			});
+
+			ssize_t size;
+			uint8 buffer[65536];
+
+			var md5 = new GLib.Checksum(ChecksumType.MD5);
+			while ((size = Posix.read(standard_output,buffer,65536)) != 0) {
+				md5.update(buffer,size);
+			}
+
+			loop.run();
+
+			if (exit_status != 0) {
+				return null;
+			} else {
+				return md5.get_string();
+			}
+		}
+
+		public bool contains_string(string[] haystack, string needle) {
+			foreach (var line in haystack) {
+				if (line == needle) {
+					return true;
+				}
+			}
+			return false;
+		}
+
 		/**
 		 * Creates de PKGBUILD file
 		 * @param path The project's path
@@ -96,8 +163,9 @@ namespace AutoVala {
 			var f_control_path_base = Path.build_filename(this.config.globalData.projectFolder,"packages","PKGBUILD.base");
 			var f_control = File.new_for_path(f_control_path);
 			var f_control_base = File.new_for_path(f_control_path_base);
+			var has_sources = false;
 
-			string[] valid_keys = {"pkgname","depends","makedepends","pkgdesc","arch","url","license","groups","provides","conflicts","replaces","backup","options","install","changelog"};
+			string[] invalid_keys = {"pkgver","pkgrel"};
 
 			if (f_control_base.query_exists()) {
 				string ? multiline_key = null;
@@ -110,11 +178,8 @@ namespace AutoVala {
 					if (multiline_key != null) {
 						multiline_data += line.replace("\"","") + "\n";
 						if (line.index_of_char('"') != -1) {
-							foreach (var l in valid_keys) {
-								if (l == multiline_key) {
-									element_keys.set(multiline_key,"\""+multiline_data.strip()+"\"");
-									break;
-								}
+							if (!this.contains_string(invalid_keys,multiline_key)) {
+								element_keys.set(multiline_key,"\""+multiline_data.strip()+"\"");
 							}
 							multiline_key = null;
 							multiline_data = null;
@@ -140,11 +205,8 @@ namespace AutoVala {
 							}
 							data = data.replace("\"","");
 						}
-						foreach (var l in valid_keys) {
-							if (l == key) {
-								element_keys.set(key,data.strip());
-								break;
-							}
+						if (!this.contains_string(invalid_keys,key)) {
+							element_keys.set(key,data.strip());
 						}
 					}
 				}
@@ -163,18 +225,45 @@ namespace AutoVala {
 				var of = new DataOutputStream(dis.output_stream as FileOutputStream);
 				bool not_first;
 
-				of.put_string("pkgname=%s\n".printf(this.config.globalData.projectName));
+				this.print_key(of,element_keys,"pkgname",this.config.globalData.projectName);
 				of.put_string("pkgver=%s\n".printf(this.version));
 				of.put_string("pkgrel=1\n");
-				if (!element_keys.has_key("pkgdesc")) {
-					of.put_string("pkgdesc=\"%s\"\n".printf(this.description.replace("\"","")));
-				}
-				if (!element_keys.has_key("arch")) {
-					of.put_string("arch=('i686' 'x86_64')\n");
+				this.print_key(of,element_keys,"pkgdesc",this.description.replace("\"",""));
+				this.print_key(of,element_keys,"arch","('i686' 'x86_64')");
+
+				if (element_keys.has_key("source")) {
+					var sources = element_keys.get("source").replace("(","").replace(")","").split("'");
+					string[] l_sources = {};
+					string[] l_mdsums  = {};
+					foreach (var source in sources) {
+						source = source.strip();
+						if (source == "") {
+							continue;
+						}
+						var md5sum = this.get_md5sum(source);
+						if (md5sum != null) {
+							l_sources += source;
+							l_mdsums += md5sum;
+						} else {
+							ElementBase.globalData.addWarning(_("Failed to download %s").printf(source));
+						}
+					}
+					if (l_sources.length != 0) {
+						of.put_string("source=(");
+						foreach (var source in l_sources) {
+							of.put_string(" '%s' ".printf(source));
+						}
+						of.put_string(")\nmd5sums=(");
+						foreach (var sum in l_mdsums) {
+							of.put_string(" '%s' ".printf(sum));
+						}
+						of.put_string(")\n");
+						has_sources = true;
+					}
 				}
 
 				foreach (var key in element_keys.keys) {
-					if ((key != "depends") && (key != "makedepends")) {
+					if ((key != "depends") && (key != "makedepends") && (key != "pkgname") && (key != "pkgver") && (key != "pkgrel") && (key != "pkgdesc") && (key != "arch") && (key != "source") && (key != "md5sums")) {
 						of.put_string("%s=%s\n".printf(key,element_keys.get(key)));
 					}
 				}
@@ -210,12 +299,33 @@ namespace AutoVala {
 				}
 				of.put_string(" )\n");
 
-				of.put_string("source=()\n");
-				of.put_string("noextract=()\n");
-				of.put_string("md5sums=()\n");
-				of.put_string("validpgpkeys=()\n\n");
-				of.put_string("build() {\n\trm -rf ${startdir}/install\n\tmkdir ${startdir}/install\n\tcd ${startdir}/install\n\tcmake .. -DCMAKE_INSTALL_PREFIX=/usr\n\tmake\n}\n\n");
-				of.put_string("package() {\n\tcd ${startdir}/install\n\tmake DESTDIR=\"$pkgdir/\" install\n}\n");
+				if (has_sources) {
+					of.put_string("build() {\n");
+					of.put_string("\tcd $srcdir\n");
+					of.put_string("\tTMP1=`find | grep -F \"%s\"` \n".printf(GLib.Path.get_basename(this.config.globalData.configFile)));
+					of.put_string("\tcd `dirname $TMP1`\n");
+					of.put_string("\trm -rf install\n");
+					of.put_string("\tmkdir install\n");
+					of.put_string("\tcd install\n");
+					of.put_string("\tcmake .. -DCMAKE_INSTALL_PREFIX=/usr\n");
+					of.put_string("\tmake\n");
+					of.put_string("}\n\n");
+					of.put_string("package() {\n");
+					of.put_string("\tcd $srcdir\n");
+					of.put_string("\tTMP1=`find | grep -F \"%s\"` \n".printf(GLib.Path.get_basename(this.config.globalData.configFile)));
+					of.put_string("\tcd `dirname $TMP1`\n");
+					of.put_string("\tcd install\n");
+					of.put_string("\tmake DESTDIR=\"$pkgdir/\" install\n");
+					of.put_string("}\n\n");
+				} else {
+					of.put_string("build() {\n");
+					of.put_string("\trm -rf ${startdir}/install\n");
+					of.put_string("\tmkdir ${startdir}/install\n");
+					of.put_string("\tcd ${startdir}/install\n");
+					of.put_string("\tcmake .. -DCMAKE_INSTALL_PREFIX=/usr\n");
+					of.put_string("\tmake\n}\n\n");
+					of.put_string("package() {\n\tcd ${startdir}/install\n\tmake DESTDIR=\"$pkgdir/\" install\n}\n");
+				}
 
 				dis.close();
 				Posix.chmod(f_control_path,420); // 644 permissions)

@@ -89,20 +89,23 @@ namespace AutoVala {
 				try {
 					if (!Process.spawn_sync (null,spawn_args,Environ.get(),SpawnFlags.SEARCH_PATH,null,out ls_stdout,null,out ls_status)) {
 						ElementBase.globalData.addWarning(_("Failed to launch dpkg for the file %s").printf(element));
-						return;
+						ElementBase.globalData.addWarning(_("Can't find a package for the file %s").printf(element));
+						continue;
 					}
 					if (ls_status != 0) {
 						ElementBase.globalData.addWarning(_("Error %d when launching dpkg for the file %s").printf(ls_status,element));
-						return;
+						ElementBase.globalData.addWarning(_("Can't find a package for the file %s").printf(element));
+						continue;
 					}
 				} catch (SpawnError e) {
 					ElementBase.globalData.addWarning(_("Exception '%s' when launching dpkg for the file %s").printf(e.message,element));
-					return;
+					ElementBase.globalData.addWarning(_("Can't find a package for the file %s").printf(element));
+					continue;
 				}
 				var elements = ls_stdout.split(":");
 				if (elements.length == 0) {
 					ElementBase.globalData.addWarning(_("Can't find a package for the file %s").printf(element));
-				} else 	if (!destination.contains(elements[0])) {
+				} else if (!destination.contains(elements[0])) {
 					destination.add(elements[0]);
 				}
 			}

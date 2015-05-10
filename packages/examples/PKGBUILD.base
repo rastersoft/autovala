@@ -1,2 +1,1 @@
-depends=( 'pandoc-bin' )
-
+source=( 'https://github.com/rastersoft/autovala/archive/master.zip' )

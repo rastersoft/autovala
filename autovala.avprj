@@ -10,7 +10,7 @@ custom: data/debian share/autovala/debian
 
 
 vala_binary: src/autovala
-*version: 0.99.24
+*version: 0.99.25
 compile_c_options: -O2
 vala_local_package: AutoVala
 *vala_package: posix
@@ -125,4 +125,5 @@ manpage: wiki/autovala.1.md
 source_dependency: /usr/include/readline/readline.h
 
 binary_dependency: /usr/bin/pandoc
+binary_dependency: /usr/bin/curl
 

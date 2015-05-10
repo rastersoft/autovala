@@ -55,6 +55,8 @@ endif ()
 
 if (OLD_GEDIT)
 	set (COMPILE_OPTIONS ${COMPILE_OPTIONS} -D OLD_GEDIT)
+	set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DOLD_GEDIT " )
+	set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DOLD_GEDIT " )
 endif ()
 set (COMPILE_OPTIONS ${COMPILE_OPTIONS} --library=autovalagedit --gir autovalagedit-1.0.gir )
 
