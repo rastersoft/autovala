@@ -268,6 +268,7 @@ namespace AutoVala {
 						return true;
 					}
 				}
+				dataStream.put_string("\n");
 			} catch (Error e) {
 				ElementBase.globalData.addError(_("Failed to generate the main CMakeLists.txt file"));
 			}

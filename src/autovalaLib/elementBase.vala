@@ -283,9 +283,10 @@ namespace AutoVala {
 		/**
 		 * Inserts the CMake commands needed for this file AT ITS END in the data stream specified. This allows to add extra commands at the end of a file
 		 * @param dataStream The data stream for the CMakeList.txt file being processed
+		 * @param dataStreamGlobal The data stream for the main CMakeList.txt file being processed, to allow to add extra commands at its end
 		 * @return //true// if there was an error; //false// if not. The error texts can be obtained by calling to returnErrors()
 		 */
-		public virtual bool generateCMakePostData(DataOutputStream dataStream) {
+		public virtual bool generateCMakePostData(DataOutputStream dataStream,DataOutputStream dataStreamGlobal) {
 			return false;
 		}
 

@@ -302,6 +302,7 @@ namespace AutoVala {
 
 			globalData.generateExtraData();
 			var globalElement = new ElementGlobal();
+			DataOutputStream dataStreamGlobal;
 			try {
 				var mainPath = GLib.Path.build_filename(globalData.projectFolder,"CMakeLists.txt");
 				var file = File.new_for_path(mainPath);
@@ -309,9 +310,8 @@ namespace AutoVala {
 					file.delete();
 				}
 				var dis = file.create(FileCreateFlags.NONE);
-				var dataStream = new DataOutputStream(dis);
-				error |= globalElement.generateMainCMakeHeader(dataStream);
-				dataStream.close();
+				dataStreamGlobal = new DataOutputStream(dis);
+				error |= globalElement.generateMainCMakeHeader(dataStreamGlobal);
 			} catch (Error e) {
 				ElementBase.globalData.addError(_("Failed while generating the main CMakeLists.txt file"));
 				return true;
@@ -347,12 +347,12 @@ namespace AutoVala {
 					}
 					condition.printTail();
 
-					error |= globalElement.generateCMakePostData(dataStream);
+					error |= globalElement.generateCMakePostData(dataStream,dataStream);
 					foreach(var element in globalData.globalElements) {
 						if (element.path!=path) {
 							continue;
 						}
-						error |= element.generateCMakePostData(dataStream);
+						error |= element.generateCMakePostData(dataStream,dataStreamGlobal);
 					}
 
 					globalElement.endedCMakeFile();
@@ -368,6 +368,7 @@ namespace AutoVala {
 				ElementBase.globalData.addError(_("Failed while generating the CMakeLists.txt files"));
 				return true;
 			}
+			dataStreamGlobal.close();
 			return error;
 		}
 

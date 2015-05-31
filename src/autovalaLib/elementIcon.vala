@@ -244,7 +244,7 @@ namespace AutoVala {
 		private string[] appendText;
 		private string iconTheme;
 		private bool fixed_size;
-		private static bool addedSuffix=false;
+		private static int addedSuffix = 0;
 		private static string[] updateThemes = {};
 		private static ThemeList themes = new ThemeList();
 
@@ -351,6 +351,10 @@ namespace AutoVala {
 		}
 
 		public override bool generateCMake(DataOutputStream dataStream) {
+
+			// Count how many CMake files for icons we are building,
+			// to ensure that we put the regeneration code in the last one
+			ElementIcon.addedSuffix++;
 
 			var fullPath=Path.build_filename(ElementBase.globalData.projectFolder,this._fullPath);
 			int size=0;
@@ -488,30 +492,34 @@ namespace AutoVala {
 			return (size);
 		}
 
-		public override bool generateCMakePostData(DataOutputStream dataStream) {
+		public override bool generateCMakePostData(DataOutputStream dataStreamGlobal,DataOutputStream dataStream) {
 
-			if ((ElementIcon.addedSuffix==false) && (ElementIcon.updateThemes.length!=0)) {
-				// Refresh the icon cache (but only if ICON_UPDATE is not OFF; that means we are building a package)
-				try {
-					ElementIcon.addedSuffix=true;
-					dataStream.put_string("IF( NOT (${ICON_UPDATE} STREQUAL \"OFF\" ))\n");
-					foreach(var theme in ElementIcon.updateThemes) {
-						var th = ElementIcon.themes.find_theme(theme);
-						if (th!=null) {
-							dataStream.put_string("\tinstall (CODE \"execute_process ( COMMAND /usr/bin/gtk-update-icon-cache-3.0 -t ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATAROOTDIR}/icons/%s )\" )\n".printf(th.folder_name));
+			if (ElementIcon.addedSuffix == 1) {
+				if (ElementIcon.updateThemes.length != 0) {
+					// Refresh the icon cache (but only if ICON_UPDATE is not OFF; that means we are building a package)
+					try {
+						dataStreamGlobal.put_string("if( NOT (${ICON_UPDATE} STREQUAL \"OFF\" ))\n");
+						dataStreamGlobal.put_string("\tfind_program ( GTK_UPDATE_ICON_CACHE NAMES gtk-update-icon-cache.3.0 gtk-update-icon-cache )\n");
+						foreach(var theme in ElementIcon.updateThemes) {
+							var th = ElementIcon.themes.find_theme(theme);
+							if (th!=null) {
+								dataStreamGlobal.put_string("\tinstall (CODE \"execute_process ( COMMAND ${GTK_UPDATE_ICON_CACHE} -t ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATAROOTDIR}/icons/%s )\" )\n".printf(th.folder_name));
+							}
 						}
+						dataStreamGlobal.put_string("ENDIF()\n");
+					} catch (Error e) {
+						ElementBase.globalData.addError(_("Failed to write the PostData for icons at %s").printf(fullPath));
+						return true;
 					}
-					dataStream.put_string("ENDIF()\n");
-				} catch (Error e) {
-					ElementBase.globalData.addError(_("Failed to write the PostData for icons at %s").printf(fullPath));
-					return true;
 				}
+			} else {
+				ElementIcon.addedSuffix--;
 			}
 			return false;
 		}
 
 		public override void endedCMakeFile() {
-			ElementIcon.addedSuffix=false;
+			ElementIcon.addedSuffix = 0;
 			ElementIcon.updateThemes={};
 		}
 

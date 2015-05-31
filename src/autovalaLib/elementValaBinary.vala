@@ -1195,7 +1195,7 @@ namespace AutoVala {
 			return false;
 		}
 
-		public override bool generateCMakePostData(DataOutputStream dataStream) {
+		public override bool generateCMakePostData(DataOutputStream dataStream,DataOutputStream dataStreamGlobal) {
 
 			if (ElementValaBinary.addedLibraryWarning == false) {
 				ElementValaBinary.addedLibraryWarning = true;
