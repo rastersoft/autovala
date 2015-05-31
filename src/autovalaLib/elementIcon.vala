@@ -245,7 +245,7 @@ namespace AutoVala {
 		private string iconTheme;
 		private bool fixed_size;
 		private static weak DataOutputStream lastCMakeFile = null;
-		private static string[] updateThemes = {};
+		private string[] updateThemes = {};
 		private static ThemeList themes = new ThemeList();
 
 		public ElementIcon() {
@@ -273,12 +273,12 @@ namespace AutoVala {
 
 		private void add_theme(string theme) {
 
-			foreach(var t in ElementIcon.updateThemes) {
+			foreach(var t in this.updateThemes) {
 				if (theme == t) {
 					return;
 				}
 			}
-			ElementIcon.updateThemes += theme;
+			this.updateThemes += theme;
 		}
 
 		public override bool configureLine(string line, bool automatic, string? condition, bool invertCondition, int lineNumber) {
@@ -494,12 +494,12 @@ namespace AutoVala {
 		public override bool generateCMakePostData(DataOutputStream dataStreamGlobal,DataOutputStream dataStream) {
 
 			if (ElementIcon.lastCMakeFile != dataStreamGlobal) {
-				if (ElementIcon.updateThemes.length != 0) {
+				if (this.updateThemes.length != 0) {
 					// Refresh the icon cache (but only if ICON_UPDATE is not OFF; that means we are building a package)
 					try {
 						dataStreamGlobal.put_string("if( NOT (${ICON_UPDATE} STREQUAL \"OFF\" ))\n");
 						dataStreamGlobal.put_string("\tfind_program ( GTK_UPDATE_ICON_CACHE NAMES gtk-update-icon-cache.3.0 gtk-update-icon-cache )\n");
-						foreach(var theme in ElementIcon.updateThemes) {
+						foreach(var theme in this.updateThemes) {
 							var th = ElementIcon.themes.find_theme(theme);
 							if (th!=null) {
 								dataStreamGlobal.put_string("\tinstall (CODE \"execute_process ( COMMAND ${GTK_UPDATE_ICON_CACHE} -t ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATAROOTDIR}/icons/%s )\" )\n".printf(th.folder_name));
