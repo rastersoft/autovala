@@ -244,7 +244,7 @@ namespace AutoVala {
 		private string[] appendText;
 		private string iconTheme;
 		private bool fixed_size;
-		private static int addedSuffix = 0;
+		private static weak DataOutputStream lastCMakeFile = null;
 		private static string[] updateThemes = {};
 		private static ThemeList themes = new ThemeList();
 
@@ -354,7 +354,6 @@ namespace AutoVala {
 
 			// Count how many CMake files for icons we are building,
 			// to ensure that we put the regeneration code in the last one
-			ElementIcon.addedSuffix++;
 
 			var fullPath=Path.build_filename(ElementBase.globalData.projectFolder,this._fullPath);
 			int size=0;
@@ -494,7 +493,7 @@ namespace AutoVala {
 
 		public override bool generateCMakePostData(DataOutputStream dataStreamGlobal,DataOutputStream dataStream) {
 
-			if (ElementIcon.addedSuffix == 1) {
+			if (ElementIcon.lastCMakeFile != dataStreamGlobal) {
 				if (ElementIcon.updateThemes.length != 0) {
 					// Refresh the icon cache (but only if ICON_UPDATE is not OFF; that means we are building a package)
 					try {
@@ -512,14 +511,13 @@ namespace AutoVala {
 						return true;
 					}
 				}
-			} else {
-				ElementIcon.addedSuffix--;
 			}
+			ElementIcon.lastCMakeFile = dataStreamGlobal;
 			return false;
 		}
 
 		public override void endedCMakeFile() {
-			ElementIcon.addedSuffix = 0;
+			ElementIcon.lastCMakeFile = null;
 			ElementIcon.updateThemes={};
 		}
 
