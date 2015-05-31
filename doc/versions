@@ -6,6 +6,11 @@
 <div class="main_frame">
 <p><a href="index.html">Home</a></p>
 <ul>
+<li>version 0.99.27 (2015-05-31)</li>
+<li>Now refreshes fine the icon cache when there are several icon themes</li>
+<li>version 0.99.26 (2015-05-11)</li>
+<li>Now, for arch, installs libraries in /usr/lib instead of /usr/lib64</li>
+<li>Fixed dependencies in the DEB, RPM and Pacman files</li>
 <li>version 0.99.25 (2015-05-10)</li>
 <li>Now allows to generate PKGBUILD files for Arch's Pacman that support to download the sources from a repository (like GitHub)</li>
 <li>Added packaging files for the Gedit-Plugin</li>

@@ -1,3 +1,8 @@
+* version 0.99.27 (2015-05-31)
+   * Now refreshes fine the icon cache when there are several icon themes
+* version 0.99.26 (2015-05-11)
+   * Now, for arch, installs libraries in /usr/lib instead of /usr/lib64
+   * Fixed dependencies in the DEB, RPM and Pacman files
 * version 0.99.25 (2015-05-10)
    * Now allows to generate PKGBUILD files for Arch's Pacman that support to download the sources from a repository (like GitHub)
    * Added packaging files for the Gedit-Plugin
