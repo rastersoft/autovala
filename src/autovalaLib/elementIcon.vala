@@ -518,7 +518,6 @@ namespace AutoVala {
 
 		public override void endedCMakeFile() {
 			ElementIcon.lastCMakeFile = null;
-			ElementIcon.updateThemes={};
 		}
 
 		public override bool storeConfig(DataOutputStream dataStream,ConditionalText printConditions) {
