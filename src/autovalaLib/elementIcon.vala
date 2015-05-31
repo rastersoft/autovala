@@ -502,7 +502,7 @@ namespace AutoVala {
 						foreach(var theme in this.updateThemes) {
 							var th = ElementIcon.themes.find_theme(theme);
 							if (th!=null) {
-								dataStreamGlobal.put_string("\tinstall (CODE \"execute_process ( COMMAND ${GTK_UPDATE_ICON_CACHE} -t ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATAROOTDIR}/icons/%s )\" )\n".printf(th.folder_name));
+								dataStreamGlobal.put_string("\tinstall (CODE \"execute_process ( COMMAND ${GTK_UPDATE_ICON_CACHE} -f -t ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATAROOTDIR}/icons/%s )\" )\n".printf(th.folder_name));
 							}
 						}
 						dataStreamGlobal.put_string("ENDIF()\n");
