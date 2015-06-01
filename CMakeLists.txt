@@ -73,3 +73,4 @@ add_subdirectory(data/bash_completion)
 add_subdirectory(data/interface)
 add_subdirectory(src/autovalaPlugin)
 add_subdirectory(src)
+
