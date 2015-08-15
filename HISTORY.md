@@ -1,5 +1,7 @@
 ## History of versions ##
 
+* version 0.99.28 (2015-08-15)
+   * Now ensures that the Debian control file has a valid name
 * version 0.99.27 (2015-05-31)
    * Now refreshes fine the icon cache when there are several icon themes
 * version 0.99.26 (2015-05-11)

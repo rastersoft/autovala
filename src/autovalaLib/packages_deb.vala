@@ -26,8 +26,27 @@ namespace AutoVala {
 
 		private Gee.List<string> source_packages;
 		private Gee.List<string> binary_packages;
+		private string projectName;
 
 		public bool create_deb_package() {
+
+			// adjust project name to Debian conventions (only letters, numbers, '+', '-' and '.'
+			this.projectName = "";
+			for(int i=0; i <this.config.globalData.projectName.length; i++) {
+				var c = this.config.globalData.projectName.get_char(i);
+				if (c.isspace()) {
+					continue;
+				}
+				if ((c.isalnum()) || (c == '.') || (c == '+') || (c == '-')) {
+					this.projectName += c.to_string();
+					continue;
+				}
+				if ((c == ',') || (c == ':') || (c == ';')) {
+					this.projectName += ".";
+					continue;
+				}
+				this.projectName += "-";
+			}
 
 			this.write_defaults();
 
@@ -214,7 +233,7 @@ namespace AutoVala {
 				var of = new DataOutputStream(dis.output_stream as FileOutputStream);
 				bool not_first;
 
-				this.print_key(of,source_keys,"Source",this.config.globalData.projectName);
+				this.print_key(of,source_keys,"Source",this.projectName);
 				this.print_key(of,source_keys,"Maintainer","%s <%s>".printf(this.author_package,this.email_package));
 				this.print_key(of,source_keys,"Priority","optional");
 				this.print_key(of,source_keys,"Section","misc");
@@ -262,7 +281,7 @@ namespace AutoVala {
 
 				of.put_string("\n\n");
 
-				this.print_key(of,binary_keys,"Package",this.config.globalData.projectName);
+				this.print_key(of,binary_keys,"Package",this.projectName);
 				this.print_key(of,binary_keys,"Architecture","any");
 				of.put_string("Version: %s\n".printf(this.version));
 

@@ -6,6 +6,8 @@
 <div class="main_frame">
 <p><a href="index.html">Home</a></p>
 <ul>
+<li>version 0.99.28 (2015-08-15)</li>
+<li>Now ensures that the Debian control file has a valid name</li>
 <li>version 0.99.27 (2015-05-31)</li>
 <li>Now refreshes fine the icon cache when there are several icon themes</li>
 <li>version 0.99.26 (2015-05-11)</li>
