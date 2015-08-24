@@ -1,5 +1,9 @@
 ## History of versions ##
 
+* version 0.99.29
+   * Updated PKGBUILD to the new Pandoc package
+   * Updated DEBIAN control files to support both valac-0.26 and 0.28
+   * Added Windows CMake support
 * version 0.99.28 (2015-08-15)
    * Now ensures that the Debian control file has a valid name
 * version 0.99.27 (2015-05-31)

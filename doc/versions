@@ -5,7 +5,12 @@
 <body>
 <div class="main_frame">
 <p><a href="index.html">Home</a></p>
+<h2 id="history-of-versions">History of versions</h2>
 <ul>
+<li>version 0.99.29</li>
+<li>Updated PKGBUILD to the new Pandoc package</li>
+<li>Updated DEBIAN control files to support both valac-0.26 and 0.28</li>
+<li>Added Windows CMake support</li>
 <li>version 0.99.28 (2015-08-15)</li>
 <li>Now ensures that the Debian control file has a valid name</li>
 <li>version 0.99.27 (2015-05-31)</li>
@@ -57,7 +62,7 @@
 <li>version 0.99.12 (2015-01-11)</li>
 <li>Fixed a bug when using development versions of Vala compiler</li>
 <li>Allows to use alternative CMAKE files</li>
-<li>version 0.99.11 (2014-11-25)</li>
+<li>version 0.99.11 (2014-12-12)</li>
 <li>Can create automagically the metadata for .deb and .rpm packages</li>
 <li>Now honors the c_library parameters also in libraries</li>
 <li>Now only updates the project view in editor plugins when the project file has changed.</li>
@@ -167,19 +172,13 @@
 <li>version 0.25.0 (2013-11-16)</li>
 <li>Added support for creating and installing man pages</li>
 <li>Added manpages for Autovala</li>
-<li>version 0.24.0 (2013-10-20)
-<ul>
+<li>version 0.24.0 (2013-10-20)</li>
 <li>Added conditional compilation and conditional installation support</li>
-</ul></li>
-<li>version 0.23.0 (2013-10-14)
-<ul>
+<li>version 0.23.0 (2013-10-14)</li>
 <li>Added bash_completion support</li>
-</ul></li>
-<li>version 0.22.0 (2013-10-14)
-<ul>
+<li>version 0.22.0 (2013-10-14)</li>
 <li>Autovala and gedit plugin are now different projects, allowing to compile only the former</li>
 <li>Now supports several namespaces in the same .vapi file</li>
-</ul></li>
 <li>version 0.21.0 (2013-09-14)</li>
 <li>Allows to specify GIO, GIO-unix, GObject and GModule packages for compilation</li>
 <li>version 0.20.0 (2013-05-19)</li>
@@ -190,8 +189,8 @@
 <li>version 0.19.0 (2013-04-30)</li>
 <li>Now the plugin deletes the content of the <em>install</em> folder, but not the folder itself</li>
 <li>version 0.18.0 (2013-04-30)</li>
-<li>Allows to delete the <em>install</em> folder from Gedit</li>
-<li>Allows to delete the <em>install</em> folder, update the .avprj file, run cmake and launch make in a single step from Gedit</li>
+<li>Allows to delete the INSTALL folder from Gedit</li>
+<li>Allows to delete the INSTALL folder, update the .avprj file, run cmake and launch make in a single step from Gedit</li>
 <li>version 0.17.0 (2013-04-28)</li>
 <li>Fixed bug in plugin when updating the whole project</li>
 <li>version 0.16.0 (2013-04-28)</li>
