@@ -1,6 +1,6 @@
 ### AutoVala Project ###
 autovala_version: 16
-project_name: gedit_plugin
+project_name: autovala_gedit
 vala_version: 0.24
 
 custom: data/autovala.plugin share/gedit/plugins/autovala

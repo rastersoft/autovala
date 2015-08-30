@@ -1,7 +1,7 @@
-Name: gedit_plugin
+Name: autovala_gedit
 Version: 1.0.0
 Release: 1
-License: Unknown/not set
+License: GPLv3
 Summary: This is a plugin for GEdit 3 that integrates the project manager AutoVala, allowing to use GEdit as a fully-fledged IDE for creating projects in VALA language.
 
 BuildRequires: gcc
