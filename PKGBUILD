@@ -1,5 +1,5 @@
 pkgname=autovala
-pkgver=0.99.29
+pkgver=0.99.30
 pkgrel=1
 pkgdesc="Autovala is a program and a library designed to help in the creation
 of projects with Vala and CMake.
@@ -46,7 +46,7 @@ build() {
 	mkdir ${startdir}/install
 	cd ${startdir}/install
 	cmake .. -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_INSTALL_LIBDIR=/usr/lib
-	make
+	make -j1
 }
 
 package() {
