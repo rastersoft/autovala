@@ -7,6 +7,8 @@
 <p><a href="index.html">Home</a></p>
 <h2 id="history-of-versions">History of versions</h2>
 <ul>
+<li>version 0.99.30 (2015-10-14)</li>
+<li>Removes multithread compilation under Arch, because doesn't work</li>
 <li>version 0.99.29 (2015-08-24)</li>
 <li>Updated PKGBUILD to the new Pandoc package</li>
 <li>Updated DEBIAN control files to support both valac-0.26 and 0.28</li>
