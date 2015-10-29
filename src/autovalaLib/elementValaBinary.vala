@@ -521,17 +521,20 @@ namespace AutoVala {
 						if (pos==-1) {
 							pos=regexString.length; // allow to put //using without a ; at the end, but also accept with it
 						}
-						var namespaceFound=regexString.substring(pos2+2,pos-pos2-2).strip();
-						if ((namespaceFound == "Math") || (namespaceFound == "GLib.Math")) {
-							if (added_math == false) {
-								added_math = true;
-								this.add_library("m");
-							}
-							continue;
-						}
-						if (this.usingList.contains(namespaceFound)==false) {
-							this.usingList.add(namespaceFound);
-						}
+						var namespacesFound=regexString.substring(pos2+2,pos-pos2-2).split(",");
+						foreach(var namespaceFound_tmp in namespacesFound) {
+                            var namespaceFound = namespaceFound_tmp.strip();
+                            if ((namespaceFound == "Math") || (namespaceFound == "GLib.Math")) {
+                                if (added_math == false) {
+                                    added_math = true;
+                                    this.add_library("m");
+                                }
+                                continue;
+                            }
+                            if (this.usingList.contains(namespaceFound)==false) {
+                                this.usingList.add(namespaceFound);
+                            }
+                        }
 						continue;
 					}
 					// Check if this source file uses classes, to add the gobject package

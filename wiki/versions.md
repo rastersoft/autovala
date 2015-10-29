@@ -1,4 +1,6 @@
 ## History of versions ##
+* version 0.99.31 (2015-10-29)
+   * Allows to use "using PKG, PKG..." syntax (before only allowed one package per "using" statement)
 * version 0.99.30 (2015-10-14)
    * Removes multithread compilation under Arch, because doesn't work
 * version 0.99.29 (2015-08-24)
