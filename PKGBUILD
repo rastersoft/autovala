@@ -1,5 +1,5 @@
 pkgname=autovala
-pkgver=0.99.31
+pkgver=0.99.32
 pkgrel=1
 pkgdesc="Autovala is a program and a library designed to help in the creation
 of projects with Vala and CMake.
@@ -37,10 +37,11 @@ binary that uses a library defined in the same project.
 introspection capabilities.
 * Automatically generates the list of source files for GETTEXT.
 * Simplifies mixing C and Vala source files.
+
 "
 arch=('i686' 'x86_64')
-depends=( 'glib2' 'libgee' 'cairo' 'gtk3' 'pango' 'gdk-pixbuf2' 'readline' 'atk' 'libx11' 'pandoc-static' 'curl' )
-makedepends=( 'vala' 'glibc' 'glib2' 'libgee' 'readline' 'cairo' 'gtk3' 'gdk-pixbuf2' 'pango' 'atk' 'libx11' 'cmake' 'gettext' 'pkg-config' 'gcc' 'make' 'intltool' 'pandoc-static' 'bash-completion' )
+depends=( 'glib2' 'libgee' 'cairo' 'gtk3' 'pango' 'gdk-pixbuf2' 'libxml2' 'readline' 'atk' 'libx11' 'pandoc' 'curl' )
+makedepends=( 'vala' 'glibc' 'glib2' 'libgee' 'readline' 'cairo' 'gtk3' 'gdk-pixbuf2' 'libxml2' 'pango' 'atk' 'libx11' 'cmake' 'gettext' 'pkg-config' 'gcc' 'make' 'intltool' 'pandoc' 'bash-completion' )
 build() {
 	rm -rf ${startdir}/install
 	mkdir ${startdir}/install

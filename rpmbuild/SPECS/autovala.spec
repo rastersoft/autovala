@@ -1,8 +1,8 @@
 Name: autovala
-Version: 0.99.31
+Version: 0.99.32
 Release: 1
 License: Unknown/not set
-Summary: Autovala is a program and a library designed to help in the creation of projects with Vala and CMake.
+Summary: Simplify the creation of Vala projects
 
 BuildRequires: gcc
 BuildRequires: gcc-c++
@@ -14,6 +14,7 @@ BuildRequires: readline-devel
 BuildRequires: cairo-devel
 BuildRequires: gtk3-devel
 BuildRequires: gdk-pixbuf2-devel
+BuildRequires: libxml2-devel
 BuildRequires: pango-devel
 BuildRequires: atk-devel
 BuildRequires: libX11-devel
@@ -32,6 +33,7 @@ Requires: gtk3
 Requires: pango
 Requires: gdk-pixbuf2
 Requires: cairo-gobject
+Requires: libxml2
 Requires: readline
 Requires: atk
 Requires: libX11
@@ -75,6 +77,7 @@ binary that uses a library defined in the same project.
 introspection capabilities.
 * Automatically generates the list of source files for GETTEXT.
 * Simplifies mixing C and Vala source files.
+.
 .
 
 %files
