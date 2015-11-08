@@ -8,7 +8,7 @@ autovala fileformat - The syntax for autovala configuration file
 
 The project file has a very simple format. Usually you don't need to manually edit it, but when the guesses of autovala are incorrect, you can do it, and your changes will be remembered each time you refresh the file.
 
-The current version for the project file format is **16**.
+The current version for the project file format is **17**.
 
 The file is based on commands in the format:
 
@@ -30,11 +30,14 @@ After that, it comes several commands, some of them repeated several times, to s
 
  * **po**: specifies the folder where to store the translations. By default it is **po**. The program identifier for Gettext is the project name.
 
- * **define**: specifies a condition parameter set in a **#define** statement in the source code, for conditional compilation. These parameters can be set during Makefile creatin with **-Dparameter=ON**, and will be passed to **valac** during compilation.
+ * **define**: specifies a condition parameter set in a **#define** statement in the source code, for conditional compilation. These parameters can be set during Makefile creating with **-Dparameter=ON**, and will be passed to **valac** during compilation.
 
  * **data**: specifies a folder with local data that must be installed in **share/project_name**. By default it is **data/local**.
 
  * **doc**: specifies a folder with the documentation that must be installed in **share/doc/project_name**. By default it is **doc**.
+
+ * **appdata**: specifies an AppData file, which contains metadata about the application (details at http://people.freedesktop.org/~hughsient/appdata/). When creating
+ packages, Autovala will try to take data from this file if it exists, like a summary and a description.
 
  * **vala_binary**:  contains a path and a name, and specifies that, in the path, there are several source files that must be compiled to create that binary. Example:
 

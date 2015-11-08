@@ -1,3 +1,9 @@
+autovala (0.99.32-Debian1) sid; urgency=low
+
+  * Changes made
+
+ -- Sergio Costas <rastersoft@gmail.com>  Sun, 08 Nov 2015 19:08:48 +0100
+
 autovala (0.99.31-Debian1) sid; urgency=low
 
   * Allows to use "using PKG, PKG..." syntax (before only allowed one package per "using" statement)

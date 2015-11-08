@@ -1,4 +1,6 @@
 ## History of versions ##
+* version 0.99.32 (2015-11-08)
+   * Recognizes AppData files, installing them in the right place and using its data when creating packages
 * version 0.99.31 (2015-10-29)
    * Allows to use "using PKG, PKG..." syntax (before only allowed one package per "using" statement)
 * version 0.99.30 (2015-10-14)

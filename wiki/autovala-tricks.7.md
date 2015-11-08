@@ -16,7 +16,7 @@ The **rules** file is designed to be compatible with **launchpad**. Also it is p
     ./debian/rules build
     ./debian/rules binary-arch
 
-It is possible to create a template control file at **packages/control.base**. In this file you can manually add entries that you want to be included in the final **control** file. Its syntax is exactly the same than the final **control** file. Autovala will honor these entries and will use them instead the ones generated automatically, with one exception: the dependencies defined in this file will not overrule the automatic ones, but will be added to them. That way, if autovala is unable to detect that your program needs, let's say, *pandoc* to be run, you can put it in this file and it will be added to the dependency list.
+It is possible to create a template control file at **packages/control.base**. In this file you can manually add entries that you want to be included in the final **control** file for Debian packages. Its syntax is exactly the same than the final **control** file. Autovala will honor these entries and will use them instead the ones generated automatically, with one exception: the dependencies defined in this file will not overrule the automatic ones, but will be added to them. That way, if autovala is unable to detect that your program needs, let's say, *pandoc* to be run, you can put it in this file and it will be added to the dependency list.
 
 You can manually edit the files **preinst**, **prerm**, **postinst** and **postrm** in the **debian** folder, and the changes will be kept if you run again the package generation.
 
@@ -34,7 +34,7 @@ A nice detail is that, by default, autovala will create a PKGBUILD file that all
 
 If the project needs an extra package that can't be determined automatically by autovala, it is possible to mark it in a distro-agnostic way, by using the commands **source_dependency** and **binary_dependency** in the **.avprj** file. The first one points to a file in the system that is needed for building the project; when generating the package metadata, autovala will add as a Build-Dependency the package that contains that file. The second one points to a file in the system that is needed for using the project; when generating the package metadata, autovala will add as a Dependency the package that contains that file.
 
-There are several fields extracted from the source itself. The **Description** is extracted from the **README** or **README.md** file. If the file is a pure text one, all it will be used; if it is a markdown one, only the first section will be used.
+There are several fields extracted from the source itself. The **Description** is extracted from the AppData file in the project (ussually available in the *data* folder). If there is no such file, Autovala will use the **README** or **README.md** files. If the file is a pure text one, all it will be used; if it is a markdown one, only the first section will be used.
 
 The package name will be set to the project name. The same for the version number. Also, the version number can't be overriden with the template file (but the package name can be).
 

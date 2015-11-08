@@ -116,6 +116,64 @@ namespace AutoVala {
 			return "";
 		}
 
+        private string? adjust_text(Xml.Node *item) {
+            var paragraph = item->get_content().dup().strip().replace("\n"," ");
+            while (paragraph.index_of("  ") != -1) {
+                paragraph = paragraph.replace("  "," ");
+            }
+            return paragraph;
+        }
+
+        private string? read_xml_description(Xml.Node *item) {
+            string data = "";
+            bool next_element = false;
+            for (var iter = item->children; iter != null; iter = iter->next) {
+                var lang = iter->get_prop("lang");
+                if ((lang != null) && (lang != "en")) {
+                    continue;
+                }
+                var name = iter->name;
+                switch (name) {
+                case "p":
+                    if (next_element) {
+                        data += "\n";
+                    }
+                    next_element = true;
+                    data += this.adjust_text(iter)+"\n";
+                break;
+                case "ul":
+                    if (next_element) {
+                        data += "\n";
+                    }
+                    next_element = true;
+                    bool put_line = false;
+                    for (var iter2 = iter->children; iter2 != null; iter2 = iter2->next) {
+                        if (iter2->name == "li") {
+                            data += "* "+this.adjust_text(iter2)+"\n";
+                            put_line = true;
+                        }
+                    }
+                break;
+                case "ol":
+                    if (next_element) {
+                        data += "\n";
+                    }
+                    next_element = true;
+                    int counter = 1;
+                    bool put_line = false;
+                    for (var iter2 = iter->children; iter2 != null; iter2 = iter2->next) {
+                        if (iter2->name == "li") {
+                            data += "%d. %s\n".printf(counter,this.adjust_text(iter2));
+                            put_line = true;
+                            counter++;
+                        }
+                    }
+                break;
+                }
+            }
+            return data;
+        }
+
 		/**
 		 * Second part of the initialization process. Here the class reads the configuration file,
 		 * fills the dependencies, and sets the compiler version.
@@ -167,15 +225,18 @@ namespace AutoVala {
                 var appdata = Xml.Parser.parse_file(filepath);
                 
                 var root = appdata->get_root_element();
-                if ((root != null) && (root->name == "component")) {
+                if ((root != null) && ((root->name == "component") || (root->name == "application"))) {
                     for (var iter = root->children; iter != null; iter = iter->next) {
                         if (iter->type == Xml.ElementType.ELEMENT_NODE) {
                             switch(iter->name) {
                             case "summary":
-                                this.summary = iter->get_content().dup();
+                                var lang = iter->get_prop("lang");
+                                if ((lang == null) || (lang == "en")) {
+                                    this.summary = iter->get_content().dup();
+                                }
                             break;
                             case "description":
-                                this.description = iter->content.dup();
+                                this.description = this.read_xml_description(iter);
                             break;
                             case "url":
                                 var attr = iter->has_prop("type");
@@ -206,7 +267,6 @@ namespace AutoVala {
 			}
 
 			this.description = this.cut_lines(this.description,70);
-            print(this.description+"\n");
 			this.read_defaults();
 			this.fill_libraries("/lib");
 			this.fill_libraries("/usr/lib");
