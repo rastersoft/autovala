@@ -413,6 +413,7 @@ namespace AutoVala {
 			error|=ElementPo.autoGenerate();
 			error|=ElementScheme.autoGenerate();
 			error|=ElementValaBinary.autoGenerate();
+			error|=ElementAppData.autoGenerate();
 
 			if (error==false) {
 				error|=this.config.saveConfiguration();

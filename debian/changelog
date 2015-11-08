@@ -1,3 +1,9 @@
+autovala (0.99.31-Debian1) sid; urgency=low
+
+  * Allows to use "using PKG, PKG..." syntax (before only allowed one package per "using" statement)
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Thu, 29 Oct 2015 23:55:00 +0200
+
 autovala (0.99.30-Debian1) sid; urgency=low
 
   * Removes multithread compilation under Arch, because doesn't work

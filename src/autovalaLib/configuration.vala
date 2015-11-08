@@ -245,6 +245,8 @@ namespace AutoVala {
 						element = new ElementSDepend();
 					} else if (line.has_prefix("binary_dependency: ")) {
 						element = new ElementBDepend();
+					} else if (line.has_prefix("appdata: ")) {
+						element = new ElementAppData();
 					} else if ((line.has_prefix("vala_binary: "))||(line.has_prefix("vala_library: "))) {
 						if (this.checkConditionals(cond)) {
 							error=true;
@@ -413,6 +415,7 @@ namespace AutoVala {
 				this.storeData(ConfigType.VALA_LIBRARY,data_stream);
 				this.storeData(ConfigType.PO,data_stream);
 				this.storeData(ConfigType.DATA,data_stream);
+				this.storeData(ConfigType.APPDATA,data_stream);
 				this.storeData(ConfigType.DOC,data_stream);
 				this.storeData(ConfigType.BINARY,data_stream);
 				this.storeData(ConfigType.DESKTOP,data_stream);

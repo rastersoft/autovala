@@ -2,6 +2,7 @@ src/autovala.vala
 src/autovalaLib/autovalaLib.vala
 src/autovalaLib/conditionalText.vala
 src/autovalaLib/configuration.vala
+src/autovalaLib/elementAppData.vala
 src/autovalaLib/elementBDepend.vala
 src/autovalaLib/elementBase.vala
 src/autovalaLib/elementBashCompletion.vala

@@ -19,6 +19,7 @@
 using GLib;
 using Gee;
 using Posix;
+using Xml;
 
 namespace AutoVala {
 
@@ -32,6 +33,8 @@ namespace AutoVala {
 		public string? description;
 		// Contains the summary to add to the package. Usually the first line of the description.
 		public string? summary;
+		// The homepage
+		public string? homepage;
 		// A list of the files needed for running the project, extracted automatically by autovala
 		public Gee.List<string> dependencies;
 		// A list of the files needed for building the project, extracted automatically by autovala
@@ -77,6 +80,7 @@ namespace AutoVala {
 			this.author_package = null;
 			this.email_package = null;
 			this.description = null;
+			this.homepage = null;
 			this.dependencies = new ArrayList<string>();
 			this.source_dependencies = new ArrayList<string>();
 			this.extra_dependencies = new ArrayList<string>();
@@ -152,16 +156,57 @@ namespace AutoVala {
 			}
 
 			this.summary = null;
-			// Try to read the description from the README or README.md file
-			if (!this.read_description(Path.build_filename(this.config.globalData.projectFolder,"README"))) {
-				if (!this.read_description(Path.build_filename(this.config.globalData.projectFolder,"README.md"))) {
-					this.description = "Not available";
-				}
-			}
+
+            // If there is an AppData file, use it to get the data for the package
+            foreach (var element in config.globalData.globalElements) {
+                if (element.eType != ConfigType.APPDATA) {
+                    continue;
+                }
+                var e_appdata = element as ElementAppData;
+                var filepath = Path.build_filename(this.config.globalData.projectFolder,e_appdata.fullPath);
+                var appdata = Xml.Parser.parse_file(filepath);
+                
+                var root = appdata->get_root_element();
+                if ((root != null) && (root->name == "component")) {
+                    for (var iter = root->children; iter != null; iter = iter->next) {
+                        if (iter->type == Xml.ElementType.ELEMENT_NODE) {
+                            switch(iter->name) {
+                            case "summary":
+                                this.summary = iter->get_content().dup();
+                            break;
+                            case "description":
+                                this.description = iter->content.dup();
+                            break;
+                            case "url":
+                                var attr = iter->has_prop("type");
+                                if (attr != null) {
+                                    var type = iter->get_prop("type").dup();
+                                    if (type == "homepage") {
+                                        this.homepage = iter->get_content().dup();
+                                    }
+                                }
+                            break;
+                            }
+                        }
+                    }
+                }
+                delete (appdata);
+            }
+
+            if (this.description == null) {
+    			// Try to read the description from the README or README.md file
+    			if (!this.read_description(Path.build_filename(this.config.globalData.projectFolder,"README"))) {
+    				if (!this.read_description(Path.build_filename(this.config.globalData.projectFolder,"README.md"))) {
+    					this.description = "Not available";
+    				}
+    			}
+    		}
 			if (this.summary == null) {
 				this.summary = this.description.split("\n")[0];
 			}
+
 			this.description = this.cut_lines(this.description,70);
+            print(this.description+"\n");
 			this.read_defaults();
 			this.fill_libraries("/lib");
 			this.fill_libraries("/usr/lib");
@@ -411,7 +456,7 @@ namespace AutoVala {
 						}
 					}
 				}
-			} catch (Error e) {
+			} catch (GLib.Error e) {
 				ElementBase.globalData.addWarning(_("Failed to process %s.vapi to find dependencies").printf(module));
 			}
 			return false;
@@ -494,7 +539,7 @@ namespace AutoVala {
 					}
 					this.fill_libraries(line2);
 				}
-			} catch (Error e) {
+			} catch (GLib.Error e) {
 			}
 		}
 
@@ -528,7 +573,7 @@ namespace AutoVala {
 						}
 					}
 				}
-			} catch (Error e) {
+			} catch (GLib.Error e) {
 			}
 		}
 
@@ -554,7 +599,7 @@ namespace AutoVala {
 					}
 				}
 				dis.close();
-			} catch (Error e) {
+			} catch (GLib.Error e) {
 			}
 		}
 
@@ -578,7 +623,7 @@ namespace AutoVala {
 					of.put_string("email_package: %s\n".printf(this.email_package));
 				}
 				dis.close();
-			} catch (Error e) {
+			} catch (GLib.Error e) {
 			}
 		}
 
@@ -646,7 +691,7 @@ namespace AutoVala {
 				while ((line = dis.read_line (null)) != null) {
 					content+=line;
 				}
-			} catch (Error e) {
+			} catch (GLib.Error e) {
 				return false;
 			}
 

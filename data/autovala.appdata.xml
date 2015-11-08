@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright 2013 First Lastname <your@email.com> -->
+<component type="desktop">
+ <id>autovala.desktop</id>
+ <metadata_license>CC0-1.0</metadata_license>
+ <project_license>GPL-3.0+</project_license>
+ <name>Autovala</name>
+ <summary>Simplify the creation of Vala projects</summary>
+ <description>
+  <p>Autovala is a program and a library designed to help in the creation of
+projects with Vala and CMake.</p>
+
+  <p>The idea is quite simple: CMake is very powerful, but writting the CMakeLists
+files is boring and repetitive. Why not let the computer create them, by
+guessing what to do with each file? And if, at the end, there are mistakes,
+let the user fix them in an easy way, and generate the final CMakeLists files.</p>
+
+  <p>This is what Autovala does. This process is done in three steps:</p>
+  <ul>
+    <li>First, Autovala checks all the folders and files, and writes a project
+    file with the type of each file</li>
+    <li>It also peeks the source files to determine which Vala packages they need,
+    and generate automagically that list</li>
+    <li>After that (and after allowing the user to check, if (s)he wishes, the
+    project file), it uses that project file to generate the needed CMakeLists
+    files</li>
+  </ul>
+  <p>Autovala greatly simplifies the process of working with Vala because:</p>
+  <ul>
+    <li>Automatically determines the vala packages and libraries needed to compile
+    and run the project, by inspecting the source code</li>
+    <li>Automatically generates the .vapi and pkg-config files for libraries</li>
+    <li>Automatically determinates the final destination for an icon, by checking
+    its type (svg or png) and, in the later case, its size.</li>
+    <li>Automatically generates manpages from text files in several possible input
+    format (markdown, html, latex...).</li>
+    <li>Greatly simplifies creating libraries in Vala, or a project with a binary
+    that uses a library defined in the same project.</li>
+    <li>Automatically generates the metadata files to create .DEB and .RPM packages.</li>
+    <li>Easily integrates unitary tests for each binary in the project.</li>
+    <li>Can generate automatically DBUS bindings by using the DBUS introspection
+    capabilities.</li>
+    <li>Automatically generates the list of source files for GETTEXT.</li>
+    <li>Simplifies mixing C and Vala source files.</li>
+  </ul>
+ </description>
+ <url type="homepage">http://www.rastersoft.com/programas/autovala.html</url>
+ <updatecontact>raster@rastersoft.com</updatecontact>
+</component>
