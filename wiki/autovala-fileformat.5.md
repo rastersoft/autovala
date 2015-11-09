@@ -36,7 +36,7 @@ After that, it comes several commands, some of them repeated several times, to s
 
  * **doc**: specifies a folder with the documentation that must be installed in **share/doc/project_name**. By default it is **doc**.
 
- * **appdata**: specifies an AppData file, which contains metadata about the application (details at http://people.freedesktop.org/~hughsient/appdata/). When creating
+ * **appdata**: specifies an AppData file, which contains metadata about the application (details at http://www.freedesktop.org/software/appstream/docs/chap-Metadata.html and http://www.freedesktop.org/software/appstream/docs/chap-Quickstart.html#sect-Quickstart-DesktopApps). When creating
  packages, Autovala will try to take data from this file if it exists, like a summary and a description.
 
  * **vala_binary**:  contains a path and a name, and specifies that, in the path, there are several source files that must be compiled to create that binary. Example:
