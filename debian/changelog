@@ -1,8 +1,15 @@
+autovala (0.99.33-Debian1) sid; urgency=low
+
+  * Uses the new format for AppData files
+  * Recognizes **.metainfo.xml** files as AppData files too
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Mon, 09 Nov 2015 23:55:00 +0200
+
 autovala (0.99.32-Debian1) sid; urgency=low
 
-  * Changes made
+  * Recognizes AppData files, installing them in the right place and using its data when creating packages
 
- -- Sergio Costas <rastersoft@gmail.com>  Sun, 08 Nov 2015 19:08:48 +0100
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Sun, 08 Nov 2015 23:55:00 +0200
 
 autovala (0.99.31-Debian1) sid; urgency=low
 
