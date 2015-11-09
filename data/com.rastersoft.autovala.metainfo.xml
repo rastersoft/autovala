@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component>
- <id>com.rastersoft.autovala</id>
+ <id type="desktop">com.rastersoft.autovala.desktop</id>
  <metadata_license>CC0-1.0</metadata_license>
  <project_license>GPL-3.0+</project_license>
  <name>Autovala</name>
@@ -30,17 +30,17 @@ let the user fix them in an easy way, and generate the final CMakeLists files.</
     and run the project, by inspecting the source code</li>
     <li>Automatically generates the .vapi and pkg-config files for libraries</li>
     <li>Automatically determinates the final destination for an icon, by checking
-    its type (svg or png) and, in the later case, its size.</li>
+    its type (svg or png) and, in the later case, its size</li>
     <li>Automatically generates manpages from text files in several possible input
-    format (markdown, html, latex...).</li>
+    format (markdown, html, latex...)</li>
     <li>Greatly simplifies creating libraries in Vala, or a project with a binary
-    that uses a library defined in the same project.</li>
+    that uses a library defined in the same project</li>
     <li>Automatically generates the metadata files to create .DEB and .RPM packages.</li>
-    <li>Easily integrates unitary tests for each binary in the project.</li>
+    <li>Easily integrates unitary tests for each binary in the project</li>
     <li>Can generate automatically DBUS bindings by using the DBUS introspection
-    capabilities.</li>
-    <li>Automatically generates the list of source files for GETTEXT.</li>
-    <li>Simplifies mixing C and Vala source files.</li>
+    capabilities</li>
+    <li>Automatically generates the list of source files for GETTEXT</li>
+    <li>Simplifies mixing C and Vala source files</li>
   </ul>
  </description>
  <url type="homepage">http://www.rastersoft.com/programas/autovala.html</url>
