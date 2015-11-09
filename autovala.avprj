@@ -102,7 +102,7 @@ vala_local_package: AutoVala
 
 *data: data/local
 
-*appdata: data/autovala.appdata.xml
+*appdata: data/com.rastersoft.autovala.metainfo.xml
 
 *doc: doc
 
