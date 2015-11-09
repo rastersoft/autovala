@@ -1,4 +1,7 @@
 ## History of versions ##
+* version 0.99.33 (2015-11-09)
+   * Uses the new format for AppData files
+   * Recognizes **.metainfo.xml** files as AppData files too
 * version 0.99.32 (2015-11-08)
    * Recognizes AppData files, installing them in the right place and using its data when creating packages
 * version 0.99.31 (2015-10-29)

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<application>
+<component>
+ <id>com.rastersoft.autovala</id>
  <metadata_license>CC0-1.0</metadata_license>
  <project_license>GPL-3.0+</project_license>
  <name>Autovala</name>
@@ -43,5 +44,6 @@ let the user fix them in an easy way, and generate the final CMakeLists files.</
   </ul>
  </description>
  <url type="homepage">http://www.rastersoft.com/programas/autovala.html</url>
- <updatecontact>raster@rastersoft.com</updatecontact>
-</application>
+ <developer_name>Sergio Costas</developer_name>
+ <update_contact>raster@rastersoft.com</update_contact>
+</component>

@@ -31,7 +31,7 @@ namespace AutoVala {
 			var filePath = File.new_for_path(Path.build_filename(ElementBase.globalData.projectFolder,"data"));
 
 			if (filePath.query_exists()) {
-				var files = ElementBase.getFilesFromFolder("data",{".appdata.xml"},false);
+				var files = ElementBase.getFilesFromFolder("data",{".appdata.xml",".metainfo.xml"},false);
 				foreach (var file in files) {
 					var element = new ElementAppData();
 					error|=element.autoConfigure(file);

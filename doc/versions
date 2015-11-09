@@ -7,6 +7,9 @@
 <p><a href="index.html">Home</a></p>
 <h2 id="history-of-versions">History of versions</h2>
 <ul>
+<li>version 0.99.33 (2015-11-09)</li>
+<li>Uses the new format for AppData files</li>
+<li>Recognizes <strong>.metainfo.xml</strong> files as AppData files too</li>
 <li>version 0.99.32 (2015-11-08)</li>
 <li>Recognizes AppData files, installing them in the right place and using its data when creating packages</li>
 <li>version 0.99.31 (2015-10-29)</li>
