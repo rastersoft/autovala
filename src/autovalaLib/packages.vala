@@ -116,63 +116,63 @@ namespace AutoVala {
 			return "";
 		}
 
-        private string? adjust_text(Xml.Node *item) {
-            var paragraph = item->get_content().dup().strip().replace("\n"," ");
-            while (paragraph.index_of("  ") != -1) {
-                paragraph = paragraph.replace("  "," ");
-            }
-            return paragraph;
-        }
+		private string? adjust_text(Xml.Node *item) {
+			var paragraph = item->get_content().dup().strip().replace("\n"," ");
+			while (paragraph.index_of("  ") != -1) {
+				paragraph = paragraph.replace("  "," ");
+			}
+			return paragraph;
+		}
 
-        private string? read_xml_description(Xml.Node *item) {
-            string data = "";
-            bool next_element = false;
-            for (var iter = item->children; iter != null; iter = iter->next) {
-                var lang = iter->get_prop("lang");
-                if ((lang != null) && (lang != "en")) {
-                    continue;
-                }
-                var name = iter->name;
-                switch (name) {
-                case "p":
-                    if (next_element) {
-                        data += "\n";
-                    }
-                    next_element = true;
-                    data += this.adjust_text(iter)+"\n";
-                break;
-                case "ul":
-                    if (next_element) {
-                        data += "\n";
-                    }
-                    next_element = true;
-                    bool put_line = false;
-                    for (var iter2 = iter->children; iter2 != null; iter2 = iter2->next) {
-                        if (iter2->name == "li") {
-                            data += "* "+this.adjust_text(iter2)+"\n";
-                            put_line = true;
-                        }
-                    }
-                break;
-                case "ol":
-                    if (next_element) {
-                        data += "\n";
-                    }
-                    next_element = true;
-                    int counter = 1;
-                    bool put_line = false;
-                    for (var iter2 = iter->children; iter2 != null; iter2 = iter2->next) {
-                        if (iter2->name == "li") {
-                            data += "%d. %s\n".printf(counter,this.adjust_text(iter2));
-                            put_line = true;
-                            counter++;
-                        }
-                    }
-                break;
-                }
-            }
-            return data;
-        }
+		private string? read_xml_description(Xml.Node *item) {
+			string data = "";
+			bool next_element = false;
+			for (var iter = item->children; iter != null; iter = iter->next) {
+				var lang = iter->get_prop("lang");
+				if ((lang != null) && (lang != "en")) {
+					continue;
+				}
+				var name = iter->name;
+				switch (name) {
+				case "p":
+					if (next_element) {
+						data += "\n";
+					}
+					next_element = true;
+					data += this.adjust_text(iter)+"\n";
+				break;
+				case "ul":
+					if (next_element) {
+						data += "\n";
+					}
+					next_element = true;
+					bool put_line = false;
+					for (var iter2 = iter->children; iter2 != null; iter2 = iter2->next) {
+						if (iter2->name == "li") {
+							data += "* "+this.adjust_text(iter2)+"\n";
+							put_line = true;
+						}
+					}
+				break;
+				case "ol":
+					if (next_element) {
+						data += "\n";
+					}
+					next_element = true;
+					int counter = 1;
+					bool put_line = false;
+					for (var iter2 = iter->children; iter2 != null; iter2 = iter2->next) {
+						if (iter2->name == "li") {
+							data += "%d. %s\n".printf(counter,this.adjust_text(iter2));
+							put_line = true;
+							counter++;
+						}
+					}
+				break;
+				}
+			}
+			return data;
+		}
 
 		/**
 		 * Second part of the initialization process. Here the class reads the configuration file,
@@ -215,53 +215,53 @@ namespace AutoVala {
 
 			this.summary = null;
 
-            // If there is an AppData file, use it to get the data for the package
-            foreach (var element in config.globalData.globalElements) {
-                if (element.eType != ConfigType.APPDATA) {
-                    continue;
-                }
-                var e_appdata = element as ElementAppData;
-                var filepath = Path.build_filename(this.config.globalData.projectFolder,e_appdata.fullPath);
-                var appdata = Xml.Parser.parse_file(filepath);
-                
-                var root = appdata->get_root_element();
-                if ((root != null) && ((root->name == "component") || (root->name == "application"))) {
-                    for (var iter = root->children; iter != null; iter = iter->next) {
-                        if (iter->type == Xml.ElementType.ELEMENT_NODE) {
-                            switch(iter->name) {
-                            case "summary":
-                                var lang = iter->get_prop("lang");
-                                if ((lang == null) || (lang == "en")) {
-                                    this.summary = iter->get_content().dup();
-                                }
-                            break;
-                            case "description":
-                                this.description = this.read_xml_description(iter);
-                            break;
-                            case "url":
-                                var attr = iter->has_prop("type");
-                                if (attr != null) {
-                                    var type = iter->get_prop("type").dup();
-                                    if (type == "homepage") {
-                                        this.homepage = iter->get_content().dup();
-                                    }
-                                }
-                            break;
-                            }
-                        }
-                    }
-                }
-                delete (appdata);
-            }
+			// If there is an AppData file, use it to get the data for the package
+			foreach (var element in config.globalData.globalElements) {
+				if (element.eType != ConfigType.APPDATA) {
+					continue;
+				}
+				var e_appdata = element as ElementAppData;
+				var filepath = Path.build_filename(this.config.globalData.projectFolder,e_appdata.fullPath);
+				var appdata = Xml.Parser.parse_file(filepath);
+				
+				var root = appdata->get_root_element();
+				if ((root != null) && ((root->name == "component") || (root->name == "application"))) {
+					for (var iter = root->children; iter != null; iter = iter->next) {
+						if (iter->type == Xml.ElementType.ELEMENT_NODE) {
+							switch(iter->name) {
+							case "summary":
+								var lang = iter->get_prop("lang");
+								if ((lang == null) || (lang == "en")) {
+									this.summary = iter->get_content().dup();
+								}
+							break;
+							case "description":
+								this.description = this.read_xml_description(iter);
+							break;
+							case "url":
+								var attr = iter->has_prop("type");
+								if (attr != null) {
+									var type = iter->get_prop("type").dup();
+									if (type == "homepage") {
+										this.homepage = iter->get_content().dup();
+									}
+								}
+							break;
+							}
+						}
+					}
+				}
+				delete (appdata);
+			}
 
-            if (this.description == null) {
-    			// Try to read the description from the README or README.md file
-    			if (!this.read_description(Path.build_filename(this.config.globalData.projectFolder,"README"))) {
-    				if (!this.read_description(Path.build_filename(this.config.globalData.projectFolder,"README.md"))) {
-    					this.description = "Not available";
-    				}
-    			}
-    		}
+			if (this.description == null) {
+				// Try to read the description from the README or README.md file
+				if (!this.read_description(Path.build_filename(this.config.globalData.projectFolder,"README"))) {
+					if (!this.read_description(Path.build_filename(this.config.globalData.projectFolder,"README.md"))) {
+						this.description = "Not available";
+					}
+				}
+			}
 			if (this.summary == null) {
 				this.summary = this.description.split("\n")[0];
 			}
@@ -274,16 +274,51 @@ namespace AutoVala {
 			this.read_library_paths("/etc/ld.so.conf");
 
 			// Fill the dependencies
+			bool found_error = false;
 			foreach (var element in config.globalData.globalElements) {
 				if (element.eType == ConfigType.SOURCE_DEPENDENCY) {
-					if (!this.extra_source_dependencies.contains(element.name)) {
-						this.extra_source_dependencies.add(element.name);
+					var paths = element.name.split(" ");
+					bool found = false;
+					foreach (var path in paths) {
+						if (path == "") {
+							continue;
+						}
+						var f = GLib.File.new_for_path(path);
+						if (f.query_exists()) {
+							if (!this.extra_source_dependencies.contains(path)) {
+								this.extra_source_dependencies.add(path);
+								found = true;
+								break;
+							}
+						}
 					}
+					if (!found) {
+						ElementBase.globalData.addError(_("Failed to find any of the files: %s").printf(element.name));
+						found_error = true;
+					}
+					continue;
 				}
 				if (element.eType == ConfigType.BINARY_DEPENDENCY) {
-					if (!this.extra_dependencies.contains(element.name)) {
-						this.extra_dependencies.add(element.name);
+					var paths = element.name.split(" ");
+					bool found = false;
+					foreach (var path in paths) {
+						if (path == "") {
+							continue;
+						}
+						var f = GLib.File.new_for_path(path);
+						if (f.query_exists()) {
+							if (!this.extra_dependencies.contains(path)) {
+								this.extra_dependencies.add(path);
+								found = true;
+								break;
+							}
+						}
 					}
+					if (!found) {
+						ElementBase.globalData.addError(_("Failed to find any of the files: %s").printf(element.name));
+						found_error = true;
+					}
+					continue;
 				}
 				if ((element.eType == ConfigType.VALA_BINARY) || (element.eType == ConfigType.VALA_LIBRARY)) {
 					if (element.path == "src") {
@@ -308,6 +343,9 @@ namespace AutoVala {
 				if (element.eType == ConfigType.BASH_COMPLETION) {
 					this.has_bash_completion = true;
 				}
+			}
+			if (found_error) {
+				return true;
 			}
 			foreach (var element in config.globalData.globalElements) {
 				if ((element.eType == ConfigType.VALA_LIBRARY) || (element.eType == ConfigType.VALA_BINARY)) {
@@ -390,7 +428,7 @@ namespace AutoVala {
 			}
 
 			if (this.has_bash_completion) {
-			    this.source_dependencies.add("/usr/share/pkgconfig/bash-completion.pc");
+				this.source_dependencies.add("/usr/share/pkgconfig/bash-completion.pc");
 			}
 
 			return false;

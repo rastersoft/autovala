@@ -172,7 +172,20 @@ namespace AutoVala {
 						continue;
 					}
 				    printConditions.printCondition(element.condition,element.invertCondition);
-					dataStream.put_string("if ( NOT EXISTS \"%s\" )\n\tmessage(FATAL_ERROR \"Can't find the file %s\")\nendif()\n".printf(element.path,element.path));
+					dataStream.put_string("if ( ");
+					var paths = element.path.split(" ");
+					bool first = true;
+					foreach (var path in paths) {
+					    if (path == "") {
+					        continue;
+					    }
+					    if (! first) {
+    					    dataStream.put_string(" AND ");
+					    }
+					    first = false;
+					    dataStream.put_string("(NOT EXISTS \"%s\")".printf(path));
+					}
+					dataStream.put_string(")\n\tmessage(FATAL_ERROR \"Can't find any of the files %s\")\nendif()\n".printf(element.path));
 					printConditions.printTail();
 					dataStream.put_string("\n");
 				}

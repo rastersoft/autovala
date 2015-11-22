@@ -46,16 +46,16 @@ set(MODULES_TO_CHECK ${MODULES_TO_CHECK} x11)
 
 pkg_check_modules(DEPS REQUIRED ${MODULES_TO_CHECK})
 
-if ( NOT EXISTS "/usr/include/readline/readline.h" )
-	message(FATAL_ERROR "Can't find the file /usr/include/readline/readline.h")
+if ( (NOT EXISTS "/usr/include/readline/readline.h"))
+	message(FATAL_ERROR "Can't find any of the files /usr/include/readline/readline.h")
 endif()
 
-if ( NOT EXISTS "/usr/bin/pandoc" )
-	message(FATAL_ERROR "Can't find the file /usr/bin/pandoc")
+if ( (NOT EXISTS "/usr/bin/pandoc"))
+	message(FATAL_ERROR "Can't find any of the files /usr/bin/pandoc")
 endif()
 
-if ( NOT EXISTS "/usr/bin/curl" )
-	message(FATAL_ERROR "Can't find the file /usr/bin/curl")
+if ( (NOT EXISTS "/usr/bin/curl"))
+	message(FATAL_ERROR "Can't find any of the files /usr/bin/curl")
 endif()
 
 find_program ( WHERE_PANDOC pandoc )

@@ -47,7 +47,7 @@ namespace AutoVala {
 				Intl.bindtextdomain(AutoValaConstants.GETTEXT_PACKAGE, Path.build_filename(AutoValaConstants.DATADIR,"locale"));
 			}
 
-			this.currentVersion=17; // currently we support version 17 of the syntax
+			this.currentVersion=18; // currently we support version 18 of the syntax
 			this.version=0;
 
 			this.globalData = new AutoVala.Globals(projectName,basePath);
