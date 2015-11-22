@@ -1,3 +1,9 @@
+autovala (0.99.34-Debian1) sid; urgency=low
+
+  * Allows to put several files in "source_dependency" and "binary_dependency" statements, allowing to search for one of the files listed fo fullfill the condition.
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Sun, 22 Nov 2015 23:55:00 +0200
+
 autovala (0.99.33-Debian1) sid; urgency=low
 
   * Uses the new format for AppData files
