@@ -1,3 +1,9 @@
+autovala (0.99.35-Debian1) sid; urgency=low
+
+  * Now the buttons in the plugins for Gedit and Scratch works fine (fixed callbacks)
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Tue, 24 Nov 2015 23:55:00 +0200
+
 autovala (0.99.34-Debian1) sid; urgency=low
 
   * Allows to put several files in "source_dependency" and "binary_dependency" statements, allowing to search for one of the files listed fo fullfill the condition.

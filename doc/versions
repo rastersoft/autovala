@@ -7,6 +7,10 @@
 <p><a href="index.html">Home</a></p>
 <h2 id="history-of-versions">History of versions</h2>
 <ul>
+<li>version 0.99.35 (2015-11-24)</li>
+<li>Now the buttons in the plugins for Gedit and Scratch works fine (fixed callbacks)</li>
+<li>version 0.99.34 (2015-11-22)</li>
+<li>Allows to put several files in &quot;source_dependency&quot; and &quot;binary_dependency&quot; statements, allowing to search for one of the files listed fo fullfill the condition.</li>
 <li>version 0.99.33 (2015-11-09)</li>
 <li>Uses the new format for AppData files</li>
 <li>Recognizes <strong>.metainfo.xml</strong> files as AppData files too</li>
