@@ -81,7 +81,6 @@
                   <object class="GtkEntry" id="binary_name">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
-                    <signal name="changed" handler="autovala_plugin_project_properties_name_changed" swapped="no"/>
                   </object>
                   <packing>
                     <property name="expand">True</property>
@@ -177,8 +176,6 @@
                     <property name="action">select-folder</property>
                     <property name="preview_widget_active">False</property>
                     <property name="use_preview_label">False</property>
-                    <signal name="current-folder-changed" handler="autovala_plugin_project_properties_path_changed" swapped="no"/>
-                    <signal name="file-set" handler="autovala_plugin_project_properties_path_changed" swapped="no"/>
                   </object>
                   <packing>
                     <property name="expand">True</property>

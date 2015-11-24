@@ -1,4 +1,6 @@
 ## History of versions ##
+* version 0.99.35 (2015-11-24)
+   * Now the buttons in the plugins for Gedit and Scratch works fine (fixed callbacks)
 * version 0.99.34 (2015-11-22)
    * Allows to put several files in "source_dependency" and "binary_dependency" statements, allowing to search for one of the files listed fo fullfill the condition.
 * version 0.99.33 (2015-11-09)

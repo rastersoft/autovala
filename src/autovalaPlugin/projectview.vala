@@ -687,6 +687,10 @@ namespace AutovalaPlugin {
 			this.accept_button = (Gtk.Button) builder.get_object("button_accept");
 			this.error_message = (Gtk.Label) builder.get_object("error_message");
 
+            this.path.file_set.connect(this.path_changed);
+            this.path.current_folder_changed.connect(this.path_changed);
+            this.name.changed.connect(this.name_changed);
+
 			if(this.editing) {
 				var project_data = project.get_binaries_list(project_file);
 				if (project_data != null) {
@@ -709,7 +713,6 @@ namespace AutovalaPlugin {
 				this.path.set_filename(Path.get_dirname(project_file));
 			}
 			this.main_window.show_all();
-			builder.connect_signals(this);
 			this.set_status();
 		}
 
@@ -737,7 +740,7 @@ namespace AutovalaPlugin {
 		}
 
 		[CCode(instance_pos=-1)]
-		public void name_changed(Gtk.Entry entry) {
+		public void name_changed() {
 			this.set_status();
 		}
 
