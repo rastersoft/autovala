@@ -82,35 +82,41 @@ VERSION
 SOVERSION
 	0 )
 
+set (INSTALL_LIBRARY_AutovalaPlugin ${CMAKE_INSTALL_LIBDIR} )
+set (INSTALL_INCLUDE_AutovalaPlugin ${CMAKE_INSTALL_INCLUDEDIR} )
+set (INSTALL_VAPI_AutovalaPlugin ${CMAKE_INSTALL_DATAROOTDIR}/vala/vapi/ )
+set (INSTALL_GIR_AutovalaPlugin ${CMAKE_INSTALL_DATAROOTDIR}/gir-1.0/ )
+set (INSTALL_PKGCONFIG_AutovalaPlugin ${CMAKE_INSTALL_LIBDIR/pkgconfig} )
+
 install(TARGETS
 	AutovalaPlugin
 LIBRARY DESTINATION
-	${CMAKE_INSTALL_LIBDIR}/
+	${INSTALL_LIBRARY_AutovalaPlugin}/
 )
 install(FILES
 	${CMAKE_CURRENT_BINARY_DIR}/AutovalaPlugin.h
 DESTINATION
-	${CMAKE_INSTALL_INCLUDEDIR}/
+	${INSTALL_INCLUDE_AutovalaPlugin}/
 )
 install(FILES
 	${CMAKE_CURRENT_BINARY_DIR}/AutovalaPlugin.vapi
 DESTINATION
-	${CMAKE_INSTALL_DATAROOTDIR}/vala/vapi/
+	${INSTALL_VAPI_AutovalaPlugin}/
 )
 install(FILES
 	${CMAKE_CURRENT_BINARY_DIR}/AutovalaPlugin.deps
 DESTINATION
-	${CMAKE_INSTALL_DATAROOTDIR}/vala/vapi/
+	${INSTALL_VAPI_AutovalaPlugin}/
 )
 install(FILES
 	${CMAKE_CURRENT_BINARY_DIR}/AutovalaPlugin-0.0.gir
 DESTINATION
-	${CMAKE_INSTALL_DATAROOTDIR}/gir-1.0/
+	${INSTALL_GIR_AutovalaPlugin}/
 )
 install(FILES
 	${CMAKE_CURRENT_BINARY_DIR}/AutovalaPlugin.pc
 DESTINATION
-	${CMAKE_INSTALL_LIBDIR}/pkgconfig/
+	${INSTALL_PKGCONFIG_AutovalaPlugin}/
 )
 if(HAVE_VALADOC)
 	valadoc(AutovalaPlugin

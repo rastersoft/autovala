@@ -58,10 +58,12 @@ OPTIONS
 
 add_executable(autovala ${VALA_C})
 
+set (INSTALL_BINARYPATH_autovala ${CMAKE_INSTALL_BINDIR} )
+
 install(TARGETS
 	autovala
 RUNTIME DESTINATION
-	${CMAKE_INSTALL_BINDIR}/
+	${INSTALL_BINARYPATH_autovala}
 )
 
 if(HAVE_VALADOC)

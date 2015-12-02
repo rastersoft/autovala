@@ -1546,11 +1546,11 @@ namespace AutoVala {
 
 					// Install library
                     if (this._destination.size == 0) {
-                        dataStream.put_string("set (INSTALL_LIBRARY_%s ${CMAKE_INSTALL_LIBDIR} )\n");
-                        dataStream.put_string("set (INSTALL_INCLUDE_%s ${CMAKE_INSTALL_INCLUDEDIR} )\n");
-                        dataStream.put_string("set (INSTALL_VAPI_%s ${CMAKE_INSTALL_DATAROOTDIR}/vala/vapi/ )\n");
-                        dataStream.put_string("set (INSTALL_GIR_%s ${CMAKE_INSTALL_DATAROOTDIR}/gir-1.0/ )\n");
-                        dataStream.put_string("set (INSTALL_PKGCONFIG_%s ${CMAKE_INSTALL_LIBDIR/pkgconfig} )\n");
+                        dataStream.put_string("set (INSTALL_LIBRARY_%s ${CMAKE_INSTALL_LIBDIR} )\n".printf(libFilename));
+                        dataStream.put_string("set (INSTALL_INCLUDE_%s ${CMAKE_INSTALL_INCLUDEDIR} )\n".printf(libFilename));
+                        dataStream.put_string("set (INSTALL_VAPI_%s ${CMAKE_INSTALL_DATAROOTDIR}/vala/vapi/ )\n".printf(libFilename));
+                        dataStream.put_string("set (INSTALL_GIR_%s ${CMAKE_INSTALL_DATAROOTDIR}/gir-1.0/ )\n".printf(libFilename));
+                        dataStream.put_string("set (INSTALL_PKGCONFIG_%s ${CMAKE_INSTALL_LIBDIR/pkgconfig} )\n".printf(libFilename));
                     } else {
     					foreach(var element in this._destination) {
                             printConditions.printCondition(element.condition,element.invertCondition);
@@ -1604,7 +1604,7 @@ namespace AutoVala {
 					printConditions.printTail();
 					dataStream.put_string("\n");
 					if (this._destination.size == 0) {
-                        dataStream.put_string("set (INSTALL_BINARYPATH_%s ${CMAKE_INSTALL_BINDIR} )\n");
+                        dataStream.put_string("set (INSTALL_BINARYPATH_%s ${CMAKE_INSTALL_BINDIR} )\n".printf(libFilename));
                     } else {
     					foreach(var element in this._destination) {
                             printConditions.printCondition(element.condition,element.invertCondition);
@@ -1614,7 +1614,7 @@ namespace AutoVala {
     				}
 					dataStream.put_string("\ninstall(TARGETS\n");
 					dataStream.put_string("\t"+libFilename+"\n");
-					dataStream.put_string("RUNTIME DESTINATION\n\tINSTALL_BINARYPATH_%s \n)\n\n".printf(libFilename));
+					dataStream.put_string("RUNTIME DESTINATION\n\t${INSTALL_BINARYPATH_%s}\n)\n\n".printf(libFilename));
 				}
 
 				// unitary tests
