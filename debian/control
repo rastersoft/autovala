@@ -6,7 +6,7 @@ Build-Depends: build-essential, po-debconf, valac-0.28, libc6-dev, libglib2.0-de
 
 Package: autovala
 Architecture: any
-Version: 0.99.35
+Version: 0.99.36
 Depends: libglib2.0-0, libgee-0.8-2, libcairo2, libgtk-3-0, libpangocairo-1.0-0, libpango-1.0-0, libgdk-pixbuf2.0-0, libcairo-gobject2, libxml2, libreadline6, libatk1.0-0, libx11-6, pandoc, curl
 Description: Autovala is a program and a library designed to help in the creation
  of projects with Vala and CMake.

@@ -1,3 +1,10 @@
+autovala (0.99.36-Debian1) sid; urgency=low
+
+  * Supports conditional CUSTOM and VALA_DESTINATION commands
+  * Now the Gedit plugin can be installed in the right folders both locally and globally
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Wed, 02 Dec 2015 23:55:00 +0200
+
 autovala (0.99.35-Debian1) sid; urgency=low
 
   * Now the buttons in the plugins for Gedit and Scratch works fine (fixed callbacks)

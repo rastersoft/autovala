@@ -1,5 +1,5 @@
 pkgname=autovala_gedit
-pkgver=1.0.0
+pkgver=0.99.36
 pkgrel=1
 pkgdesc="This is a plugin for GEdit 3 that integrates the project manager
 AutoVala, allowing to use GEdit as a fully-fledged IDE for creating

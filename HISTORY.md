@@ -1,5 +1,5 @@
 ## History of versions ##
-* verwion 0.99.36 (2015-12-02)
+* version 0.99.36 (2015-12-02)
    * Supports conditional CUSTOM and VALA_DESTINATION commands
    * Now the Gedit plugin can be installed in the right folders both locally and globally
 * version 0.99.35 (2015-11-24)
