@@ -80,6 +80,15 @@ namespace AutoVala {
 		}
 	}
 
+    public class DestinationElement:GenericElement {
+		public DestinationElement(string destination, bool automatic, string? condition, bool inverted) {
+			this.elementName=destination;
+			this.automatic=automatic;
+			this.condition=condition;
+			this.invertCondition=inverted;
+		}
+	}
+
 	public class DBusElement:GenericElement {
 
 		public string obj;
@@ -146,7 +155,11 @@ namespace AutoVala {
 			get {return this._currentNamespace;}
 		}
 		private bool namespaceAutomatic;
-		private string? destination;
+
+		private Gee.List<DestinationElement ?> _destination;
+		public Gee.List<DestinationElement ?> destination {
+			get {return this._destination;}
+		}
 
 		private static bool addedValaBinaries;
 		private static bool addedLibraryWarning;
@@ -234,7 +247,6 @@ namespace AutoVala {
 			this.usingList=null;
 			this.defines=null;
 			this.namespaceAutomatic=true;
-			this.destination=null;
 			this.namespaces=null;
 			this._packages=new Gee.ArrayList<PackageElement ?>();
 			this._sources=new Gee.ArrayList<SourceElement ?>();
@@ -246,6 +258,7 @@ namespace AutoVala {
 			this._compileCOptions=new Gee.ArrayList<CompileElement ?>();
 			this._dbusElements=new Gee.ArrayList<DBusElement ?>();
 			this._link_libraries=new Gee.ArrayList<LibraryElement ?>();
+			this._destination=new Gee.ArrayList<DestinationElement ?>();
 			ElementValaBinary.addedValaBinaries = false;
 			ElementValaBinary.addedLibraryWarning = false;
 			ElementValaBinary.counter = 1;
@@ -832,12 +845,29 @@ namespace AutoVala {
 			return false;
 		}
 
-		private bool setDestination(string destination, int lineNumber) {
-			if (this.destination==null) {
-				this.destination=destination;
-			} else {
-				ElementBase.globalData.addWarning(_("Ignoring duplicated DESTINATION command (line %d)").printf(lineNumber));
+		private bool setDestination(string destination, bool automatic, string? condition, bool invertCondition, int lineNumber) {
+
+            if (condition!= null) {
+                automatic = false;
+            }
+
+            // adding a non-automatic destination to an automatic binary transforms this binary to non-automatic
+			if ((automatic==false)&&(this._automatic==true)) {
+				this.transformToNonAutomatic(false);
 			}
+
+			foreach(var element in this._destination) {
+				if ((element.elementName==destination) && (automatic==true)) {
+					return false;
+				}
+				if ((element.elementName==destination) && (element.condition==condition) && (element.invertCondition == invertCondition)) {
+    				ElementBase.globalData.addWarning(_("Ignoring duplicated DESTINATION command (line %d)").printf(lineNumber));
+					return false;
+				}
+			}
+
+			var element=new DestinationElement(destination,automatic,condition,invertCondition);
+			this._destination.add(element);
 			return false;
 		}
 
@@ -1043,7 +1073,7 @@ namespace AutoVala {
 			} else if (line.has_prefix("compile_c_options: ")) {
 				return this.setCompileCOptions(line.substring(19).strip(),automatic, condition, invertCondition, lineNumber);
 			} else if (line.has_prefix("vala_destination: ")) {
-				return this.setDestination(line.substring(18).strip(),lineNumber);
+				return this.setDestination(line.substring(18).strip(),automatic,condition, invertCondition,lineNumber);
 			} else if (line.has_prefix("vala_package: ")) {
 				return this.addPackage(line.substring(14).strip(),packageType.NO_CHECK,automatic,condition,invertCondition,lineNumber);
 			} else if (line.has_prefix("vala_check_package: ")) {
@@ -1515,72 +1545,54 @@ namespace AutoVala {
 					dataStream.put_string("\t"+this.version.split(".")[0]+" )\n\n");
 
 					// Install library
-					dataStream.put_string("install(TARGETS\n");
+                    if (this._destination.size == 0) {
+                        dataStream.put_string("set (INSTALL_LIBRARY_%s ${CMAKE_INSTALL_LIBDIR} )\n");
+                        dataStream.put_string("set (INSTALL_INCLUDE_%s ${CMAKE_INSTALL_INCLUDEDIR} )\n");
+                        dataStream.put_string("set (INSTALL_VAPI_%s ${CMAKE_INSTALL_DATAROOTDIR}/vala/vapi/ )\n");
+                        dataStream.put_string("set (INSTALL_GIR_%s ${CMAKE_INSTALL_DATAROOTDIR}/gir-1.0/ )\n");
+                        dataStream.put_string("set (INSTALL_PKGCONFIG_%s ${CMAKE_INSTALL_LIBDIR/pkgconfig} )\n");
+                    } else {
+    					foreach(var element in this._destination) {
+                            printConditions.printCondition(element.condition,element.invertCondition);
+                            dataStream.put_string("set (INSTALL_LIBRARY_%s \"%s\" )\n".printf(libFilename,element.elementName));
+                            dataStream.put_string("set (INSTALL_INCLUDE_%s \"%s\" )\n".printf(libFilename,element.elementName));
+                            dataStream.put_string("set (INSTALL_VAPI_%s \"%s\" )\n".printf(libFilename,element.elementName));
+                            dataStream.put_string("set (INSTALL_GIR_%s \"%s\" )\n".printf(libFilename,element.elementName));
+                            dataStream.put_string("set (INSTALL_PKGCONFIG_%s \"%s\" )\n".printf(libFilename,element.elementName));
+	    				}
+    					printConditions.printTail();
+    				}
+
+					dataStream.put_string("\ninstall(TARGETS\n");
 					dataStream.put_string("\t"+libFilename+"\n");
-					dataStream.put_string("LIBRARY DESTINATION\n");
-					if (this.destination==null) {
-						dataStream.put_string("\t${CMAKE_INSTALL_LIBDIR}/\n");
-					} else {
-						dataStream.put_string("\t%s\n".printf(this.destination));
-					}
-					dataStream.put_string(")\n");
+					dataStream.put_string("LIBRARY DESTINATION\n\t${INSTALL_LIBRARY_%s}/\n)\n".printf(libFilename));
 
 					// Install headers
 					dataStream.put_string("install(FILES\n");
 					dataStream.put_string("\t${CMAKE_CURRENT_BINARY_DIR}/"+libFilename+".h\n");
-					dataStream.put_string("DESTINATION\n");
-					if (this.destination==null) {
-						dataStream.put_string("\t${CMAKE_INSTALL_INCLUDEDIR}/\n");
-					} else {
-						dataStream.put_string("\t%s\n".printf(this.destination));
-					}
-					dataStream.put_string(")\n");
+					dataStream.put_string("DESTINATION\n\t${INSTALL_INCLUDE_%s}/\n)\n".printf(libFilename));
 
 					// Install VAPI
 					dataStream.put_string("install(FILES\n");
 					dataStream.put_string("\t${CMAKE_CURRENT_BINARY_DIR}/"+libFilename+".vapi\n");
-					dataStream.put_string("DESTINATION\n");
-					if (this.destination==null) {
-						dataStream.put_string("\t${CMAKE_INSTALL_DATAROOTDIR}/vala/vapi/\n");
-					} else {
-						dataStream.put_string("\t%s\n".printf(this.destination));
-					}
-					dataStream.put_string(")\n");
+					dataStream.put_string("DESTINATION\n\t${INSTALL_VAPI_%s}/\n)\n".printf(libFilename));
 
 					// Install DEPS
 					dataStream.put_string("install(FILES\n");
 					dataStream.put_string("\t${CMAKE_CURRENT_BINARY_DIR}/"+libFilename+".deps\n");
-					dataStream.put_string("DESTINATION\n");
-					if (this.destination==null) {
-						dataStream.put_string("\t${CMAKE_INSTALL_DATAROOTDIR}/vala/vapi/\n");
-					} else {
-						dataStream.put_string("\t%s\n".printf(this.destination));
-					}
-					dataStream.put_string(")\n");
+					dataStream.put_string("DESTINATION\n\t${INSTALL_VAPI_%s}/\n)\n".printf(libFilename));
 
 					// Install GIR
 					if (girFilename!="") {
 						dataStream.put_string("install(FILES\n");
 						dataStream.put_string("\t${CMAKE_CURRENT_BINARY_DIR}/"+girFilename+"\n");
-						dataStream.put_string("DESTINATION\n");
-					if (this.destination==null) {
-						dataStream.put_string("\t${CMAKE_INSTALL_DATAROOTDIR}/gir-1.0/\n");
-					} else {
-						dataStream.put_string("\t%s\n".printf(this.destination));
-					}
-						dataStream.put_string(")\n");
+						dataStream.put_string("DESTINATION\n\t${INSTALL_GIR_%s}/\n)\n".printf(libFilename));
 					}
 
 					// Install PC
 					dataStream.put_string("install(FILES\n");
 					dataStream.put_string("\t${CMAKE_CURRENT_BINARY_DIR}/"+pcFilename+"\n");
-					dataStream.put_string("DESTINATION\n");
-					if (this.destination==null) {
-						dataStream.put_string("\t${CMAKE_INSTALL_LIBDIR}/pkgconfig/\n");
-					} else {
-						dataStream.put_string("\t%s\n".printf(this.destination));
-					}
-					dataStream.put_string(")\n");
+					dataStream.put_string("DESTINATION\n\t${INSTALL_PKGCONFIG_%s}/\n)\n".printf(libFilename));
 
 				} else {
 					// Install executable
@@ -1591,15 +1603,18 @@ namespace AutoVala {
 					}
 					printConditions.printTail();
 					dataStream.put_string("\n");
-					dataStream.put_string("install(TARGETS\n");
+					if (this._destination.size == 0) {
+                        dataStream.put_string("set (INSTALL_BINARYPATH_%s ${CMAKE_INSTALL_BINDIR} )\n");
+                    } else {
+    					foreach(var element in this._destination) {
+                            printConditions.printCondition(element.condition,element.invertCondition);
+                            dataStream.put_string("set (INSTALL_BINARYPATH_%s \"%s\" )\n".printf(libFilename,element.elementName));
+	    				}
+    					printConditions.printTail();
+    				}
+					dataStream.put_string("\ninstall(TARGETS\n");
 					dataStream.put_string("\t"+libFilename+"\n");
-					dataStream.put_string("RUNTIME DESTINATION\n");
-					if (this.destination==null) {
-						dataStream.put_string("\t${CMAKE_INSTALL_BINDIR}/\n");
-					} else {
-						dataStream.put_string("\t%s\n".printf(this.destination));
-					}
-					dataStream.put_string(")\n\n");
+					dataStream.put_string("RUNTIME DESTINATION\n\tINSTALL_BINARYPATH_%s \n)\n\n".printf(libFilename));
 				}
 
 				// unitary tests
@@ -1686,9 +1701,15 @@ namespace AutoVala {
 					}
 					dataStream.put_string("namespace: %s\n".printf(this._currentNamespace));
 				}
-				if (this.destination!=null) {
-					dataStream.put_string("vala_destination: %s\n".printf(this.destination));
+
+                foreach(var element in this._destination) {
+					printConditions.printCondition(element.condition,element.invertCondition);
+					if (element.automatic) {
+						dataStream.put_string("*");
+					}
+					dataStream.put_string("vala_destination: %s\n".printf(element.elementName));
 				}
+				printConditions.printTail();
 
 				foreach(var element in this._compileOptions) {
 					printConditions.printCondition(element.condition,element.invertCondition);

@@ -24,6 +24,8 @@ Preferences -> Plugins to enable the Autovala plugin.
 
 ## Local installation ##
 
+CURRENTLY, LOCAL INSTALLATION IS NOT AVAILABLE
+
 Local installation is the preferable way for installing this plugin. It makes
 the plugin accesible only to the user that installed it, but has the advantage
 of not needing root priviledges, and also avoids the problems with library

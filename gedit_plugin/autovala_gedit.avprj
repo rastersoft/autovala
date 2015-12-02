@@ -1,16 +1,15 @@
 ### AutoVala Project ###
-autovala_version: 16
+autovala_version: 18
 project_name: autovala_gedit
 vala_version: 0.24
 
-custom: data/autovala.plugin share/gedit/plugins/autovala
+custom: data/autovala.plugin lib/gedit/plugins/autovala
 
 *define: OLD_GEDIT
 
-
 vala_library: src/gedit_plugin
 *namespace: autovalagedit
-vala_destination: share/gedit/plugins/autovala
+vala_destination: lib/gedit/plugins/autovala
 if OLD_GEDIT
 else
 vala_vapi: vapis/gedit.vapi
@@ -36,6 +35,7 @@ end
 *vala_check_package: gtk+-3.0
 *vala_check_package: gtksourceview-3.0
 *vala_check_package: libpeas-1.0
+*vala_check_package: libxml-2.0
 *vala_check_package: pango
 *vala_check_package: pangocairo
 *vala_check_package: x11
