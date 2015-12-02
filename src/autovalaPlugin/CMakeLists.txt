@@ -82,6 +82,7 @@ VERSION
 SOVERSION
 	0 )
 
+
 install(TARGETS
 	AutovalaPlugin
 LIBRARY DESTINATION

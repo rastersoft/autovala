@@ -7,13 +7,13 @@ set (GETTEXT_PACKAGE "autovala")
 set (RELEASE_NAME "autovala")
 set (CMAKE_C_FLAGS "")
 set (PREFIX ${CMAKE_INSTALL_PREFIX})
-set (VERSION "0.99.35")
+set (VERSION "0.99.36")
 set (TESTSRCDIR "${CMAKE_SOURCE_DIR}")
 set (DOLLAR "$")
 
 configure_file (${CMAKE_SOURCE_DIR}/src/Config.vala.cmake ${CMAKE_BINARY_DIR}/src/Config.vala)
 add_definitions(-DGETTEXT_PACKAGE=\"${GETTEXT_PACKAGE}\")
-set (VERSION "0.99.35")
+set (VERSION "0.99.36")
 add_definitions (${DEPS_CFLAGS})
 include_directories ( ${CMAKE_BINARY_DIR}/src/autovalaLib )
 link_libraries ( ${DEPS_LIBRARIES} -lAutoVala )
@@ -58,12 +58,12 @@ OPTIONS
 
 add_executable(autovala ${VALA_C})
 
+
 install(TARGETS
 	autovala
 RUNTIME DESTINATION
-	${CMAKE_INSTALL_BINDIR}/
+	${CMAKE_INSTALL_BINDIR}
 )
-
 if(HAVE_VALADOC)
 	valadoc(autovala
 		${CMAKE_BINARY_DIR}/valadoc/autovala

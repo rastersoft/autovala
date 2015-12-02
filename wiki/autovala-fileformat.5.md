@@ -149,7 +149,7 @@ After that, it comes several commands, some of them repeated several times, to s
 
  * **binary_dependency**: followed by one or more path/filenames (separated by spaces), it defines a system file needed for running the project, so, when creating a system package, the package that contains that file will be added to the dependencies list. It will also be checked when creating the CMAKE files. This is useful, for example, when checking for library files, because in debian-based 64-bit systems they are stored at */usr/lib*, but in fedora-based 64-bit systems they are at */usr/lib64*.
 
-It is also possible to add conditions to nearly all of these commands (more specifically, all can be conditional with the exception of **vala_version**, **vala_binary**, **vala_library**, **version**, **namespace**, **include**, **project_name**, **vala_destination**, **define**, **source_dependency**, **binary_dependency** and **autovala_version**). To do so, you can use the commands **if CONDITION**, **else** and **end**. The format for the **CONDITION** string is the CMake format (statements that can be true or false, parenteses, and AND, OR and NOT operators).
+It is also possible to add conditions to nearly all of these commands (more specifically, all can be conditional with the exception of **vala_version**, **vala_binary**, **vala_library**, **version**, **namespace**, **include**, **project_name**, **define**, **source_dependency**, **binary_dependency** and **autovala_version**). To do so, you can use the commands **if CONDITION**, **else** and **end**. The format for the **CONDITION** string is the CMake format (statements that can be true or false, parenteses, and AND, OR and NOT operators).
 
 An example taken from Cronopete:
 

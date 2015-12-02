@@ -2,9 +2,9 @@
 ### Do not edit
 
 set (DATADIR "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATAROOTDIR}")
-set (PKGDATADIR "${DATADIR}/gedit_plugin")
-set (GETTEXT_PACKAGE "gedit_plugin")
-set (RELEASE_NAME "gedit_plugin")
+set (PKGDATADIR "${DATADIR}/autovala_gedit")
+set (GETTEXT_PACKAGE "autovala_gedit")
+set (RELEASE_NAME "autovala_gedit")
 set (CMAKE_C_FLAGS "")
 set (PREFIX ${CMAKE_INSTALL_PREFIX})
 set (VERSION "1.0.0")
@@ -41,6 +41,7 @@ set (VALA_PACKAGES ${VALA_PACKAGES} gobject-introspection-1.0)
 set (VALA_PACKAGES ${VALA_PACKAGES} gtk+-3.0)
 set (VALA_PACKAGES ${VALA_PACKAGES} gtksourceview-3.0)
 set (VALA_PACKAGES ${VALA_PACKAGES} libpeas-1.0)
+set (VALA_PACKAGES ${VALA_PACKAGES} libxml-2.0)
 set (VALA_PACKAGES ${VALA_PACKAGES} pango)
 set (VALA_PACKAGES ${VALA_PACKAGES} pangocairo)
 set (VALA_PACKAGES ${VALA_PACKAGES} x11)
@@ -53,6 +54,11 @@ if (NOT(OLD_GEDIT))
 endif ()
 
 
+if (ATHOME)
+	set (COMPILE_OPTIONS ${COMPILE_OPTIONS} -D ATHOME)
+	set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DATHOME " )
+	set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DATHOME " )
+endif ()
 if (OLD_GEDIT)
 	set (COMPILE_OPTIONS ${COMPILE_OPTIONS} -D OLD_GEDIT)
 	set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DOLD_GEDIT " )
@@ -82,35 +88,50 @@ VERSION
 SOVERSION
 	1 )
 
+if (ATHOME)
+	set (INSTALL_LIBRARY_autovalagedit "share/gedit/plugins/autovala" )
+set (INSTALL_INCLUDE_autovalagedit "share/gedit/plugins/autovala" )
+set (INSTALL_VAPI_autovalagedit "share/gedit/plugins/autovala" )
+set (INSTALL_GIR_autovalagedit "share/gedit/plugins/autovala" )
+set (INSTALL_PKGCONFIG_autovalagedit "share/gedit/plugins/autovala" )
+else ()
+	set (INSTALL_LIBRARY_autovalagedit "lib/gedit/plugins/autovala" )
+set (INSTALL_INCLUDE_autovalagedit "lib/gedit/plugins/autovala" )
+set (INSTALL_VAPI_autovalagedit "lib/gedit/plugins/autovala" )
+set (INSTALL_GIR_autovalagedit "lib/gedit/plugins/autovala" )
+set (INSTALL_PKGCONFIG_autovalagedit "lib/gedit/plugins/autovala" )
+endif ()
+
+
 install(TARGETS
 	autovalagedit
 LIBRARY DESTINATION
-	share/gedit/plugins/autovala
+	${INSTALL_LIBRARY_autovalagedit}/
 )
 install(FILES
 	${CMAKE_CURRENT_BINARY_DIR}/autovalagedit.h
 DESTINATION
-	share/gedit/plugins/autovala
+	${INSTALL_INCLUDE_autovalagedit}/
 )
 install(FILES
 	${CMAKE_CURRENT_BINARY_DIR}/autovalagedit.vapi
 DESTINATION
-	share/gedit/plugins/autovala
+	${INSTALL_VAPI_autovalagedit}/
 )
 install(FILES
 	${CMAKE_CURRENT_BINARY_DIR}/autovalagedit.deps
 DESTINATION
-	share/gedit/plugins/autovala
+	${INSTALL_VAPI_autovalagedit}/
 )
 install(FILES
 	${CMAKE_CURRENT_BINARY_DIR}/autovalagedit-1.0.gir
 DESTINATION
-	share/gedit/plugins/autovala
+	${INSTALL_GIR_autovalagedit}/
 )
 install(FILES
 	${CMAKE_CURRENT_BINARY_DIR}/autovalagedit.pc
 DESTINATION
-	share/gedit/plugins/autovala
+	${INSTALL_PKGCONFIG_autovalagedit}/
 )
 if(HAVE_VALADOC)
 	valadoc(autovalagedit
@@ -124,7 +145,7 @@ if(HAVE_VALADOC)
 	install(DIRECTORY
 		${CMAKE_BINARY_DIR}/valadoc
 	DESTINATION
-		${CMAKE_INSTALL_DATAROOTDIR}/doc/gedit_plugin
+		${CMAKE_INSTALL_DATAROOTDIR}/doc/autovala_gedit
 	)
 endif()
 

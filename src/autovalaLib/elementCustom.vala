@@ -22,6 +22,7 @@ namespace AutoVala {
 
 	private class ElementCustom : ElementBase {
 
+        private string source;
 		private string destination;
 
 		public ElementCustom() {
@@ -31,12 +32,12 @@ namespace AutoVala {
 
 		public override void add_files() {
 
-			var file = File.new_for_path(Path.build_filename(ElementBase.globalData.projectFolder,this._fullPath));
+			var file = File.new_for_path(Path.build_filename(ElementBase.globalData.projectFolder,this.source));
 			if (file.query_file_type(FileQueryInfoFlags.NONE) == GLib.FileType.DIRECTORY) {
 				this.file_list = ElementBase.getFilesFromFolder(this._path,null,true);
 			} else {
 				this.file_list = {};
-				this.file_list+=this._fullPath;
+				this.file_list+=this.source;
 			}
 		}
 
@@ -53,10 +54,24 @@ namespace AutoVala {
 				ElementBase.globalData.addError(_("Custom command needs two parameters (line %d)").printf(lineNumber));
 				return true;
 			}
-			var file = data[0];
+			this.source = data[0];
+			if (this.source.has_suffix(Path.DIR_SEPARATOR_S)) {
+			    this.source=this.source.substring(0,this.source.length-1);
+			}
 			this.destination = data[1];
 
-			return this.configureElement(file,null,null,automatic,condition,invertCondition);
+            bool retval = this.configureElement(null,null,null,automatic,condition,invertCondition);
+
+            var file = File.new_for_path(Path.build_filename(ElementBase.globalData.projectFolder,this.source));
+            if (file.query_file_type(FileQueryInfoFlags.NONE) != FileType.DIRECTORY) {
+				this._path = GLib.Path.get_dirname(this.source);
+				this._name = GLib.Path.get_basename(this.source);
+			} else {
+				this._path = this.source;
+				this._name = "";
+			}
+
+			return retval;
 		}
 
 		public override bool generateCMake(DataOutputStream dataStream) {
@@ -76,7 +91,7 @@ namespace AutoVala {
 				dataStream.put_string("\t)\n");
 				dataStream.put_string("ENDIF()\n\n");
 			} catch (Error e) {
-				ElementBase.globalData.addError(_("Failed to write the CMakeLists file for custom file %s").printf(this.name));
+				ElementBase.globalData.addError(_("Failed to write the CMakeLists file for custom file %s").printf(this.source));
 				return true;
 			}
 			return false;
@@ -88,9 +103,9 @@ namespace AutoVala {
 				if (this._automatic) {
 					dataStream.put_string("*");
 				}
-				dataStream.put_string("custom: %s %s\n".printf(this.fullPath, this.destination));
+				dataStream.put_string("custom: %s %s\n".printf(this.source, this.destination));
 			} catch (Error e) {
-				ElementBase.globalData.addError(_("Failed to store 'custom: %s %s' at config").printf(this.fullPath, this.destination));
+				ElementBase.globalData.addError(_("Failed to store 'custom: %s %s' at config").printf(this.source, this.destination));
 				return true;
 			}
 			return false;
