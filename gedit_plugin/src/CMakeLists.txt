@@ -54,15 +54,15 @@ if (NOT(OLD_GEDIT))
 endif ()
 
 
-if (LOCAL)
-	set (COMPILE_OPTIONS ${COMPILE_OPTIONS} -D LOCAL)
-	set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DLOCAL " )
-	set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DLOCAL " )
-endif ()
 if (OLD_GEDIT)
 	set (COMPILE_OPTIONS ${COMPILE_OPTIONS} -D OLD_GEDIT)
 	set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DOLD_GEDIT " )
 	set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DOLD_GEDIT " )
+endif ()
+if (ATHOME)
+	set (COMPILE_OPTIONS ${COMPILE_OPTIONS} -D ATHOME)
+	set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DATHOME " )
+	set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DATHOME " )
 endif ()
 set (COMPILE_OPTIONS ${COMPILE_OPTIONS} --library=autovalagedit --gir autovalagedit-1.0.gir )
 
@@ -88,35 +88,50 @@ VERSION
 SOVERSION
 	1 )
 
+if (ATHOME)
+	set (INSTALL_LIBRARY_autovalagedit "$ENV{HOME}/.local/share/gedit/plugins/autovala" )
+set (INSTALL_INCLUDE_autovalagedit "$ENV{HOME}/.local/share/gedit/plugins/autovala" )
+set (INSTALL_VAPI_autovalagedit "$ENV{HOME}/.local/share/gedit/plugins/autovala" )
+set (INSTALL_GIR_autovalagedit "$ENV{HOME}/.local/share/gedit/plugins/autovala" )
+set (INSTALL_PKGCONFIG_autovalagedit "$ENV{HOME}/.local/share/gedit/plugins/autovala" )
+else ()
+	set (INSTALL_LIBRARY_autovalagedit "lib/gedit/plugins/autovala" )
+set (INSTALL_INCLUDE_autovalagedit "lib/gedit/plugins/autovala" )
+set (INSTALL_VAPI_autovalagedit "lib/gedit/plugins/autovala" )
+set (INSTALL_GIR_autovalagedit "lib/gedit/plugins/autovala" )
+set (INSTALL_PKGCONFIG_autovalagedit "lib/gedit/plugins/autovala" )
+endif ()
+
+
 install(TARGETS
 	autovalagedit
 LIBRARY DESTINATION
-	$HOME/.local/share/gedit/plugins/autovala
+	${INSTALL_LIBRARY_autovalagedit}/
 )
 install(FILES
 	${CMAKE_CURRENT_BINARY_DIR}/autovalagedit.h
 DESTINATION
-	$HOME/.local/share/gedit/plugins/autovala
+	${INSTALL_INCLUDE_autovalagedit}/
 )
 install(FILES
 	${CMAKE_CURRENT_BINARY_DIR}/autovalagedit.vapi
 DESTINATION
-	$HOME/.local/share/gedit/plugins/autovala
+	${INSTALL_VAPI_autovalagedit}/
 )
 install(FILES
 	${CMAKE_CURRENT_BINARY_DIR}/autovalagedit.deps
 DESTINATION
-	$HOME/.local/share/gedit/plugins/autovala
+	${INSTALL_VAPI_autovalagedit}/
 )
 install(FILES
 	${CMAKE_CURRENT_BINARY_DIR}/autovalagedit-1.0.gir
 DESTINATION
-	$HOME/.local/share/gedit/plugins/autovala
+	${INSTALL_GIR_autovalagedit}/
 )
 install(FILES
 	${CMAKE_CURRENT_BINARY_DIR}/autovalagedit.pc
 DESTINATION
-	$HOME/.local/share/gedit/plugins/autovala
+	${INSTALL_PKGCONFIG_autovalagedit}/
 )
 if(HAVE_VALADOC)
 	valadoc(autovalagedit

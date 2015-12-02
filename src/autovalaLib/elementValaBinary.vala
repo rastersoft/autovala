@@ -1545,13 +1545,9 @@ namespace AutoVala {
 					dataStream.put_string("\t"+this.version.split(".")[0]+" )\n\n");
 
 					// Install library
-                    if (this._destination.size == 0) {
-                        dataStream.put_string("set (INSTALL_LIBRARY_%s ${CMAKE_INSTALL_LIBDIR} )\n".printf(libFilename));
-                        dataStream.put_string("set (INSTALL_INCLUDE_%s ${CMAKE_INSTALL_INCLUDEDIR} )\n".printf(libFilename));
-                        dataStream.put_string("set (INSTALL_VAPI_%s ${CMAKE_INSTALL_DATAROOTDIR}/vala/vapi/ )\n".printf(libFilename));
-                        dataStream.put_string("set (INSTALL_GIR_%s ${CMAKE_INSTALL_DATAROOTDIR}/gir-1.0/ )\n".printf(libFilename));
-                        dataStream.put_string("set (INSTALL_PKGCONFIG_%s ${CMAKE_INSTALL_LIBDIR/pkgconfig} )\n".printf(libFilename));
-                    } else {
+					bool cond_dest = false;
+                    if (this._destination.size != 0) {
+                        cond_dest = true;
     					foreach(var element in this._destination) {
                             printConditions.printCondition(element.condition,element.invertCondition);
                             dataStream.put_string("set (INSTALL_LIBRARY_%s \"%s\" )\n".printf(libFilename,element.elementName));
@@ -1565,34 +1561,64 @@ namespace AutoVala {
 
 					dataStream.put_string("\ninstall(TARGETS\n");
 					dataStream.put_string("\t"+libFilename+"\n");
-					dataStream.put_string("LIBRARY DESTINATION\n\t${INSTALL_LIBRARY_%s}/\n)\n".printf(libFilename));
+					dataStream.put_string("LIBRARY DESTINATION\n");
+					if (cond_dest) {
+					    dataStream.put_string("\t${INSTALL_LIBRARY_%s}/\n)\n".printf(libFilename));
+					} else {
+    					dataStream.put_string("\t${CMAKE_INSTALL_LIBDIR}\n)\n");
+					}
 
 					// Install headers
 					dataStream.put_string("install(FILES\n");
 					dataStream.put_string("\t${CMAKE_CURRENT_BINARY_DIR}/"+libFilename+".h\n");
-					dataStream.put_string("DESTINATION\n\t${INSTALL_INCLUDE_%s}/\n)\n".printf(libFilename));
+					dataStream.put_string("DESTINATION\n");
+					if (cond_dest) {
+					    dataStream.put_string("\t${INSTALL_INCLUDE_%s}/\n)\n".printf(libFilename));
+					} else {
+					    dataStream.put_string("\t${CMAKE_INSTALL_INCLUDEDIR}\n)\n");
+					}
 
 					// Install VAPI
 					dataStream.put_string("install(FILES\n");
 					dataStream.put_string("\t${CMAKE_CURRENT_BINARY_DIR}/"+libFilename+".vapi\n");
-					dataStream.put_string("DESTINATION\n\t${INSTALL_VAPI_%s}/\n)\n".printf(libFilename));
+					dataStream.put_string("DESTINATION\n");
+					if (cond_dest) {
+					    dataStream.put_string("\t${INSTALL_VAPI_%s}/\n)\n".printf(libFilename));
+					} else {
+					    dataStream.put_string("\t${CMAKE_INSTALL_DATAROOTDIR}/vala/vapi/\n)\n");
+					}
 
 					// Install DEPS
 					dataStream.put_string("install(FILES\n");
 					dataStream.put_string("\t${CMAKE_CURRENT_BINARY_DIR}/"+libFilename+".deps\n");
-					dataStream.put_string("DESTINATION\n\t${INSTALL_VAPI_%s}/\n)\n".printf(libFilename));
+					dataStream.put_string("DESTINATION\n");
+					if (cond_dest) {
+					    dataStream.put_string("\t${INSTALL_VAPI_%s}/\n)\n".printf(libFilename));
+					} else {
+					    dataStream.put_string("\t${CMAKE_INSTALL_DATAROOTDIR}/vala/vapi/\n)\n");
+					}
 
 					// Install GIR
 					if (girFilename!="") {
 						dataStream.put_string("install(FILES\n");
 						dataStream.put_string("\t${CMAKE_CURRENT_BINARY_DIR}/"+girFilename+"\n");
-						dataStream.put_string("DESTINATION\n\t${INSTALL_GIR_%s}/\n)\n".printf(libFilename));
+						dataStream.put_string("DESTINATION\n");
+    					if (cond_dest) {
+	    				    dataStream.put_string("\t${INSTALL_GIR_%s}/\n)\n".printf(libFilename));
+	    				} else {
+	    				    dataStream.put_string("\t${CMAKE_INSTALL_DATAROOTDIR}/gir-1.0/\n)\n");
+	    				}
 					}
 
 					// Install PC
 					dataStream.put_string("install(FILES\n");
 					dataStream.put_string("\t${CMAKE_CURRENT_BINARY_DIR}/"+pcFilename+"\n");
-					dataStream.put_string("DESTINATION\n\t${INSTALL_PKGCONFIG_%s}/\n)\n".printf(libFilename));
+					dataStream.put_string("DESTINATION\n");
+					if (cond_dest) {
+					    dataStream.put_string("\t${INSTALL_PKGCONFIG_%s}/\n)\n".printf(libFilename));
+					} else {
+					    dataStream.put_string("\t${CMAKE_INSTALL_LIBDIR}/pkgconfig/\n)\n");
+					}
 
 				} else {
 					// Install executable

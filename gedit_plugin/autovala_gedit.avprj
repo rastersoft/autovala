@@ -7,9 +7,14 @@ custom: data/autovala.plugin lib/gedit/plugins/autovala
 
 *define: OLD_GEDIT
 
+
 vala_library: src/gedit_plugin
 *namespace: autovalagedit
+if ATHOME
+vala_destination: $ENV{HOME}/.local/share/gedit/plugins/autovala
+else
 vala_destination: lib/gedit/plugins/autovala
+end
 if OLD_GEDIT
 else
 vala_vapi: vapis/gedit.vapi
