@@ -1565,7 +1565,7 @@ namespace AutoVala {
 					if (cond_dest) {
 					    dataStream.put_string("\t${INSTALL_LIBRARY_%s}/\n)\n".printf(libFilename));
 					} else {
-    					dataStream.put_string("\t${CMAKE_INSTALL_LIBDIR}\n)\n");
+    					dataStream.put_string("\t${CMAKE_INSTALL_LIBDIR}/\n)\n");
 					}
 
 					// Install headers
@@ -1575,7 +1575,7 @@ namespace AutoVala {
 					if (cond_dest) {
 					    dataStream.put_string("\t${INSTALL_INCLUDE_%s}/\n)\n".printf(libFilename));
 					} else {
-					    dataStream.put_string("\t${CMAKE_INSTALL_INCLUDEDIR}\n)\n");
+					    dataStream.put_string("\t${CMAKE_INSTALL_INCLUDEDIR}/\n)\n");
 					}
 
 					// Install VAPI
@@ -1629,9 +1629,9 @@ namespace AutoVala {
 					}
 					printConditions.printTail();
 					dataStream.put_string("\n");
-					if (this._destination.size == 0) {
-                        dataStream.put_string("set (INSTALL_BINARYPATH_%s ${CMAKE_INSTALL_BINDIR} )\n".printf(libFilename));
-                    } else {
+					bool cond_dest = false;
+					if (this._destination.size != 0) {
+                        cond_dest = true;
     					foreach(var element in this._destination) {
                             printConditions.printCondition(element.condition,element.invertCondition);
                             dataStream.put_string("set (INSTALL_BINARYPATH_%s \"%s\" )\n".printf(libFilename,element.elementName));
@@ -1640,7 +1640,12 @@ namespace AutoVala {
     				}
 					dataStream.put_string("\ninstall(TARGETS\n");
 					dataStream.put_string("\t"+libFilename+"\n");
-					dataStream.put_string("RUNTIME DESTINATION\n\t${INSTALL_BINARYPATH_%s}\n)\n\n".printf(libFilename));
+					dataStream.put_string("RUNTIME DESTINATION\n");
+					if (cond_dest) {
+					    dataStream.put_string("\t${INSTALL_BINARYPATH_%s}\n)\n\n".printf(libFilename));
+					} else {
+					    dataStream.put_string("\t${CMAKE_INSTALL_BINDIR}\n)\n");
+					}
 				}
 
 				// unitary tests

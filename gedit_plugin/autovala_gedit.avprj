@@ -1,9 +1,13 @@
 ### AutoVala Project ###
-autovala_version: 18
+autovala_version: 19
 project_name: autovala_gedit
 vala_version: 0.24
 
+if ATHOME
+custom: data/autovala.plugin share/gedit/plugins/autovala
+else
 custom: data/autovala.plugin lib/gedit/plugins/autovala
+end
 
 *define: OLD_GEDIT
 
@@ -11,7 +15,7 @@ custom: data/autovala.plugin lib/gedit/plugins/autovala
 vala_library: src/gedit_plugin
 *namespace: autovalagedit
 if ATHOME
-vala_destination: $ENV{HOME}/.local/share/gedit/plugins/autovala
+vala_destination: share/gedit/plugins/autovala
 else
 vala_destination: lib/gedit/plugins/autovala
 end

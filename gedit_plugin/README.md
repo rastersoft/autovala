@@ -24,8 +24,6 @@ Preferences -> Plugins to enable the Autovala plugin.
 
 ## Local installation ##
 
-CURRENTLY, LOCAL INSTALLATION IS NOT AVAILABLE
-
 Local installation is the preferable way for installing this plugin. It makes
 the plugin accesible only to the user that installed it, but has the advantage
 of not needing root priviledges, and also avoids the problems with library
@@ -34,7 +32,7 @@ just type:
 
         mkdir install
         cd install
-        cmake .. -DCMAKE_INSTALL_PREFIX=$HOME/.local [-DOLD_GEDIT=on]
+        cmake .. -DATHOME=on -DCMAKE_INSTALL_PREFIX=$HOME/.local [-DOLD_GEDIT=on]
         make
         make install
 
@@ -49,7 +47,7 @@ system, just type:
 
         mkdir install
         cd install
-        cmake .. [-DOLD_GEGIT=on]
+        cmake .. -DCMAKE_INSTALL_PREFIX=/usr [-DOLD_GEGIT=on]
         make
         sudo make install
 
