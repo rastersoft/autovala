@@ -1,3 +1,9 @@
+autovala (0.99.37-Debian1) sid; urgency=low
+
+  * Now the DBUS Service files ends with the right file name (it removes the ".base" if requires)
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Sat, 05 Dec 2015 23:55:00 +0200
+
 autovala (0.99.36-Debian1) sid; urgency=low
 
   * Supports conditional CUSTOM and VALA_DESTINATION commands

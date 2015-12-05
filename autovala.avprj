@@ -10,7 +10,7 @@ custom: data/debian share/autovala/debian
 
 
 vala_binary: src/autovala
-*version: 0.99.36
+*version: 0.99.37
 compile_c_options: -O2
 vala_local_package: AutoVala
 *vala_package: posix

@@ -1,4 +1,6 @@
 ## History of versions ##
+* version 0.99.37 (2015-12-05)
+   * Now the DBUS Service files ends with the right file name (it removes the ".base" if requires)
 * version 0.99.36 (2015-12-02)
    * Supports conditional CUSTOM and VALA_DESTINATION commands
    * Now the Gedit plugin can be installed in the right folders both locally and globally
