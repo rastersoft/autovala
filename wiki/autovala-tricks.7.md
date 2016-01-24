@@ -26,7 +26,7 @@ To generate .rpm files, just run **autovala rpm**. It will create the folders **
 
 This will create the RPM package in **rpmbuild/RPMS**. At this moment, the source RPM package at **rpmbuild/SRPMS** is empty, so don't use it.
 
-It is possible to create a template file called **packages/rpm.specs.base** to set values that autovala can't automatically get. Its syntax is the same than a regular **.specs** file. This works the same than the template file for debian packages.
+It is possible to create a template file called **packages/rpm.spec.base** to set values that autovala can't automatically get. Its syntax is the same than a regular **.specs** file. This works the same than the template file for debian packages.
 
 To generate .PKGBUILD files for pacman file manager, just run **autovala pacman**. It will create the file. It also will use a template file, if available, that must be called **packages/PKGBUILD.base**. Its syntax is the same than the PKGBUILD file.
 

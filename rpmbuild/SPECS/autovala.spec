@@ -66,17 +66,17 @@ Autovala greatly simplifies the process of working with Vala because:
 compile and run the project, by inspecting the source code
 * Automatically generates the .vapi and pkg-config files for libraries
 * Automatically determinates the final destination for an icon, by
-checking its type (svg or png) and, in the later case, its size.
+checking its type (svg or png) and, in the later case, its size
 * Automatically generates manpages from text files in several
-possible input format (markdown, html, latex...).
+possible input format (markdown, html, latex...)
 * Greatly simplifies creating libraries in Vala, or a project with a
-binary that uses a library defined in the same project.
+binary that uses a library defined in the same project
 * Automatically generates the metadata files to create .DEB and .RPM packages.
-* Easily integrates unitary tests for each binary in the project.
+* Easily integrates unitary tests for each binary in the project
 * Can generate automatically DBUS bindings by using the DBUS
-introspection capabilities.
-* Automatically generates the list of source files for GETTEXT.
-* Simplifies mixing C and Vala source files.
+introspection capabilities
+* Automatically generates the list of source files for GETTEXT
+* Simplifies mixing C and Vala source files
 .
 .
 

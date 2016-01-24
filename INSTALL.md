@@ -1,20 +1,5 @@
 # HOW TO INSTALL
 
-You need CMake, Vala 0.20 or later, libgee and gtk+.
-The repository includes a version of CMake for Vala
-that includes some changes (not mine) to support
-Valadoc. These changes still aren't available at the
-oficial repository. You can get the oficial files with
-
-    bzr checkout lp:~elementary-apps/+junk/cmake-modules
-
-This will create a folder called *cmake-modules*. Inside
-it will be a folder called *cmake*. Copy the later to the
-Autovala project folder, overwriting the files inside.
-
-Don't forget to keep the files FindValadoc.cmake and
-Valadoc.cmake, needed to work with Valadoc.
-
 To compile and install it, just open a terminal, go
 to the directory where you downloaded the git repository
 and type:
@@ -47,3 +32,20 @@ pandoc-data and libicu52, which can be downloaded from
 The Gedit and Scratch plugins are compiled and installed
 separately. Just follow the instructions available in each
 folder.
+
+Remember that you need CMake, Vala 0.20 or later, libgee
+and gtk+. The repository includes a version of CMake for
+Vala that includes some changes (not mine) to support
+Valadoc. These changes still aren't available at the
+oficial repository. If you want, you can get the oficial
+files with:
+
+    bzr checkout lp:~elementary-apps/+junk/cmake-modules
+
+This will create a folder called *cmake-modules*. Inside
+it will be a folder called *cmake*. Copy the later to the
+Autovala project folder, overwriting the files inside.
+
+Don't forget to keep the files FindValadoc.cmake and
+Valadoc.cmake, needed to work with Valadoc.
+
