@@ -30,22 +30,22 @@ namespace AutoVala {
 		public ReadPkgConfig() {
 			this.pkgconfigs = new Gee.HashSet<string>();
 			this.paths = new Gee.HashMap<string,string>();
+			var default_search_path=string.join(":",
+					"/usr/lib",
+					"/usr/lib64",
+					"/usr/share",
+					"/usr/lib/i386-linux-gnu",
+					"/usr/lib/x86_64-linux-gnu",
+					"/usr/local/lib",
+					"/usr/local/lib64",
+					"/usr/local/share",
+					"/usr/local/lib/i386-linux-gnu",
+					"/usr/local/lib/x86_64-linux-gnu");
+			var env_search_path=GLib.Environment.get_variable("PKG_CONFIG_PATH");
 
-			this.fill_pkgconfig_files("/usr/lib");
-			this.fill_pkgconfig_files("/usr/lib64");
-			this.fill_pkgconfig_files("/usr/share");
-			this.fill_pkgconfig_files("/usr/lib/i386-linux-gnu");
-			this.fill_pkgconfig_files("/usr/lib/x86_64-linux-gnu");
-			this.fill_pkgconfig_files("/usr/local/lib");
-			this.fill_pkgconfig_files("/usr/local/lib64");
-			this.fill_pkgconfig_files("/usr/local/share");
-			this.fill_pkgconfig_files("/usr/local/lib/i386-linux-gnu");
-			this.fill_pkgconfig_files("/usr/local/lib/x86_64-linux-gnu");
-			var other_pkgconfig=GLib.Environment.get_variable("PKG_CONFIG_PATH");
-			if (other_pkgconfig!=null) {
-				foreach(var element in other_pkgconfig.split(":")) {
-					this.fill_pkgconfig_files(element);
-				}
+			var search_path=(env_search_path!=null) ? env_search_path : default_search_path;
+			foreach(var element in search_path.split(":")) {
+				this.fill_pkgconfig_files(element);
 			}
 		}
 
