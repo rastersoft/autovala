@@ -30,22 +30,22 @@ namespace AutoVala {
 		public ReadPkgConfig() {
 			this.pkgconfigs = new Gee.HashSet<string>();
 			this.paths = new Gee.HashMap<string,string>();
+			var default_search_path=string.join(":",
+					"/usr/lib/pkgconfig",
+					"/usr/lib64/pkgconfig",
+					"/usr/share/pkgconfig",
+					"/usr/lib/i386-linux-gnu/pkgconfig",
+					"/usr/lib/x86_64-linux-gnu/pkgconfig",
+					"/usr/local/lib/pkgconfig",
+					"/usr/local/lib64/pkgconfig",
+					"/usr/local/share/pkgconfig",
+					"/usr/local/lib/i386-linux-gnu/pkgconfig",
+					"/usr/local/lib/x86_64-linux-gnu/pkgconfig");
+			var env_search_path=GLib.Environment.get_variable("PKG_CONFIG_PATH");
 
-			this.fill_pkgconfig_files("/usr/lib");
-			this.fill_pkgconfig_files("/usr/lib64");
-			this.fill_pkgconfig_files("/usr/share");
-			this.fill_pkgconfig_files("/usr/lib/i386-linux-gnu");
-			this.fill_pkgconfig_files("/usr/lib/x86_64-linux-gnu");
-			this.fill_pkgconfig_files("/usr/local/lib");
-			this.fill_pkgconfig_files("/usr/local/lib64");
-			this.fill_pkgconfig_files("/usr/local/share");
-			this.fill_pkgconfig_files("/usr/local/lib/i386-linux-gnu");
-			this.fill_pkgconfig_files("/usr/local/lib/x86_64-linux-gnu");
-			var other_pkgconfig=GLib.Environment.get_variable("PKG_CONFIG_PATH");
-			if (other_pkgconfig!=null) {
-				foreach(var element in other_pkgconfig.split(":")) {
-					this.fill_pkgconfig_files(element);
-				}
+			var search_path=(env_search_path!=null) ? env_search_path : default_search_path;
+			foreach(var element in search_path.split(":")) {
+				this.fill_pkgconfig_files(element);
 			}
 		}
 
@@ -55,7 +55,7 @@ namespace AutoVala {
 			 * Reads all the pkgconfig files in basepath and creates a list with the libraries managed by them
 			 */
 
-			var newpath=File.new_for_path(Path.build_filename(basepath,"pkgconfig"));
+			var newpath=File.new_for_path(basepath);
 			if (newpath.query_exists()==false) {
 				return;
 			}
@@ -75,7 +75,7 @@ namespace AutoVala {
 					var final_name=fname.substring(0,fname.length-3); // remove .pc extension
 					this.pkgconfigs.add(final_name); // add to the list
 					if (!this.paths.has_key(final_name)) {
-						this.paths.set(final_name,Path.build_filename(basepath,"pkgconfig",fname)); // store the path found
+						this.paths.set(final_name,Path.build_filename(basepath,fname)); // store the path found
 					}
 				}
 			} catch (Error e) {
