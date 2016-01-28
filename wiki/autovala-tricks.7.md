@@ -4,6 +4,20 @@ Autovala-tricks(1)
 
 Autovala tricks - Several tricks for Autovala
 
+## Enabling debug symbols
+
+Just add in your .avprj file, in each binary/library section, the line
+
+    compile_options: -g
+
+If you want to do it conditional, just use something like this:
+
+    if DEBUG
+    compile_options: -g
+    endif
+
+And use "cmake .. -DDEBUG=on" to enable the debug symbols.
+
 ## Creating packages for linux distributions
 
 AutoVala can create the metadata files for creating .deb, .rpm and pacman source packages. It should be easy to add support for other package systems.

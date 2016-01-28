@@ -8,6 +8,14 @@
 <p>Autovala-tricks(1)</p>
 <h1 id="name">NAME</h1>
 <p>Autovala tricks - Several tricks for Autovala</p>
+<h2 id="enabling-debug-symbols">Enabling debug symbols</h2>
+<p>Just add in your .avprj file, in each binary/library section, the line</p>
+<pre><code>compile_options: -g</code></pre>
+<p>If you want to do it conditional, just use something like this:</p>
+<pre><code>if DEBUG
+compile_options: -g
+endif</code></pre>
+<p>And use &quot;cmake .. -DDEBUG=on&quot; to enable the debug symbols.</p>
 <h2 id="creating-packages-for-linux-distributions">Creating packages for linux distributions</h2>
 <p>AutoVala can create the metadata files for creating .deb, .rpm and pacman source packages. It should be easy to add support for other package systems.</p>
 <p>To generate .deb files, just run <strong>autovala deb</strong>. It will create a folder called <strong>debian</strong> and inside will be the <strong>control</strong>, <strong>changelog</strong> and <strong>rules</strong> files, and, if needed, <strong>preinst</strong>, <strong>prerm</strong>, <strong>postinst</strong> and <strong>postrm</strong>. The <strong>control</strong> file will have only the bare minimum, but autovala will include inside the dependencies needed both for building the package, and for running the project. These dependencies are generated automatically from the information extracted from the project. The <strong>changelog</strong> will add a boilerplate line only if there is no line for the current version, so it is strongly recommended to edit and complete this file after doing the automatic generation.</p>
@@ -20,7 +28,7 @@
 <p>To generate .rpm files, just run <strong>autovala rpm</strong>. It will create the folders <strong>rpmbuild/SPECS/</strong>, and inside will be the <strong>.spec</strong> file with the metadata. Then, go to <strong>rpmbuild</strong> folder and run:</p>
 <pre><code>rpmbuild --define &quot;_topdir `pwd`&quot; -ba SPECS/PROJECT_NAME.spec</code></pre>
 <p>This will create the RPM package in <strong>rpmbuild/RPMS</strong>. At this moment, the source RPM package at <strong>rpmbuild/SRPMS</strong> is empty, so don't use it.</p>
-<p>It is possible to create a template file called <strong>packages/rpm.specs.base</strong> to set values that autovala can't automatically get. Its syntax is the same than a regular <strong>.specs</strong> file. This works the same than the template file for debian packages.</p>
+<p>It is possible to create a template file called <strong>packages/rpm.spec.base</strong> to set values that autovala can't automatically get. Its syntax is the same than a regular <strong>.specs</strong> file. This works the same than the template file for debian packages.</p>
 <p>To generate .PKGBUILD files for pacman file manager, just run <strong>autovala pacman</strong>. It will create the file. It also will use a template file, if available, that must be called <strong>packages/PKGBUILD.base</strong>. Its syntax is the same than the PKGBUILD file.</p>
 <p>A nice detail is that, by default, autovala will create a PKGBUILD file that allows to use <em>makepkg</em> directly in the project's folder to make a binary package; but if you define in the <strong>PKGBUILD.base</strong> file a <strong>source</strong> entry with one or more URIs, autovala will automagically calculate their MD5SUMs (even if it has to download using http or https), and will modify the build code to ensure that it works with the downloaded file. This allows to easily generate <strong>PKGBUILD</strong> files for AUR, pointing, let's say, to a GITHUB repository. Even more: it will search for the right folder, so the ZIP file can have the project inside a folder, or even can have several Autovala projects (like <em>autovala</em> and <em>gedit-plugin for autovala</em>, which are both available in the same GitHub repository).</p>
 <p>If the project needs an extra package that can't be determined automatically by autovala, it is possible to mark it in a distro-agnostic way, by using the commands <strong>source_dependency</strong> and <strong>binary_dependency</strong> in the <strong>.avprj</strong> file. The first one points to a file in the system that is needed for building the project; when generating the package metadata, autovala will add as a Build-Dependency the package that contains that file. The second one points to a file in the system that is needed for using the project; when generating the package metadata, autovala will add as a Dependency the package that contains that file.</p>
@@ -237,12 +245,15 @@
 <h1 id="see-also">SEE ALSO</h1>
 <p><a href="autovala.1">autovala(1)</a> <a href="autovala-fileformat.5">autovala-fileformat(5)</a> <a href="autovala-keep-changes.7">autovala-keep-changes(7)</a> <a href="autovala-rules.7">autovala-rules(7)</a></p>
 <h1 id="author">AUTHOR</h1>
-<p>Sergio Costas Rodriguez<br /><script type="text/javascript">
+<p>Sergio Costas Rodriguez<br />
+<script type="text/javascript">
 <!--
 h='&#114;&#x61;&#x73;&#116;&#x65;&#114;&#x73;&#x6f;&#102;&#116;&#46;&#x63;&#x6f;&#x6d;';a='&#64;';n='&#114;&#x61;&#x73;&#116;&#x65;&#114;';e=n+a+h;
 document.write('<a h'+'ref'+'="ma'+'ilto'+':'+e+'" clas'+'s="em' + 'ail">'+e+'<\/'+'a'+'>');
 // -->
-</script><noscript>&#114;&#x61;&#x73;&#116;&#x65;&#114;&#32;&#x61;&#116;&#32;&#114;&#x61;&#x73;&#116;&#x65;&#114;&#x73;&#x6f;&#102;&#116;&#32;&#100;&#x6f;&#116;&#32;&#x63;&#x6f;&#x6d;</noscript><br /><a href="http://www.rastersoft.com" class="uri">http://www.rastersoft.com</a><br /><a href="http://github.com/rastersoft" class="uri">http://github.com/rastersoft</a></p>
+</script><noscript>&#114;&#x61;&#x73;&#116;&#x65;&#114;&#32;&#x61;&#116;&#32;&#114;&#x61;&#x73;&#116;&#x65;&#114;&#x73;&#x6f;&#102;&#116;&#32;&#100;&#x6f;&#116;&#32;&#x63;&#x6f;&#x6d;</noscript><br />
+<a href="http://www.rastersoft.com" class="uri">http://www.rastersoft.com</a><br />
+<a href="http://github.com/rastersoft" class="uri">http://github.com/rastersoft</a></p>
 <p><a href="index.html">Home</a></p>
 </div>
 </body>

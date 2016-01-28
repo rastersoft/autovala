@@ -1,3 +1,10 @@
+autovala (0.99.38-Debian1) sid; urgency=low
+
+  * Now PKG_CONFIG_PATH takes precedence (and fully replaces) the base paths.
+  * Fixed a bug when compiling under windows
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Thu, 28 Jan 2016 23:55:00 +0200
+
 autovala (0.99.37-Debian1) sid; urgency=low
 
   * Now the DBUS Service files ends with the right file name (it removes the ".base" if requires)
