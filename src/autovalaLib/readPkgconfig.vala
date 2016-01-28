@@ -31,16 +31,16 @@ namespace AutoVala {
 			this.pkgconfigs = new Gee.HashSet<string>();
 			this.paths = new Gee.HashMap<string,string>();
 			var default_search_path=string.join(":",
-					"/usr/lib",
-					"/usr/lib64",
-					"/usr/share",
-					"/usr/lib/i386-linux-gnu",
-					"/usr/lib/x86_64-linux-gnu",
-					"/usr/local/lib",
-					"/usr/local/lib64",
-					"/usr/local/share",
-					"/usr/local/lib/i386-linux-gnu",
-					"/usr/local/lib/x86_64-linux-gnu");
+					"/usr/lib/pkgconfig",
+					"/usr/lib64/pkgconfig",
+					"/usr/share/pkgconfig",
+					"/usr/lib/i386-linux-gnu/pkgconfig",
+					"/usr/lib/x86_64-linux-gnu/pkgconfig",
+					"/usr/local/lib/pkgconfig",
+					"/usr/local/lib64/pkgconfig",
+					"/usr/local/share/pkgconfig",
+					"/usr/local/lib/i386-linux-gnu/pkgconfig",
+					"/usr/local/lib/x86_64-linux-gnu/pkgconfig");
 			var env_search_path=GLib.Environment.get_variable("PKG_CONFIG_PATH");
 
 			var search_path=(env_search_path!=null) ? env_search_path : default_search_path;
@@ -55,7 +55,7 @@ namespace AutoVala {
 			 * Reads all the pkgconfig files in basepath and creates a list with the libraries managed by them
 			 */
 
-			var newpath=File.new_for_path(Path.build_filename(basepath,"pkgconfig"));
+			var newpath=File.new_for_path(basepath);
 			if (newpath.query_exists()==false) {
 				return;
 			}
@@ -75,7 +75,7 @@ namespace AutoVala {
 					var final_name=fname.substring(0,fname.length-3); // remove .pc extension
 					this.pkgconfigs.add(final_name); // add to the list
 					if (!this.paths.has_key(final_name)) {
-						this.paths.set(final_name,Path.build_filename(basepath,"pkgconfig",fname)); // store the path found
+						this.paths.set(final_name,Path.build_filename(basepath,fname)); // store the path found
 					}
 				}
 			} catch (Error e) {
