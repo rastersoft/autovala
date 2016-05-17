@@ -10,7 +10,7 @@ custom: data/debian share/autovala/debian
 
 
 vala_binary: src/autovala
-*version: 0.99.38
+*version: 0.99.39
 compile_c_options: -O2
 vala_local_package: AutoVala
 *vala_package: posix
@@ -55,6 +55,7 @@ c_library: readline
 *vala_source: elementDesktop.vala
 *vala_source: elementDoc.vala
 *vala_source: elementEosPlug.vala
+*vala_source: elementGResource.vala
 *vala_source: elementGlade.vala
 *vala_source: elementGlobal.vala
 *vala_source: elementIcon.vala

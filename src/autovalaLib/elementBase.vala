@@ -23,7 +23,7 @@ namespace AutoVala {
 
 	public enum ConfigType {GLOBAL, VALA_BINARY, VALA_LIBRARY, BINARY, ICON, PIXMAP, PO, GLADE, DBUS_SERVICE, DESKTOP, AUTOSTART,
 							 EOS_PLUG, SCHEME, DATA, DOC, INCLUDE, IGNORE, CUSTOM, DEFINE, MANPAGE, BASH_COMPLETION, SOURCE_DEPENDENCY,
-							 BINARY_DEPENDENCY, APPDATA }
+							 BINARY_DEPENDENCY, APPDATA, GRESOURCE }
 
 	/**
 	 * Represents a generic file of the project, with its path, filename, compilation condition...

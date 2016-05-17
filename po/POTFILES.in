@@ -14,6 +14,7 @@ src/autovalaLib/elementDefine.vala
 src/autovalaLib/elementDesktop.vala
 src/autovalaLib/elementDoc.vala
 src/autovalaLib/elementEosPlug.vala
+src/autovalaLib/elementGResource.vala
 src/autovalaLib/elementGlade.vala
 src/autovalaLib/elementGlobal.vala
 src/autovalaLib/elementIcon.vala
