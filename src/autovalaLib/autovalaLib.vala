@@ -391,6 +391,7 @@ namespace AutoVala {
 			if (error) {
 				return true;
 			}
+
 			ElementBase.globalData.clearAutomatic();
 			ElementBase.globalData.generateExtraData();
 
@@ -399,6 +400,7 @@ namespace AutoVala {
 				element.autoConfigure();
 			}
 
+			error|=ElementGResource.autoGenerate();
 			error|=ElementBashCompletion.autoGenerate();
 			error|=ElementBinary.autoGenerate();
 			error|=ElementData.autoGenerate();

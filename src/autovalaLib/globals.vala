@@ -140,6 +140,17 @@ namespace AutoVala {
 			this.globalElements.add(element);
 		}
 
+		public ElementBase[] findElements(AutoVala.ConfigType eType) {
+
+			AutoVala.ElementBase[] elements = {};
+			foreach(var element in this.globalElements) {
+				if (element.eType == eType) {
+					elements += element;
+				}
+			}
+			return elements;
+		}
+
 		/**
 		 * Inserts a new file/path in the list of exclude files/paths
 		 * @param file/path to add (with path relative to the project's root)

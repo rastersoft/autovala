@@ -236,7 +236,17 @@ namespace AutoVala {
 							this.addFolderToMainCMakeLists(path,dataStream);
 							addedOne=true;
 							continue;
-						} else {
+						}
+					}
+										foreach(var path in paths.keys) {
+						var element=paths.get(path);
+						if ((element.eType==ConfigType.DEFINE) || (element.eType == ConfigType.SOURCE_DEPENDENCY) || (element.eType == ConfigType.BINARY_DEPENDENCY)) {
+							continue;
+						}
+						if (element.processed) {
+							continue;
+						}
+						if ((element.eType==ConfigType.VALA_LIBRARY) || (element.eType==ConfigType.VALA_BINARY)) {
 							var binElement = element as ElementValaBinary;
 							allProcessed=false;
 							bool valid=true;
@@ -250,7 +260,7 @@ namespace AutoVala {
 								continue;
 							}
 
-							addFolderToMainCMakeLists(path,dataStream);
+							this.addFolderToMainCMakeLists(path,dataStream);
 							addedOne=true;
 							element.processed=true;
 							if ((binElement.eType==ConfigType.VALA_LIBRARY)&&(binElement.currentNamespace!="")) {

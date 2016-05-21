@@ -209,7 +209,9 @@ namespace AutoVala {
 						automatic=false;
 					}
 
-					if (line.has_prefix("custom: ")) {
+					if (line.has_prefix("gresource: ")) {
+						element = new ElementGResource();
+					} else if (line.has_prefix("custom: ")) {
 						element = new ElementCustom();
 					} else if (line.has_prefix("bash_completion: ")) {
 						element = new ElementBashCompletion();
@@ -411,6 +413,7 @@ namespace AutoVala {
 				this.storeData(ConfigType.IGNORE,data_stream);
 				this.storeData(ConfigType.CUSTOM,data_stream);
 				this.storeData(ConfigType.DEFINE,data_stream);
+				this.storeData(ConfigType.GRESOURCE,data_stream);
 				this.storeData(ConfigType.VALA_BINARY,data_stream);
 				this.storeData(ConfigType.VALA_LIBRARY,data_stream);
 				this.storeData(ConfigType.PO,data_stream);

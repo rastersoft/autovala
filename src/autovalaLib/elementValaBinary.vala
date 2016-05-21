@@ -89,6 +89,15 @@ namespace AutoVala {
 		}
 	}
 
+	public class ResourceElement:GenericElement {
+		public ResourceElement(string resource, bool automatic, string? condition, bool inverted) {
+			this.elementName=resource;
+			this.automatic=automatic;
+			this.condition=condition;
+			this.invertCondition=inverted;
+		}
+	}
+
 	public class DBusElement:GenericElement {
 
 		public string obj;
@@ -112,6 +121,10 @@ namespace AutoVala {
 		private bool versionSet;
 		private bool versionAutomatic;
 
+		private Gee.List<ResourceElement ?> _resources;
+		public Gee.List<ResourceElement ?> resources {
+			get {return this._resources;}
+		}
 		private Gee.List<PackageElement ?> _packages;
 		public Gee.List<PackageElement ?> packages {
 			get {return this._packages;}
@@ -249,6 +262,7 @@ namespace AutoVala {
 			this.namespaceAutomatic=true;
 			this.namespaces=null;
 			this._packages=new Gee.ArrayList<PackageElement ?>();
+			this._resources=new Gee.ArrayList<ResourceElement ?>();
 			this._sources=new Gee.ArrayList<SourceElement ?>();
 			this._cSources=new Gee.ArrayList<SourceElement ?>();
 			this._hFolders=new Gee.ArrayList<SourceElement ?>();
@@ -719,6 +733,7 @@ namespace AutoVala {
 			this._vapis.sort(AutoVala.ElementValaBinary.comparePackages);
 			this._compileOptions.sort(AutoVala.ElementValaBinary.comparePackages);
 			this._dbusElements.sort(AutoVala.ElementValaBinary.comparePackages);
+			this._resources.sort(AutoVala.ElementValaBinary.comparePackages);
 		}
 
 		private void transformToNonAutomatic(bool automatic) {
@@ -915,6 +930,28 @@ namespace AutoVala {
 			return false;
 		}
 
+		private bool addResource(string resourceFile, bool automatic, string? condition, bool invertCondition, int lineNumber) {
+
+			if (condition!=null) {
+				automatic=false; // if a resource file is conditional, it MUST be manual, because conditions are not added automatically
+			}
+
+			// adding a non-automatic resource to an automatic binary transforms this binary to non-automatic
+			if ((automatic==false) && (this._automatic==true)) {
+				this.transformToNonAutomatic(false);
+			}
+
+			foreach(var element in this._resources) {
+				if (element.elementName == resourceFile) {
+					return false;
+				}
+			}
+
+			var element=new ResourceElement(resourceFile,automatic,condition, invertCondition);
+			this._resources.add(element);
+			return false;
+		}
+
 		private bool addUnitest(string unitestFile, bool automatic, string? condition, bool invertCondition, int lineNumber) {
 
 			if (condition!=null) {
@@ -1096,6 +1133,8 @@ namespace AutoVala {
 				return this.setCLibrary(line.substring(11).strip(),automatic,condition,invertCondition,lineNumber);
 			} else if (line.has_prefix("h_folder: ")) {
 				return this.addHFolder(line.substring(10).strip(),automatic,condition,invertCondition,lineNumber);
+			} else if (line.has_prefix("use_resource: ")) {
+				return this.addResource(line.substring(14).strip(),automatic,condition,invertCondition,lineNumber);
 			} else {
 				var badCommand = line.split(": ")[0];
 				ElementBase.globalData.addError(_("Invalid command %s after command %s (line %d)").printf(badCommand,this.command, lineNumber));
@@ -1528,8 +1567,17 @@ namespace AutoVala {
 					dataStream.put_string("\n");
 				}
 
+				foreach (var resource in this._resources) {
+					//dataStream.put_string("add_dependencies (%s %s)\n".printf(libFilename,resource.elementName));
+					dataStream.put_string("SET (VALA_C ${VALA_C} ${%s_C_FILE})\n".printf(resource.elementName));
+				}
+
 				if (this._type == ConfigType.VALA_LIBRARY) {
 					dataStream.put_string("add_library("+libFilename+" SHARED ${VALA_C})\n\n");
+					foreach (var resource in this._resources) {
+						dataStream.put_string("add_dependencies (%s %s)\n".printf(libFilename,resource.elementName));
+						//dataStream.put_string("SET (VALA_C ${VALA_C} ${%s_C_FILE})\n".printf(resource.elementName));
+					}
 
 					foreach (var element in this._link_libraries) {
 						printConditions.printCondition(element.condition,element.invertCondition);
@@ -1562,6 +1610,7 @@ namespace AutoVala {
 					dataStream.put_string("\ninstall(TARGETS\n");
 					dataStream.put_string("\t"+libFilename+"\n");
 					dataStream.put_string("LIBRARY DESTINATION\n");
+
 					if (cond_dest) {
 					    dataStream.put_string("\t${INSTALL_LIBRARY_%s}/\n)\n".printf(libFilename));
 					} else {
@@ -1623,6 +1672,11 @@ namespace AutoVala {
 				} else {
 					// Install executable
 					dataStream.put_string("add_executable("+libFilename+" ${VALA_C})\n");
+					foreach (var resource in this._resources) {
+						dataStream.put_string("add_dependencies (%s %s)\n".printf(libFilename,resource.elementName));
+						//dataStream.put_string("SET (VALA_C ${VALA_C} ${%s_C_FILE})\n".printf(resource.elementName));
+					}
+
 					foreach (var element in this._link_libraries) {
 						printConditions.printCondition(element.condition,element.invertCondition);
 						dataStream.put_string("target_link_libraries( "+libFilename+" "+element.elementName+" )\n");
@@ -1757,6 +1811,15 @@ namespace AutoVala {
 						dataStream.put_string("*");
 					}
 					dataStream.put_string("compile_c_options: %s\n".printf(element.elementName));
+				}
+				printConditions.printTail();
+
+				foreach(var element in this._resources) {
+					printConditions.printCondition(element.condition,element.invertCondition);
+					if (element.automatic) {
+						dataStream.put_string("*");
+					}
+					dataStream.put_string("use_resource: %s\n".printf(element.elementName));
 				}
 				printConditions.printTail();
 

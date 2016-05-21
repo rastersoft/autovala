@@ -70,6 +70,7 @@ c_library: readline
 *vala_source: findVala.vala
 *vala_source: genVapis.vala
 *vala_source: globals.vala
+*vala_source: gresource_xml.vala
 *vala_source: packages.vala
 *vala_source: packages_deb.vala
 *vala_source: packages_pacman.vala
