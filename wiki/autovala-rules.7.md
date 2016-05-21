@@ -22,6 +22,8 @@ The rules followed by Autovala are the following:
 
 * All **.vapi** files inside a **vapis** folder, located in a binary/library top folder will be added to that binary/library
 
+* All **.gresource.xml** files inside **data** folder will be considered a GResource XML file, so it will be added to the .avprj's root, and the files inside it won't be added automatically.
+
 * All **.png** or **.svg** files in the folder **data/icons/** (and subfolders) are considered icons, so Autovala will determine automatically the best-fitting standard icon size in the case of **.png**; for **.svg** it will try to put them in an scalable group with **scalable** in the name; if it doesn't exists, it will try to put them in an scalable group (no matter the name); if neither exist, it will try to get the canvas size of the icon, and store it in the nearest fixed size folder; in case it can't determine it, the icon will be installed in the biggest size group available in the desired cathegory. By default, the cathegory will be **Applications**, unless it is a **.svg** file with a filename ended in **-symbolic.svg**; in that case it will go to **Status**. The user can modify the final cathegory and icon theme manually for the icons (s)he wishes.
 
 * All **.png**, **.jpg** or **.svg** files in the folder **data/pixmaps/** (and subfolders) are considered pixmaps, and will be installed in **share/pixmaps/**.
