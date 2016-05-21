@@ -7,6 +7,11 @@
 <p><a href="index.html">Home</a></p>
 <h2 id="history-of-versions">History of versions</h2>
 <ul>
+<li>version 0.99.38 (2016-01-28)</li>
+<li>Now PKG_CONFIG_PATH takes precedence (and fully replaces) the base paths.</li>
+<li>Fixed a bug when compiling under windows</li>
+<li>version 0.99.37 (2015-12-05)</li>
+<li>Now the DBUS Service files ends with the right file name (it removes the &quot;.base&quot; if requires)</li>
 <li>verwion 0.99.36 (2015-12-02)</li>
 <li>Supports conditional CUSTOM and VALA_DESTINATION commands</li>
 <li>Now the Gedit plugin can be installed in the right folders both locally and globally</li>

@@ -8,6 +8,33 @@
 <p>Autovala-tricks(1)</p>
 <h1 id="name">NAME</h1>
 <p>Autovala tricks - Several tricks for Autovala</p>
+<h2 id="using-gresource">Using GResource</h2>
+<p>GResource is a system available in GLib to include files (text, images, sound...) inside an executable, avoiding the problem of locating them in the hard disk. To do so, an utility called <strong>glib-compile-resources</strong> is used, which takes an XML file with the list of files to include, and generates a <strong>.c</strong> file with them, which can then be compiled with the source code. More information about it is available in the <a href="https://developer.gnome.org/gio/2.32/gio-GResource.html">GResource API documentation page</a>.</p>
+<p>AutoVala simplifies this process by checking the filenames inside the XML and adding them as dependencies for our binary, thus ensuring that any changes to these files will force a recompilation.</p>
+<p>To use GResource, start by writting an XML file with the files that you want to include inside your binary, and place it in your AutoVala project. Now edit your <em>.avprj</em> file and add a line like this:</p>
+<pre><code>gresource: identifier_name path/to/the/file.gresource.xml</code></pre>
+<p>This command instructs AutoVala to process the file located in the project at <em>path/to/the/file.gresource.xml</em>, and assigns to it <em>identifier_name</em> as an identifier. If you put your file inside of <em>data/</em> and its file name ends in <em>.gresource.xml</em>, AutoVala will add it automagically in your project, using as identifier the file name, with the dots replaced with underscores.</p>
+<p>This only pre-processes the GResource file; now we must specify in which binary we want to put it. To do so, just add this sub-command in the <em>vala_binary</em> or <em>vala_library</em> commands:</p>
+<pre><code>use_gresource: identifier_name</code></pre>
+<p>This will include in that binary all the resources specified.</p>
+<p>An example:</p>
+<pre><code>### AutoVala Project ###
+autovala_version: 19
+project_name: example
+*vala_version: 0.32
+
+*gresource: datas_gresource_xml data/datas.gresource.xml
+
+vala_binary: src/example
+use_resource: datas_gresource_xml
+*vala_check_package: gio-2.0
+*vala_check_package: glib-2.0
+*vala_source: example.vala</code></pre>
+<p>Here we have a project called <em>example</em>, with a GResource XML file located at <em>data/</em> and called <em>datas.gresource.xml</em>. This means that AutoVala is able to autodetect and include it automatically. Also, the identifier is the file name with the dots replaced by underscores.</p>
+<p>In the <em>vala_binary</em> section we added the <em>use_resource</em> sub-command, which instructs AutoVala to use that resources in this binary.</p>
+<p>It is mandatory to include GIO in the binaries that use GResource. It is as easy as including the line</p>
+<pre><code>//using GIO</code></pre>
+<p>at the begining of any of the source files (be carefull: you must put it as a comment, because GIO has not its own VAPI file, but uses a different library).</p>
 <h2 id="enabling-debug-symbols">Enabling debug symbols</h2>
 <p>Just add in your .avprj file, in each binary/library section, the line</p>
 <pre><code>compile_options: -g</code></pre>
