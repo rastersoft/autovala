@@ -6,7 +6,7 @@ Autovala tricks - Several tricks for Autovala
 
 ## Using GResource
 
-GResource is a system available in GLib to include files (text, images, sound...) inside an executable, avoiding the problem of locating them in the hard disk. To do so, an utility called **glib-compile-resources** is used, which takes an XML file with the list of files to include, and generates a **.c** file with them, which can then be compiled with the source code. More information about it is available in the [GResource API documentation page](https://developer.gnome.org/gio/2.32/gio-GResource.html).
+GResource is a system available in GLib to include files (text, images, sound...) inside an executable, avoiding the problem of locating them in the hard disk. To do so, an utility called **glib-compile-resources** is used, which takes an XML file with the list of files to include, and generates a **.c** file with them, which can then be compiled with the source code. More information about it is available in the [GResource API documentation page](https://developer.gnome.org/gio/stable/GResource.html).
 
 AutoVala simplifies this process by checking the filenames inside the XML and adding them as dependencies for our binary, thus ensuring that any changes to these files will force a recompilation.
 

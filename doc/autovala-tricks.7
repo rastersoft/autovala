@@ -9,7 +9,7 @@
 <h1 id="name">NAME</h1>
 <p>Autovala tricks - Several tricks for Autovala</p>
 <h2 id="using-gresource">Using GResource</h2>
-<p>GResource is a system available in GLib to include files (text, images, sound...) inside an executable, avoiding the problem of locating them in the hard disk. To do so, an utility called <strong>glib-compile-resources</strong> is used, which takes an XML file with the list of files to include, and generates a <strong>.c</strong> file with them, which can then be compiled with the source code. More information about it is available in the <a href="https://developer.gnome.org/gio/2.32/gio-GResource.html">GResource API documentation page</a>.</p>
+<p>GResource is a system available in GLib to include files (text, images, sound...) inside an executable, avoiding the problem of locating them in the hard disk. To do so, an utility called <strong>glib-compile-resources</strong> is used, which takes an XML file with the list of files to include, and generates a <strong>.c</strong> file with them, which can then be compiled with the source code. More information about it is available in the <a href="https://developer.gnome.org/gio/stable/GResource.html">GResource API documentation page</a>.</p>
 <p>AutoVala simplifies this process by checking the filenames inside the XML and adding them as dependencies for our binary, thus ensuring that any changes to these files will force a recompilation.</p>
 <p>To use GResource, start by writting an XML file with the files that you want to include inside your binary, and place it in your AutoVala project. Now edit your <em>.avprj</em> file and add a line like this:</p>
 <pre><code>gresource: identifier_name path/to/the/file.gresource.xml</code></pre>
