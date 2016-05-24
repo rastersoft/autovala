@@ -218,7 +218,7 @@ namespace AutoVala {
 			}
 
 			if ((this._path == ".") || (this._path == "./")) {
-				ElementBase.globalData.addError(_("File %s is located at the project's root. Autovala can't work with that. Move it into a folder.").printf(fullPath));
+				ElementBase.globalData.addError(_("File %s is located at the project's root. Autovala doesn't allow that. You should move it into a folder.").printf(fullPath));
 				return true;
 			}
 
