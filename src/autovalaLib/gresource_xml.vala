@@ -47,7 +47,7 @@ namespace AutoVala {
 
 			var file = File.new_for_path(filename);
 			if (!file.query_exists ()) {
-				throw new MarkupError.PARSE (error_msg (_("File %s for GResource XML doesn't exist"),filename));
+				throw new MarkupError.PARSE (error_msg (_("File %s (GResource XML) doesn't exist"),filename));
 			}
 
 			var dis = new DataInputStream (file.read ());
