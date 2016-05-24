@@ -301,6 +301,7 @@ namespace AutoVala {
 			}
 
 			globalData.generateExtraData();
+			
 			var globalElement = new ElementGlobal();
 			DataOutputStream dataStreamGlobal;
 			try {

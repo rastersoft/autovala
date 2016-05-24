@@ -205,6 +205,16 @@ namespace AutoVala {
 					break;
 				}
 
+				// check for GLIB-COMPILE-RESOURCES, but only if there are gresource files
+				foreach(var element in ElementBase.globalData.globalElements) {
+					if (element.eType!=ConfigType.GRESOURCE) {
+						continue;
+					}
+					dataStream.put_string("find_program ( WHERE_GRESOURCE glib-compile-resources )\n");
+					dataStream.put_string("if ( NOT WHERE_GRESOURCE )\n\tMESSAGE(FATAL_ERROR \"Error! GLIB-COMPILE-RESOURCES is not installed.\")\nendif()\n\n");
+					break;
+				}
+
 				// now, put all the binary and library folders, in order of satisfied dependencies
 				var paths=new Gee.HashMap<string,ElementBase>();
 				foreach(var element in ElementBase.globalData.globalElements) {

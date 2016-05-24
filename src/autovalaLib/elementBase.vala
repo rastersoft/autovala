@@ -217,6 +217,11 @@ namespace AutoVala {
 				this._name = name;
 			}
 
+			if ((this._path == ".") || (this._path == "./")) {
+				ElementBase.globalData.addError(_("File %s is located at the project's root. Autovala can't work with that. Move it into a folder.").printf(fullPath));
+				return true;
+			}
+
 			ElementBase.globalData.addElement(this);
 			if (fullPath != null) {
 				ElementBase.globalData.addExclude(fullPath);
