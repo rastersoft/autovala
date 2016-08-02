@@ -1,4 +1,8 @@
 ## History of versions ##
+* version 0.99.39 (2016-08-02)
+   * Allows to use GResource files in projects
+   * Uses GResources to store icons and glade files
+   * Now shows the output of autovala when it can't refresh the widgets in an editor
 * version 0.99.38 (2016-01-28)
    * Now PKG_CONFIG_PATH takes precedence (and fully replaces) the base paths.
    * Fixed a bug when compiling under windows

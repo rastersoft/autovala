@@ -41,6 +41,19 @@ namespace AutoVala {
 			}
 			return error;
 		}
+		
+		public override bool configureElement(string? fullPathP, string? path, string? name, bool automatic, string? condition, bool invertCondition) {
+
+			bool retval;
+			
+			retval = base.configureElement(fullPathP,path,name,automatic,condition,invertCondition);
+			if (retval == false) {
+				var translation = new ElementTranslation();
+				translation.translate_type = TranslationType.GLADE;
+				translation.configureElement(this._fullPath,null,null,automatic,condition,invertCondition);
+			}
+			return (retval);
+		}
 
 		public override bool generateCMake(DataOutputStream dataStream) {
 

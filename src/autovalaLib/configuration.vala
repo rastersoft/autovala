@@ -47,7 +47,7 @@ namespace AutoVala {
 				Intl.bindtextdomain(AutoValaConstants.GETTEXT_PACKAGE, Path.build_filename(AutoValaConstants.DATADIR,"locale"));
 			}
 
-			this.currentVersion=19; // currently we support version 19 of the syntax
+			this.currentVersion=20; // currently we support version 20 of the syntax
 			this.version=0;
 
 			this.globalData = new AutoVala.Globals(projectName,basePath);
@@ -209,7 +209,11 @@ namespace AutoVala {
 						automatic=false;
 					}
 
-					if (line.has_prefix("custom: ")) {
+					if (line.has_prefix("translate: ")) {
+						element = new ElementTranslation();
+					}else if (line.has_prefix("gresource: ")) {
+						element = new ElementGResource();
+					} else if (line.has_prefix("custom: ")) {
 						element = new ElementCustom();
 					} else if (line.has_prefix("bash_completion: ")) {
 						element = new ElementBashCompletion();
@@ -411,9 +415,11 @@ namespace AutoVala {
 				this.storeData(ConfigType.IGNORE,data_stream);
 				this.storeData(ConfigType.CUSTOM,data_stream);
 				this.storeData(ConfigType.DEFINE,data_stream);
+				this.storeData(ConfigType.GRESOURCE,data_stream);
 				this.storeData(ConfigType.VALA_BINARY,data_stream);
 				this.storeData(ConfigType.VALA_LIBRARY,data_stream);
 				this.storeData(ConfigType.PO,data_stream);
+				this.storeData(ConfigType.TRANSLATION,data_stream);
 				this.storeData(ConfigType.DATA,data_stream);
 				this.storeData(ConfigType.APPDATA,data_stream);
 				this.storeData(ConfigType.DOC,data_stream);

@@ -23,7 +23,7 @@ namespace AutoVala {
 
 	public enum ConfigType {GLOBAL, VALA_BINARY, VALA_LIBRARY, BINARY, ICON, PIXMAP, PO, GLADE, DBUS_SERVICE, DESKTOP, AUTOSTART,
 							 EOS_PLUG, SCHEME, DATA, DOC, INCLUDE, IGNORE, CUSTOM, DEFINE, MANPAGE, BASH_COMPLETION, SOURCE_DEPENDENCY,
-							 BINARY_DEPENDENCY, APPDATA }
+							 BINARY_DEPENDENCY, APPDATA, GRESOURCE, TRANSLATION }
 
 	/**
 	 * Represents a generic file of the project, with its path, filename, compilation condition...
@@ -64,6 +64,7 @@ namespace AutoVala {
 
 		public bool automatic {
 			get {return this._automatic;}
+			set {this._automatic = value;}
 		}
 
 		public string? condition {
@@ -218,7 +219,7 @@ namespace AutoVala {
 			}
 
 			if ((this._path == ".") || (this._path == "./")) {
-				ElementBase.globalData.addError(_("File %s is located at the project's root. Autovala doesn't allow that. You must move it into a folder.").printf(fullPath));
+				ElementBase.globalData.addError(_("File %s is located at the project's root. Autovala doesn't allow that. You should move it into a folder.").printf(fullPath));
 				return true;
 			}
 

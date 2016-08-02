@@ -66,33 +66,11 @@ namespace AutoVala {
 				var dataStream2 = new DataOutputStream(dis);
 
 				foreach(var element in ElementBase.globalData.globalElements) {
-					switch (element.eType) {
-					case ConfigType.VALA_BINARY:
-					case ConfigType.VALA_LIBRARY:
-						var element2 = element as ElementValaBinary;
-						var subFiles=element2.getSubFiles();
-						if (subFiles!=null) {
-							foreach(var subFile in subFiles) {
-								// Don't add the DBUS interfaces to the list of files to check
-								if (subFile.contains("dbus_generated")) {
-									continue;
-								}
-								dataStream2.put_string(Path.build_filename(element2.path,subFile)+"\n");
-							}
-						}
-						subFiles=element2.getCSubFiles();
-						if (subFiles!=null) {
-							foreach(var subFile in subFiles) {
-								dataStream2.put_string(Path.build_filename(element2.path,subFile)+"\n");
-							}
-						}
-					break;
-					case ConfigType.GLADE:
-						dataStream2.put_string(Path.build_filename(element.fullPath)+"\n");
-					break;
-					default:
-					break;
+					if (element.eType != ConfigType.TRANSLATION) {
+						continue;
 					}
+					var element2 = element as ElementTranslation;
+					dataStream2.put_string(element2.fullPath2+"\n");
 				}
 				dataStream2.close();
 
@@ -109,15 +87,15 @@ namespace AutoVala {
 
 				// Find all the folders with translatable files
 				foreach (var element in ElementBase.globalData.globalElements) {
-					if ((element.eType==ConfigType.VALA_BINARY) || (element.eType==ConfigType.GLADE)) {
+					if (element.eType==ConfigType.TRANSLATION) {
 						bool found=false;
 						foreach (var p in translatablePaths) {
-							if (p==element.path) {
+							if (p == element.path) {
 								found=true;
 								break;
 							}
 						}
-						if (found==false) {
+						if (found == false) {
 							translatablePaths+=element.path;
 						}
 					}
@@ -135,7 +113,7 @@ namespace AutoVala {
 				ElementBase.globalData.addError(_("Failed to create the PO files list"));
 				return true;
 			}
-			
+
 			return false;
 		}
 	}

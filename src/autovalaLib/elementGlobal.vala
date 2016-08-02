@@ -205,6 +205,16 @@ namespace AutoVala {
 					break;
 				}
 
+				// check for GLIB-COMPILE-RESOURCES, but only if there are gresource files
+				foreach(var element in ElementBase.globalData.globalElements) {
+					if (element.eType!=ConfigType.GRESOURCE) {
+						continue;
+					}
+					dataStream.put_string("find_program ( WHERE_GRESOURCE glib-compile-resources )\n");
+					dataStream.put_string("if ( NOT WHERE_GRESOURCE )\n\tMESSAGE(FATAL_ERROR \"Error! GLIB-COMPILE-RESOURCES is not installed.\")\nendif()\n\n");
+					break;
+				}
+
 				// now, put all the binary and library folders, in order of satisfied dependencies
 				var paths=new Gee.HashMap<string,ElementBase>();
 				foreach(var element in ElementBase.globalData.globalElements) {
@@ -236,7 +246,17 @@ namespace AutoVala {
 							this.addFolderToMainCMakeLists(path,dataStream);
 							addedOne=true;
 							continue;
-						} else {
+						}
+					}
+										foreach(var path in paths.keys) {
+						var element=paths.get(path);
+						if ((element.eType==ConfigType.DEFINE) || (element.eType == ConfigType.SOURCE_DEPENDENCY) || (element.eType == ConfigType.BINARY_DEPENDENCY)) {
+							continue;
+						}
+						if (element.processed) {
+							continue;
+						}
+						if ((element.eType==ConfigType.VALA_LIBRARY) || (element.eType==ConfigType.VALA_BINARY)) {
 							var binElement = element as ElementValaBinary;
 							allProcessed=false;
 							bool valid=true;
@@ -250,7 +270,7 @@ namespace AutoVala {
 								continue;
 							}
 
-							addFolderToMainCMakeLists(path,dataStream);
+							this.addFolderToMainCMakeLists(path,dataStream);
 							addedOne=true;
 							element.processed=true;
 							if ((binElement.eType==ConfigType.VALA_LIBRARY)&&(binElement.currentNamespace!="")) {

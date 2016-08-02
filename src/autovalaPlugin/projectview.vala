@@ -64,21 +64,21 @@ namespace AutovalaPlugin {
 
 			try {
 				Gdk.Pixbuf pixbuf;
-				pixbuf = new Gdk.Pixbuf.from_file_at_size(Path.build_filename(AutovalaPluginConstants.DATADIR,"autovala","application.svg"),-1,-1);
+				pixbuf = new Gdk.Pixbuf.from_resource_at_scale("/com/rastersoft/autovala/pixmaps/application.svg",-1,-1,false);
 				Gtk.IconTheme.add_builtin_icon("autovala-plugin-executable",-1,pixbuf);
-				pixbuf = new Gdk.Pixbuf.from_file_at_size(Path.build_filename(AutovalaPluginConstants.DATADIR,"autovala","c.svg"),-1,-1);
+				pixbuf = new Gdk.Pixbuf.from_resource_at_scale("/com/rastersoft/autovala/pixmaps/c.svg",-1,-1,false);
 				Gtk.IconTheme.add_builtin_icon("autovala-plugin-c",-1,pixbuf);
-				pixbuf = new Gdk.Pixbuf.from_file_at_size(Path.build_filename(AutovalaPluginConstants.DATADIR,"autovala","h.svg"),-1,-1);
+				pixbuf = new Gdk.Pixbuf.from_resource_at_scale("/com/rastersoft/autovala/pixmaps/h.svg",-1,-1,false);
 				Gtk.IconTheme.add_builtin_icon("autovala-plugin-h",-1,pixbuf);
-				pixbuf = new Gdk.Pixbuf.from_file_at_size(Path.build_filename(AutovalaPluginConstants.DATADIR,"autovala","library.svg"),-1,-1);
+				pixbuf = new Gdk.Pixbuf.from_resource_at_scale("/com/rastersoft/autovala/pixmaps/library.svg",-1,-1,false);
 				Gtk.IconTheme.add_builtin_icon("autovala-plugin-library",-1,pixbuf);
-				pixbuf = new Gdk.Pixbuf.from_file_at_size(Path.build_filename(AutovalaPluginConstants.DATADIR,"autovala","project.svg"),-1,-1);
+				pixbuf = new Gdk.Pixbuf.from_resource_at_scale("/com/rastersoft/autovala/pixmaps/project.svg",-1,-1,false);
 				Gtk.IconTheme.add_builtin_icon("autovala-plugin-project",-1,pixbuf);
-				pixbuf = new Gdk.Pixbuf.from_file_at_size(Path.build_filename(AutovalaPluginConstants.DATADIR,"autovala","vapi.svg"),-1,-1);
+				pixbuf = new Gdk.Pixbuf.from_resource_at_scale("/com/rastersoft/autovala/pixmaps/vapi.svg",-1,-1,false);
 				Gtk.IconTheme.add_builtin_icon("autovala-plugin-vapi",-1,pixbuf);
-				pixbuf = new Gdk.Pixbuf.from_file_at_size(Path.build_filename(AutovalaPluginConstants.DATADIR,"autovala","vala.svg"),-1,-1);
+				pixbuf = new Gdk.Pixbuf.from_resource_at_scale("/com/rastersoft/autovala/pixmaps/vala.svg",-1,-1,false);
 				Gtk.IconTheme.add_builtin_icon("autovala-plugin-vala",-1,pixbuf);
-				pixbuf = new Gdk.Pixbuf.from_file_at_size(Path.build_filename(AutovalaPluginConstants.DATADIR,"autovala","test_vala.svg"),-1,-1);
+				pixbuf = new Gdk.Pixbuf.from_resource_at_scale("/com/rastersoft/autovala/pixmaps/test_vala.svg",-1,-1,false);
 				Gtk.IconTheme.add_builtin_icon("autovala-plugin-unitestvala",-1,pixbuf);
 			} catch (GLib.Error e) {}
 
@@ -339,6 +339,7 @@ namespace AutovalaPlugin {
 				project = null;
 			}
 
+			this.outputView.clear_buffer();
 			if (project==null) {
 				if (this.searchView != null) {
 					this.searchView.del_source_files();
@@ -347,7 +348,11 @@ namespace AutovalaPlugin {
 				this.popupMenu = null;
 				this.current_project_file = null;
 				this.changed_base_folder(null,null);
-			} else if ((this.current_project_file==null) || (this.current_project_file!=project.projectFile) || force) {
+				var errors = this.current_project.getErrors();
+				foreach(var error in errors) {
+					this.outputView.append_text(error);
+				}
+			} else if ((this.current_project_file == null) || (this.current_project_file != project.projectFile) || force) {
 				if (this.searchView != null) {
 					this.searchView.del_source_files();
 				}
@@ -675,7 +680,7 @@ namespace AutovalaPlugin {
 
 			var builder = new Gtk.Builder();
 			builder.set_translation_domain(AutovalaPluginConstants.GETTEXT_PACKAGE);
-			builder.add_from_file(Path.build_filename(AutovalaPluginConstants.DATADIR,"autovala","binary_properties.ui"));
+			builder.add_from_resource("/com/rastersoft/autovala/interface/binary_properties.ui");
 			this.main_window = (Gtk.Dialog) builder.get_object("binary_properties");
 			this.name = (Gtk.Entry) builder.get_object("binary_name");
 			this.path = (Gtk.FileChooserButton) builder.get_object("path");
