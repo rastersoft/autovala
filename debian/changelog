@@ -1,8 +1,10 @@
-autovala (0.99.39-debian1) sid; urgency=low
+autovala (0.99.39-Debian1) sid; urgency=low
 
-  * Changes made
+  * Allows to use GResource files in projects
+  * Uses GResources to store icons and glade files
+  * Now shows the output of autovala when it can't refresh the widgets in an editor
 
- -- Sergio Costas <rastersoft@gmail.com>  Sun, 08 May 2016 22:01:56 +0200
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Tue, 02 Aug 2016 23:55:00 +0200
 
 autovala (0.99.38-Debian1) sid; urgency=low
 
