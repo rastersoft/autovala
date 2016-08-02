@@ -339,6 +339,7 @@ namespace AutovalaPlugin {
 				project = null;
 			}
 
+			this.outputView.clear_buffer();
 			if (project==null) {
 				if (this.searchView != null) {
 					this.searchView.del_source_files();
@@ -347,7 +348,11 @@ namespace AutovalaPlugin {
 				this.popupMenu = null;
 				this.current_project_file = null;
 				this.changed_base_folder(null,null);
-			} else if ((this.current_project_file==null) || (this.current_project_file!=project.projectFile) || force) {
+				var errors = this.current_project.getErrors();
+				foreach(var error in errors) {
+					this.outputView.append_text(error);
+				}
+			} else if ((this.current_project_file == null) || (this.current_project_file != project.projectFile) || force) {
 				if (this.searchView != null) {
 					this.searchView.del_source_files();
 				}

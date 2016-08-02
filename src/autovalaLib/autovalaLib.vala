@@ -824,7 +824,7 @@ namespace AutoVala {
 		 */
 		public ValaProject ? get_binaries_list(string ?basePath = null) {
 
-			this.config=new AutoVala.Configuration(basePath);
+			this.config = new AutoVala.Configuration(basePath);
 			if (config.globalData.error) {
 				return null;
 			}
