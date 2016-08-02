@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gresources>
+  <gresource prefix="/com/rastersoft/autovala">
+    <file>pixmaps/application.svg</file>
+    <file>pixmaps/c.svg</file>
+    <file>pixmaps/h.svg</file>
+    <file>pixmaps/library.svg</file>
+    <file>pixmaps/project.svg</file>
+    <file>pixmaps/test_vala.svg</file>
+    <file>pixmaps/vala.svg</file>
+    <file>pixmaps/vapi.svg</file>
+    <file compressed="true">interface/binary_properties.ui</file>
+    <file compressed="true">interface/new_project.ui</file>
+  </gresource>
+</gresources>

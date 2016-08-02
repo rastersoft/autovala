@@ -10,7 +10,7 @@
 <p>autovala fileformat - The syntax for autovala configuration file</p>
 <h1 id="description">DESCRIPTION</h1>
 <p>The project file has a very simple format. Usually you don't need to manually edit it, but when the guesses of autovala are incorrect, you can do it, and your changes will be remembered each time you refresh the file.</p>
-<p>The current version for the project file format is <strong>18</strong>.</p>
+<p>The current version for the project file format is <strong>20</strong>.</p>
 <p>The file is based on commands in the format:</p>
 <pre><code>    command: data</code></pre>
 <p>one in each line. Every line that starts with # is ignored (is a comment), but also will be removed when the file is recreated.</p>
@@ -101,6 +101,7 @@ document.write('<a h'+'ref'+'="ma'+'ilto'+':'+e+'" clas'+'s="em' + 'ail">'+e+'<\
 <pre><code>    custom: data/config_system.txt share/ will install the file **config_system.txt** in **/usr/share** or **/usr/local/share**
 
     custom: data/config_system.txt /etc/myfolder will install the file **config_system.txt** in **/etc/myfolder**</code></pre></li>
+<li><p><strong>translate</strong>: followed by a file type (currently <em>vala</em>, <em>c</em> or <em>glade</em>) and a path/filename. Specifies that the file must be included in the POTFILES.in file, to be scanned for translatable strings.</p></li>
 <li><p><strong>manpage</strong>: followed by a path/filename, and optionally a language and a page section. Specifies that the file is a man page in the specified language (<strong>default</strong> to install it in the default folder), and for the specified section. If the section is not specified, it will be assumed to be section 1. If the language is not specified, it will be assumed <strong>default</strong>. If the file ends in <strong>.md</strong>, Autovala will presume that it is a <strong>markdown</strong> file, and will convert it to groff before. Other supported formats and its extensions are HTML (<strong>.html</strong>), ReStructured Text (<strong>.rst</strong>), LaTeX (<strong>.tex</strong>), JSON version of native AST format (<strong>.json</strong>), TexTile/RedCloth (<strong>.rdoc</strong>), DocBook format (<strong>.xml</strong>) and MediaWiki (<strong>.txt</strong>). Examples:</p>
 <pre><code>    manpage: data/man/autovala.1   will install the file **data/man/autovala** in **/usr/local/share/man/man1**
     manpage: data/man/autovala-rules.7.md es 7   will install the file **data/man/autovala-rules** in **/usr/local/share/man/es/man7**

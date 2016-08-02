@@ -2,7 +2,7 @@ using Gtk;
 using Gdk;
 using Gee;
 using AutoVala;
-
+//using GIO
 namespace AutovalaPlugin {
 
 	/**
@@ -200,7 +200,7 @@ namespace AutovalaPlugin {
 
 			var builder = new Gtk.Builder();
 			builder.set_translation_domain(AutovalaPluginConstants.GETTEXT_PACKAGE);
-			builder.add_from_file(Path.build_filename(AutovalaPluginConstants.DATADIR,"autovala","new_project.ui"));
+			builder.add_from_resource("/com/rastersoft/autovala/interface/new_project.ui");
 			this.main_window = (Gtk.Dialog) builder.get_object("new_project");
 			this.name = (Gtk.Entry) builder.get_object("project_name");
 			this.path = (Gtk.FileChooserButton) builder.get_object("project_folder");

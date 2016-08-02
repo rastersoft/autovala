@@ -8,7 +8,7 @@ autovala fileformat - The syntax for autovala configuration file
 
 The project file has a very simple format. Usually you don't need to manually edit it, but when the guesses of autovala are incorrect, you can do it, and your changes will be remembered each time you refresh the file.
 
-The current version for the project file format is **18**.
+The current version for the project file format is **20**.
 
 The file is based on commands in the format:
 
@@ -150,6 +150,8 @@ After that, it comes several commands, some of them repeated several times, to s
             custom: data/config_system.txt share/ will install the file **config_system.txt** in **/usr/share** or **/usr/local/share**
 
             custom: data/config_system.txt /etc/myfolder will install the file **config_system.txt** in **/etc/myfolder**
+
+ * **translate**: followed by a file type (currently *vala*, *c* or *glade*) and a path/filename. Specifies that the file must be included in the POTFILES.in file, to be scanned for translatable strings.
 
  * **manpage**: followed by a path/filename, and optionally a language and a page section. Specifies that the file is a man page in the specified language (**default** to install it in the default folder), and for the specified section. If the section is not specified, it will be assumed to be section 1. If the language is not specified, it will be assumed **default**. If the file ends in **.md**, Autovala will presume that it is a **markdown** file, and will convert it to groff before. Other supported formats and its extensions are HTML (**.html**), ReStructured Text (**.rst**), LaTeX (**.tex**), JSON version of native AST format (**.json**), TexTile/RedCloth (**.rdoc**), DocBook format (**.xml**) and MediaWiki (**.txt**). Examples:
 

@@ -927,6 +927,9 @@ namespace AutoVala {
 			}
 			var element=new SourceElement(sourceFile,automatic,condition, invertCondition);
 			this._sources.add(element);
+			var translation = new ElementTranslation();
+			translation.translate_type = TranslationType.VALA;
+			translation.configureElement(GLib.Path.build_filename(this._path,sourceFile),null,null,automatic,condition,invertCondition);
 			return false;
 		}
 
@@ -991,6 +994,9 @@ namespace AutoVala {
 			}
 			var element=new SourceElement(sourceFile,automatic,condition, invertCondition);
 			this._cSources.add(element);
+			var translation = new ElementTranslation();
+			translation.translate_type = TranslationType.C;
+			translation.configureElement(GLib.Path.build_filename(this._path,sourceFile),null,null,automatic,condition,invertCondition);
 			return false;
 		}
 
@@ -1133,7 +1139,7 @@ namespace AutoVala {
 				return this.setCLibrary(line.substring(11).strip(),automatic,condition,invertCondition,lineNumber);
 			} else if (line.has_prefix("h_folder: ")) {
 				return this.addHFolder(line.substring(10).strip(),automatic,condition,invertCondition,lineNumber);
-			} else if (line.has_prefix("use_resource: ")) {
+			} else if (line.has_prefix("use_gresource: ")) {
 				return this.addResource(line.substring(14).strip(),automatic,condition,invertCondition,lineNumber);
 			} else {
 				var badCommand = line.split(": ")[0];
@@ -1819,7 +1825,7 @@ namespace AutoVala {
 					if (element.automatic) {
 						dataStream.put_string("*");
 					}
-					dataStream.put_string("use_resource: %s\n".printf(element.elementName));
+					dataStream.put_string("use_gresource: %s\n".printf(element.elementName));
 				}
 				printConditions.printTail();
 

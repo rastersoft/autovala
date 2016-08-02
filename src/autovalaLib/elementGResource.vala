@@ -89,6 +89,11 @@ namespace AutoVala {
 				}
 				this.gresource_files += filename;
 				ElementBase.globalData.addExclude(filename2);
+				if (filename.has_suffix(".ui")) {
+					var translation = new ElementTranslation();
+					translation.translate_type = TranslationType.GLADE;
+					translation.configureElement(filename2,null,null,true,null,false);
+				}
 			}
 
 			return found_error;
