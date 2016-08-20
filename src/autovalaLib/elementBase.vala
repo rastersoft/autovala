@@ -23,7 +23,7 @@ namespace AutoVala {
 
 	public enum ConfigType {GLOBAL, VALA_BINARY, VALA_LIBRARY, BINARY, ICON, PIXMAP, PO, GLADE, DBUS_SERVICE, DESKTOP, AUTOSTART,
 							 EOS_PLUG, SCHEME, DATA, DOC, INCLUDE, IGNORE, CUSTOM, DEFINE, MANPAGE, BASH_COMPLETION, SOURCE_DEPENDENCY,
-							 BINARY_DEPENDENCY, APPDATA, GRESOURCE, TRANSLATION }
+							 BINARY_DEPENDENCY, APPDATA, GRESOURCE, TRANSLATION, VAPIDIR }
 
 	/**
 	 * Represents a generic file of the project, with its path, filename, compilation condition...
@@ -94,7 +94,7 @@ namespace AutoVala {
 		 * @param extensions A list with all the file extensions to search (starting with a dot), or null to add all files
 		 * @param recursive If true, will add the files from the specified folder and its subfolders
 		 * @param removeFolder If true, will not prefix the paths and filenames with FOLDER
-		 * @param masterFolder The current folder relative to the starting point (FOLDER) 
+		 * @param masterFolder The current folder relative to the starting point (FOLDER)
 		 *
 		 * @returns A list with all the files with its relative path to the specified starting path
 		 */

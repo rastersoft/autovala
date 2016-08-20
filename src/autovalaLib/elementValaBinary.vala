@@ -1498,6 +1498,14 @@ namespace AutoVala {
 					}
 				}
 
+				foreach(var element in ElementBase.globalData.globalElements) {
+					if (element.eType==ConfigType.VAPIDIR) {
+						addDefines=true;
+						printConditions.printCondition(element.condition,element.invertCondition);
+						dataStream.put_string("set (COMPILE_OPTIONS ${COMPILE_OPTIONS} --vapidir=%s )\n".printf(Path.build_filename(ElementBase.globalData.projectFolder,element.fullPath)));
+					}
+				}
+
 				if (this._type == ConfigType.VALA_LIBRARY) {
 					addDefines=true;
 					// If it is a library, generate the Gobject Introspection file

@@ -301,7 +301,7 @@ namespace AutoVala {
 			}
 
 			globalData.generateExtraData();
-			
+
 			var globalElement = new ElementGlobal();
 			DataOutputStream dataStreamGlobal;
 			try {
@@ -396,11 +396,12 @@ namespace AutoVala {
 			ElementBase.globalData.clearAutomatic();
 			ElementBase.globalData.generateExtraData();
 
-			// refresh the automatic configuration for the manually set elements 
+			// refresh the automatic configuration for the manually set elements
 			foreach (var element in ElementBase.globalData.globalElements) {
 				element.autoConfigure();
 			}
 
+			error|=ElementVapidir.autoGenerate();
 			error|=ElementGResource.autoGenerate();
 			error|=ElementBashCompletion.autoGenerate();
 			error|=ElementBinary.autoGenerate();
@@ -579,6 +580,7 @@ namespace AutoVala {
 				return true;
 			}
 
+			ElementBase.globalData.generateExtraData();
 			ElementBase element_found = null;
 			foreach(var element in config.globalData.globalElements) {
 				if ((element.eType == AutoVala.ConfigType.VALA_BINARY) || (element.eType == AutoVala.ConfigType.VALA_LIBRARY)) {
@@ -620,6 +622,7 @@ namespace AutoVala {
 				return null;
 			}
 
+			ElementBase.globalData.generateExtraData();
 			string base_path2;
 			string base_path3 = "";
 			string projectPath2;
@@ -833,6 +836,7 @@ namespace AutoVala {
 				return null;
 			}
 
+			ElementBase.globalData.generateExtraData();
 			var project = new ValaProjectInternal();
 
 			project.projectPath = config.globalData.projectFolder;

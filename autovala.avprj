@@ -70,6 +70,7 @@ c_library: readline
 *vala_source: elementScheme.vala
 *vala_source: elementTranslation.vala
 *vala_source: elementValaBinary.vala
+*vala_source: elementVapidir.vala
 *vala_source: findVala.vala
 *vala_source: genVapis.vala
 *vala_source: globals.vala
@@ -107,10 +108,9 @@ vala_local_package: AutoVala
 *po: po
 
 *translate: vala src/autovala.vala
-*translate: vala src/autovalaLib/configuration.vala
 *translate: vala src/autovalaLib/packages_pacman.vala
 *translate: vala src/autovalaLib/elementIcon.vala
-*translate: vala src/autovalaLib/readPkgconfig.vala
+*translate: vala src/autovalaLib/elementSDepend.vala
 *translate: vala src/autovalaLib/packages.vala
 *translate: vala src/autovalaLib/elementDBus.vala
 *translate: vala src/autovalaLib/elementCustom.vala
@@ -131,18 +131,20 @@ vala_local_package: AutoVala
 *translate: vala src/autovalaLib/elementManpage.vala
 *translate: vala src/autovalaLib/genVapis.vala
 *translate: vala src/autovalaLib/elementBDepend.vala
-*translate: vala src/autovalaLib/elementSDepend.vala
 *translate: vala src/autovalaLib/packages_rpm.vala
 *translate: vala src/autovalaLib/elementDefine.vala
-*translate: vala src/autovalaLib/autovalaLib.vala
-*translate: vala src/autovalaLib/elementGResource.vala
+*translate: vala src/autovalaLib/elementVapidir.vala
 *translate: vala src/autovalaLib/elementGlobal.vala
-*translate: vala src/autovalaLib/gresource_xml.vala
-*translate: vala src/autovalaLib/elementTranslation.vala
+*translate: vala src/autovalaLib/autovalaLib.vala
 *translate: vala src/autovalaLib/elementGlade.vala
-*translate: vala src/autovalaLib/globals.vala
-*translate: vala src/autovalaLib/elementValaBinary.vala
 *translate: vala src/autovalaLib/elementPo.vala
+*translate: vala src/autovalaLib/configuration.vala
+*translate: vala src/autovalaLib/globals.vala
+*translate: vala src/autovalaLib/elementGResource.vala
+*translate: vala src/autovalaLib/elementTranslation.vala
+*translate: vala src/autovalaLib/gresource_xml.vala
+*translate: vala src/autovalaLib/readPkgconfig.vala
+*translate: vala src/autovalaLib/elementValaBinary.vala
 *translate: vala src/autovalaLib/elementBase.vala
 *translate: vala src/autovalaPlugin/projectview.vala
 *translate: vala src/autovalaPlugin/PanedPercentage.vala

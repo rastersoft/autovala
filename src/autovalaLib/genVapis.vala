@@ -89,10 +89,10 @@ namespace AutoVala {
 			this.pkgConfigs=new ReadPkgConfig();
 
 			if(local==false) {
-				this.fillNamespaces("/usr/share/vala");
-				this.fillNamespaces("/usr/share/vala-%d.%d".printf(major,minor));
-				this.fillNamespaces("/usr/local/share/vala");
-				this.fillNamespaces("/usr/local/share/vala-%d.%d".printf(major,minor));
+				this.fillNamespaces("/usr/share/vala",true);
+				this.fillNamespaces("/usr/share/vala-%d.%d".printf(major,minor),true);
+				this.fillNamespaces("/usr/local/share/vala",true);
+				this.fillNamespaces("/usr/local/share/vala-%d.%d".printf(major,minor),true);
 			}
 		}
 
@@ -277,6 +277,7 @@ namespace AutoVala {
 					 * If this line contains a namespace, read and store it in lastNamespace
 					 * It will be added to the list when we find the '{' character that belongs to it
 					 */
+
 					if (regexNamespace.match(line,0,out foundString)) {
 						// Take the regular expression found
 						// Remove all prefix spaces and tabs
@@ -351,6 +352,7 @@ namespace AutoVala {
 					}
 				}
 			} catch (Error e) {
+				//print("Error: %s\n".printf(e.message));
 				return;
 			}
 		}
@@ -380,9 +382,15 @@ namespace AutoVala {
 		 * the "best" one (bigger version)
 		 * @param basepath The path where to find VAPI files
 		 */
-		private void fillNamespaces(string basepath) {
+		public void fillNamespaces(string basepath,bool inside_vapi = false) {
 
-			var newpath=File.new_for_path(Path.build_filename(basepath,"vapi"));
+			string full_basepath;
+			if (inside_vapi) {
+				full_basepath = Path.build_filename(basepath,"vapi");
+			} else {
+				full_basepath = basepath;
+			}
+			var newpath=File.new_for_path(full_basepath);
 			if (newpath.query_exists()==false) {
 				return;
 			}
@@ -399,9 +407,9 @@ namespace AutoVala {
 					if (fname.has_suffix(".vapi")==false) {
 						continue;
 					}
-					this.checkVapiFile(Path.build_filename(basepath,"vapi",fname),fname);
+					this.checkVapiFile(Path.build_filename(full_basepath,fname),fname);
 					var deps_name = fname.substring(0,fname.length-5); // remove the .vapi extension
-					this.checkDepsFile(Path.build_filename(basepath,"vapi",deps_name+".deps"),deps_name);
+					this.checkDepsFile(Path.build_filename(full_basepath,deps_name+".deps"),deps_name);
 				}
 			} catch (Error e) {
 				return;
