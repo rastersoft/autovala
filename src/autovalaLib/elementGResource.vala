@@ -66,15 +66,17 @@ namespace AutoVala {
 			return error;
 		}
 
-		public bool add_inner_files() {
+		public string[]? get_inner_files() {
 
 			GResourceXML parser;
+
+			string[]? filelist = {};
 
 			try {
 				parser = new GResourceXML(Path.build_filename(ElementBase.globalData.projectFolder,this._fullPath));
 			} catch (MarkupError e) {
 				ElementBase.globalData.addError(e.message);
-				return true;
+				return null;
 			}
 
 			bool found_error = false;
@@ -87,16 +89,48 @@ namespace AutoVala {
 					ElementBase.globalData.addError(_("The file %s, defined in the GResource file %s, doesn't exist").printf(filename2,this._fullPath));
 					continue;
 				}
-				this.gresource_files += filename;
-				ElementBase.globalData.addExclude(filename2);
+				filelist += filename2;
+			}
+			return filelist;
+		}
+
+		public bool add_inner_files() {
+
+			var filelist = this.get_inner_files();
+			if (filelist == null) {
+				return true;
+			}
+
+			bool found_error = false;
+			foreach(var filename in filelist) {
+				string full_filename = Path.build_filename(ElementBase.globalData.projectFolder,filename);
+				var f = File.new_for_path(full_filename);
+				if (f.query_exists() == false) {
+					found_error = true;
+					ElementBase.globalData.addError(_("The file %s, defined in the GResource file %s, doesn't exist").printf(filename,this._fullPath));
+					continue;
+				}
+				this.gresource_files += Path.get_basename(filename);
+				ElementBase.globalData.addExclude(filename);
 				if (filename.has_suffix(".ui")) {
 					var translation = new ElementTranslation();
 					translation.translate_type = TranslationType.GLADE;
-					translation.configureElement(filename2,null,null,true,null,false);
+					translation.configureElement(filename,null,null,true,null,false);
 				}
 			}
 
 			return found_error;
+		}
+
+		public override void add_files() {
+
+			this.file_list = this.get_inner_files();
+			if (this.file_list == null) {
+				this.file_list = {};
+			}
+			var full_path = GLib.Path.build_filename(this._path, this._name);
+			this.file_list += full_path;
+
 		}
 
 		public override bool generateCMake(DataOutputStream dataStream) {
@@ -108,7 +142,7 @@ namespace AutoVala {
 
 			try {
 				dataStream.put_string("EXECUTE_PROCESS( COMMAND glib-compile-resources --sourcedir=${CMAKE_CURRENT_SOURCE_DIR} --generate-source --target=%s %s)\n".printf(Path.build_filename("${CMAKE_CURRENT_BINARY_DIR}",c_name),Path.build_filename("${CMAKE_CURRENT_SOURCE_DIR}",this._name)));
-				
+
 				dataStream.put_string("EXECUTE_PROCESS( COMMAND glib-compile-resources --sourcedir=${CMAKE_CURRENT_SOURCE_DIR} --generate-header --target=%s %s)\n".printf(Path.build_filename("${CMAKE_CURRENT_BINARY_DIR}",h_name),Path.build_filename("${CMAKE_CURRENT_SOURCE_DIR}",this._name)));
 				dataStream.put_string("ADD_CUSTOM_COMMAND (\n");
 

@@ -402,8 +402,6 @@ namespace AutoVala {
 
 		public override void add_files() {
 
-			this.file_list = {};
-
 			this.file_list = ElementBase.getFilesFromFolder(this._path,{".vala",".c",".h",".pc","deps",".cmake"},true);
 			var files = ElementBase.getFilesFromFolder(GLib.Path.build_filename(this._path,"vapis"),{".vapi"},true);
 			foreach (var element in files) {

@@ -36,15 +36,18 @@ namespace AutoVala {
 				var element = new ElementVapidir();
 				error|=element.autoConfigure("src/vapidir");
 			}
-
-			/*foreach(var element in ElementBase.globalData.globalElements) {
-				if (element.eType == ConfigType.VAPIDIR) {
-					var fullpath = Path.build_filename(ElementBase.globalData.projectFolder,element.fullPath);
-					ElementBase.globalData.vapiList.fillNamespaces(fullpath);
-				}
-			}*/
-
 			return error;
 		}
+
+		public override void add_files() {
+
+			if (this._fullPath[0] == '/') {
+				// don't add VAPI files that aren't inside this project
+				return;
+			}
+
+			this.file_list = this.getFilesFromFolder(this._fullPath,{".vapi"},false);
+		}
+
 	}
 }
