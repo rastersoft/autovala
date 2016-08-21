@@ -136,9 +136,9 @@ vala_local_package: AutoVala
 *translate: vala src/autovalaLib/elementDefine.vala
 *translate: vala src/autovalaLib/configuration.vala
 *translate: vala src/autovalaLib/elementGlobal.vala
-*translate: vala src/autovalaLib/elementGResource.vala
 *translate: vala src/autovalaLib/autovalaLib.vala
 *translate: vala src/autovalaLib/globals.vala
+*translate: vala src/autovalaLib/elementGResource.vala
 *translate: vala src/autovalaLib/elementValaBinary.vala
 *translate: vala src/autovalaLib/elementGlade.vala
 *translate: vala src/autovalaLib/elementPo.vala

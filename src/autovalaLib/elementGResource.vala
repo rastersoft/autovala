@@ -66,7 +66,7 @@ namespace AutoVala {
 			return error;
 		}
 
-		public string[]? get_inner_files() {
+		public string[]? get_inner_files(bool full) {
 
 			GResourceXML parser;
 
@@ -89,33 +89,38 @@ namespace AutoVala {
 					ElementBase.globalData.addError(_("The file %s, defined in the GResource file %s, doesn't exist").printf(filename2,this._fullPath));
 					continue;
 				}
-				filelist += filename2;
+				if (full) {
+					filelist += filename2;
+				} else {
+					filelist += filename;
+				}
 			}
 			return filelist;
 		}
 
 		public bool add_inner_files() {
 
-			var filelist = this.get_inner_files();
+			var filelist = this.get_inner_files(false);
 			if (filelist == null) {
 				return true;
 			}
 
 			bool found_error = false;
 			foreach(var filename in filelist) {
-				string full_filename = Path.build_filename(ElementBase.globalData.projectFolder,filename);
+				string filename2 = Path.build_filename(this.path,filename);
+				string full_filename = Path.build_filename(ElementBase.globalData.projectFolder,filename2);
 				var f = File.new_for_path(full_filename);
 				if (f.query_exists() == false) {
 					found_error = true;
-					ElementBase.globalData.addError(_("The file %s, defined in the GResource file %s, doesn't exist").printf(filename,this._fullPath));
+					ElementBase.globalData.addError(_("The file %s, defined in the GResource file %s, doesn't exist").printf(filename2,this._fullPath));
 					continue;
 				}
-				this.gresource_files += Path.get_basename(filename);
-				ElementBase.globalData.addExclude(filename);
+				this.gresource_files += filename;
+				ElementBase.globalData.addExclude(filename2);
 				if (filename.has_suffix(".ui")) {
 					var translation = new ElementTranslation();
 					translation.translate_type = TranslationType.GLADE;
-					translation.configureElement(filename,null,null,true,null,false);
+					translation.configureElement(filename2,null,null,true,null,false);
 				}
 			}
 
@@ -124,7 +129,7 @@ namespace AutoVala {
 
 		public override void add_files() {
 
-			this.file_list = this.get_inner_files();
+			this.file_list = this.get_inner_files(true);
 			if (this.file_list == null) {
 				this.file_list = {};
 			}

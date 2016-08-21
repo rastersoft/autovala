@@ -5,7 +5,7 @@ EXECUTE_PROCESS( COMMAND glib-compile-resources --sourcedir=${CMAKE_CURRENT_SOUR
 EXECUTE_PROCESS( COMMAND glib-compile-resources --sourcedir=${CMAKE_CURRENT_SOURCE_DIR} --generate-header --target=${CMAKE_CURRENT_BINARY_DIR}/extras.gresource.xml.h ${CMAKE_CURRENT_SOURCE_DIR}/extras.gresource.xml)
 ADD_CUSTOM_COMMAND (
 	OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/extras.gresource.xml.c
-	DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/extras.gresource.xml ${CMAKE_CURRENT_SOURCE_DIR}/application.svg ${CMAKE_CURRENT_SOURCE_DIR}/c.svg ${CMAKE_CURRENT_SOURCE_DIR}/h.svg ${CMAKE_CURRENT_SOURCE_DIR}/library.svg ${CMAKE_CURRENT_SOURCE_DIR}/project.svg ${CMAKE_CURRENT_SOURCE_DIR}/test_vala.svg ${CMAKE_CURRENT_SOURCE_DIR}/vala.svg ${CMAKE_CURRENT_SOURCE_DIR}/vapi.svg ${CMAKE_CURRENT_SOURCE_DIR}/binary_properties.ui ${CMAKE_CURRENT_SOURCE_DIR}/new_project.ui
+	DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/extras.gresource.xml ${CMAKE_CURRENT_SOURCE_DIR}/pixmaps/application.svg ${CMAKE_CURRENT_SOURCE_DIR}/pixmaps/c.svg ${CMAKE_CURRENT_SOURCE_DIR}/pixmaps/h.svg ${CMAKE_CURRENT_SOURCE_DIR}/pixmaps/library.svg ${CMAKE_CURRENT_SOURCE_DIR}/pixmaps/project.svg ${CMAKE_CURRENT_SOURCE_DIR}/pixmaps/test_vala.svg ${CMAKE_CURRENT_SOURCE_DIR}/pixmaps/vala.svg ${CMAKE_CURRENT_SOURCE_DIR}/pixmaps/vapi.svg ${CMAKE_CURRENT_SOURCE_DIR}/interface/binary_properties.ui ${CMAKE_CURRENT_SOURCE_DIR}/interface/new_project.ui
 	COMMAND glib-compile-resources --sourcedir=${CMAKE_CURRENT_SOURCE_DIR} --generate-source --target=${CMAKE_CURRENT_BINARY_DIR}/extras.gresource.xml.c ${CMAKE_CURRENT_SOURCE_DIR}/extras.gresource.xml
 
 	COMMAND glib-compile-resources --sourcedir=${CMAKE_CURRENT_SOURCE_DIR} --generate-header --target=${CMAKE_CURRENT_BINARY_DIR}/extras.gresource.xml.h ${CMAKE_CURRENT_SOURCE_DIR}/extras.gresource.xml
