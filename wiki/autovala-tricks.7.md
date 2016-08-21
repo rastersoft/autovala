@@ -4,6 +4,12 @@ Autovala-tricks(1)
 
 Autovala tricks - Several tricks for Autovala
 
+## Using vapidir and vapi_file commands
+
+The *vapidir* command will add a folder to the list of places where to search for .vapi files, passing them to the *valac* compiler with the *--vapidir=...* command line parameter. This is useful for programs (like Gnome-Builder 3.20) that put their vapi files in a non-standard location, or for libraries (like libkeybinder) that have .vapi files but they aren't included in Debian packages (at least at august 21, 2016). All the autovala's bells and whistles (like automatic search of pkg-config based on *Using* statements inside the source code, checking for existence during cmake execution and so on) are available for the .vapi files inside these folders. These folders are added for all the binaries and libraries in a project.
+
+On the other hand, the *vapi_file* command adds an specific .vapi file (and only that .vapi file), and does it only for an specific binary or library. It is added to the sources list, like another source file, and the only thing checked is if it fulfills any of the *Using* statements in the sources. Everything else (checking for existence, adding *-l...* to the C options and so on) is left to the user, who must configure them to ensure that the compilation works. This is useful mainly when a project generates a library used by another library or binary in the same project.
+
 ## Using GResource
 
 GResource is a system available in GLib to include files (text, images, sound...) inside an executable, avoiding the problem of locating them in the hard disk. To do so, an utility called **glib-compile-resources** is used, which takes an XML file with the list of files to include, and generates a **.c** file with them, which can then be compiled with the source code. More information about it is available in the [GResource API documentation page](https://developer.gnome.org/gio/stable/GResource.html).

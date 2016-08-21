@@ -8,7 +8,7 @@ autovala fileformat - The syntax for autovala configuration file
 
 The project file has a very simple format. Usually you don't need to manually edit it, but when the guesses of autovala are incorrect, you can do it, and your changes will be remembered each time you refresh the file.
 
-The current version for the project file format is **20**.
+The current version for the project file format is **21**.
 
 The file is based on commands in the format:
 
@@ -44,6 +44,8 @@ After that, it comes several commands, some of them repeated several times, to s
             gresource: data_gresource_xml data/data.gresource.xml
 
    the identifier is used in the binaries/libraries to specify which resource file to include there, and the path specifies where is the XML file with the GResources data. AutoVala will check the files specified inside, to prevent adding them automatically in other parts (example: if you have an icon file in *data/icons*, by default it will be installed at */usr/share/icons...*; but if that file is inside a *gresource* file, it won't be installed, unless you add it manually to the .avprj file). Also, those files will be added as dependencies, so any change to any of them will force a recompilation of the corresponding object file and binaries.
+
+ * **vapidir**: points to a folder where extra VAPI files can be found. This is a global path, used in all binaries and libraries used in the project (unlike the *vapi_file* statement, that is binary-specific). This command is useful when a program puts their .vapi files in a non-standard folder (which is the current case of Gnome-Builder), or when you have a library installed in your system but it doesn't include a .vapi file. When asking the file list with the *project_files* command-line parameter, it will include the .vapi files inside these folders only if the folder is relative to the project's folder; if it is an absolute path (which points, let's say, to /usr/share...) won't list those .vapi files.
 
  * **vala_binary**:  contains a path and a name, and specifies that, in the path, there are several source files that must be compiled to create that binary. Example:
 

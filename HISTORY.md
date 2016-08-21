@@ -1,4 +1,7 @@
 ## History of versions ##
+* version 0.99.40 (2016-08-21)
+   * Allows to specify --vapidir folders
+   * Now includes the files inside a GResource XML file in the project's file list
 * version 0.99.39 (2016-08-02)
    * Allows to use GResource files in projects
    * Uses GResources to store icons and glade files

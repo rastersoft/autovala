@@ -10,7 +10,7 @@
 <p>autovala fileformat - The syntax for autovala configuration file</p>
 <h1 id="description">DESCRIPTION</h1>
 <p>The project file has a very simple format. Usually you don't need to manually edit it, but when the guesses of autovala are incorrect, you can do it, and your changes will be remembered each time you refresh the file.</p>
-<p>The current version for the project file format is <strong>20</strong>.</p>
+<p>The current version for the project file format is <strong>21</strong>.</p>
 <p>The file is based on commands in the format:</p>
 <pre><code>    command: data</code></pre>
 <p>one in each line. Every line that starts with # is ignored (is a comment), but also will be removed when the file is recreated.</p>
@@ -32,6 +32,7 @@ packages, Autovala will try to take data from this file if it exists, like a sum
 </ul>
 <p>the identifier is used in the binaries/libraries to specify which resource file to include there, and the path specifies where is the XML file with the GResources data. AutoVala will check the files specified inside, to prevent adding them automatically in other parts (example: if you have an icon file in <em>data/icons</em>, by default it will be installed at <em>/usr/share/icons...</em>; but if that file is inside a <em>gresource</em> file, it won't be installed, unless you add it manually to the .avprj file). Also, those files will be added as dependencies, so any change to any of them will force a recompilation of the corresponding object file and binaries.</p>
 <ul>
+<li><p><strong>vapidir</strong>: points to a folder where extra VAPI files can be found. This is a global path, used in all binaries and libraries used in the project (unlike the <em>vapi_file</em> statement, that is binary-specific). This command is useful when a program puts their .vapi files in a non-standard folder (which is the current case of Gnome-Builder), or when you have a library installed in your system but it doesn't include a .vapi file. When asking the file list with the <em>project_files</em> command-line parameter, it will include the .vapi files inside these folders only if the folder is relative to the project's folder; if it is an absolute path (which points, let's say, to /usr/share...) won't list those .vapi files.</p></li>
 <li><p><strong>vala_binary</strong>: contains a path and a name, and specifies that, in the path, there are several source files that must be compiled to create that binary. Example:</p>
 <pre><code>    vala_binary: src/test_file</code></pre></li>
 </ul>

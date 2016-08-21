@@ -1,3 +1,10 @@
+autovala (0.99.40-Debian1) sid; urgency=low
+
+  * Allows to specify --vapidir folders
+  * Now includes the files inside a GResource XML file in the project's file list
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Sun, 21 Aug 2016 23:55:00 +0200
+
 autovala (0.99.39-Debian1) sid; urgency=low
 
   * Allows to use GResource files in projects

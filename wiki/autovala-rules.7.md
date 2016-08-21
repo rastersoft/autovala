@@ -20,7 +20,9 @@ The rules followed by Autovala are the following:
 
 * The VALA sources will be scanned to find the version number in a specific format, allowing to keep it inside the sources and avoiding the need of editing the project file manually
 
-* All **.vapi** files inside a **vapis** folder, located in a binary/library top folder will be added to that binary/library
+* All **.vapi** files inside a **vapis** folder, located in a binary/library top folder will be added to that binary/library using the *vapi_file* command.
+
+* If it exists a **vapidir** folder inside the **src** folder, it will be added to the project with the *vapidir* command.
 
 * All **.gresource.xml** files inside **data** folder will be considered a GResource XML file, so it will be added to the .avprj's root, and the files inside it won't be added automatically. The .ui files defined inside will be added to the translation list.
 
