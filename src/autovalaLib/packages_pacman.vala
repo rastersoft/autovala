@@ -223,7 +223,6 @@ namespace AutoVala {
 			try {
 				var dis = f_control.create_readwrite(GLib.FileCreateFlags.PRIVATE);
 				var of = new DataOutputStream(dis.output_stream as FileOutputStream);
-				bool not_first;
 
 				this.print_key(of,element_keys,"pkgname",this.config.globalData.projectName);
 				of.put_string("pkgver=%s\n".printf(this.version));
@@ -268,8 +267,6 @@ namespace AutoVala {
 					}
 				}
 
-				var depends = new Gee.ArrayList<string>();
-				var makedepends = new Gee.ArrayList<string>();
 				if (element_keys.has_key("depends")) {
 					var l = element_keys.get("depends").replace("'","").replace("(","").replace(")","").split(" ");
 					foreach (var d2 in l) {

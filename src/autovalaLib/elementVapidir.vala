@@ -46,7 +46,7 @@ namespace AutoVala {
 				return;
 			}
 
-			this.file_list = this.getFilesFromFolder(this._fullPath,{".vapi"},false);
+			this.file_list = AutoVala.ElementBase.getFilesFromFolder(this._fullPath,{".vapi"},false);
 		}
 
 	}

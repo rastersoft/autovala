@@ -1,4 +1,7 @@
 ## History of versions ##
+* version 0.99.41 (2016-08-25)
+   * Fixed a bug in the --vapidir folder generation
+   * Fixed some compilation warnings
 * version 0.99.40 (2016-08-21)
    * Allows to specify --vapidir folders
    * Now includes the files inside a GResource XML file in the project's file list

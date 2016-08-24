@@ -1,3 +1,10 @@
+autovala (0.99.41-Debian1) sid; urgency=low
+
+  * Fixed a bug in the --vapidir folder generation
+  * Fixed some compilation warnings
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Thu, 25 Aug 2016 23:55:00 +0200
+
 autovala (0.99.40-Debian1) sid; urgency=low
 
   * Allows to specify --vapidir folders

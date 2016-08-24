@@ -1500,7 +1500,7 @@ namespace AutoVala {
 					if (element.eType==ConfigType.VAPIDIR) {
 						addDefines=true;
 						printConditions.printCondition(element.condition,element.invertCondition);
-						dataStream.put_string("set (COMPILE_OPTIONS ${COMPILE_OPTIONS} --vapidir=%s )\n".printf(Path.build_filename(ElementBase.globalData.projectFolder,element.fullPath)));
+						dataStream.put_string("set (COMPILE_OPTIONS ${COMPILE_OPTIONS} --vapidir=${CMAKE_SOURCE_DIR}/%s )\n".printf(element.fullPath));
 					}
 				}
 

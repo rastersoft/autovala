@@ -112,7 +112,7 @@ namespace AutoVala {
 				}
 				if (element.eType == ConfigType.VAPIDIR) {
 					var fullpath = Path.build_filename(ElementBase.globalData.projectFolder,element.fullPath);
-					ElementBase.globalData.vapiList.fillNamespaces(fullpath);
+					AutoVala.Globals.vapiList.fillNamespaces(fullpath);
 				}
 			}
 		}
