@@ -120,6 +120,7 @@ int main(string[] argv) {
 			return -1;
 		}
 		var gen = new AutoVala.ManageProject();
+		GLib.stdout.printf(_("Updating project file\n"));
 		retval=gen.refresh();
 		gen.showErrors();
 		if (retval) {

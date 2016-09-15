@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- made by Andy, It's public domain,  yeah why not-->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   id="svg4895"
+   sodipodi:docname="build.svg"
+   sodipodi:modified="true"
+   viewBox="0 0 128 128"
+   sodipodi:version="0.32"
+   version="1.0"
+   inkscape:output_extension="org.inkscape.output.svg.inkscape"
+   inkscape:version="0.91 r13725">
+  <sodipodi:namedview
+     id="base"
+     bordercolor="#666666"
+     inkscape:pageshadow="2"
+     guidetolerance="10.0"
+     pagecolor="#ffffff"
+     gridtolerance="10.0"
+     inkscape:zoom="2.9609375"
+     objecttolerance="10.0"
+     borderopacity="1.0"
+     inkscape:current-layer="svg4895"
+     inkscape:cx="64"
+     inkscape:cy="63.831135"
+     inkscape:window-y="27"
+     inkscape:window-x="0"
+     inkscape:window-height="1016"
+     inkscape:pageopacity="0.0"
+     inkscape:window-width="1920"
+     showgrid="false"
+     inkscape:window-maximized="1" />
+  <defs
+     id="defs3">
+    <linearGradient
+       id="WhiteTransparent">
+      <stop
+         id="stop6"
+         style="stop-color:white"
+         offset="0" />
+      <stop
+         id="stop8"
+         style="stop-color:white;stop-opacity:0"
+         offset="1" />
+    </linearGradient>
+    <linearGradient
+       id="BlackTransparent">
+      <stop
+         id="stop11"
+         style="stop-color:black"
+         offset="0" />
+      <stop
+         id="stop13"
+         style="stop-color:black;stop-opacity:0"
+         offset="1" />
+    </linearGradient>
+    <clipPath
+       id="clipoutline2"
+       clipPathUnits="userSpaceOnUse">
+      <path
+         id="outline2"
+         d="m55.8 12l0.76 0.16c8.84-2.94 28.68 8.64 24.26 18.96-1.12 1.62-0.93 4.5 0.42 6.31l-24.81 24.82c-1.39-1.39-4.48-1.36-5.9 0l-41.03 39.38c-3.74 3.59-0.8 6.64 0.78 8.25l7.36 7.36c1.61 1.6 5.86 3.76 8.88 0.56l38.72-40.81c1.35-1.42 1.36-4.47 0-5.87 0 0 0.01-0.02 0-0.02l24.91-24.9c2.63 2.37 5.114 2.575 7.47 1.93 4.55-1.245 7.09 3.207 9.81 6.46l-1.23 1.21c-1.82 1.84-1.65 4.94 0.39 6.98s5.15 2.21 6.97 0.39l8.14-8.13c1.82-1.84 1.65-4.94-0.4-6.97-1.84-1.85-4.51-2.09-6.37-0.77-5.58-6.26-2.65-7.2-10.01-15.35l-13.79-14.09c-9.93-9.74-22.83-9.73-35.33-5.86z" />
+    </clipPath>
+    <!-- -->
+    <linearGradient
+       id="linearGradient2646"
+       y2="6037.5"
+       xlink:href="#BlackTransparent"
+       gradientUnits="userSpaceOnUse"
+       x2="2375.5"
+       y1="6145.3"
+       x1="2483"
+       inkscape:collect="always" />
+    <linearGradient
+       id="linearGradient2648"
+       y2="124"
+       xlink:href="#WhiteTransparent"
+       gradientUnits="userSpaceOnUse"
+       x2="626.1"
+       gradientTransform="matrix(.0775 .0775 -.36 .36 78.84 -44.8)"
+       y1="124"
+       x1="577.03"
+       inkscape:collect="always" />
+    <linearGradient
+       id="linearGradient2650"
+       y2="368.27"
+       xlink:href="#WhiteTransparent"
+       gradientUnits="userSpaceOnUse"
+       x2="146.15"
+       gradientTransform="matrix(.3 .3 -.09 .09 78.84 -44.8)"
+       y1="288.57"
+       x1="146.15"
+       inkscape:collect="always" />
+    <linearGradient
+       id="linearGradient2652"
+       y2="-1.72"
+       xlink:href="#WhiteTransparent"
+       gradientUnits="userSpaceOnUse"
+       x2="258.96"
+       gradientTransform="matrix(.33 .33 -.0944 .0944 9.03 -48.1)"
+       y1="62.74"
+       x1="258.96"
+       inkscape:collect="always" />
+    <linearGradient
+       id="linearGradient2654"
+       y2="286.56"
+       xlink:href="#BlackTransparent"
+       gradientUnits="userSpaceOnUse"
+       x2="419.88"
+       gradientTransform="matrix(.0998 .0998 -.28 .28 78.84 -44.8)"
+       y1="286.56"
+       x1="543.1"
+       inkscape:collect="always" />
+    <linearGradient
+       id="linearGradient2656"
+       y2="254.83"
+       xlink:href="#WhiteTransparent"
+       gradientUnits="userSpaceOnUse"
+       x2="615.59"
+       gradientTransform="matrix(.0807 .0775 -.35 .36 77.14 -45.89)"
+       y1="254.36"
+       x1="512.7"
+       inkscape:collect="always" />
+    <linearGradient
+       id="linearGradient2658"
+       y2="118.3"
+       xlink:href="#WhiteTransparent"
+       gradientUnits="userSpaceOnUse"
+       x2="638.3"
+       gradientTransform="matrix(.1 .1 -.22 .2 75.6 -33.53)"
+       y1="69.99"
+       x1="637.03"
+       inkscape:collect="always" />
+  </defs>
+  <style
+     id="style31"
+     type="text/css">/* Specular Highlighting */
+		.low-specularity	{opacity:0.25;}
+		.specularity		{opacity:0.5;}
+		.high-specularity	{opacity:0.75;}
+		.full-specularity	{opacity:1;}
+	/* Shading */
+		.low-shade	{opacity:0.25;}
+		.shade		{opacity:0.5;}
+		.high-shade	{opacity:0.75;}
+		.full-shade	{opacity:1;}
+	/* Tango palette fill/stroke */
+		.black		{fill:#000;}
+		.aluminium1	{fill:#eeeeec;}
+		.aluminium2	{fill:#d3d7cf;}
+		.aluminium6	{fill:#2e3436;}
+		.chocolate3	{fill:#8f5902;}
+		.chocolate2	{fill:#c17d11;}
+		.aluminium4	{fill:#888a85;}
+	/* Shadows: Back-Shadows &amp; Base Shadows */
+		.base-shadow	{opacity:0.4;}
+		.outline-big	{stroke:black;stroke-width:8;opacity:0.25;stroke-linejoin:round;}
+		.outline-small	{stroke:black;stroke-width:4;opacity:0.5;stroke-linejoin:round;}
+		.stroke-highlight	{fill:none;stroke:white;stroke-opacity:0.2;stroke-width:4;stroke-linejoin:round;}</style>
+  <g
+     id="hammer"
+     transform="translate(-1.0132 -1.3509)">
+    <use
+       id="use50"
+       style="opacity:.25;stroke-linejoin:round;stroke:black;stroke-width:8"
+       class="outline-big"
+       xlink:href="#outline2"
+       height="128"
+       width="128"
+       y="0"
+       x="0" />
+    <use
+       id="use52"
+       style="opacity:.5;stroke-linejoin:round;stroke:black;stroke-width:4"
+       class="outline-small stroke-aluminium5"
+       xlink:href="#outline2"
+       height="128"
+       width="128"
+       y="0"
+       x="0" />
+    <path
+       id="path54"
+       class="aluminium2"
+       style="fill:#d3d7cf"
+       d="m82.92 35.75l-29.45 29.45 8.83 8.83 29.45-29.44-8.83-8.84z" />
+    <path
+       id="path56"
+       class="specularity"
+       style="opacity:.5;fill:url(#linearGradient2646)"
+       d="m88.93 41.76l-29.45 29.44 2.82 2.83 29.45-29.44-2.82-2.83z" />
+    <path
+       id="path58"
+       style="fill:url(#linearGradient2648)"
+       d="m86.46 37.04l-29.33 29.33 3.79 3.79 28.58-30.08-3.04-3.04z" />
+    <path
+       id="path60"
+       class="aluminium6"
+       style="fill:#2e3436"
+       d="m55.8 12l0.76 0.16c8.84-2.94 28.68 8.64 24.26 18.96-1.12 1.62-0.93 4.5 0.42 6.31l8.91 8.77c2.63 2.37 5.11 2.57 7.47 1.93 4.55-1.23 7.08 3.2 9.81 6.46l-1.23 1.21c-1.82 1.84-1.65 4.94 0.39 6.98s5.15 2.21 6.97 0.39l8.14-8.13c1.82-1.84 1.65-4.94-0.4-6.97-1.84-1.85-4.51-2.09-6.37-0.77-5.58-6.26-2.65-7.2-10.01-15.35l-13.79-14.09c-9.93-9.74-22.83-9.73-35.33-5.86z" />
+    <path
+       id="path62"
+       class="specularity"
+       style="opacity:.5;fill:url(#linearGradient2650)"
+       d="m114.93 47.3c-5.58-6.26-2.65-7.2-10.01-15.35l-13.79-14.09c-5.69-5.58-12.36-7.96-19.36-8.26l41.13 41.53 2.98-2.73-0.95-1.1z" />
+    <path
+       id="path64"
+       class="low-specularity"
+       style="opacity:.5;fill:url(#linearGradient2652)"
+       d="m81.45 28c0.05 1-0.179 2-0.65 3.12-1.1 1.62-0.91 4.5 0.44 6.31l8.91 8.77c2.63 2.37 5.11 2.57 7.47 1.93 1.08-0.33 2.06-0.27 2.98 0 2.8 0.77-19.16-20.55-19.15-20.23v0.1z" />
+    <path
+       id="path66"
+       style="fill:#3465a4"
+       d="m56.43 62.25c-1.39-1.39-4.48-1.36-5.9 0l-41.03 39.38c-3.74 3.59-0.82 6.64 0.78 8.25l7.36 7.36c1.61 1.6 5.86 3.76 8.88 0.56l38.72-40.81c1.35-1.42 1.36-4.47 0-5.87 0 0 0.01-0.02 0-0.02l-8.81-8.85z" />
+    <path
+       id="path68"
+       class="low-shade"
+       style="opacity:.5;fill:url(#linearGradient2654)"
+       d="m10.27 109.87l7.36 7.37c1.61 1.6 5.73 3.89 8.75 0.71l38.87-40.97c1.35-1.43 1.39-4.5 0-5.88l-8.83-8.84-46.15 47.61z" />
+    <path
+       id="path70"
+       class="specularity"
+       style="opacity:.5;fill:url(#linearGradient2656)"
+       d="m51.2 65.7l-38.88 38.04c-1.62 1.56-1.07 3.75 0.1 4.89l4.13 3.97 42.37-43.6-3.92-3.68c-0.84-0.8-2.8-0.57-3.8 0.38z" />
+    <use
+       id="use72"
+       style="stroke-linejoin:round;stroke:white;stroke-width:4;stroke-opacity:.2;fill:none"
+       clip-path="url(#clipoutline2)"
+       class="stroke-highlight"
+       xlink:href="#outline2"
+       height="128"
+       width="128"
+       y="0"
+       x="0" />
+    <path
+       id="path74"
+       style="fill:url(#linearGradient2658)"
+       d="m120.45 49.26c1.51 1.44 1.8 3.44-0.28 5.36l-3.87 3.63c-2.08 1.95-7.52-3.25-5.45-5.19l3.88-3.63c2.07-1.95 4.21-1.61 5.72-0.17z" />
+  </g>
+  <metadata
+     id="metadata4254">
+    <rdf:RDF>
+      <cc:Work>
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <cc:license
+           rdf:resource="http://creativecommons.org/licenses/publicdomain/" />
+        <dc:publisher>
+          <cc:Agent
+             rdf:about="http://openclipart.org/">
+            <dc:title>Openclipart</dc:title>
+          </cc:Agent>
+        </dc:publisher>
+        <dc:title></dc:title>
+        <dc:date>2006-08-30T00:03:02</dc:date>
+        <dc:description>I removed the wrench and uploaded just the hammer from this. Its a cheap remix, but explains the concept visually :)</dc:description>
+        <dc:source>https://openclipart.org/detail/73/hammer-by-rejon</dc:source>
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>rejon</dc:title>
+          </cc:Agent>
+        </dc:creator>
+        <dc:subject>
+          <rdf:Bag>
+            <rdf:li>blue</rdf:li>
+            <rdf:li>colour</rdf:li>
+            <rdf:li>construction</rdf:li>
+            <rdf:li>contour</rdf:li>
+            <rdf:li>glossy</rdf:li>
+            <rdf:li>hammer</rdf:li>
+            <rdf:li>icon</rdf:li>
+            <rdf:li>metallic</rdf:li>
+            <rdf:li>remix</rdf:li>
+            <rdf:li>stylized</rdf:li>
+            <rdf:li>tool</rdf:li>
+            <rdf:li>work</rdf:li>
+          </rdf:Bag>
+        </dc:subject>
+      </cc:Work>
+      <cc:License
+         rdf:about="http://creativecommons.org/licenses/publicdomain/">
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Reproduction" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Distribution" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+</svg>

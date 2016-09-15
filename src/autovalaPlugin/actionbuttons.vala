@@ -13,14 +13,10 @@ namespace AutovalaPlugin {
 	public class ActionButtons : Gtk.Box {
 
 		private Gtk.Button new_project;
-#if !GTK_OLD
-		private Gtk.MenuButton expand_menu;
-#endif
-		private Gtk.Menu popupMenu;
-		private Gtk.MenuItem refresh_project;
-		private Gtk.MenuItem update_project;
-		private Gtk.MenuItem update_translations;
-		
+		private Gtk.Button refresh_project;
+		private Gtk.Button update_project;
+		private Gtk.Button update_translations;
+
 		private CreateNewProject create_new_project;
 
 		private AutoVala.ManageProject current_project;
@@ -46,28 +42,43 @@ namespace AutovalaPlugin {
 		 * This signal is emited when there is output from a job
 		 */
 		public signal void output_message_append(string msg);
-		
+
 		public signal void set_project_status(ProjectStatus status);
 
 		public ActionButtons() {
 
+			int iconsize = 30;
+
+			Gdk.Pixbuf pixbuf;
+			pixbuf = new Gdk.Pixbuf.from_resource_at_scale("/com/rastersoft/autovala/pixmaps/build.svg",iconsize,iconsize,false);
+			Gtk.IconTheme.add_builtin_icon("autovala-plugin-build",-1,pixbuf);
+			pixbuf = new Gdk.Pixbuf.from_resource_at_scale("/com/rastersoft/autovala/pixmaps/full_build.svg",iconsize,iconsize,false);
+			Gtk.IconTheme.add_builtin_icon("autovala-plugin-full-build",-1,pixbuf);
+			pixbuf = new Gdk.Pixbuf.from_resource_at_scale("/com/rastersoft/autovala/pixmaps/refresh.svg",iconsize,iconsize,false);
+			Gtk.IconTheme.add_builtin_icon("autovala-plugin-refresh",-1,pixbuf);
+			pixbuf = new Gdk.Pixbuf.from_resource_at_scale("/com/rastersoft/autovala/pixmaps/refresh_langs.svg",iconsize,iconsize,false);
+			Gtk.IconTheme.add_builtin_icon("autovala-plugin-refresh-langs",-1,pixbuf);
+			pixbuf = new Gdk.Pixbuf.from_resource_at_scale("/com/rastersoft/autovala/pixmaps/update.svg",iconsize,iconsize,false);
+			Gtk.IconTheme.add_builtin_icon("autovala-plugin-update",-1,pixbuf);
+
 			this.create_new_project = null;
 			this.orientation = Gtk.Orientation.HORIZONTAL;
-		
-			this.new_project = new Gtk.Button.with_label(_("New project"));
+
+			this.new_project = new Gtk.Button.from_icon_name("document-new",Gtk.IconSize.LARGE_TOOLBAR);
 			this.new_project.tooltip_text =_("Creates a new Autovala project");
 			this.pack_start(this.new_project,false,false);
 
-#if !GTK_OLD
-			this.expand_menu = new Gtk.MenuButton();
-			this.pack_start(this.expand_menu,false,false);
-#endif
+			this.refresh_project = new Gtk.Button.from_icon_name("autovala-plugin-refresh",Gtk.IconSize.LARGE_TOOLBAR);
+			this.refresh_project.tooltip_text =_("Refreshes the Autovala project");
+			this.pack_start(this.refresh_project,false,false);
 
-			this.popupMenu = new Gtk.Menu();
+			this.update_project = new Gtk.Button.from_icon_name("autovala-plugin-update",Gtk.IconSize.LARGE_TOOLBAR);
+			this.update_project.tooltip_text =_("Refreshes the project and rebuilds the CMake files");
+			this.pack_start(this.update_project,false,false);
 
-			this.refresh_project = new Gtk.MenuItem.with_label("autovala refresh");
-			this.update_project = new Gtk.MenuItem.with_label("autovala update");
-			this.update_translations = new Gtk.MenuItem.with_label(_("Update translations"));
+			this.update_translations = new Gtk.Button.from_icon_name("autovala-plugin-refresh-langs",Gtk.IconSize.LARGE_TOOLBAR);
+			this.update_translations.tooltip_text =_("Updates the language translation files");
+			this.pack_start(this.update_translations,false,false);
 
 			this.new_project.clicked.connect( () => {
 				if (this.create_new_project != null) {
@@ -82,49 +93,68 @@ namespace AutovalaPlugin {
 					this.current_project.refresh(Path.build_filename(project_path,project_name+".avprj"));
 					var base_name = Path.build_filename(project_path,"src",project_name+".vala");
 					this.open_file(base_name);
+					this.output_message_clear();
 				}
 				this.create_new_project.destroy();
 				this.create_new_project = null;
 			});
 
-			this.refresh_project.activate.connect( () => {
-			
+			this.refresh_project.clicked.connect( () => {
+
 				string[] msgs;
-			
+
 				this.output_message_clear();
 				this.current_project = new AutoVala.ManageProject();
 				var retval=this.current_project.refresh(this.current_project_file);
 
 				msgs = this.current_project.getErrors();
+				this.output_message_append(_("Updating project file\n"));
 				foreach(var msg in msgs) {
+					print(msg+"\n");
 					this.output_message_append(msg+"\n");
 				}
 				this.action_refresh_project(retval);
+				if (retval) {
+					this.output_message_append(_("Aborting\n"));
+				} else {
+					this.output_message_append(_("Done\n"));
+				}
 			});
 
-			this.update_project.activate.connect( () => {
-			
+			this.update_project.clicked.connect( () => {
+
 				string[] msgs;
-			
+
 				this.output_message_clear();
 				this.current_project = new AutoVala.ManageProject();
 				var retval=this.current_project.refresh(this.current_project_file);
 
 				msgs = this.current_project.getErrors();
+				this.output_message_append(_("Updating project file\n"));
 				foreach(var msg in msgs) {
+					print(msg+"\n");
 					this.output_message_append(msg+"\n");
 				}
 				if (!retval) {
 					retval=this.current_project.cmake(this.current_project_file);
 					msgs = this.current_project.getErrors();
+					this.output_message_append(_("Updating CMake files\n"));
 					foreach(var msg in msgs) {
 						this.output_message_append(msg+"\n");
 					}
+					if (retval) {
+						this.output_message_append(_("Aborting\n"));
+					} else {
+						this.output_message_append(_("Done\n"));
+					}
+				} else {
+					this.output_message_append(_("Aborting\n"));
 				}
 				this.action_update_project(retval);
 			});
 
-			this.update_translations.activate.connect( () => {
+			this.update_translations.clicked.connect( () => {
+				this.output_message_clear();
 				this.current_project = new AutoVala.ManageProject();
 				var retval = this.current_project.gettext(this.current_project_file);
 				var msgs = this.current_project.getErrors();
@@ -134,16 +164,9 @@ namespace AutovalaPlugin {
 				this.action_update_gettext(retval);
 			});
 
-#if !GTK_OLD
-			this.popupMenu.append(this.refresh_project);
-			this.popupMenu.append(this.update_project);
-			this.popupMenu.append(this.update_translations);
-			this.popupMenu.show_all();
-			this.expand_menu.set_popup(this.popupMenu);
-#endif
 			this.show_all();
 		}
-		
+
 		/**
 		 * This method allows to indicate to the widget which file is being edited by the user.
 		 * The widget uses this to search for an Autovala project file associated to that file,
@@ -170,7 +193,7 @@ namespace AutovalaPlugin {
 		 * @param project The ManageProject created by the ProjectView
 		 */
 		public void set_current_project(AutoVala.ManageProject project) {
-		
+
 			this.current_project = project;
 		}
 	}

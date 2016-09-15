@@ -6,8 +6,6 @@ vala_version: 0.30
 custom: data/cmake share/autovala/cmake
 custom: data/debian share/autovala/debian
 
-*define: GTK_OLD
-
 *gresource: extras_gresource_xml data/extras.gresource.xml
 
 
@@ -146,12 +144,12 @@ vala_local_package: AutoVala
 *translate: vala src/autovalaLib/gresource_xml.vala
 *translate: vala src/autovalaLib/readPkgconfig.vala
 *translate: vala src/autovalaLib/elementBase.vala
-*translate: vala src/autovalaPlugin/projectview.vala
 *translate: vala src/autovalaPlugin/PanedPercentage.vala
 *translate: vala src/autovalaPlugin/outputview.vala
 *translate: vala src/autovalaPlugin/searchview.vala
 *translate: vala src/autovalaPlugin/fileview.vala
 *translate: vala src/autovalaPlugin/actionbuttons.vala
+*translate: vala src/autovalaPlugin/projectview.vala
 *translate: glade data/interface/binary_properties.ui
 *translate: glade data/interface/new_project.ui
 

@@ -120,7 +120,7 @@ namespace AutovalaPlugin {
 			if (this.fileViewer != null) {
 				return false;
 			}
-			
+
 			this.fileViewer = fileViewer;
 			this.fileViewer.changed_file.connect( () => {
 				this.refresh_project(true);
@@ -202,7 +202,7 @@ namespace AutovalaPlugin {
 		 * @param searchView The SearchView widget to link to this ProjectViewer
 		 * @return true if all went fine; false if there was a SearchView object already registered
 		 */
-		 
+
 		 public bool link_search_view(SearchView searchView) {
 
 		 	if(this.searchView != null) {
@@ -339,7 +339,6 @@ namespace AutovalaPlugin {
 				project = null;
 			}
 
-			this.outputView.clear_buffer();
 			if (project==null) {
 				if (this.searchView != null) {
 					this.searchView.del_source_files();
@@ -499,11 +498,11 @@ namespace AutovalaPlugin {
 			TreeIter? tmpIter = null;
 
 			this.current_project_file=project.projectFile;
-			
+
 			if (project.projectFile == null) {
 				return;
 			}
-			
+
 			var ignorePaths = new Gee.ArrayList<string>();
 			var list = project.binaries;
 
@@ -619,12 +618,12 @@ namespace AutovalaPlugin {
 			}
 
 			this.append(this.action_new_binary);
-			
+
 			if ((type == ProjectEntryTypes.EXECUTABLE)||(type == ProjectEntryTypes.LIBRARY)) {
 				this.append(this.action_edit_binary);
 				this.append(this.action_delete_binary);
 			}
-			
+
 			this.action_open.activate.connect( () => {
 				this.open(this.file_path);
 			});
