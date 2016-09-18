@@ -11,6 +11,12 @@ custom: data/debian share/autovala/debian
 
 vala_binary: src/autovala
 *version: 0.99.41
+if DEBUG
+compile_options: -g
+end
+if DEBUG
+compile_c_options: -g
+end
 compile_c_options: -O2
 vala_local_package: AutoVala
 *vala_package: posix
@@ -25,6 +31,9 @@ vala_library: src/autovalaLib/autovalaLib
 *namespace: AutoVala
 if DEBUG
 compile_options: -g --fatal-warnings
+end
+if DEBUG
+compile_c_options: -g
 end
 compile_c_options: -O2
 *vala_package: posix
@@ -95,6 +104,7 @@ vala_local_package: AutoVala
 *vala_check_package: gtk+-3.0
 *vala_check_package: pango
 *vala_check_package: pangocairo
+*vala_check_package: vte-2.91
 *vala_check_package: x11
 *vala_source: PanedPercentage.vala
 *vala_source: actionbuttons.vala
@@ -145,11 +155,11 @@ vala_local_package: AutoVala
 *translate: vala src/autovalaLib/readPkgconfig.vala
 *translate: vala src/autovalaLib/elementBase.vala
 *translate: vala src/autovalaPlugin/PanedPercentage.vala
-*translate: vala src/autovalaPlugin/outputview.vala
 *translate: vala src/autovalaPlugin/searchview.vala
 *translate: vala src/autovalaPlugin/fileview.vala
 *translate: vala src/autovalaPlugin/actionbuttons.vala
 *translate: vala src/autovalaPlugin/projectview.vala
+*translate: vala src/autovalaPlugin/outputview.vala
 *translate: glade data/interface/binary_properties.ui
 *translate: glade data/interface/new_project.ui
 

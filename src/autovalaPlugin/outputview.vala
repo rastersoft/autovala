@@ -1,6 +1,7 @@
 using Gtk;
 using Gdk;
 using Gee;
+using Vte;
 
 namespace AutovalaPlugin {
 
@@ -13,7 +14,7 @@ namespace AutovalaPlugin {
 
 		private Gtk.TextBuffer buffer;
 		private Gtk.TextView view;
-		
+
 		public OutputView() {
 			this.buffer = new Gtk.TextBuffer(null);
 			this.view = new Gtk.TextView();
@@ -26,7 +27,7 @@ namespace AutovalaPlugin {
 		}
 
 		public void clear_buffer() {
-		
+
 			Gtk.TextIter start;
 			Gtk.TextIter end;
 			this.buffer.get_start_iter(out start);
@@ -35,7 +36,7 @@ namespace AutovalaPlugin {
 		}
 
 		public void append_text(string text) {
-		
+
 			Gtk.TextIter end;
 			this.buffer.get_end_iter(out end);
 			this.buffer.insert(ref end,text,-1);

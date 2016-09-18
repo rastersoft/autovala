@@ -38,7 +38,14 @@ if (DEBUG)
 	set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DDEBUG " )
 	set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DDEBUG " )
 endif ()
+if (DEBUG)
+	set (COMPILE_OPTIONS ${COMPILE_OPTIONS} -g )
+endif ()
 
+
+if (DEBUG)
+	set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g " )
+endif ()
 set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O2 " )
 
 vala_precompile(VALA_C autovala
