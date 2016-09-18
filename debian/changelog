@@ -1,0 +1,610 @@
+autovala (0.99.41-Debian1) sid; urgency=low
+
+  * Fixed a bug in the --vapidir folder generation
+  * Fixed some compilation warnings
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Thu, 25 Aug 2016 23:55:00 +0200
+
+autovala (0.99.40-Debian1) sid; urgency=low
+
+  * Allows to specify --vapidir folders
+  * Now includes the files inside a GResource XML file in the project's file list
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Sun, 21 Aug 2016 23:55:00 +0200
+
+autovala (0.99.39-Debian1) sid; urgency=low
+
+  * Allows to use GResource files in projects
+  * Uses GResources to store icons and glade files
+  * Now shows the output of autovala when it can't refresh the widgets in an editor
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Tue, 02 Aug 2016 23:55:00 +0200
+
+autovala (0.99.38-Debian1) sid; urgency=low
+
+  * Now PKG_CONFIG_PATH takes precedence (and fully replaces) the base paths.
+  * Fixed a bug when compiling under windows
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Thu, 28 Jan 2016 23:55:00 +0200
+
+autovala (0.99.37-Debian1) sid; urgency=low
+
+  * Now the DBUS Service files ends with the right file name (it removes the ".base" if requires)
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Sat, 05 Dec 2015 23:55:00 +0200
+
+autovala (0.99.36-Debian1) sid; urgency=low
+
+  * Supports conditional CUSTOM and VALA_DESTINATION commands
+  * Now the Gedit plugin can be installed in the right folders both locally and globally
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Wed, 02 Dec 2015 23:55:00 +0200
+
+autovala (0.99.35-Debian1) sid; urgency=low
+
+  * Now the buttons in the plugins for Gedit and Scratch works fine (fixed callbacks)
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Tue, 24 Nov 2015 23:55:00 +0200
+
+autovala (0.99.34-Debian1) sid; urgency=low
+
+  * Allows to put several files in "source_dependency" and "binary_dependency" statements, allowing to search for one of the files listed fo fullfill the condition.
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Sun, 22 Nov 2015 23:55:00 +0200
+
+autovala (0.99.33-Debian1) sid; urgency=low
+
+  * Uses the new format for AppData files
+  * Recognizes **.metainfo.xml** files as AppData files too
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Mon, 09 Nov 2015 23:55:00 +0200
+
+autovala (0.99.32-Debian1) sid; urgency=low
+
+  * Recognizes AppData files, installing them in the right place and using its data when creating packages
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Sun, 08 Nov 2015 23:55:00 +0200
+
+autovala (0.99.31-Debian1) sid; urgency=low
+
+  * Allows to use "using PKG, PKG..." syntax (before only allowed one package per "using" statement)
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Thu, 29 Oct 2015 23:55:00 +0200
+
+autovala (0.99.30-Debian1) sid; urgency=low
+
+  * Removes multithread compilation under Arch, because doesn't work
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Wed, 14 Oct 2015 23:55:00 +0200
+
+autovala (0.99.29-Debian1) sid; urgency=low
+
+  * Updated PKGBUILD to the new Pandoc package
+  * Updated DEBIAN control files to support both valac-0.26 and 0.28
+  * Added Windows CMake support
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Mon, 24 Aug 2015 23:55:00 +0200
+
+autovala (0.99.28-Debian1) sid; urgency=low
+
+  * Now ensures that the Debian control file has a valid name
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Sat, 15 Aug 2015 23:55:00 +0200
+
+autovala (0.99.27-Debian1) sid; urgency=low
+
+  * Now refreshes fine the icon cache when there are several icon themes
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Sun, 31 May 2015 23:55:00 +0200
+
+autovala (0.99.26-Debian1) sid; urgency=low
+
+  * Now, for arch, installs libraries in /usr/lib instead of /usr/lib64
+  * Fixed dependencies in the DEB, RPM and Pacman files
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Mon, 11 May 2015 23:55:00 +0200
+
+autovala (0.99.25-Debian1) sid; urgency=low
+
+  * Now allows to generate PKGBUILD files for Arch's Pacman that support to download the sources from a repository (like GitHub)
+  * Added packaging files for the Gedit-Plugin
+  * Now, if it is not possible to determine to which package belongs a file, the package generation process will not be stopped
+  * Fixed some extra bugs in the PGBUILD generation process
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Sun, 10 May 2015 23:55:00 +0200
+
+autovala (0.99.24-Debian1) sid; urgency=low
+
+  * Now uses separated .base files when creating deb, rpm or pacman packages
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Sat, 09 May 2015 23:55:00 +0200
+
+autovala (0.99.23-Debian1) sid; urgency=low
+
+  * Added support for creating preliminar PACMAN's PKGBUILD files
+  * Fixed bug when extracting translation strings in non-ascii, UTF-8 format
+  * Removed (hope this one for all) the [type: gettext/glade] entry
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Thu, 07 May 2015 23:55:00 +0200
+
+autovala (0.99.22-Debian1) sid; urgency=low
+
+  * Better use of the VERSION field in packages
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Sun, 26 Apr 2015 23:55:00 +0200
+
+autovala (0.99.21-Debian1) sid; urgency=low
+
+  * Now sets the right permissions to DEB and RPM files
+  * Added msgfmt as dependency for programs
+  * Now fills the SECTION field in DEB packages
+  * Add bash-completion.pc as dependency when there are bash-completion files
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Thu, 23 Apr 2015 23:55:00 +0200
+
+autovala (0.99.20-Debian1) sid; urgency=low
+
+  * Now adds the field VERSION in the DEBIAN/CONTROL file
+  * Allows to set files that must be present during build (needed for readline, since it doesn't have pkg-config file)
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Sun, 12 Apr 2015 23:55:00 +0200
+
+autovala (0.99.19-Debian1) sid; urgency=low
+
+  * Now also passes the definitions set in CMAKE with -D to the C source files
+  * Adds again the GLADE mimetype to the POTFILES.in .ui files, to ensure that intltool-update recognizes them
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Mon, 06 Apr 2015 23:55:00 +0200
+
+autovala (0.99.18-Debian1) sid; urgency=low
+
+  * Now calls gtk-update-icon-cache with the right path
+  * Updated spanish translation and translatable strings
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Mon, 23 Feb 2015 23:55:00 +0200
+
+autovala (0.99.17-Debian1) sid; urgency=low
+
+  * Better support for exporting Autovala projects to Valama
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Tue, 17 Feb 2015 23:55:00 +0200
+
+autovala (0.99.16-Debian1) sid; urgency=low
+
+  * Added preliminary support to export Autovala project files to Valama project files
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Tue, 17 Feb 2015 23:50:00 +0200
+
+autovala (0.99.15-Debian1) sid; urgency=low
+
+  * Can use the canvas size of a SVG file to determine the size entry where to put it
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Sun, 15 Feb 2015 23:55:00 +0200
+
+autovala (0.99.14-Debian1) sid; urgency=low
+
+  * Allows to specify a different theme for icons
+  * Now parses the INDEX.THEME file from an icon theme to know where to put an icon
+  * Allows to specify extra folders where to search for .h files when compiling the C source files
+  * Fixed a bug when setting several C parameters
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Thu, 12 Feb 2015 23:55:00 +0200
+
+autovala (0.99.13-Debian1) sid; urgency=low
+
+  * Now doesn't take into account DEFINE parameters named "true", "false", "0" or "1"
+  * Fixed the final directory name for bitmap icons
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Mon, 02 Feb 2015 23:55:00 +0200
+
+autovala (0.99.12-Debian1) sid; urgency=low
+
+  * Fixed a bug when using development versions of Vala compiler
+  * Allows to use alternative CMAKE files
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Sun, 11 Jan 2015 23:55:00 +0200
+
+autovala (0.99.11-Debian1) sid; urgency=low
+
+  * Can create automagically the metadata for .deb and .rpm packages
+  * Now honors the c_library parameters also in libraries
+  * Now only updates the project view in editor plugins when the project file has changed.
+  * Added support for GTK 3.4 (needed to allow to compile under Elementary OS Luna)
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Fry, 12 Dec 2014 23:55:00 +0200
+
+autovala (0.99.10-Debian1) sid; urgency=low
+
+  * Added support for unitary tests
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Tue, 18 Nov 2014 23:55:00 +0200
+
+autovala (0.99.9-Debian1) sid; urgency=low
+
+  * Now .gitignore also contains a line to ignore backup files (this is, files with a name ended in ~)
+  * Allows to set an specific vala version in the configuration file, or let autovala set automatically the most recent version available
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Tue, 23 Sep 2014 23:55:00 +0200
+
+autovala (0.99.8-Debian1) sid; urgency=low
+
+  * Fully fixed to avoid put as a requirement the library being built when it defines a sub-namespace of its own namespace
+  * Autogenerates a .gitignore, .bzrignore and .hgignore files
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Thu, 18 Sep 2014 23:55:00 +0200
+
+autovala (0.99.7-Debian1) sid; urgency=low
+
+  * Generates .deps files for libraries, needed with .vapi files
+  * Adds **Require** field in pkg-config files to list the dependencies of a library
+  * Now doesn't put as a requirement the library being built when it defines a sub-namespace of its own namespace
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Wed, 03 Sep 2014 23:55:00 +0200
+
+autovala (0.99.6-Debian1) sid; urgency=low
+
+  * Doesn't show the message that can't resolve "Using Math" when using that statement
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Wed, 27 Aug 2014 23:55:00 +0200
+
+autovala (0.99.5-Debian1) sid; urgency=low
+
+  * Allows to specify C libraries that lacks pkg-config support (like the math library, needed when using GLib.Math)
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Tue, 26 Aug 2014 23:55:00 +0200
+
+autovala (0.99.4-Debian1) sid; urgency=low
+
+  * Added the "project_files" option to the text shown with "help"
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Mon, 25 Aug 2014 23:55:00 +0200
+
+autovala (0.99.3-Debian1) sid; urgency=low
+
+  * Now detects valac development versions with non-classic version numbers, like *Vala 0.25.1.1-ba8e*
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Wed, 30 Jul 2014 23:55:00 +0200
+
+autovala (0.99.2-Debian1) sid; urgency=low
+
+  * Now installs manpages at .../man/manX, instead of .../man/man/manX
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Mon, 30 Jun 2014 23:55:00 +0200
+
+autovala (0.99.1-Debian1) sid; urgency=low
+
+  * Allows to list all the files needed to compile the project. Useful to add them to GIT, Bazaar, Subversion...
+  * Now error messages are shown in STDERR instead of STDOUT
+  * Added translations for Scratch plugin
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Mon, 30 Jun 2014 23:50:00 +0200
+
+autovala (0.99.0-Debian1) sid; urgency=low
+
+  * Added global search (searchs string in all the files in a project)
+  * Added panel to show the output of the building process
+  * Internal changes to allow to add more types of elements
+  * Now double-click is used to the files from the project view, the file view or the global search
+  * Fixed scrolling problem in the project view under scratch text editor
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Sun, 08 Jun 2014 23:55:00 +0200
+
+autovala (0.98.0-Debian1) sid; urgency=low
+
+  * Added support for GEdit 3.12 and later in the plugin
+  * Added a plugin for Scratch Text Editor
+  * Allows to create new projects from the plugins
+  * Added folders */usr/lib64* and */usr/local/lib64* in the list for searching pkgconfig packages (enhances compatibility with Fedora)
+  * Now it uses GNUInstallDirs with CMake, improving compatibility with non-debian-based systems
+  * Now installs the autostart file in ${XDG\_CONFIG\_HOME}/autostart when the code is being installed in the $HOME directory
+  * Now adds all non-conditional CHECK elements
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Mon, 26 May 2014 23:55:00 +0200
+
+autovala (0.97.0-Debian1) sid; urgency=low
+
+  * Added support for the new GEdit plugin for Autovala
+  * Added two GTK3 widgets to allow to easily create plugins for text editors
+  * Now the GLOBALS object has the vapiList as an static member, allowing to read it once. This speeds up the gedit plugin
+  * Now autovala doesn't add hiden or backup source files
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Mon, 12 May 2014 23:55:00 +0200
+
+autovala (0.96.0-Debian1) sid; urgency=low
+
+  * Now manages the bash-completion files automagically
+  * When installing a project to the HOME folder, it won't install the bash-completion files to avoid an error (because they should go to /etc)
+  * Added compatibility with source-based linux distributions (like gentoo), which doesn't add a link to a "default" vala compiler version
+  * Allows to manually specify the vala compiler to use when building a project
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Sun, 04 May 2014 23:55:00 +0200
+
+autovala (0.95.0-Debian1) sid; urgency=low
+
+  * Now always copy the CMAKE folder when doing a "cmake" or "update" command
+  * Added extra checks when copying the CMAKE folder
+  * Allows to automatically update the .po files with new strings (requires gettext 0.18.3)
+  * Fixed bug when autodetecting manpages
+  * Now checks if dbus-send and vala-dbus-binding-tool are installed if needed
+  * Removed BASH dependency
+  * Now supports several parameters in the compile_c_options statement
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Wed, 02 Apr 2014 23:55:00 +0200
+
+autovala (0.94.0-Debian1) sid; urgency=low
+
+  * Now keeps automatic binaries when contains a manually-added DBus interface definition
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Fry, 21 Mar 2014 23:55:00 +0200
+
+autovala (0.93.0-Debian1) sid; urgency=low
+
+  * Now remembers if a dbus interface must be generated using gdbus or dbus-glib.
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Tue, 18 Mar 2014 23:55:00 +0200
+
+autovala (0.92.0-Debian1) sid; urgency=low
+
+  * Allows to generate automatically DBus interfaces, using DBus introspection capabilities and *vala-dbus-binding-tool*.
+  * Now adds GIO automatically if it finds *stdin.* or *stdout.* in the source code.
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Sat, 15 Mar 2014 23:55:00 +0200
+
+autovala (0.91.0-Debian1) sid; urgency=low
+
+  * When a project creates one or more libraries, the "make install" command shows a message remembering to run 'sudo ldconfig'.
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Sat, 18 Jan 2014 23:55:00 +0200
+
+autovala (0.90.0-Debian1) sid; urgency=low
+
+  * Now takes into account the dependencies for VAPI files when creating the CMake files.
+  * Now allows to specify libraries to be added when compiling the C code but not the Vala code. Useful when mixing C and Vala source files.
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Thu, 16 Jan 2014 23:55:00 +0200
+
+autovala (0.35.0-Debian1) sid; urgency=low
+
+  * Now includes automagically the VAPIs files in the "vapis" folder for each binary/library
+  * Now doesn't add a vala package if a local VAPI provides the same namespaces
+  * Allows to pass flags to the C compiler/linker
+  * Allows to mix VALA and C source files in the same binary or library
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Thu, 26 Dec 2013 23:55:00 +0200
+
+autovala (0.34.0-Debian1) sid; urgency=low
+
+  * Now adds GObject only if the source file contains classes
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Sat, 21 Dec 2013 23:55:00 +0200
+
+autovala (0.33.0-Debian1) sid; urgency=low
+
+  * Fixed bug with libgee 0.6, which is named, due to historical reasons, as libgee-1.0
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Sat, 14 Dec 2013 23:55:00 +0200
+
+autovala (0.32.0-Debian1) sid; urgency=low
+
+  * Always forces GLib and GObject packages to ensure that everything compiles
+  * Added GLib.File as rule to detect when automagically add GIO
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Fry, 06 Dec 2013 23:55:00 +0200
+
+autovala (0.31.0-Debian1) sid; urgency=low
+
+  * Allows to install the projects in the local folder
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Wed, 04 Dec 2013 23:55:00 +0200
+
+autovala (0.30.0-Debian1) sid; urgency=low
+
+  * Now shows a warning message when it can't find a package from a Using statement
+  * Now supports packages that contains more than one namespace when the user sets manually that package
+  * Now adds a tabulator inside conditionals in the CMakeLists.files
+  * Now puts the manual packages before the automatic ones in the configuration file
+  * Added support for nested namespaces in VAPI files
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Wed, 04 Dec 2013 23:50:00 +0200
+
+autovala (0.29.0-Debian1) sid; urgency=low
+
+  * Now uses regular expressions for processing the USING and PROJECT VERSION strings, which gives more flexibility to the user
+  * Now can autodetect in some cases when to add the gio package
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Mon, 02 Dec 2013 23:55:00 +0200
+
+autovala (0.28.0-Debian1) sid; urgency=low
+
+  * Supports the use of conditionals with COMPILE_OPTIONS statement
+  * Allows to use several COMPILE_OPTIONS in the same binary/library
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Sun, 01 Dec 2013 23:55:00 +0200
+
+autovala (0.27.0-Debian1) sid; urgency=low
+
+  * Full refactorization to simplify future maintenance and improvements
+  * Removed the Gedit plugin (until having spare time to fix it)
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Sun, 01 Dec 2013 23:50:00 +0200
+
+autovala (0.26.0-Debian1) sid; urgency=low
+
+  * Added support for more input formats when creating man pages
+  * Now MarkDown format is github format
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Sun, 17 Nov 2013 23:55:00 +0200
+
+autovala (0.25.0-Debian1) sid; urgency=low
+
+  * Added support for creating and installing man pages
+  * Added manpages for Autovala
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Sat, 16 Nov 2013 23:55:00 +0200
+
+autovala (0.24.0-Debian1) sid; urgency=low
+
+  * Added conditional compilation and conditional installation support
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Sun, 20 Oct 2013 23:55:00 +0200
+
+autovala (0.23.0-Debian1) sid; urgency=low
+
+  * Added bash_completion support
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Mon, 14 Oct 2013 23:55:00 +0200
+
+autovala (0.22.0-Debian1) sid; urgency=low
+
+  * Autovala and gedit plugin are now different projects, allowing to compile only the former
+  * Now supports several namespaces in the same .vapi file
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Mon, 14 Oct 2013 23:50:00 +0200
+
+autovala (0.21.0-Debian1) sid; urgency=low
+
+  * Allows to specify GIO, GIO-unix, GObject and GModule packages for compilation
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Sat, 14 Sep 2013 23:55:00 +0200
+
+autovala (0.20.0-Debian1) sid; urgency=low
+
+  * When initializating a new project, it will copy the needed CMAKE scripts for Vala and create an empty source file
+  * Now the CUSTOM command accepts both files and folders
+  * Now only adds CUSTOM_VAPIS_LIST command when there are a custom VAPI list
+  * Now forbides to set files in the main directory (all files/folders must be inside a folder in the main directory). This is a must to avoid failures.
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Sun, 19 May 2013 23:55:00 +0200
+
+autovala (0.19.0-Debian1) sid; urgency=low
+
+  * Now the plugin deletes the content of the *install* folder, but not the folder itself
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Tue, 30 Apr 2013 23:55:00 +0200
+
+autovala (0.18.0-Debian1) sid; urgency=low
+
+  * Allows to delete the INSTALL folder from Gedit
+  * Allows to delete the INSTALL folder, update the .avprj file, run cmake and launch make in a single step from Gedit
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Tue, 30 Apr 2013 23:50:00 +0200
+
+autovala (0.17.0-Debian1) sid; urgency=low
+
+  * Fixed bug in plugin when updating the whole project
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Sun, 28 Apr 2013 23:55:00 +0200
+
+autovala (0.16.0-Debian1) sid; urgency=low
+
+  * Added plugin for Gedit
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Sun, 28 Apr 2013 23:50:00 +0200
+
+autovala (0.15.0-Debian1) sid; urgency=low
+
+  * Allows to specify manually the destination directory for binaries and libraries (useful for plugins)
+  * Allows to install files in a manually specified destination directory
+  * Autodetects autorun *.desktop* files and install them in the right place
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Fry, 26 Apr 2013 23:55:00 +0200
+
+autovala (0.14.0-Debian1) sid; urgency=low
+
+  * Now the autovala library can use its own translated messages instead the ones from the main app (useful when embedding autovala in other programs)
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Sun, 21 Apr 2013 23:55:00 +0200
+
+autovala (0.13.0-Debian1) sid; urgency=low
+
+  * In libraries, includes the *librarynamespaceConstant* namespace to allow to get access to build data without clash (only when the library has a namespace)
+  * Added *clear* command, to remove the automatic parts in the *.avprj* file
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Thu, 11 Apr 2013 23:55:00 +0200
+
+autovala (0.12.0-Debian1) sid; urgency=low
+
+  * When checking VAPI files, now will give priority to the version number inside it (gir_version), and only when there is no such number will use the one in the filename
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Tue, 09 Apr 2013 23:55:00 +0200
+
+autovala (0.11.0-Debian1) sid; urgency=low
+
+  * Includes the *Constant* namespace in the executables (but not in libraries to avoid clash)
+  * Enabled gettext to allow to translate the messages in Autovala
+  * Translation to spanish
+  * Fixed messages
+  * Fixed a bug in Constants that prevented defining the VERSION field
+  * New format for the version string inside source code, that allows to set it in libraries without clash
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Sun, 07 Apr 2013 23:55:00 +0200
+
+autovala (0.10.0-Debian1) sid; urgency=low
+
+  * Allows to link an executable with a library from the same project
+  * Now Autovala itself is a shared library, and the command line binary uses it
+  * Fixed several bugs in the .pc generation
+  * Fixed the installation paths for include files
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Sun, 07 Apr 2013 23:50:00 +0200
+
+autovala (0.9.0-Debian1) sid; urgency=low
+
+  * Fixed a bug in the .pc generation
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Sat, 06 Apr 2013 23:55:00 +0200
+
+autovala (0.8.0-Debian1) sid; urgency=low
+
+  * Automatically generates the .pc file for libraries
+  * Fixed a bug with CMake when creating more than one binary and/or library
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Sat, 06 Apr 2013 23:50:00 +0200
+
+autovala (0.7.0-Debian1) sid; urgency=low
+
+  * Now honors the IGNORE command with VAPI files and source folders
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Fry, 05 Apr 2013 23:55:00 +0200
+
+autovala (0.6.0-Debian1) sid; urgency=low
+
+  * Added support for CUSTOM VAPI files
+  * Installs Valadoc file sin a better place
+  * Added instructions in HTML format, extracted from GitHub's wiki
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Fry, 05 Apr 2013 23:50:00 +0200
+
+autovala (0.5.0-Debian1) sid; urgency=low
+
+  * Adds all source files at SRC and their subdirectories
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Mon, 01 Apr 2013 23:55:00 +0200
+
+autovala (0.4.0-Debian1) sid; urgency=low
+
+  * Fixed a bug when PKG_CONFIG_PATH is empty
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Sun, 31 Mar 2013 23:55:00 +0200
+
+autovala (0.3.0-Debian1) sid; urgency=low
+
+  * Added support for source files that are not in the same folder than the binary they belong to
+  * Added documentation about DOC command
+  * Valadoc support
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Sat, 30 Mar 2013 23:55:00 +0200
+
+autovala (0.2.0-Debian1) sid; urgency=low
+
+  * Now recognizes the DOC folder
+  * Now also search libraries in PKG_CONFIG_PATH
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Sat, 30 Mar 2013 23:50:00 +0200
+
+autovala (0.1.0-Debian1) sid; urgency=low
+
+  * First public version
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Fry, 29 Mar 2013 23:55:00 +0200
+

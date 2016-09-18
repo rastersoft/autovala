@@ -1,0 +1,64 @@
+autovala-gedit (0.99.36-Debian1) sid; urgency=low
+
+  * Now the Gedit plugin can be installed in the right folders both locally and globally
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Wed, 02 Dec 2015 23:55:00 +0200
+
+autovala-gedit (0.99.25-Debian1) sid; urgency=low
+
+  * Added packaging files for the Gedit-Plugin
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Sun, 10 May 2015 23:55:00 +0200
+
+autovala-gedit (0.98.0-Debian1) sid; urgency=low
+
+  * Added support for GEdit 3.12 and later in the plugin
+  * Allows to create new projects from the plugins
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Mon, 26 May 2014 23:55:00 +0200
+
+autovala-gedit (0.97.0-Debian1) sid; urgency=low
+
+  * Added support for the new GEdit plugin for Autovala
+  * Added two GTK3 widgets to allow to easily create plugins for text editors
+  * Now the GLOBALS object has the vapiList as an static member, allowing to read it once. This speeds up the gedit plugin
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Mon, 12 May 2014 23:55:00 +0200
+
+autovala-gedit (0.27.0-Debian1) sid; urgency=low
+
+  * Removed the Gedit plugin (until having spare time to fix it)
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Sun, 01 Dec 2013 23:55:00 +0200
+
+autovala-gedit (0.22.0-Debian1) sid; urgency=low
+
+  * Autovala and gedit plugin are now different projects, allowing to compile only the former
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Mon, 14 Oct 2013 23:55:00 +0200
+
+autovala-gedit (0.19.0-Debian1) sid; urgency=low
+
+  * Now the plugin deletes the content of the *install* folder, but not the folder itself
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Tue, 30 Apr 2013 23:55:00 +0200
+
+autovala-gedit (0.18.0-Debian1) sid; urgency=low
+
+  * Allows to delete the INSTALL folder from Gedit
+  * Allows to delete the INSTALL folder, update the .avprj file, run cmake and launch make in a single step from Gedit
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Tue, 30 Apr 2013 23:50:00 +0200
+
+autovala-gedit (0.17.0-Debian1) sid; urgency=low
+
+  * Fixed bug in plugin when updating the whole project
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Sun, 28 Apr 2013 23:55:00 +0200
+
+autovala-gedit (0.16.0-Debian1) sid; urgency=low
+
+  * Added plugin for Gedit
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Sun, 28 Apr 2013 23:50:00 +0200
+

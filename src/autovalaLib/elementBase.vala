@@ -22,7 +22,8 @@ using Gee;
 namespace AutoVala {
 
 	public enum ConfigType {GLOBAL, VALA_BINARY, VALA_LIBRARY, BINARY, ICON, PIXMAP, PO, GLADE, DBUS_SERVICE, DESKTOP, AUTOSTART,
-							 EOS_PLUG, SCHEME, DATA, DOC, INCLUDE, IGNORE, CUSTOM, DEFINE, MANPAGE, BASH_COMPLETION}
+							 EOS_PLUG, SCHEME, DATA, DOC, INCLUDE, IGNORE, CUSTOM, DEFINE, MANPAGE, BASH_COMPLETION, SOURCE_DEPENDENCY,
+							 BINARY_DEPENDENCY, APPDATA, GRESOURCE, TRANSLATION, VAPIDIR }
 
 	/**
 	 * Represents a generic file of the project, with its path, filename, compilation condition...
@@ -63,6 +64,7 @@ namespace AutoVala {
 
 		public bool automatic {
 			get {return this._automatic;}
+			set {this._automatic = value;}
 		}
 
 		public string? condition {
@@ -92,13 +94,13 @@ namespace AutoVala {
 		 * @param extensions A list with all the file extensions to search (starting with a dot), or null to add all files
 		 * @param recursive If true, will add the files from the specified folder and its subfolders
 		 * @param removeFolder If true, will not prefix the paths and filenames with FOLDER
-		 * @param masterFolder The current folder relative to the starting point (FOLDER) 
+		 * @param masterFolder The current folder relative to the starting point (FOLDER)
 		 *
 		 * @returns A list with all the files with its relative path to the specified starting path
 		 */
 
 		public static string[] getFilesFromFolder(string folder, string[]? extensions, bool recursive,bool removeFolder=false, string ? masterFolder=null) {
-			
+
 			string[] files = {};
 
 			var dirPath=File.new_for_path(Path.build_filename(ElementBase.globalData.projectFolder,folder));
@@ -184,9 +186,9 @@ namespace AutoVala {
 				return true;
 			}
 
-			string fullPath=fullPathP;
+			string? fullPath=fullPathP;
 			if (fullPath != null) {
-				
+
 				if (fullPath.has_suffix(Path.DIR_SEPARATOR_S)) {
 					fullPath=fullPathP.substring(0,fullPathP.length-1);
 				}
@@ -214,6 +216,11 @@ namespace AutoVala {
 			} else {
 				this._path = path;
 				this._name = name;
+			}
+
+			if ((this._path == ".") || (this._path == "./")) {
+				ElementBase.globalData.addError(_("File %s is located at the project's root. Autovala doesn't allow that. You should move it into a folder.").printf(fullPath));
+				return true;
 			}
 
 			ElementBase.globalData.addElement(this);
@@ -282,9 +289,10 @@ namespace AutoVala {
 		/**
 		 * Inserts the CMake commands needed for this file AT ITS END in the data stream specified. This allows to add extra commands at the end of a file
 		 * @param dataStream The data stream for the CMakeList.txt file being processed
+		 * @param dataStreamGlobal The data stream for the main CMakeList.txt file being processed, to allow to add extra commands at its end
 		 * @return //true// if there was an error; //false// if not. The error texts can be obtained by calling to returnErrors()
 		 */
-		public virtual bool generateCMakePostData(DataOutputStream dataStream) {
+		public virtual bool generateCMakePostData(DataOutputStream dataStream,DataOutputStream dataStreamGlobal) {
 			return false;
 		}
 
@@ -321,7 +329,7 @@ namespace AutoVala {
 				}
 				dataStream.put_string("%s: %s\n".printf(this.command,data));
 			} catch (Error e) {
-				ElementBase.globalData.addError(_("Failed to store '%s: %s' at config").printf(this.command.data));
+				ElementBase.globalData.addError(_("Failed to store '%s: %s' at config").printf(this.command,data));
 				return true;
 			}
 			return false;

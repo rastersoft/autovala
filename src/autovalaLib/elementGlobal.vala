@@ -86,6 +86,7 @@ namespace AutoVala {
 				dataStream.put_string("enable_testing ()\n");
 				dataStream.put_string("option(ICON_UPDATE \"Update the icon cache after installing\" ON)\n");
 				dataStream.put_string("option(BUILD_VALADOC \"Build API documentation if Valadoc is available\" OFF)\n");
+
 				foreach(var element in ElementBase.globalData.globalElements) {
 					if (element.eType!=ConfigType.DEFINE) {
 						continue;
@@ -165,6 +166,30 @@ namespace AutoVala {
 					}
 				}
 
+                // Check for files that must be available
+                foreach(var element in ElementBase.globalData.globalElements) {
+					if ((element.eType != ConfigType.SOURCE_DEPENDENCY) && (element.eType!=ConfigType.BINARY_DEPENDENCY)) {
+						continue;
+					}
+				    printConditions.printCondition(element.condition,element.invertCondition);
+					dataStream.put_string("if ( ");
+					var paths = element.path.split(" ");
+					bool first = true;
+					foreach (var path in paths) {
+					    if (path == "") {
+					        continue;
+					    }
+					    if (! first) {
+    					    dataStream.put_string(" AND ");
+					    }
+					    first = false;
+					    dataStream.put_string("(NOT EXISTS \"%s\")".printf(path));
+					}
+					dataStream.put_string(")\n\tmessage(FATAL_ERROR \"Can't find any of the files %s\")\nendif()\n".printf(element.path));
+					printConditions.printTail();
+					dataStream.put_string("\n");
+				}
+
 				// check for PANDOC, but only if there are man pages in non-groff format
 				foreach(var element in ElementBase.globalData.globalElements) {
 					if (element.eType!=ConfigType.MANPAGE) {
@@ -177,6 +202,16 @@ namespace AutoVala {
 					// if we reach here, it is a non-groff man page, so ask for PANDOC
 					dataStream.put_string("find_program ( WHERE_PANDOC pandoc )\n");
 					dataStream.put_string("if ( NOT WHERE_PANDOC )\n\tMESSAGE(FATAL_ERROR \"Error! PANDOC is not installed.\")\nendif()\n\n");
+					break;
+				}
+
+				// check for GLIB-COMPILE-RESOURCES, but only if there are gresource files
+				foreach(var element in ElementBase.globalData.globalElements) {
+					if (element.eType!=ConfigType.GRESOURCE) {
+						continue;
+					}
+					dataStream.put_string("find_program ( WHERE_GRESOURCE glib-compile-resources )\n");
+					dataStream.put_string("if ( NOT WHERE_GRESOURCE )\n\tMESSAGE(FATAL_ERROR \"Error! GLIB-COMPILE-RESOURCES is not installed.\")\nendif()\n\n");
 					break;
 				}
 
@@ -200,18 +235,28 @@ namespace AutoVala {
 					allProcessed=true;
 					foreach(var path in paths.keys) {
 						var element=paths.get(path);
-						if (element.eType==ConfigType.DEFINE) {
+						if ((element.eType==ConfigType.DEFINE) || (element.eType == ConfigType.SOURCE_DEPENDENCY) || (element.eType == ConfigType.BINARY_DEPENDENCY)) {
 							continue;
 						}
 						if (element.processed) {
 							continue;
 						}
-						if ((element.eType!=ConfigType.VALA_LIBRARY)&&(element.eType!=ConfigType.VALA_BINARY)) {
+						if ((element.eType!=ConfigType.VALA_LIBRARY) && (element.eType!=ConfigType.VALA_BINARY)) {
 							element.processed=true;
 							this.addFolderToMainCMakeLists(path,dataStream);
 							addedOne=true;
 							continue;
-						} else {
+						}
+					}
+										foreach(var path in paths.keys) {
+						var element=paths.get(path);
+						if ((element.eType==ConfigType.DEFINE) || (element.eType == ConfigType.SOURCE_DEPENDENCY) || (element.eType == ConfigType.BINARY_DEPENDENCY)) {
+							continue;
+						}
+						if (element.processed) {
+							continue;
+						}
+						if ((element.eType==ConfigType.VALA_LIBRARY) || (element.eType==ConfigType.VALA_BINARY)) {
 							var binElement = element as ElementValaBinary;
 							allProcessed=false;
 							bool valid=true;
@@ -225,7 +270,7 @@ namespace AutoVala {
 								continue;
 							}
 
-							addFolderToMainCMakeLists(path,dataStream);
+							this.addFolderToMainCMakeLists(path,dataStream);
 							addedOne=true;
 							element.processed=true;
 							if ((binElement.eType==ConfigType.VALA_LIBRARY)&&(binElement.currentNamespace!="")) {
@@ -256,6 +301,7 @@ namespace AutoVala {
 						return true;
 					}
 				}
+				dataStream.put_string("\n");
 			} catch (Error e) {
 				ElementBase.globalData.addError(_("Failed to generate the main CMakeLists.txt file"));
 			}

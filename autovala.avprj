@@ -1,15 +1,21 @@
 ### AutoVala Project ###
-autovala_version: 12
+autovala_version: 21
 project_name: autovala
-vala_version: 0.24
+vala_version: 0.30
 
 custom: data/cmake share/autovala/cmake
+custom: data/debian share/autovala/debian
+
+*gresource: extras_gresource_xml data/extras.gresource.xml
 
 
 vala_binary: src/autovala
-*version: 0.99.9
+*version: 0.99.41
 if DEBUG
-compile_options: -g --fatal-warnings
+compile_options: -g
+end
+if DEBUG
+compile_c_options: -g
 end
 compile_c_options: -O2
 vala_local_package: AutoVala
@@ -26,8 +32,12 @@ vala_library: src/autovalaLib/autovalaLib
 if DEBUG
 compile_options: -g --fatal-warnings
 end
+if DEBUG
+compile_c_options: -g
+end
 compile_c_options: -O2
 *vala_package: posix
+*vala_package: readline
 *vala_check_package: cairo
 *vala_check_package: gdk-3.0
 *vala_check_package: gdk-pixbuf-2.0
@@ -35,11 +45,15 @@ compile_c_options: -O2
 *vala_check_package: gio-2.0
 *vala_check_package: glib-2.0
 *vala_check_package: gobject-2.0
+*vala_check_package: libxml-2.0
 *vala_check_package: pango
 *vala_check_package: pangocairo
+c_library: readline
 *vala_source: autovalaLib.vala
 *vala_source: conditionalText.vala
 *vala_source: configuration.vala
+*vala_source: elementAppData.vala
+*vala_source: elementBDepend.vala
 *vala_source: elementBase.vala
 *vala_source: elementBashCompletion.vala
 *vala_source: elementBinary.vala
@@ -50,6 +64,7 @@ compile_c_options: -O2
 *vala_source: elementDesktop.vala
 *vala_source: elementDoc.vala
 *vala_source: elementEosPlug.vala
+*vala_source: elementGResource.vala
 *vala_source: elementGlade.vala
 *vala_source: elementGlobal.vala
 *vala_source: elementIcon.vala
@@ -58,16 +73,25 @@ compile_c_options: -O2
 *vala_source: elementManpage.vala
 *vala_source: elementPixmap.vala
 *vala_source: elementPo.vala
+*vala_source: elementSDepend.vala
 *vala_source: elementScheme.vala
+*vala_source: elementTranslation.vala
 *vala_source: elementValaBinary.vala
+*vala_source: elementVapidir.vala
 *vala_source: findVala.vala
 *vala_source: genVapis.vala
 *vala_source: globals.vala
+*vala_source: gresource_xml.vala
+*vala_source: packages.vala
+*vala_source: packages_deb.vala
+*vala_source: packages_pacman.vala
+*vala_source: packages_rpm.vala
 *vala_source: readPkgconfig.vala
 
 vala_library: src/autovalaPlugin/autovalaPlugin
 *version: 0.99
 *namespace: AutovalaPlugin
+use_gresource: extras_gresource_xml
 vala_local_package: AutoVala
 *vala_check_package: atk
 *vala_check_package: cairo
@@ -80,6 +104,7 @@ vala_local_package: AutoVala
 *vala_check_package: gtk+-3.0
 *vala_check_package: pango
 *vala_check_package: pangocairo
+*vala_check_package: vte-2.91
 *vala_check_package: x11
 *vala_source: PanedPercentage.vala
 *vala_source: actionbuttons.vala
@@ -90,20 +115,59 @@ vala_local_package: AutoVala
 
 *po: po
 
+*translate: vala src/autovala.vala
+*translate: vala src/autovalaLib/packages_pacman.vala
+*translate: vala src/autovalaLib/elementIcon.vala
+*translate: vala src/autovalaLib/elementSDepend.vala
+*translate: vala src/autovalaLib/packages.vala
+*translate: vala src/autovalaLib/elementDBus.vala
+*translate: vala src/autovalaLib/elementCustom.vala
+*translate: vala src/autovalaLib/elementDoc.vala
+*translate: vala src/autovalaLib/elementBashCompletion.vala
+*translate: vala src/autovalaLib/elementBinary.vala
+*translate: vala src/autovalaLib/elementDesktop.vala
+*translate: vala src/autovalaLib/elementIgnore.vala
+*translate: vala src/autovalaLib/elementPixmap.vala
+*translate: vala src/autovalaLib/elementScheme.vala
+*translate: vala src/autovalaLib/elementEosPlug.vala
+*translate: vala src/autovalaLib/elementData.vala
+*translate: vala src/autovalaLib/elementAppData.vala
+*translate: vala src/autovalaLib/elementInclude.vala
+*translate: vala src/autovalaLib/conditionalText.vala
+*translate: vala src/autovalaLib/packages_deb.vala
+*translate: vala src/autovalaLib/findVala.vala
+*translate: vala src/autovalaLib/elementManpage.vala
+*translate: vala src/autovalaLib/genVapis.vala
+*translate: vala src/autovalaLib/elementBDepend.vala
+*translate: vala src/autovalaLib/elementVapidir.vala
+*translate: vala src/autovalaLib/packages_rpm.vala
+*translate: vala src/autovalaLib/elementDefine.vala
+*translate: vala src/autovalaLib/configuration.vala
+*translate: vala src/autovalaLib/elementGlobal.vala
+*translate: vala src/autovalaLib/autovalaLib.vala
+*translate: vala src/autovalaLib/elementGResource.vala
+*translate: vala src/autovalaLib/elementValaBinary.vala
+*translate: vala src/autovalaLib/elementGlade.vala
+*translate: vala src/autovalaLib/globals.vala
+*translate: vala src/autovalaLib/elementPo.vala
+*translate: vala src/autovalaLib/elementTranslation.vala
+*translate: vala src/autovalaLib/gresource_xml.vala
+*translate: vala src/autovalaLib/readPkgconfig.vala
+*translate: vala src/autovalaLib/elementBase.vala
+*translate: vala src/autovalaPlugin/PanedPercentage.vala
+*translate: vala src/autovalaPlugin/searchview.vala
+*translate: vala src/autovalaPlugin/fileview.vala
+*translate: vala src/autovalaPlugin/actionbuttons.vala
+*translate: vala src/autovalaPlugin/projectview.vala
+*translate: vala src/autovalaPlugin/outputview.vala
+*translate: glade data/interface/binary_properties.ui
+*translate: glade data/interface/new_project.ui
+
 *data: data/local
 
+*appdata: data/com.rastersoft.autovala.metainfo.xml
+
 *doc: doc
-
-*glade: data/interface/binary_properties.ui
-*glade: data/interface/new_project.ui
-
-*pixmap: data/pixmaps/application.svg
-*pixmap: data/pixmaps/c.svg
-*pixmap: data/pixmaps/h.svg
-*pixmap: data/pixmaps/library.svg
-*pixmap: data/pixmaps/project.svg
-*pixmap: data/pixmaps/vala.svg
-*pixmap: data/pixmaps/vapi.svg
 
 manpage: wiki/autovala-fileformat.5.md default 5
 manpage: wiki/autovala-keep-changes.7.md default 7
@@ -112,4 +176,9 @@ manpage: wiki/autovala-tricks.7.md default 7
 manpage: wiki/autovala.1.md
 
 *bash_completion: data/bash_completion/autovala
+
+source_dependency: /usr/include/readline/readline.h
+
+binary_dependency: /usr/bin/pandoc
+binary_dependency: /usr/bin/curl
 

@@ -118,7 +118,7 @@ macro(vala_precompile output target_name)
     parse_arguments(ARGS "TARGET;PACKAGES;OPTIONS;DIRECTORY;GENERATE_GIR;GENERATE_SYMBOLS;GENERATE_HEADER;GENERATE_VAPI;CUSTOM_VAPIS" "" ${ARGN})
 
     if(ARGS_DIRECTORY)
-        set(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/${ARGS_DIRECTORY})
+        set(DIRECTORY ${ARGS_DIRECTORY})
     else(ARGS_DIRECTORY)
         set(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
     endif(ARGS_DIRECTORY)
@@ -133,7 +133,7 @@ macro(vala_precompile output target_name)
     set(${output} "")
 
     foreach(src ${ARGS_DEFAULT_ARGS})
-        string(REGEX MATCH "^/" IS_MATCHED ${src})
+        string(REGEX MATCH "^([a-zA-Z]:)?/" IS_MATCHED ${src})
         if(${IS_MATCHED} MATCHES "/")
             set(src_file_path ${src})
         else()
@@ -144,8 +144,8 @@ macro(vala_precompile output target_name)
         string(REPLACE ".gs" ".c" src ${src})
         if(${IS_MATCHED} MATCHES "/")
             get_filename_component(VALA_FILE_NAME ${src} NAME)
-            set(out_file "${CMAKE_CURRENT_BINARY_DIR}/${VALA_FILE_NAME}")
-            list(APPEND out_files "${CMAKE_CURRENT_BINARY_DIR}/${VALA_FILE_NAME}")
+            set(out_file "${DIRECTORY}/${VALA_FILE_NAME}")
+            list(APPEND out_files "${DIRECTORY}/${VALA_FILE_NAME}")
         else()
             set(out_file "${DIRECTORY}/${src}")
             list(APPEND out_files "${DIRECTORY}/${src}")
@@ -197,10 +197,16 @@ macro(vala_precompile output target_name)
         list(APPEND out_files_display "${ARGS_GENERATE_SYMBOLS}.symbols")
         set(symbols_arguments "--symbols=${ARGS_GENERATE_SYMBOLS}.symbols")
     endif(ARGS_GENERATE_SYMBOLS)
+	
+    set(os_defines "")
+    if(WIN32)
+        list(APPEND os_defines "-D \"G_OS_WIN32\"")
+    endif(WIN32)
 
     # Workaround for a bug that would make valac run twice. This file is written
     # after the vala compiler generates C source code.
-    set(OUTPUT_STAMP ${CMAKE_CURRENT_BINARY_DIR}/${target_name}_valac.stamp)
+    set (extra_name ${extra_name}_ )
+    set(OUTPUT_STAMP ${CMAKE_CURRENT_BINARY_DIR}/${target_name}${extra_name}valac.stamp)
 
     add_custom_command(
     OUTPUT
@@ -215,6 +221,7 @@ macro(vala_precompile output target_name)
         ${symbols_arguments} 
         "-b" ${CMAKE_CURRENT_SOURCE_DIR} 
         "-d" ${DIRECTORY} 
+		${os_defines}
         ${vala_pkg_opts} 
         ${ARGS_OPTIONS} 
         ${in_files} 

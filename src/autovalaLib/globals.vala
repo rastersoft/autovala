@@ -100,7 +100,8 @@ namespace AutoVala {
 			this.localModules=new Gee.HashMap<string,string>();
 			this.pathList=new Gee.HashSet<string>();
 			foreach(var element in this.globalElements) {
-				if ((element.eType!=ConfigType.IGNORE)&&(element.eType!=ConfigType.DEFINE)&&(!this.pathList.contains(element.path))) {
+				if ((element.eType!=ConfigType.IGNORE) && (element.eType!=ConfigType.DEFINE) && (element.eType!=ConfigType.SOURCE_DEPENDENCY)
+						&& (element.eType!=ConfigType.BINARY_DEPENDENCY) && (!this.pathList.contains(element.path))) {
 					this.pathList.add(element.path);
 				}
 				if (element.eType==ConfigType.VALA_LIBRARY) {
@@ -108,6 +109,10 @@ namespace AutoVala {
 					if ((elementLibrary.currentNamespace!=null)&&(!this.localModules.has_key(elementLibrary.currentNamespace))) {
 						this.localModules.set(elementLibrary.currentNamespace,elementLibrary.path);
 					}
+				}
+				if (element.eType == ConfigType.VAPIDIR) {
+					var fullpath = Path.build_filename(ElementBase.globalData.projectFolder,element.fullPath);
+					AutoVala.Globals.vapiList.fillNamespaces(fullpath);
 				}
 			}
 		}
@@ -137,6 +142,17 @@ namespace AutoVala {
 		 */
 		public void addElement(ElementBase element) {
 			this.globalElements.add(element);
+		}
+
+		public ElementBase[] findElements(AutoVala.ConfigType eType) {
+
+			AutoVala.ElementBase[] elements = {};
+			foreach(var element in this.globalElements) {
+				if (element.eType == eType) {
+					elements += element;
+				}
+			}
+			return elements;
 		}
 
 		/**

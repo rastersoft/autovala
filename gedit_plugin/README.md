@@ -32,7 +32,7 @@ just type:
 
         mkdir install
         cd install
-        cmake .. -DCMAKE_INSTALL_PREFIX=$HOME/.local [-DOLD_GEDIT=on]
+        cmake .. -DATHOME=on -DCMAKE_INSTALL_PREFIX=$HOME/.local [-DOLD_GEDIT=on]
         make
         make install
 
@@ -47,7 +47,7 @@ system, just type:
 
         mkdir install
         cd install
-        cmake .. [-DOLD_GEGIT=on]
+        cmake .. -DCMAKE_INSTALL_PREFIX=/usr [-DOLD_GEGIT=on]
         make
         sudo make install
 

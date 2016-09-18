@@ -8,7 +8,7 @@ autovala fileformat - The syntax for autovala configuration file
 
 The project file has a very simple format. Usually you don't need to manually edit it, but when the guesses of autovala are incorrect, you can do it, and your changes will be remembered each time you refresh the file.
 
-The current version for the project file format is **12**.
+The current version for the project file format is **21**.
 
 The file is based on commands in the format:
 
@@ -30,11 +30,22 @@ After that, it comes several commands, some of them repeated several times, to s
 
  * **po**: specifies the folder where to store the translations. By default it is **po**. The program identifier for Gettext is the project name.
 
- * **define**: specifies a condition parameter set in a **#define** statement in the source code, for conditional compilation. These parameters can be set during Makefile creatin with **-Dparameter=ON**, and will be passed to **valac** during compilation.
+ * **define**: specifies a condition parameter set in a **#define** statement in the source code, for conditional compilation. These parameters can be set during Makefile creating with **-Dparameter=ON**, and will be passed to **valac** during compilation.
 
  * **data**: specifies a folder with local data that must be installed in **share/project_name**. By default it is **data/local**.
 
  * **doc**: specifies a folder with the documentation that must be installed in **share/doc/project_name**. By default it is **doc**.
+
+ * **appdata**: specifies an AppData file, which contains metadata about the application (details at http://www.freedesktop.org/software/appstream/docs/chap-Metadata.html and http://www.freedesktop.org/software/appstream/docs/chap-Quickstart.html#sect-Quickstart-DesktopApps). When creating
+ packages, Autovala will try to take data from this file if it exists, like a summary and a description.
+
+ * **gresource**: specifies a GResource file and an identifier for it. Example:
+ 
+            gresource: data_gresource_xml data/data.gresource.xml
+
+   the identifier is used in the binaries/libraries to specify which resource file to include there, and the path specifies where is the XML file with the GResources data. AutoVala will check the files specified inside, to prevent adding them automatically in other parts (example: if you have an icon file in *data/icons*, by default it will be installed at */usr/share/icons...*; but if that file is inside a *gresource* file, it won't be installed, unless you add it manually to the .avprj file). Also, those files will be added as dependencies, so any change to any of them will force a recompilation of the corresponding object file and binaries.
+
+ * **vapidir**: points to a folder where extra VAPI files can be found. This is a global path, used in all binaries and libraries used in the project (unlike the *vapi_file* statement, that is binary-specific). This command is useful when a program puts their .vapi files in a non-standard folder (which is the current case of Gnome-Builder), or when you have a library installed in your system but it doesn't include a .vapi file. When asking the file list with the *project_files* command-line parameter, it will include the .vapi files inside these folders only if the folder is relative to the project's folder; if it is an absolute path (which points, let's say, to /usr/share...) won't list those .vapi files.
 
  * **vala_binary**:  contains a path and a name, and specifies that, in the path, there are several source files that must be compiled to create that binary. Example:
 
@@ -74,13 +85,23 @@ After that, it comes several commands, some of them repeated several times, to s
 
    * **c_source**: this command specifies one C source file that belongs to this binary. The path must be relative to the binary/library path.
 
+   * **h_folder**: this command specifies one folder containing .h files that must be included when compiling the C source files in this binary. The path must be relative to the binary/library path.
+
    * **vala_vapi**: this command specifies one custom **.vapi** file, needed to compile your project. Each file must be prepended by the relative path from the project folder. The path must be relative to the binary/library path.
 
    * **dbus_interface**: this command specifies a DBus interface to be automatically extracted using introspection, and to generate a source file with it. It must be followed by the connection name (e.g. org.freedesktop.ConsoleKit), the object path (e.g. /org/freedesktop/ConsoleKit/Manager), and whether it must connect to the **system** or **session** bus. Finally, it can have an extra parameter specifying if the generated interface must be for **gdbus** (the default option) or for the obsolete **dbus-glib** library.
 
    * **c_library**: this command specifies one or more C libraries which must be linked against this binary (separated by blank spaces), useful for libraries not supported with **pkg_config** like the math C library. The libraries must be specified without the 'l' preffix; this is, the math library is 'm'; the posix threads library is 'pthread', and so on.
 
-    The last eleven subcommands (compile_options, compile_c_options, vala_package, vala_check_package, c_check_package, vala_local_package, vala_source, c_source, vala_vapi, dbus_interface and c_library) can be repeated as many times as needed to specify all the sources and packages needed.
+   * **unitest**: this command specifies one VALA source file that contains an unitary test. Each one of these files will be compiled with all the source files of this executable/library as a stand-alone executable. The path must be relative to the binary/library path. For details, read the FAQ.
+
+   * **use_resource**: this command instructs AutoVala to include in this binary the resources specified by an identifier. Example:
+
+            use_resource: data_gresource_xml
+
+    Here, data_gresource_xml is the identifier used in a *gresource* command.
+
+    The last fourteen subcommands (compile_options, compile_c_options, vala_package, vala_check_package, c_check_package, vala_local_package, vala_source, c_source, vala_vapi, dbus_interface, c_library, unitest and use_resource) can be repeated as many times as needed to specify all the sources and packages needed.
 
  * **vala_library**: the same than vala_binary, but creates a dynamic linking library. It uses the same subcommands.
 
@@ -88,9 +109,11 @@ After that, it comes several commands, some of them repeated several times, to s
 
  * **binary**: specifies that the file is a precompiled binary (or a shell script) that must be copied as-is to vbin/**
 
- * **icon**: followed by the category and the icon path/name. Autovala will determine the icon size and use it to copy it to the right place (only if it is a **.png** file; it it is a **.svg** will copy to "scalable"). Also, by default, the cathegory will be **apps**, unless it is a **.svg** with **-symbolic**; in that case will be put in the **status** category. Example:
+ * **full_icon**: followed by the theme, the category and the icon path/name. Autovala will determine the icon size and use it to copy it to the right place (only if it is a **.png** file; it it is a **.svg** will copy to "scalable"). Also, by default, the cathegory will be **apps**, unless it is a **.svg** with **-symbolic**; in that case will be put in the **status** category. Example:
 
-            icon: apps finger.svg
+            full_icon: Hicolor Applications finger.svg
+
+ * **fixed_size_icon**: similar to full_icon, but for **svg** icons, they will be put always in a fixed size entry, based on the canvas size; will never be put in an scalable entry. This is useful when there are several SVG pictures for different sizes of the same icon.
 
  * **pixmap**: followed by a picture filename. Will be copied to **share/pixmaps**
 
@@ -125,18 +148,24 @@ After that, it comes several commands, some of them repeated several times, to s
             ignore: src/OTHER will ignore the folder OTHER when creating binaries
 
  * **custom**: followed by a path/filename and another path. Installs the specified file in the path. If the path is given in relative format (this is, if it doesn't start with an slash) the file will be installed relative to the PREFIX (**/usr** or **/usr/local**); but if it is given in absolute format (this is, the path starts with a slash) the file will be installed in that precise folder. Examples:
- 
+
             custom: data/config_system.txt share/ will install the file **config_system.txt** in **/usr/share** or **/usr/local/share**
 
             custom: data/config_system.txt /etc/myfolder will install the file **config_system.txt** in **/etc/myfolder**
 
+ * **translate**: followed by a file type (currently *vala*, *c* or *glade*) and a path/filename. Specifies that the file must be included in the POTFILES.in file, to be scanned for translatable strings.
+
  * **manpage**: followed by a path/filename, and optionally a language and a page section. Specifies that the file is a man page in the specified language (**default** to install it in the default folder), and for the specified section. If the section is not specified, it will be assumed to be section 1. If the language is not specified, it will be assumed **default**. If the file ends in **.md**, Autovala will presume that it is a **markdown** file, and will convert it to groff before. Other supported formats and its extensions are HTML (**.html**), ReStructured Text (**.rst**), LaTeX (**.tex**), JSON version of native AST format (**.json**), TexTile/RedCloth (**.rdoc**), DocBook format (**.xml**) and MediaWiki (**.txt**). Examples:
- 
+
             manpage: data/man/autovala.1   will install the file **data/man/autovala** in **/usr/local/share/man/man1**
             manpage: data/man/autovala-rules.7.md es 7   will install the file **data/man/autovala-rules** in **/usr/local/share/man/es/man7**
             manpage: data/man/autovala-modifying.5.md default 5   will install the file **data/man/autovala-modifying** in **/usr/local/share/man/man5**
 
-It is also possible to add conditions to nearly all of these commands (more specifically, all can be conditional with the exception of **vala_version**, **vala_binary**, **vala_library**, **version**, **namespace**, **include**, **project_name**, **vala_destination**, **define** and **autovala_version**). To do so, you can use the commands **if CONDITION**, **else** and **end**. The format for the **CONDITION** string is the CMake format (statements that can be true or false, parenteses, and AND, OR and NOT operators).
+ * **source_dependency**: followed by one or more path/filenames (separated by spaces), it defines a system file needed for compiling the source, so, when creating a system package, the package that contains that file will be added to the build dependencies list. It will also be checked when creating the CMAKE files. If there are several paths, only one must exists to fullfill the condition. This is useful, for example, when checking for *pkgconfig* files, because in debian-based 64-bit systems they are stored at */usr/lib/pkgconfig*, but in fedora-based 64-bit systems they are at */usr/lib64/pkgconfig*.
+
+ * **binary_dependency**: followed by one or more path/filenames (separated by spaces), it defines a system file needed for running the project, so, when creating a system package, the package that contains that file will be added to the dependencies list. It will also be checked when creating the CMAKE files. This is useful, for example, when checking for library files, because in debian-based 64-bit systems they are stored at */usr/lib*, but in fedora-based 64-bit systems they are at */usr/lib64*.
+
+It is also possible to add conditions to nearly all of these commands (more specifically, all can be conditional with the exception of **vala_version**, **vala_binary**, **vala_library**, **version**, **namespace**, **include**, **project_name**, **define**, **source_dependency**, **binary_dependency** and **autovala_version**). To do so, you can use the commands **if CONDITION**, **else** and **end**. The format for the **CONDITION** string is the CMake format (statements that can be true or false, parenteses, and AND, OR and NOT operators).
 
 An example taken from Cronopete:
 

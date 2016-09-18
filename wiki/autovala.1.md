@@ -6,7 +6,7 @@ Autovala - simplify the creation of projects with Vala and CMake
 
 # SYNOPSIS
 
-autovala {init PROJECT_NAME | clear | refresh | cmake | update | project_files |help | version}
+autovala {init PROJECT_NAME | clear | refresh | cmake | update | project_files | po | deb | rpm | valama | help | version}
 
 # DESCRIPTION
 
@@ -14,13 +14,31 @@ Autovala is a program and a library designed to help in the creation of projects
 
 This is what Autovala does. This process is done in three steps:
 
-* First, Autovala checks all the folders and files, and creates a project with the type of each file
-* It also peeks the source files to determine which Vala packages they need, and generate automagically that list
-* After that (and after allowing the user to check, if (s)he wishes, the project file), it uses that project file to generate the needed CMakeLists files
+  * First, Autovala checks all the folders and files, and creates a project with the type of each file
+  * It also peeks the source files to determine which Vala packages they need, and generate automagically that list
+  * After that (and after allowing the user to check, if (s)he wishes, the project file), it uses that project file to generate the needed CMakeLists files
 
-Autovala uses simple rules, like: "png files go to usr/share/pixmaps", and so on. It even takes into account things like the size and type of picture. For a detailed explanation of the rules followed by Autovala, check the [rules page](autovala-rules.7).
+Autovala greatly simplifies the process of working with Vala because:
+
+  * Automatically determines the vala packages and libraries needed to compile
+    and run the project, by inspecting the source code
+  * Automatically generates the .vapi and pkg-config files for libraries
+  * Automatically determinates the final destination for an icon, by checking
+    its type (svg or png) and, in the later case, its size.
+  * Automatically generates manpages from text files in several possible input
+    format (markdown, html, latex...).
+  * Greatly simplifies creating libraries in Vala, or a project with a binary
+    that uses a library defined in the same project.
+  * Automatically generates the metadata files to create .DEB and .RPM packages.
+  * Easily integrates unitary tests for each binary in the project.
+  * Can generate automatically DBUS bindings by using the DBUS introspection
+    capabilities.
+  * Automatically generates the list of source files for GETTEXT.
+  * Simplifies mixing C and Vala source files.
 
 It also includes several Gtk widgets that simplifies writing plugins for text editors. Currently plugins for GEdit 3.x and another for Scratch Text Editor 2.x are included.
+
+For a detailed explanation of the rules followed by Autovala, check the [rules page](autovala-rules.7).
 
 # USING AUTOVALA
 
@@ -33,18 +51,19 @@ The first thing to do is to initializate the project. This is done by calling au
 This will create a file called **PROJECT_NAME.avprj**, with the most basic info about your project (the format for this file will be explained later). It will also try to create the basic folders for a vala project, and will show a warning if they already exist. It will never delete a file, except the **CMakeLists** files, of course. The folder hierarchy is:
 
         .
-        +cmake
-        +src
-           +vapis
-        +install
-        +doc
-        +po
-        +data
-           +icons
-           +pixmaps
-           +interface
-           +local
-           +man
+        +cmake/
+        +src/
+           +vapis/
+           +unitests/
+        +install/
+        +doc/
+        +po/
+        +data/
+           +icons/
+           +pixmaps/
+           +interface/
+           +local/
+           +man/
 
 Autovala installs its own version of the CMake modules for Vala inside the **cmake/** folder, which contains a modified version that allows to work with Valadoc; but if you want to use a newer version you can always download the last oficial version from launchpad using bazaar:
 
@@ -64,9 +83,11 @@ Each entry is a global variable, that can be accessed from anywhere in the code.
 
 **VAPIS** is where you can put your custom VAPI files, when you need some for compiling your project.
 
+**UNITESTS** is where you can put unitary tests for this binary. For more details about the unitary tests, see the [tricks section](autovala-tricks.7).
+
 **INSTALL** is the folder where to build everything. More about it later.
 
-As can be supposed, **DOC** has to contain the documentation, and **PO** will contain the files with translatable strings. These strings are extracted from the **.vala** and **.ui** files (the later from glade).
+As can be supposed, **DOC** has to contain the documentation, and **PO** will contain the files with translatable strings. These strings are extracted automatically from the **.vala** and **.ui** files (the later from glade) using intltool.
 
 **DATA** is where you must put things like D-Bus activation files, **.desktop** files, scripts, and so on. **ICONS** folder and subfolders should contain the icons (in png or svg format), and Autovala will automagically take into account its size to put them in the right place.
 
@@ -78,7 +99,7 @@ Finally, **LOCAL** is a place where to put everything you want to get copied "as
 
         usr/share/PROJECT_NAME/
 
-To know the precise rules used by AutoVala, check the [rules page](autovala-rules.7).
+To know the precise rules used by AutoVala to decide what to do with each kind of file, check the [rules page](autovala-rules.7).
 
 When you are OK for the first compilation, just use Autovala to check the folders and automatically update the **.avprj** file with:
 
@@ -101,6 +122,8 @@ If you want to remove all the automatically added lines in the project file, lea
         autovala clear
 
 These commands can be called from any of the folders or subfolders of the project, because it will search for the first **.avprj** file located in the current folder or upstream.
+
+Everytime you run **autovala cmake** or **autovala update**, the CMAKE scripts contained in the **cmake** folder will be refreshed; this allows to get advantage of new capabilities available in more recent versions of autovala. The scripts are copied, by default, from the autovala's system-wide installation folder, unless the environment variable **AUTOVALA_CMAKE_SCRIPT** is defined with the path to a folder containing an alternative script.
 
 # OPTIONS
 
@@ -132,6 +155,15 @@ These commands can be called from any of the folders or subfolders of the projec
   The same can be done with **bazaar**, **subversion**, or nearly all versioning systems.
 
   Keep in mind that this command only lists the files that are refered in the **.avprj** file. This means that files like **README.md** at the root, won't be listed. This means that other files that you want to be available in the repository but not in the final installation must be added manually.
+
+**autovala deb**
+  Generates the metadata needed for building a **DEB** package. The most important part that generates are the dependencies, both for source and binary packages.
+
+**autovala rpm**
+  Generates the metadata needed for building an **RPM** package. The most important part that generates are the dependencies, both for source and binary packages.
+
+**autovala valama**
+  Generates a Valama project for each binary in the current project. This allows to use Valama to edit Autovala projects. **THIS SUPPORT IS STILL EXPERIMENTAL**. Don't forget to do a *refresh* before to update the Autovala project file.
 
 **autovala help**
   Shows the basic commands available

@@ -1,5 +1,5 @@
 /*
- Copyright 2013-2014 (C) Raster Software Vigo (Sergio Costas)
+ Copyright 2013-2015 (C) Raster Software Vigo (Sergio Costas)
 
  This file is part of AutoVala
 
@@ -19,6 +19,7 @@
 using GLib;
 using Gee;
 using Posix;
+using Readline;
 
 // project version=0.99
 
@@ -32,10 +33,20 @@ namespace AutoVala {
 			this.config.showErrors();
 		}
 
+		/**
+		 * Returns a list with all the errors generated during the process, and clears the error list
+		 * @return A list with the errors and warnings, one on each element.
+		 */
 		public string[] getErrors() {
 			return this.config.getErrors();
 		}
 
+		/**
+		 * Copy recursively all the files in a folder to another
+		 * @param srcS The source folder
+		 * @param destS The destination folder
+		 * @return TRUE if there was an error; FALSE if everything went fine
+		 */
 		private bool copy_recursive (string srcS, string destS) {
 
 			var src=File.new_for_path(srcS);
@@ -148,6 +159,45 @@ namespace AutoVala {
 			return false;
 		}
 
+		private bool copy_cmake(string configPath) {
+
+			string? origin = GLib.Environment.get_variable("AUTOVALA_CMAKE_SCRIPT");
+			if ((origin != null) && (origin != "")) {
+				var folderTmp = File.new_for_path(origin);
+				if ((folderTmp.query_exists() == false) || (folderTmp.query_file_type(FileQueryInfoFlags.NONE) != FileType.DIRECTORY)) {
+					origin = null;
+				}
+			} else {
+				origin = null;
+			}
+
+			if (origin != null) {
+				ElementBase.globalData.addWarning(_("Copying CMAKE scripts from %s").printf(origin));
+			} else {
+				origin = Path.build_filename(AutoValaConstants.PKGDATADIR,"cmake");
+			}
+			string destiny = Path.build_filename(configPath,"cmake");
+			var folder=File.new_for_path(destiny);
+			var folder2=File.new_for_path(origin);
+			if (folder2.query_exists()) {
+				if (folder.query_exists()) {
+					this.delete_recursive(destiny);
+				}
+				this.copy_recursive(origin,destiny);
+			} else {
+				ElementBase.globalData.addError(_("Folder %s doesn't exists. Autovala is incorrectly installed").printf(origin));
+				return true;
+			}
+			return false;
+		}
+
+
+		/**
+		 * Creates a new Autovala project in an specified path
+		 * @param projectName The name for the project
+		 * @param basePath The path where to create the project, or NULL to create in the working path
+		 * @return TRUE if there was an error; FALSE if everything went fine
+		 */
 		public bool init(string projectName,string ?basePath = null) {
 
 			bool error=false;
@@ -183,7 +233,7 @@ namespace AutoVala {
 			if (folder.query_exists()) {
 				ElementBase.globalData.addWarning(_("The 'cmake' folder already exists"));
 			} else {
-				this.copy_recursive(Path.build_filename(AutoValaConstants.PKGDATADIR,"cmake"),Path.build_filename(configPath,"cmake"));
+				this.copy_cmake(configPath);
 			}
 
 			error|=this.createPath(configPath,"src");
@@ -191,6 +241,7 @@ namespace AutoVala {
 			error|=this.createPath(configPath,"po");
 			error|=this.createPath(configPath,"doc");
 			error|=this.createPath(configPath,"install");
+			error|=this.createPath(configPath,"packages");
 			error|=this.createPath(configPath,"data");
 			error|=this.createPath(configPath,"data/icons");
 			error|=this.createPath(configPath,"data/pixmaps");
@@ -224,6 +275,11 @@ namespace AutoVala {
 			return error;
 		}
 
+		/**
+		 * Generates the CMAKE files for a project
+		 * @param basePath A base file or folder; the code will check if that file is a valid .avprj file; if not (or if it is a folder) will search in the folder containing it if there is a valid .avprj file. If not, will search upwards until a valid .avprj file is found, or the root is reached. NULL means to start searching in the current working directory
+		 * @return TRUE if there was an error; FALSE if everything went fine
+		 */
 		public bool cmake(string ?basePath = null) {
 
 			bool error;
@@ -240,22 +296,14 @@ namespace AutoVala {
 			}
 
 			string configPath=this.config.globalData.projectFolder;
-			string origin = Path.build_filename(AutoValaConstants.PKGDATADIR,"cmake");
-			string destiny = Path.build_filename(configPath,"cmake");
-			var folder=File.new_for_path(destiny);
-			var folder2=File.new_for_path(origin);
-			if (folder2.query_exists()) {
-				if (folder.query_exists()) {
-					this.delete_recursive(destiny);
-				}
-				this.copy_recursive(origin,destiny);
-			} else {
-				ElementBase.globalData.addError(_("Folder %s doesn't exists. Autovala is incorrectly installed").printf(origin));
+			if (this.copy_cmake(configPath)) {
 				return true;
 			}
 
 			globalData.generateExtraData();
+
 			var globalElement = new ElementGlobal();
+			DataOutputStream dataStreamGlobal;
 			try {
 				var mainPath = GLib.Path.build_filename(globalData.projectFolder,"CMakeLists.txt");
 				var file = File.new_for_path(mainPath);
@@ -263,9 +311,8 @@ namespace AutoVala {
 					file.delete();
 				}
 				var dis = file.create(FileCreateFlags.NONE);
-				var dataStream = new DataOutputStream(dis);
-				error |= globalElement.generateMainCMakeHeader(dataStream);
-				dataStream.close();
+				dataStreamGlobal = new DataOutputStream(dis);
+				error |= globalElement.generateMainCMakeHeader(dataStreamGlobal);
 			} catch (Error e) {
 				ElementBase.globalData.addError(_("Failed while generating the main CMakeLists.txt file"));
 				return true;
@@ -301,12 +348,12 @@ namespace AutoVala {
 					}
 					condition.printTail();
 
-					error |= globalElement.generateCMakePostData(dataStream);
+					error |= globalElement.generateCMakePostData(dataStream,dataStream);
 					foreach(var element in globalData.globalElements) {
 						if (element.path!=path) {
 							continue;
 						}
-						error |= element.generateCMakePostData(dataStream);
+						error |= element.generateCMakePostData(dataStream,dataStreamGlobal);
 					}
 
 					globalElement.endedCMakeFile();
@@ -322,9 +369,16 @@ namespace AutoVala {
 				ElementBase.globalData.addError(_("Failed while generating the CMakeLists.txt files"));
 				return true;
 			}
+			dataStreamGlobal.close();
 			return error;
 		}
 
+
+		/**
+		 * Updates the .avprj file of a project
+		 * @param basePath A base file or folder; the code will check if that file is a valid .avprj file; if not (or if it is a folder) will search in the folder containing it if there is a valid .avprj file. If not, will search upwards until a valid .avprj file is found, or the root is reached. NULL means to start searching in the current working directory
+		 * @return TRUE if there was an error; FALSE if everything went fine
+		 */
 		public bool refresh(string ?basePath = null) {
 
 			bool error;
@@ -338,35 +392,44 @@ namespace AutoVala {
 			if (error) {
 				return true;
 			}
+
 			ElementBase.globalData.clearAutomatic();
 			ElementBase.globalData.generateExtraData();
 
-			// refresh the automatic configuration for the manually set elements 
+			// refresh the automatic configuration for the manually set elements
 			foreach (var element in ElementBase.globalData.globalElements) {
 				element.autoConfigure();
 			}
 
-			error|=ElementPo.autoGenerate();
-			error|=ElementIcon.autoGenerate();
-			error|=ElementPixmap.autoGenerate();
-			error|=ElementDesktop.autoGenerate();
-			error|=ElementDBusService.autoGenerate();
-			error|=ElementEosPlug.autoGenerate();
-			error|=ElementScheme.autoGenerate();
-			error|=ElementGlade.autoGenerate();
+			error|=ElementVapidir.autoGenerate();
+			error|=ElementGResource.autoGenerate();
+			error|=ElementBashCompletion.autoGenerate();
 			error|=ElementBinary.autoGenerate();
 			error|=ElementData.autoGenerate();
+			error|=ElementDBusService.autoGenerate();
+			error|=ElementDesktop.autoGenerate();
 			error|=ElementDoc.autoGenerate();
+			error|=ElementEosPlug.autoGenerate();
+			error|=ElementGlade.autoGenerate();
+			error|=ElementIcon.autoGenerate();
 			error|=ElementManPage.autoGenerate();
-			error|=ElementBashCompletion.autoGenerate();
+			error|=ElementPixmap.autoGenerate();
+			error|=ElementPo.autoGenerate();
+			error|=ElementScheme.autoGenerate();
 			error|=ElementValaBinary.autoGenerate();
+			error|=ElementAppData.autoGenerate();
 
 			if (error==false) {
-				error|=config.saveConfiguration();
+				error|=this.config.saveConfiguration();
 			}
 			return error;
 		}
 
+		/**
+		 * Returns all the files belonging to a project. Useful for version control systems.
+		 * @param basePath A base file or folder; the code will check if that file is a valid .avprj file; if not (or if it is a folder) will search in the folder containing it if there is a valid .avprj file. If not, will search upwards until a valid .avprj file is found, or the root is reached. NULL means to start searching in the current working directory
+		 * @return A list with all the files, relative to the project's root, or NULL if there was an error
+		 */
 		public string[]? get_files(string ?basePath = null) {
 
 			string[] all_files = {};
@@ -376,7 +439,7 @@ namespace AutoVala {
 				return null; // if there was at least one error during initialization, return
 			}
 
-			var error=config.readConfiguration();
+			var error=this.config.readConfiguration();
 			if (error) {
 				return null;
 			}
@@ -404,6 +467,11 @@ namespace AutoVala {
 			return all_files;
 		}
 
+		/**
+		 * Generates the PO files for a project, using gettext for extracting the strings from the source files
+		 * @param basePath A base file or folder; the code will check if that file is a valid .avprj file; if not (or if it is a folder) will search in the folder containing it if there is a valid .avprj file. If not, will search upwards until a valid .avprj file is found, or the root is reached. NULL means to start searching in the current working directory
+		 * @return TRUE if there was an error; FALSE if everything went fine
+		 */
 		public bool gettext(string ?basePath = null) {
 			// run xgettext to generate the basic pot file
 
@@ -412,7 +480,7 @@ namespace AutoVala {
 				return true; // if there was at least one error during initialization, return
 			}
 
-			bool error=config.readConfiguration();
+			bool error=this.config.readConfiguration();
 			if (error) {
 				return true;
 			}
@@ -428,7 +496,7 @@ namespace AutoVala {
 			foreach (var element in ElementBase.globalData.globalElements) {
 				if (element.eType==ConfigType.PO) {
 					try {
-						string callString = "xgettext -d %s -o %s -p %s --keyword='_' -f po/POTFILES.in".printf(ElementBase.globalData.projectName,ElementBase.globalData.projectName+".pot",element.path);
+						string callString = "xgettext --from-code=UTF-8 -d %s -o %s -p %s --keyword='_' -f po/POTFILES.in".printf(ElementBase.globalData.projectName,ElementBase.globalData.projectName+".pot",element.path);
 						ElementBase.globalData.addMessage(_("Launching command %s").printf(callString));
 						retVal=GLib.Process.spawn_command_line_sync(callString,out ls_stdout,out ls_stderr, out ls_status);
 					} catch (GLib.SpawnError e) {
@@ -475,15 +543,18 @@ namespace AutoVala {
 			return error;
 		}
 
-
+		/**
+		 * Clears the .avprj file, removing all the automatic elements and leaving only the manually added ones
+		 * @param basePath A base file or folder; the code will check if that file is a valid .avprj file; if not (or if it is a folder) will search in the folder containing it if there is a valid .avprj file. If not, will search upwards until a valid .avprj file is found, or the root is reached. NULL means to start searching in the current working directory
+		 * @return TRUE if there was an error; FALSE if everything went fine
+		 */
 		public bool clear(string ?basePath = null) {
 
-			var config=new AutoVala.Configuration(basePath);
+			this.config=new AutoVala.Configuration(basePath);
 			if(config.globalData.error) {
 				return true; // if there was at least one error during initialization, return
 			}
 			var retval=config.readConfiguration();
-			config.showErrors();
 			if (retval) {
 				return true;
 			}
@@ -492,37 +563,14 @@ namespace AutoVala {
 			return false;
 		}
 
-		public ValaProject ? get_binaries_list(string ?basePath = null) {
-
-			var config=new AutoVala.Configuration(basePath);
-			if (config.globalData.error) {
-				return null;
-			}
-
-			if (config.readConfiguration()) {
-				return null;
-			}
-
-			var project = new ValaProject();
-
-			project.elements = new Gee.ArrayList<PublicElement>();
-			project.projectPath = config.globalData.projectFolder;
-			project.projectName = config.globalData.projectName;
-			project.projectFile = config.globalData.configFile;
-
-			foreach (var element in config.globalData.globalElements) {
-				var newElement = new PublicElement(element.eType, element.fullPath, element.name);
-				if ((element.eType == ConfigType.VALA_LIBRARY) || (element.eType == ConfigType.VALA_BINARY)) {
-					var binElement = element as ElementValaBinary;
-					newElement.set_binary_data(binElement.get_vala_opts(),binElement.get_c_opts(),binElement.get_libraries());
-				}
-				project.elements.add(newElement);
-			}
-			return project;
-		}
-
+		/**
+		 * Removes a binary from a project
+		 * @param projectPath A base file or folder; the code will check if that file is a valid .avprj file; if not (or if it is a folder) will search in the folder containing it if there is a valid .avprj file. If not, will search upwards until a valid .avprj file is found, or the root is reached. NULL means to start searching in the current working directory
+		 * @param binary_name The name of the binary to remove
+		 * @return TRUE if there was an error; FALSE if everything went fine
+		 */
 		public bool remove_binary(string? projectPath, string binary_name) {
-		
+
 			var config=new AutoVala.Configuration(projectPath);
 			if (config.globalData.error) {
 				return true;
@@ -532,6 +580,7 @@ namespace AutoVala {
 				return true;
 			}
 
+			ElementBase.globalData.generateExtraData();
 			ElementBase element_found = null;
 			foreach(var element in config.globalData.globalElements) {
 				if ((element.eType == AutoVala.ConfigType.VALA_BINARY) || (element.eType == AutoVala.ConfigType.VALA_LIBRARY)) {
@@ -548,6 +597,18 @@ namespace AutoVala {
 			return false;
 		}
 
+		/**
+		 * Allows to add or modify a binary in a project
+		 * @param original_name The name of the binary to modify, or NULL to create a new one
+		 * @param projectPath A base file or folder; the code will check if that file is a valid .avprj file; if not (or if it is a folder) will search in the folder containing it if there is a valid .avprj file. If not, will search upwards until a valid .avprj file is found, or the root is reached. NULL means to start searching in the current working directory
+		 * @param binary_name The name of the binary to create, or the new name for an existing binary
+		 * @param is_library TRUE if the binary is a library; FALSE if it is an executable
+		 * @param base_path The root path for the binary, where all the source files will be searched
+		 * @param vala_options A list of options to pass to the Vala compiler
+		 * @param c_options A list of options to pass to the C compiler
+		 * @param libraries A list of C libraries (separated with blank spaces) needed to compile this binary
+		 * @return NULL if everything went fine, or an string with several messages specifying the errors ocurred during the process
+		 */
 		public string ? process_binary(string? original_name, string? projectPath, string binary_name, bool is_library, string base_path, string vala_options, string c_options, string libraries) {
 
 			string retval = "";
@@ -561,10 +622,11 @@ namespace AutoVala {
 				return null;
 			}
 
+			ElementBase.globalData.generateExtraData();
 			string base_path2;
 			string base_path3 = "";
 			string projectPath2;
-			
+
 			if (base_path.has_suffix(Path.DIR_SEPARATOR_S)) {
 				base_path2 = base_path;
 			} else {
@@ -665,6 +727,134 @@ namespace AutoVala {
 			config.saveConfiguration();
 			return null;
 		}
+
+		/**
+		 * Creates the metadata for a DEB package
+		 * @param ask If TRUE, will ask using the command line data like the packager's name, the linux distribution name, or the version; if FALSE, it will presume that the data is available in the user's configuration file (at ~/.config/autovala/packages.cfg)
+		 * @param projectPath A base file or folder; the code will check if that file is a valid .avprj file; if not (or if it is a folder) will search in the folder containing it if there is a valid .avprj file. If not, will search upwards until a valid .avprj file is found, or the root is reached. NULL means to start searching in the current working directory
+		 * @return TRUE if there was an error; FALSE if everything went fine
+		 */
+		public bool create_deb(bool ask = false, string ? basePath = null) {
+
+			bool retval;
+
+			this.config=new AutoVala.Configuration(basePath);
+			if (config.globalData.error) {
+				return true;
+			}
+
+			if (config.readConfiguration()) {
+				return true;
+			}
+
+			var t = new AutoVala.packages_deb();
+
+			retval = t.init_all(config);
+			if (!retval) {
+				if (ask) {
+					t.ask_name();
+					t.ask_distro();
+					t.ask_distro_version();
+				}
+				retval = t.create_deb_package();
+			}
+			return retval;
+		}
+
+		/**
+		 * Creates the metadata for an RPM package
+		 * @param ask If TRUE, will ask using the command line data like the packager's name, the linux distribution name, or the version; if FALSE, it will presume that the data is available in the user's configuration file (at ~/.config/autovala/packages.cfg)
+		 * @param projectPath A base file or folder; the code will check if that file is a valid .avprj file; if not (or if it is a folder) will search in the folder containing it if there is a valid .avprj file. If not, will search upwards until a valid .avprj file is found, or the root is reached. NULL means to start searching in the current working directory
+		 * @return TRUE if there was an error; FALSE if everything went fine
+		 */
+		public bool create_rpm(bool ask = false, string ? basePath = null) {
+
+			bool retval;
+
+			this.config=new AutoVala.Configuration(basePath);
+			if (config.globalData.error) {
+				return true;
+			}
+
+			if (config.readConfiguration()) {
+				return true;
+			}
+
+			var t = new AutoVala.packages_rpm();
+
+			retval = t.init_all(config);
+			if (!retval) {
+				if (ask) {
+					t.ask_name();
+				}
+				retval = t.create_rpm_package();
+			}
+			return retval;
+		}
+
+        /**
+		 * Creates the metadata for a PACMAN package
+		 * @param ask If TRUE, will ask using the command line data like the packager's name, the linux distribution name, or the version; if FALSE, it will presume that the data is available in the user's configuration file (at ~/.config/autovala/packages.cfg)
+		 * @param projectPath A base file or folder; the code will check if that file is a valid .avprj file; if not (or if it is a folder) will search in the folder containing it if there is a valid .avprj file. If not, will search upwards until a valid .avprj file is found, or the root is reached. NULL means to start searching in the current working directory
+		 * @return TRUE if there was an error; FALSE if everything went fine
+		 */
+		public bool create_pacman(bool ask = false, string ? basePath = null) {
+
+			bool retval;
+
+			this.config=new AutoVala.Configuration(basePath);
+			if (config.globalData.error) {
+				return true;
+			}
+
+			if (config.readConfiguration()) {
+				return true;
+			}
+
+			var t = new AutoVala.packages_pacman();
+
+			retval = t.init_all(config);
+			if (!retval) {
+				retval = t.create_pacman_package();
+			}
+			return retval;
+		}
+
+		/**
+		 * Returns an object with all the binaries in this project and its source files
+		 * @param basePath A base file or folder; the code will check if that file is a valid .avprj file; if not (or if it is a folder) will search in the folder containing it if there is a valid .avprj file. If not, will search upwards until a valid .avprj file is found, or the root is reached. NULL means to start searching in the current working directory
+		 * @return NULL if there was an error; or a ValaProject object with the data of this project
+		 */
+		public ValaProject ? get_binaries_list(string ?basePath = null) {
+
+			this.config = new AutoVala.Configuration(basePath);
+			if (config.globalData.error) {
+				return null;
+			}
+
+			if (config.readConfiguration()) {
+				return null;
+			}
+
+			ElementBase.globalData.generateExtraData();
+			var project = new ValaProjectInternal();
+
+			project.projectPath = config.globalData.projectFolder;
+			project.projectName = config.globalData.projectName;
+			project.projectFile = config.globalData.configFile;
+
+			foreach (var element in config.globalData.globalElements) {
+				if ((element.eType == ConfigType.VALA_LIBRARY) || (element.eType == ConfigType.VALA_BINARY)) {
+					project.add_binary(element as ElementValaBinary);
+					continue;
+				}
+				if (element.eType == ConfigType.GLADE) {
+					project.add_glade(element as ElementGlade);
+					continue;
+				}
+			}
+			return project;
+		}
 	}
 
 	public class ValaProject : GLib.Object {
@@ -672,25 +862,77 @@ namespace AutoVala {
 		public string projectPath;
 		public string projectName;
 		public string projectFile;
-		public Gee.List<PublicElement>? elements;
+		public Gee.List<PublicBinary>? binaries;
+		public Gee.List<PublicGlade>? ui;
+
+		public ValaProject() {
+			this.binaries = new Gee.ArrayList<PublicBinary>();
+			this.ui = new Gee.ArrayList<PublicGlade>();
+		}
 	}
 
-	public class PublicElement : GLib.Object {
+	/**
+	 * This class allows to use private classes as parameters to initialize a ValaProject object
+	 */
+	private class ValaProjectInternal : ValaProject {
+
+		public void add_binary(ElementValaBinary binElement) {
+
+			var newElement = new PublicBinary(binElement.eType, binElement.fullPath, binElement.name, binElement.currentNamespace);
+			newElement.set_binary_data(binElement.get_vala_opts(),binElement.get_c_opts(),binElement.get_libraries());
+			newElement.sources = binElement.sources;
+			newElement.c_sources = binElement.cSources;
+			newElement.unitests = binElement.unitests;
+			newElement.vapis = binElement.vapis;
+			newElement.packages = binElement.packages;
+			this.binaries.add(newElement);
+		}
+
+		public void add_glade(ElementGlade element) {
+			var newElement = new PublicGlade(element.fullPath);
+			this.ui.add(newElement);
+		}
+	}
+
+	public class PublicGlade : GLib.Object {
+
+		public string fullPath;
+
+		public PublicGlade(string path) {
+			this.fullPath = path;
+		}
+	}
+
+	public class PublicBinary : GLib.Object {
 
 		public ConfigType type;
+		public string? library_namespace;
 		public string? fullPath;
 		public string name;
 		public string vala_opts;
 		public string c_opts;
 		public string libraries;
+		public Gee.List<SourceElement ?> sources;
+		public Gee.List<SourceElement ?> c_sources;
+		public Gee.List<VapiElement ?> vapis;
+		public Gee.List<SourceElement ?> unitests;
+		public Gee.List<PackageElement ?> packages;
+		public int major=0;
+		public int minor=0;
+		public int revision=0;
 
-		public PublicElement(ConfigType type,string? fullPath, string name) {
+		public PublicBinary(ConfigType type,string? fullPath, string name, string? current_namespace) {
 			this.type = type;
 			this.fullPath = fullPath;
 			this.name = name;
 			this.vala_opts = "";
 			this.c_opts = "";
 			this.libraries = "";
+			this.sources = null;
+			this.c_sources = null;
+			this.vapis = null;
+			this.unitests = null;
+			this.library_namespace = current_namespace;
 		}
 
 		public void set_binary_data(string vala_options,string c_options,string libraries) {

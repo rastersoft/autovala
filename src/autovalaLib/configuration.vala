@@ -47,7 +47,7 @@ namespace AutoVala {
 				Intl.bindtextdomain(AutoValaConstants.GETTEXT_PACKAGE, Path.build_filename(AutoValaConstants.DATADIR,"locale"));
 			}
 
-			this.currentVersion=12; // currently we support version 12 of the syntax
+			this.currentVersion=21; // currently we support version 21 of the syntax
 			this.version=0;
 
 			this.globalData = new AutoVala.Globals(projectName,basePath);
@@ -73,7 +73,7 @@ namespace AutoVala {
 		 * Returns all the errors ocurred until now
 		 */
 		public string[] getErrors() {
-		
+
 			string[] retval = {};
 			var errorList = this.globalData.getErrorList();
 			foreach(var e in errorList) {
@@ -158,7 +158,7 @@ namespace AutoVala {
 		 *
 		 * If no file/path is given, it will search from the current
 		 * path upwards until it finds a file with .avprj (in lowercase) extension.
-		 * 
+		 *
 		 * If the path of a file with .avprj extension is passed, it will try to open that file
 		 *
 		 * If another kind of file, or a path is given, it will search for a file with .avprj extension in that path (or in the path
@@ -209,13 +209,19 @@ namespace AutoVala {
 						automatic=false;
 					}
 
-					if (line.has_prefix("custom: ")) {
+					if (line.has_prefix("vapidir: ")) {
+						element = new ElementVapidir();
+					} else if (line.has_prefix("translate: ")) {
+						element = new ElementTranslation();
+					} else if (line.has_prefix("gresource: ")) {
+						element = new ElementGResource();
+					} else if (line.has_prefix("custom: ")) {
 						element = new ElementCustom();
 					} else if (line.has_prefix("bash_completion: ")) {
 						element = new ElementBashCompletion();
 					} else if (line.has_prefix("binary: ")) {
 						element = new ElementBinary();
-					} else if (line.has_prefix("icon: ")) {
+					} else if ((line.has_prefix("icon: ")) || (line.has_prefix("full_icon: ")) || (line.has_prefix("fixed_size_icon: "))) {
 						element = new ElementIcon();
 					} else if (line.has_prefix("manpage: ")) {
 						element = new ElementManPage();
@@ -241,6 +247,12 @@ namespace AutoVala {
 						element = new ElementData();
 					} else if (line.has_prefix("ignore: ")) {
 						element = new ElementIgnore();
+					} else if (line.has_prefix("source_dependency: ")) {
+						element = new ElementSDepend();
+					} else if (line.has_prefix("binary_dependency: ")) {
+						element = new ElementBDepend();
+					} else if (line.has_prefix("appdata: ")) {
+						element = new ElementAppData();
 					} else if ((line.has_prefix("vala_binary: "))||(line.has_prefix("vala_library: "))) {
 						if (this.checkConditionals(cond)) {
 							error=true;
@@ -263,17 +275,13 @@ namespace AutoVala {
 						error |= this.addCondition(line.substring(3).strip());
 						ifLineNumber=this.lineNumber;
 						continue;
-					}
-					if (line.strip()=="else") {
+					} else	if (line.strip()=="else") {
 						error|=this.invertCondition();
 						continue;
-					}
-					if (line.strip()=="end") {
+					} else if (line.strip()=="end") {
 						error|=this.removeCondition();
 						continue;
-					}
-
-					if (line.has_prefix("vala_version: ")) {
+					} else if (line.has_prefix("vala_version: ")) {
 						if (this.checkConditionals(cond)) {
 							this.globalData.addError(_("Vala version can't be conditional (line %d)").printf(this.lineNumber));
 							error=true;
@@ -409,10 +417,14 @@ namespace AutoVala {
 				this.storeData(ConfigType.IGNORE,data_stream);
 				this.storeData(ConfigType.CUSTOM,data_stream);
 				this.storeData(ConfigType.DEFINE,data_stream);
+				this.storeData(ConfigType.GRESOURCE,data_stream);
+				this.storeData(ConfigType.VAPIDIR,data_stream);
 				this.storeData(ConfigType.VALA_BINARY,data_stream);
 				this.storeData(ConfigType.VALA_LIBRARY,data_stream);
 				this.storeData(ConfigType.PO,data_stream);
+				this.storeData(ConfigType.TRANSLATION,data_stream);
 				this.storeData(ConfigType.DATA,data_stream);
+				this.storeData(ConfigType.APPDATA,data_stream);
 				this.storeData(ConfigType.DOC,data_stream);
 				this.storeData(ConfigType.BINARY,data_stream);
 				this.storeData(ConfigType.DESKTOP,data_stream);
@@ -426,6 +438,8 @@ namespace AutoVala {
 				this.storeData(ConfigType.INCLUDE,data_stream);
 				this.storeData(ConfigType.MANPAGE,data_stream);
 				this.storeData(ConfigType.BASH_COMPLETION,data_stream);
+				this.storeData(ConfigType.SOURCE_DEPENDENCY,data_stream);
+				this.storeData(ConfigType.BINARY_DEPENDENCY,data_stream);
 			} catch (Error e) {
 				this.globalData.addError(_("Can't create the config file %s").printf(this.globalData.configFile));
 				return true;

@@ -8,6 +8,7 @@ set (RELEASE_NAME "autovala")
 set (CMAKE_C_FLAGS "")
 set (PREFIX ${CMAKE_INSTALL_PREFIX})
 set (VERSION "0.99")
+set (TESTSRCDIR "${CMAKE_SOURCE_DIR}")
 set (DOLLAR "$")
 
 configure_file (${CMAKE_SOURCE_DIR}/src/autovalaPlugin/Config.vala.cmake ${CMAKE_BINARY_DIR}/src/autovalaPlugin/Config.vala)
@@ -21,7 +22,7 @@ link_libraries ( ${DEPS_LIBRARIES} -lAutoVala )
 link_directories ( ${DEPS_LIBRARY_DIRS} ${CMAKE_BINARY_DIR}/src/autovalaLib )
 find_package (Vala REQUIRED)
 include (ValaVersion)
-ensure_vala_version ("0.24" MINIMUM)
+ensure_vala_version ("0.30" MINIMUM)
 include (ValaPrecompile)
 
 set (VALA_PACKAGES ${VALA_PACKAGES} atk)
@@ -35,6 +36,7 @@ set (VALA_PACKAGES ${VALA_PACKAGES} gobject-2.0)
 set (VALA_PACKAGES ${VALA_PACKAGES} gtk+-3.0)
 set (VALA_PACKAGES ${VALA_PACKAGES} pango)
 set (VALA_PACKAGES ${VALA_PACKAGES} pangocairo)
+set (VALA_PACKAGES ${VALA_PACKAGES} vte-2.91)
 set (VALA_PACKAGES ${VALA_PACKAGES} x11)
 
 set (APP_SOURCES ${APP_SOURCES} ${CMAKE_CURRENT_BINARY_DIR}/Config.vala)
@@ -49,6 +51,8 @@ set (CUSTOM_VAPIS_LIST ${CUSTOM_VAPIS_LIST} ${CMAKE_BINARY_DIR}/src/autovalaLib/
 
 if (DEBUG)
 	set (COMPILE_OPTIONS ${COMPILE_OPTIONS} -D DEBUG)
+	set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DDEBUG " )
+	set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DDEBUG " )
 endif ()
 set (COMPILE_OPTIONS ${COMPILE_OPTIONS} --library=AutovalaPlugin --gir AutovalaPlugin-0.0.gir )
 
@@ -66,13 +70,16 @@ GENERATE_HEADER
 	AutovalaPlugin
 )
 
+SET (VALA_C ${VALA_C} ${extras_gresource_xml_C_FILE})
 add_library(AutovalaPlugin SHARED ${VALA_C})
 
+add_dependencies (AutovalaPlugin extras_gresource_xml)
 set_target_properties( AutovalaPlugin PROPERTIES
 VERSION
 	0.99
 SOVERSION
 	0 )
+
 
 install(TARGETS
 	AutovalaPlugin
