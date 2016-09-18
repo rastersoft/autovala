@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-09-15 02:11+0200\n"
+"POT-Creation-Date: 2016-09-18 21:48+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -47,9 +47,9 @@ msgstr ""
 #: src/autovala.vala:104 src/autovala.vala:111 src/autovala.vala:127
 #: src/autovala.vala:141 src/autovala.vala:155 src/autovala.vala:169
 #: src/autovala.vala:183 src/autovala.vala:197 src/autovala.vala:211
-#: src/autovala.vala:228 src/autovalaPlugin/actionbuttons.vala:117
+#: src/autovala.vala:228 src/autovalaPlugin/actionbuttons.vala:136
 #: src/autovalaPlugin/actionbuttons.vala:145
-#: src/autovalaPlugin/actionbuttons.vala:150
+#: src/autovalaPlugin/actionbuttons.vala:166
 msgid "Aborting\n"
 msgstr ""
 
@@ -57,18 +57,16 @@ msgstr ""
 #: src/autovala.vala:130 src/autovala.vala:144 src/autovala.vala:158
 #: src/autovala.vala:172 src/autovala.vala:186 src/autovala.vala:200
 #: src/autovala.vala:217 src/autovala.vala:232
-#: src/autovalaPlugin/actionbuttons.vala:119
+#: src/autovalaPlugin/actionbuttons.vala:138
 #: src/autovalaPlugin/actionbuttons.vala:147
 msgid "Done\n"
 msgstr ""
 
 #: src/autovala.vala:100 src/autovala.vala:123
-#: src/autovalaPlugin/actionbuttons.vala:110
-#: src/autovalaPlugin/actionbuttons.vala:132
 msgid "Updating project file\n"
 msgstr ""
 
-#: src/autovala.vala:107 src/autovalaPlugin/actionbuttons.vala:140
+#: src/autovala.vala:107 src/autovalaPlugin/actionbuttons.vala:265
 msgid "Updating CMake files\n"
 msgstr ""
 
@@ -977,23 +975,32 @@ msgstr ""
 msgid "Failed to write data to rpmbuild/SPECS/SPEC file (%s)"
 msgstr ""
 
-#: src/autovalaPlugin/actionbuttons.vala:68
+#: src/autovalaPlugin/actionbuttons.vala:79
 msgid "Creates a new Autovala project"
 msgstr ""
 
-#: src/autovalaPlugin/actionbuttons.vala:72
+#: src/autovalaPlugin/actionbuttons.vala:89
 msgid "Refreshes the Autovala project"
 msgstr ""
 
-#: src/autovalaPlugin/actionbuttons.vala:76
-msgid "Refreshes the project and rebuilds the CMake files"
+#: src/autovalaPlugin/actionbuttons.vala:93
+msgid "Updates the project and rebuilds the CMake files"
 msgstr ""
 
-#: src/autovalaPlugin/actionbuttons.vala:80
+#: src/autovalaPlugin/actionbuttons.vala:97
+#: src/autovalaPlugin/actionbuttons.vala:101
+msgid "Builds the Autovala project"
+msgstr ""
+
+#: src/autovalaPlugin/actionbuttons.vala:111
 msgid "Updates the language translation files"
 msgstr ""
 
-#: src/autovalaPlugin/fileview.vala:438 src/autovalaPlugin/projectview.vala:604
+#: src/autovalaPlugin/actionbuttons.vala:242
+msgid "Refreshing project file\n"
+msgstr ""
+
+#: src/autovalaPlugin/fileview.vala:438 src/autovalaPlugin/projectview.vala:588
 msgid "Open"
 msgstr ""
 
@@ -1029,38 +1036,38 @@ msgstr ""
 msgid "Untitled folder"
 msgstr ""
 
-#: src/autovalaPlugin/projectview.vala:510
+#: src/autovalaPlugin/projectview.vala:494
 #, c-format
 msgid "%s <b>(Project file)</b>"
 msgstr ""
 
-#: src/autovalaPlugin/projectview.vala:524
+#: src/autovalaPlugin/projectview.vala:508
 #, c-format
 msgid "%s <b>(executable)</b>"
 msgstr ""
 
-#: src/autovalaPlugin/projectview.vala:531
+#: src/autovalaPlugin/projectview.vala:515
 #, c-format
 msgid "%s <b>(library)</b>"
 msgstr ""
 
-#: src/autovalaPlugin/projectview.vala:605
+#: src/autovalaPlugin/projectview.vala:589
 msgid "New executable/library"
 msgstr ""
 
-#: src/autovalaPlugin/projectview.vala:606
+#: src/autovalaPlugin/projectview.vala:590
 msgid "Edit library properties"
 msgstr ""
 
-#: src/autovalaPlugin/projectview.vala:606
+#: src/autovalaPlugin/projectview.vala:590
 msgid "Edit executable properties"
 msgstr ""
 
-#: src/autovalaPlugin/projectview.vala:607
+#: src/autovalaPlugin/projectview.vala:591
 msgid "Remove library"
 msgstr ""
 
-#: src/autovalaPlugin/projectview.vala:607
+#: src/autovalaPlugin/projectview.vala:591
 msgid "Remove executable"
 msgstr ""
 

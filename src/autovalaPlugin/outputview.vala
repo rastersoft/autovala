@@ -12,34 +12,64 @@ namespace AutovalaPlugin {
 	 */
 	public class OutputView : Gtk.Box {
 
-		private Gtk.TextBuffer buffer;
-		private Gtk.TextView view;
+		public bool running;
+
+		private Vte.Terminal view;
+		private Gtk.ScrolledWindow scroll;
+		private int current_pid;
+
+		public signal void running_command(int pid);
+		public signal void ended_command(int pid, int retval);
 
 		public OutputView() {
-			this.buffer = new Gtk.TextBuffer(null);
-			this.view = new Gtk.TextView();
-			this.view.buffer = this.buffer;
-			this.view.editable = false;
-			var scroll = new Gtk.ScrolledWindow(null,null);
-			scroll.add(this.view);
-			this.pack_start(scroll,true,true);
+			this.current_pid = -1;
+			this.view = null;
+			this.scroll = new Gtk.ScrolledWindow(null,null);
+			this.pack_start(this.scroll,true,true);
+			this.clear_buffer();
 			this.show_all();
 		}
 
 		public void clear_buffer() {
 
-			Gtk.TextIter start;
-			Gtk.TextIter end;
-			this.buffer.get_start_iter(out start);
-			this.buffer.get_end_iter(out end);
-			this.buffer.delete(ref start, ref end);
+			if (this.view != null) {
+				this.scroll.remove(this.view);
+			}
+			this.view = new Vte.Terminal();
+			this.view.child_exited.connect( (status) => {
+				this.running = false;
+				this.ended_command(this.current_pid,status);
+			});
+			this.scroll.add(this.view);
+			this.view.show_all();
+			this.view.set_scrollback_lines(-1);
+			this.view.set_scroll_on_output(true);
+			this.view.set_scroll_on_keystroke(false);
+			this.view.set_input_enabled(false);
 		}
 
 		public void append_text(string text) {
+			this.view.feed((uint8[]) text.replace("\n","\r\n"));
+		}
 
-			Gtk.TextIter end;
-			this.buffer.get_end_iter(out end);
-			this.buffer.insert(ref end,text,-1);
+		public int run_command(string[] command, string working_path, bool clear = true) {
+
+			if (this.running) {
+				return -1;
+			}
+
+			this.running = true;
+			if (clear) {
+				this.clear_buffer();
+			}
+
+			var retval = this.view.spawn_sync(Vte.PtyFlags.DEFAULT,working_path,command,Environ.get(),GLib.SpawnFlags.SEARCH_PATH,null, out this.current_pid);
+
+			if (retval) {
+				return this.current_pid;
+			} else {
+				return -1;
+			}
 		}
 	}
 }
