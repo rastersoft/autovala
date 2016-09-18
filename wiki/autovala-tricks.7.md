@@ -55,14 +55,16 @@ at the begining of any of the source files (be carefull: you must put it as a co
 
 ## Enabling debug symbols
 
-Just add in your .avprj file, in each binary/library section, the line
+Just add in your .avprj file, in each binary/library section, the lines
 
     compile_options: -g
+    compile_c_options: -g
 
 If you want to do it conditional, just use something like this:
 
     if DEBUG
     compile_options: -g
+    compile_c_options: -g
     endif
 
 And use "cmake .. -DDEBUG=on" to enable the debug symbols.

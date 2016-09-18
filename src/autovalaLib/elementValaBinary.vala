@@ -10,11 +10,11 @@
 
  AutoVala is distributed in the hope that it will be useful,
  but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  GNU General Public License for more details.
 
  You should have received a copy of the GNU General Public License
- along with this program.  If not, see <http://www.gnu.org/licenses/>. */
+ along with this program. If not, see <http://www.gnu.org/licenses/>. */
 
 using GLib;
 
@@ -80,7 +80,7 @@ namespace AutoVala {
 		}
 	}
 
-    public class DestinationElement:GenericElement {
+	public class DestinationElement:GenericElement {
 		public DestinationElement(string destination, bool automatic, string? condition, bool inverted) {
 			this.elementName=destination;
 			this.automatic=automatic;
@@ -548,18 +548,18 @@ namespace AutoVala {
 						}
 						var namespacesFound=regexString.substring(pos2+2,pos-pos2-2).split(",");
 						foreach(var namespaceFound_tmp in namespacesFound) {
-                            var namespaceFound = namespaceFound_tmp.strip();
-                            if ((namespaceFound == "Math") || (namespaceFound == "GLib.Math")) {
-                                if (added_math == false) {
-                                    added_math = true;
-                                    this.add_library("m");
-                                }
-                                continue;
-                            }
-                            if (this.usingList.contains(namespaceFound)==false) {
-                                this.usingList.add(namespaceFound);
-                            }
-                        }
+							var namespaceFound = namespaceFound_tmp.strip();
+							if ((namespaceFound == "Math") || (namespaceFound == "GLib.Math")) {
+								if (added_math == false) {
+									added_math = true;
+									this.add_library("m");
+								}
+								continue;
+							}
+							if (this.usingList.contains(namespaceFound)==false) {
+								this.usingList.add(namespaceFound);
+							}
+						}
 						continue;
 					}
 					// Check if this source file uses classes, to add the gobject package
@@ -773,7 +773,7 @@ namespace AutoVala {
 			return false;
 		}
 
-		public bool setCLibrary(string libraries,  bool automatic, string? condition, bool invertCondition, int lineNumber, bool erase_all=false) {
+		public bool setCLibrary(string libraries, bool automatic, string? condition, bool invertCondition, int lineNumber, bool erase_all=false) {
 
 			if (erase_all) {
 				// remove the manually added libraries
@@ -806,7 +806,7 @@ namespace AutoVala {
 			return false;
 		}
 
-		public bool setCompileOptions(string options,  bool automatic, string? condition, bool invertCondition, int lineNumber, bool erase_all=false) {
+		public bool setCompileOptions(string options, bool automatic, string? condition, bool invertCondition, int lineNumber, bool erase_all=false) {
 
 			if (erase_all) {
 				this._compileOptions = new Gee.ArrayList<CompileElement ?>();
@@ -832,7 +832,7 @@ namespace AutoVala {
 			return false;
 		}
 
-		public bool setCompileCOptions(string options,  bool automatic, string? condition, bool invertCondition, int lineNumber, bool erase_all=false) {
+		public bool setCompileCOptions(string options, bool automatic, string? condition, bool invertCondition, int lineNumber, bool erase_all=false) {
 
 			if (erase_all) {
 				this._compileOptions = new Gee.ArrayList<CompileElement ?>();
@@ -860,11 +860,11 @@ namespace AutoVala {
 
 		private bool setDestination(string destination, bool automatic, string? condition, bool invertCondition, int lineNumber) {
 
-            if (condition!= null) {
-                automatic = false;
-            }
+			if (condition!= null) {
+				automatic = false;
+			}
 
-            // adding a non-automatic destination to an automatic binary transforms this binary to non-automatic
+			// adding a non-automatic destination to an automatic binary transforms this binary to non-automatic
 			if ((automatic==false)&&(this._automatic==true)) {
 				this.transformToNonAutomatic(false);
 			}
@@ -874,7 +874,7 @@ namespace AutoVala {
 					return false;
 				}
 				if ((element.elementName==destination) && (element.condition==condition) && (element.invertCondition == invertCondition)) {
-    				ElementBase.globalData.addWarning(_("Ignoring duplicated DESTINATION command (line %d)").printf(lineNumber));
+					ElementBase.globalData.addWarning(_("Ignoring duplicated DESTINATION command (line %d)").printf(lineNumber));
 					return false;
 				}
 			}
@@ -1209,11 +1209,11 @@ namespace AutoVala {
 						continue;
 					}
 
-   					try {
+					try {
 						outputStream.write(output.data);
 					} catch (GLib.IOError e) {
 						ElementBase.globalData.addWarning(_("IOError: %s\n").printf(e.message));
-						   return false;
+						return false;
 					}
 
 
@@ -1239,7 +1239,7 @@ namespace AutoVala {
 
 					var files = ElementBase.getFilesFromFolder(GLib.Path.build_filename(this._path,"dbus_generated"),{".vala"},true,true);
 					foreach (var iface in files) {
-					   this.addSource(GLib.Path.build_filename("dbus_generated",iface),true,null,false,-1);
+						this.addSource(GLib.Path.build_filename("dbus_generated",iface),true,null,false,-1);
 					}
 				}
 			}
@@ -1490,8 +1490,8 @@ namespace AutoVala {
 						addDefines=true;
 						dataStream.put_string("if (%s)\n".printf(element.name));
 						dataStream.put_string("\tset (COMPILE_OPTIONS ${COMPILE_OPTIONS} -D %s)\n".printf(element.name));
-                        dataStream.put_string("\tset (CMAKE_C_FLAGS \"${CMAKE_C_FLAGS} -D%s \" )\n".printf(element.name));
-                        dataStream.put_string("\tset (CMAKE_CXX_FLAGS \"${CMAKE_CXX_FLAGS} -D%s \" )\n".printf(element.name));
+						dataStream.put_string("\tset (CMAKE_C_FLAGS \"${CMAKE_C_FLAGS} -D%s \" )\n".printf(element.name));
+						dataStream.put_string("\tset (CMAKE_CXX_FLAGS \"${CMAKE_CXX_FLAGS} -D%s \" )\n".printf(element.name));
 						dataStream.put_string("endif ()\n");
 					}
 				}
@@ -1522,6 +1522,17 @@ namespace AutoVala {
 					dataStream.put_string("set (COMPILE_OPTIONS ${COMPILE_OPTIONS} %s )\n".printf(element.elementName));
 				}
 				printConditions.printTail();
+
+				foreach (var resource in this._resources) {
+					foreach(var element in ElementBase.globalData.globalElements) {
+						if (element.eType==ConfigType.GRESOURCE) {
+							var gresource = element as ElementGResource;
+							if (gresource.identifier == resource.elementName) {
+								dataStream.put_string("set (COMPILE_OPTIONS ${COMPILE_OPTIONS} --gresources=${CMAKE_SOURCE_DIR}/%s )\n".printf(element.fullPath));
+							}
+						}
+					}
+				}
 
 				if (addDefines) {
 					dataStream.put_string("\n");
@@ -1606,27 +1617,27 @@ namespace AutoVala {
 
 					// Install library
 					bool cond_dest = false;
-                    if (this._destination.size != 0) {
-                        cond_dest = true;
-    					foreach(var element in this._destination) {
-                            printConditions.printCondition(element.condition,element.invertCondition);
-                            dataStream.put_string("set (INSTALL_LIBRARY_%s \"%s\" )\n".printf(libFilename,element.elementName));
-                            dataStream.put_string("set (INSTALL_INCLUDE_%s \"%s\" )\n".printf(libFilename,element.elementName));
-                            dataStream.put_string("set (INSTALL_VAPI_%s \"%s\" )\n".printf(libFilename,element.elementName));
-                            dataStream.put_string("set (INSTALL_GIR_%s \"%s\" )\n".printf(libFilename,element.elementName));
-                            dataStream.put_string("set (INSTALL_PKGCONFIG_%s \"%s\" )\n".printf(libFilename,element.elementName));
-	    				}
-    					printConditions.printTail();
-    				}
+						if (this._destination.size != 0) {
+							cond_dest = true;
+						foreach(var element in this._destination) {
+							printConditions.printCondition(element.condition,element.invertCondition);
+							dataStream.put_string("set (INSTALL_LIBRARY_%s \"%s\" )\n".printf(libFilename,element.elementName));
+							dataStream.put_string("set (INSTALL_INCLUDE_%s \"%s\" )\n".printf(libFilename,element.elementName));
+							dataStream.put_string("set (INSTALL_VAPI_%s \"%s\" )\n".printf(libFilename,element.elementName));
+							dataStream.put_string("set (INSTALL_GIR_%s \"%s\" )\n".printf(libFilename,element.elementName));
+							dataStream.put_string("set (INSTALL_PKGCONFIG_%s \"%s\" )\n".printf(libFilename,element.elementName));
+						}
+						printConditions.printTail();
+					}
 
 					dataStream.put_string("\ninstall(TARGETS\n");
 					dataStream.put_string("\t"+libFilename+"\n");
 					dataStream.put_string("LIBRARY DESTINATION\n");
 
 					if (cond_dest) {
-					    dataStream.put_string("\t${INSTALL_LIBRARY_%s}/\n)\n".printf(libFilename));
+						dataStream.put_string("\t${INSTALL_LIBRARY_%s}/\n)\n".printf(libFilename));
 					} else {
-    					dataStream.put_string("\t${CMAKE_INSTALL_LIBDIR}/\n)\n");
+						dataStream.put_string("\t${CMAKE_INSTALL_LIBDIR}/\n)\n");
 					}
 
 					// Install headers
@@ -1634,9 +1645,9 @@ namespace AutoVala {
 					dataStream.put_string("\t${CMAKE_CURRENT_BINARY_DIR}/"+libFilename+".h\n");
 					dataStream.put_string("DESTINATION\n");
 					if (cond_dest) {
-					    dataStream.put_string("\t${INSTALL_INCLUDE_%s}/\n)\n".printf(libFilename));
+						dataStream.put_string("\t${INSTALL_INCLUDE_%s}/\n)\n".printf(libFilename));
 					} else {
-					    dataStream.put_string("\t${CMAKE_INSTALL_INCLUDEDIR}/\n)\n");
+						dataStream.put_string("\t${CMAKE_INSTALL_INCLUDEDIR}/\n)\n");
 					}
 
 					// Install VAPI
@@ -1644,9 +1655,9 @@ namespace AutoVala {
 					dataStream.put_string("\t${CMAKE_CURRENT_BINARY_DIR}/"+libFilename+".vapi\n");
 					dataStream.put_string("DESTINATION\n");
 					if (cond_dest) {
-					    dataStream.put_string("\t${INSTALL_VAPI_%s}/\n)\n".printf(libFilename));
+						dataStream.put_string("\t${INSTALL_VAPI_%s}/\n)\n".printf(libFilename));
 					} else {
-					    dataStream.put_string("\t${CMAKE_INSTALL_DATAROOTDIR}/vala/vapi/\n)\n");
+						dataStream.put_string("\t${CMAKE_INSTALL_DATAROOTDIR}/vala/vapi/\n)\n");
 					}
 
 					// Install DEPS
@@ -1654,9 +1665,9 @@ namespace AutoVala {
 					dataStream.put_string("\t${CMAKE_CURRENT_BINARY_DIR}/"+libFilename+".deps\n");
 					dataStream.put_string("DESTINATION\n");
 					if (cond_dest) {
-					    dataStream.put_string("\t${INSTALL_VAPI_%s}/\n)\n".printf(libFilename));
+						dataStream.put_string("\t${INSTALL_VAPI_%s}/\n)\n".printf(libFilename));
 					} else {
-					    dataStream.put_string("\t${CMAKE_INSTALL_DATAROOTDIR}/vala/vapi/\n)\n");
+						dataStream.put_string("\t${CMAKE_INSTALL_DATAROOTDIR}/vala/vapi/\n)\n");
 					}
 
 					// Install GIR
@@ -1664,11 +1675,11 @@ namespace AutoVala {
 						dataStream.put_string("install(FILES\n");
 						dataStream.put_string("\t${CMAKE_CURRENT_BINARY_DIR}/"+girFilename+"\n");
 						dataStream.put_string("DESTINATION\n");
-    					if (cond_dest) {
-	    				    dataStream.put_string("\t${INSTALL_GIR_%s}/\n)\n".printf(libFilename));
-	    				} else {
-	    				    dataStream.put_string("\t${CMAKE_INSTALL_DATAROOTDIR}/gir-1.0/\n)\n");
-	    				}
+						if (cond_dest) {
+							dataStream.put_string("\t${INSTALL_GIR_%s}/\n)\n".printf(libFilename));
+						} else {
+							dataStream.put_string("\t${CMAKE_INSTALL_DATAROOTDIR}/gir-1.0/\n)\n");
+						}
 					}
 
 					// Install PC
@@ -1676,9 +1687,9 @@ namespace AutoVala {
 					dataStream.put_string("\t${CMAKE_CURRENT_BINARY_DIR}/"+pcFilename+"\n");
 					dataStream.put_string("DESTINATION\n");
 					if (cond_dest) {
-					    dataStream.put_string("\t${INSTALL_PKGCONFIG_%s}/\n)\n".printf(libFilename));
+						dataStream.put_string("\t${INSTALL_PKGCONFIG_%s}/\n)\n".printf(libFilename));
 					} else {
-					    dataStream.put_string("\t${CMAKE_INSTALL_LIBDIR}/pkgconfig/\n)\n");
+						dataStream.put_string("\t${CMAKE_INSTALL_LIBDIR}/pkgconfig/\n)\n");
 					}
 
 				} else {
@@ -1686,7 +1697,6 @@ namespace AutoVala {
 					dataStream.put_string("add_executable("+libFilename+" ${VALA_C})\n");
 					foreach (var resource in this._resources) {
 						dataStream.put_string("add_dependencies (%s %s)\n".printf(libFilename,resource.elementName));
-						//dataStream.put_string("SET (VALA_C ${VALA_C} ${%s_C_FILE})\n".printf(resource.elementName));
 					}
 
 					foreach (var element in this._link_libraries) {
@@ -1697,20 +1707,20 @@ namespace AutoVala {
 					dataStream.put_string("\n");
 					bool cond_dest = false;
 					if (this._destination.size != 0) {
-                        cond_dest = true;
-    					foreach(var element in this._destination) {
-                            printConditions.printCondition(element.condition,element.invertCondition);
-                            dataStream.put_string("set (INSTALL_BINARYPATH_%s \"%s\" )\n".printf(libFilename,element.elementName));
-	    				}
-    					printConditions.printTail();
-    				}
+						cond_dest = true;
+						foreach(var element in this._destination) {
+							printConditions.printCondition(element.condition,element.invertCondition);
+							dataStream.put_string("set (INSTALL_BINARYPATH_%s \"%s\" )\n".printf(libFilename,element.elementName));
+						}
+						printConditions.printTail();
+					}
 					dataStream.put_string("\ninstall(TARGETS\n");
 					dataStream.put_string("\t"+libFilename+"\n");
 					dataStream.put_string("RUNTIME DESTINATION\n");
 					if (cond_dest) {
-					    dataStream.put_string("\t${INSTALL_BINARYPATH_%s}\n)\n\n".printf(libFilename));
+						dataStream.put_string("\t${INSTALL_BINARYPATH_%s}\n)\n\n".printf(libFilename));
 					} else {
-					    dataStream.put_string("\t${CMAKE_INSTALL_BINDIR}\n)\n");
+						dataStream.put_string("\t${CMAKE_INSTALL_BINDIR}\n)\n");
 					}
 				}
 
@@ -1799,7 +1809,7 @@ namespace AutoVala {
 					dataStream.put_string("namespace: %s\n".printf(this._currentNamespace));
 				}
 
-                foreach(var element in this._destination) {
+				foreach(var element in this._destination) {
 					printConditions.printCondition(element.condition,element.invertCondition);
 					if (element.automatic) {
 						dataStream.put_string("*");

@@ -54,6 +54,7 @@ if (DEBUG)
 	set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DDEBUG " )
 endif ()
 set (COMPILE_OPTIONS ${COMPILE_OPTIONS} --library=AutovalaPlugin --gir AutovalaPlugin-0.0.gir )
+set (COMPILE_OPTIONS ${COMPILE_OPTIONS} --gresources=${CMAKE_SOURCE_DIR}/data/extras.gresource.xml )
 
 vala_precompile(VALA_C AutovalaPlugin
 	${APP_SOURCES}

@@ -1,4 +1,6 @@
 ## History of versions ##
+* version 0.99.42 (2016-09-18)
+   * Now it pases the gresource files to the vala compiler, allowing to use Gtk Templates
 * version 0.99.41 (2016-08-25)
    * Fixed a bug in the --vapidir folder generation
    * Fixed some compilation warnings

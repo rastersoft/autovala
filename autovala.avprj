@@ -10,7 +10,7 @@ custom: data/debian share/autovala/debian
 
 
 vala_binary: src/autovala
-*version: 0.99.41
+*version: 0.99.42
 compile_c_options: -O2
 vala_local_package: AutoVala
 *vala_package: posix
@@ -132,10 +132,10 @@ vala_local_package: AutoVala
 *translate: vala src/autovalaLib/elementVapidir.vala
 *translate: vala src/autovalaLib/packages_rpm.vala
 *translate: vala src/autovalaLib/elementDefine.vala
+*translate: vala src/autovalaLib/elementGResource.vala
 *translate: vala src/autovalaLib/configuration.vala
 *translate: vala src/autovalaLib/elementGlobal.vala
 *translate: vala src/autovalaLib/autovalaLib.vala
-*translate: vala src/autovalaLib/elementGResource.vala
 *translate: vala src/autovalaLib/elementValaBinary.vala
 *translate: vala src/autovalaLib/elementGlade.vala
 *translate: vala src/autovalaLib/globals.vala
@@ -145,11 +145,11 @@ vala_local_package: AutoVala
 *translate: vala src/autovalaLib/readPkgconfig.vala
 *translate: vala src/autovalaLib/elementBase.vala
 *translate: vala src/autovalaPlugin/PanedPercentage.vala
-*translate: vala src/autovalaPlugin/outputview.vala
 *translate: vala src/autovalaPlugin/searchview.vala
 *translate: vala src/autovalaPlugin/fileview.vala
-*translate: vala src/autovalaPlugin/actionbuttons.vala
 *translate: vala src/autovalaPlugin/projectview.vala
+*translate: vala src/autovalaPlugin/actionbuttons.vala
+*translate: vala src/autovalaPlugin/outputview.vala
 *translate: glade data/interface/binary_properties.ui
 *translate: glade data/interface/new_project.ui
 
