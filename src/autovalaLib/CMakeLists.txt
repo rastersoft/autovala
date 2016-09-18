@@ -88,6 +88,9 @@ if (DEBUG)
 endif ()
 
 
+if (DEBUG)
+	set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g " )
+endif ()
 set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O2 " )
 
 vala_precompile(VALA_C AutoVala

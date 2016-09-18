@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-09-15 02:11+0200\n"
-"PO-Revision-Date: 2016-08-02 22:52+0200\n"
+"POT-Creation-Date: 2016-09-18 21:48+0200\n"
+"PO-Revision-Date: 2016-09-18 20:58+0200\n"
 "Last-Translator: Sergio Costas <rastersoft@gmail.com>\n"
 "Language-Team: Español; Castellano <rastersoft@gmail.com>\n"
 "Language: en_US\n"
@@ -72,9 +72,9 @@ msgstr ""
 #: src/autovala.vala:104 src/autovala.vala:111 src/autovala.vala:127
 #: src/autovala.vala:141 src/autovala.vala:155 src/autovala.vala:169
 #: src/autovala.vala:183 src/autovala.vala:197 src/autovala.vala:211
-#: src/autovala.vala:228 src/autovalaPlugin/actionbuttons.vala:117
+#: src/autovala.vala:228 src/autovalaPlugin/actionbuttons.vala:136
 #: src/autovalaPlugin/actionbuttons.vala:145
-#: src/autovalaPlugin/actionbuttons.vala:150
+#: src/autovalaPlugin/actionbuttons.vala:166
 msgid "Aborting\n"
 msgstr "Abortando\n"
 
@@ -82,18 +82,16 @@ msgstr "Abortando\n"
 #: src/autovala.vala:130 src/autovala.vala:144 src/autovala.vala:158
 #: src/autovala.vala:172 src/autovala.vala:186 src/autovala.vala:200
 #: src/autovala.vala:217 src/autovala.vala:232
-#: src/autovalaPlugin/actionbuttons.vala:119
+#: src/autovalaPlugin/actionbuttons.vala:138
 #: src/autovalaPlugin/actionbuttons.vala:147
 msgid "Done\n"
 msgstr "Hecho\n"
 
 #: src/autovala.vala:100 src/autovala.vala:123
-#: src/autovalaPlugin/actionbuttons.vala:110
-#: src/autovalaPlugin/actionbuttons.vala:132
 msgid "Updating project file\n"
 msgstr "Actualizando el fichero de proyecto\n"
 
-#: src/autovala.vala:107 src/autovalaPlugin/actionbuttons.vala:140
+#: src/autovala.vala:107 src/autovalaPlugin/actionbuttons.vala:265
 msgid "Updating CMake files\n"
 msgstr "Actualizando los ficheros de CMake\n"
 
@@ -1048,26 +1046,32 @@ msgstr "No se ha podido borrar el fichero rpmbuild/SPECS/SPEC (%s)"
 msgid "Failed to write data to rpmbuild/SPECS/SPEC file (%s)"
 msgstr "Incapaz de escribir datos en el fichero rpmbuild/SPECS/SPEC (%s)"
 
-#: src/autovalaPlugin/actionbuttons.vala:68
+#: src/autovalaPlugin/actionbuttons.vala:79
 msgid "Creates a new Autovala project"
 msgstr "Crea un nuevo proyecto de Autovala"
 
-#: src/autovalaPlugin/actionbuttons.vala:72
-#, fuzzy
+#: src/autovalaPlugin/actionbuttons.vala:89
 msgid "Refreshes the Autovala project"
-msgstr "Crea un nuevo proyecto de Autovala"
+msgstr "Refresca el proyecto de Autovala"
 
-#: src/autovalaPlugin/actionbuttons.vala:76
-#, fuzzy
-msgid "Refreshes the project and rebuilds the CMake files"
-msgstr "Actualiza el proyecto y los ficheros de CMake"
+#: src/autovalaPlugin/actionbuttons.vala:93
+msgid "Updates the project and rebuilds the CMake files"
+msgstr "Actualiza el proyecto y regenera los ficheros de CMake"
 
-#: src/autovalaPlugin/actionbuttons.vala:80
-#, fuzzy
+#: src/autovalaPlugin/actionbuttons.vala:97
+#: src/autovalaPlugin/actionbuttons.vala:101
+msgid "Builds the Autovala project"
+msgstr "Compila el proyecto de Autovala"
+
+#: src/autovalaPlugin/actionbuttons.vala:111
 msgid "Updates the language translation files"
-msgstr "Actualizar las traducciones"
+msgstr "Actualiza las traducciones"
 
-#: src/autovalaPlugin/fileview.vala:438 src/autovalaPlugin/projectview.vala:604
+#: src/autovalaPlugin/actionbuttons.vala:242
+msgid "Refreshing project file\n"
+msgstr "Refrescando el proyecto\n"
+
+#: src/autovalaPlugin/fileview.vala:438 src/autovalaPlugin/projectview.vala:588
 msgid "Open"
 msgstr "Abrir"
 
@@ -1103,38 +1107,38 @@ msgstr "Fichero sin título"
 msgid "Untitled folder"
 msgstr "Directorio sin título"
 
-#: src/autovalaPlugin/projectview.vala:510
+#: src/autovalaPlugin/projectview.vala:494
 #, c-format
 msgid "%s <b>(Project file)</b>"
 msgstr "%s <b>(Fichero de proyecto)</b>"
 
-#: src/autovalaPlugin/projectview.vala:524
+#: src/autovalaPlugin/projectview.vala:508
 #, c-format
 msgid "%s <b>(executable)</b>"
 msgstr "%s <b>(ejecutable)</b>"
 
-#: src/autovalaPlugin/projectview.vala:531
+#: src/autovalaPlugin/projectview.vala:515
 #, c-format
 msgid "%s <b>(library)</b>"
 msgstr "%s <b>(biblioteca)</b>"
 
-#: src/autovalaPlugin/projectview.vala:605
+#: src/autovalaPlugin/projectview.vala:589
 msgid "New executable/library"
 msgstr "Nuevo ejecutable/biblioteca"
 
-#: src/autovalaPlugin/projectview.vala:606
+#: src/autovalaPlugin/projectview.vala:590
 msgid "Edit library properties"
 msgstr "Editar propiedades de la biblioteca"
 
-#: src/autovalaPlugin/projectview.vala:606
+#: src/autovalaPlugin/projectview.vala:590
 msgid "Edit executable properties"
 msgstr "Editar propiedades del ejecutable"
 
-#: src/autovalaPlugin/projectview.vala:607
+#: src/autovalaPlugin/projectview.vala:591
 msgid "Remove library"
 msgstr "Borrar biblioteca"
 
-#: src/autovalaPlugin/projectview.vala:607
+#: src/autovalaPlugin/projectview.vala:591
 msgid "Remove executable"
 msgstr "Borrar ejecutable"
 
@@ -1208,6 +1212,9 @@ msgstr "Nombre del proyecto:"
 #: data/interface/new_project.ui:104
 msgid "Project folder:"
 msgstr "Carpeta del proyecto:"
+
+#~ msgid "Launching %s at %s folder\n"
+#~ msgstr "Lanzando el comando %s en el directorio %s\n"
 
 #~ msgid "New project"
 #~ msgstr "Nuevo proyecto"
@@ -1545,6 +1552,3 @@ msgstr "Carpeta del proyecto:"
 
 #~ msgid "Failed to get access to the project file\n"
 #~ msgstr "No se ha podido acceder al fichero de proyecto\n"
-
-#~ msgid "Refresh project"
-#~ msgstr "Refrescar proyecto"

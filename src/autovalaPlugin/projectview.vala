@@ -157,7 +157,7 @@ namespace AutovalaPlugin {
 				this.refresh_project(true);
 			});
 			if (this.outputView != null) {
-				this.link_output_view_internal();
+				this.actionButtons.register_output_view(this.outputView);
 			}
 			return true;
 		}
@@ -176,25 +176,9 @@ namespace AutovalaPlugin {
 
 			this.outputView = outputView;
 			if (this.actionButtons != null) {
-				this.link_output_view_internal();
+				this.actionButtons.register_output_view(this.outputView);
 			}
 			return true;
-		}
-
-		/**
-		 * When there is both an OutputView and an ActionButtons, this method
-		 * links both to make the messages from the later be shown in the former
-		 */
-		private void link_output_view_internal() {
-
-			this.actionButtons.output_message_clear.connect( () => {
-				this.outputView.clear_buffer();
-			});
-
-			this.actionButtons.output_message_append.connect( (msg) => {
-				this.outputView.append_text(msg);
-			});
-
 		}
 
 		/**

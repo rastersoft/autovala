@@ -10,7 +10,13 @@ custom: data/debian share/autovala/debian
 
 
 vala_binary: src/autovala
-*version: 0.99.42
+*version: 0.99.43
+if DEBUG
+compile_options: -g
+end
+if DEBUG
+compile_c_options: -g
+end
 compile_c_options: -O2
 vala_local_package: AutoVala
 *vala_package: posix
@@ -25,6 +31,9 @@ vala_library: src/autovalaLib/autovalaLib
 *namespace: AutoVala
 if DEBUG
 compile_options: -g --fatal-warnings
+end
+if DEBUG
+compile_c_options: -g
 end
 compile_c_options: -O2
 *vala_package: posix
@@ -95,6 +104,7 @@ vala_local_package: AutoVala
 *vala_check_package: gtk+-3.0
 *vala_check_package: pango
 *vala_check_package: pangocairo
+*vala_check_package: vte-2.91
 *vala_check_package: x11
 *vala_source: PanedPercentage.vala
 *vala_source: actionbuttons.vala
@@ -106,10 +116,7 @@ vala_local_package: AutoVala
 *po: po
 
 *translate: vala src/autovala.vala
-*translate: vala src/autovalaLib/packages_pacman.vala
 *translate: vala src/autovalaLib/elementIcon.vala
-*translate: vala src/autovalaLib/elementSDepend.vala
-*translate: vala src/autovalaLib/packages.vala
 *translate: vala src/autovalaLib/elementDBus.vala
 *translate: vala src/autovalaLib/elementCustom.vala
 *translate: vala src/autovalaLib/elementDoc.vala
@@ -121,29 +128,35 @@ vala_local_package: AutoVala
 *translate: vala src/autovalaLib/elementScheme.vala
 *translate: vala src/autovalaLib/elementEosPlug.vala
 *translate: vala src/autovalaLib/elementData.vala
-*translate: vala src/autovalaLib/elementAppData.vala
 *translate: vala src/autovalaLib/elementInclude.vala
 *translate: vala src/autovalaLib/conditionalText.vala
-*translate: vala src/autovalaLib/packages_deb.vala
 *translate: vala src/autovalaLib/findVala.vala
 *translate: vala src/autovalaLib/elementManpage.vala
 *translate: vala src/autovalaLib/genVapis.vala
-*translate: vala src/autovalaLib/elementBDepend.vala
-*translate: vala src/autovalaLib/elementVapidir.vala
-*translate: vala src/autovalaLib/packages_rpm.vala
 *translate: vala src/autovalaLib/elementDefine.vala
 *translate: vala src/autovalaLib/elementGResource.vala
 *translate: vala src/autovalaLib/configuration.vala
-*translate: vala src/autovalaLib/elementGlobal.vala
 *translate: vala src/autovalaLib/autovalaLib.vala
-*translate: vala src/autovalaLib/elementValaBinary.vala
-*translate: vala src/autovalaLib/elementGlade.vala
-*translate: vala src/autovalaLib/globals.vala
-*translate: vala src/autovalaLib/elementPo.vala
-*translate: vala src/autovalaLib/elementTranslation.vala
-*translate: vala src/autovalaLib/gresource_xml.vala
-*translate: vala src/autovalaLib/readPkgconfig.vala
+*translate: vala src/autovalaLib/elementGlobal.vala
 *translate: vala src/autovalaLib/elementBase.vala
+*translate: vala src/autovalaLib/elementGlade.vala
+*translate: vala src/autovalaLib/elementPo.vala
+*translate: vala src/autovalaLib/elementValaBinary.vala
+*translate: vala src/autovalaLib/globals.vala
+*translate: vala src/autovalaLib/readPkgconfig.vala
+*translate: vala src/autovalaLib/elementAppData.vala
+*translate: vala src/autovalaLib/elementBDepend.vala
+*translate: vala src/autovalaLib/elementGResource.vala
+*translate: vala src/autovalaLib/elementSDepend.vala
+*translate: vala src/autovalaLib/elementTranslation.vala
+*translate: vala src/autovalaLib/elementVapidir.vala
+*translate: vala src/autovalaLib/gresource_xml.vala
+*translate: vala src/autovalaLib/packages.vala
+*translate: vala src/autovalaLib/packages_deb.vala
+*translate: vala src/autovalaLib/packages_pacman.vala
+*translate: vala src/autovalaLib/packages_rpm.vala
+*translate: vala src/autovalaPlugin/outputview.vala
+*translate: vala src/autovalaPlugin/actionbuttons.vala
 *translate: vala src/autovalaPlugin/PanedPercentage.vala
 *translate: vala src/autovalaPlugin/searchview.vala
 *translate: vala src/autovalaPlugin/fileview.vala
