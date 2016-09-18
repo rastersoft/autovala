@@ -123,7 +123,7 @@ namespace AutovalaPlugin {
 					this.current_project.refresh(Path.build_filename(project_path,project_name+".avprj"));
 					var base_name = Path.build_filename(project_path,"src",project_name+".vala");
 					this.open_file(base_name);
-					this.output_view.clear_buffer();
+					this.output_view_clear_buffer();
 				}
 				this.create_new_project.destroy();
 				this.create_new_project = null;
@@ -132,35 +132,35 @@ namespace AutovalaPlugin {
 			this.refresh_project.clicked.connect( () => {
 				this.current_project = new AutoVala.ManageProject();
 				if (this.refresh_project_cb()) {
-					this.output_view.append_text(_("Aborting\n"));
+					this.output_view_append_text(_("Aborting\n"));
 				} else {
-					this.output_view.append_text(_("Done\n"));
+					this.output_view_append_text(_("Done\n"));
 				}
 			});
 
 			this.update_project.clicked.connect( () => {
 				this.current_project = new AutoVala.ManageProject();
 				if (this.update_project_cb()) {
-					this.output_view.append_text(_("Aborting\n"));
+					this.output_view_append_text(_("Aborting\n"));
 				} else {
-					this.output_view.append_text(_("Done\n"));
+					this.output_view_append_text(_("Done\n"));
 				}
 			});
 
 			this.update_translations.clicked.connect( () => {
-				this.output_view.clear_buffer();
+				this.output_view_clear_buffer();
 				this.current_project = new AutoVala.ManageProject();
 				var retval = this.current_project.gettext(this.current_project_file);
 				var msgs = this.current_project.getErrors();
 				foreach(var msg in msgs) {
-					this.output_view.append_text(msg+"\n");
+					this.output_view_append_text(msg+"\n");
 				}
 				this.action_update_gettext(retval);
 			});
 
 			this.build_project.clicked.connect( () => {
 
-				this.output_view.clear_buffer();
+				this.output_view_clear_buffer();
 				if (this.current_project_path == null) {
 					this.update_buttons();
 					return;
@@ -172,7 +172,7 @@ namespace AutovalaPlugin {
 
 			this.full_build_project.clicked.connect( () => {
 
-				this.output_view.clear_buffer();
+				this.output_view_clear_buffer();
 				if (this.current_project_path == null) {
 					this.update_buttons();
 					return;
@@ -185,7 +185,19 @@ namespace AutovalaPlugin {
 			this.show_all();
 		}
 
-		public bool delete_recursive (string fileFolder, bool delete_this) {
+		private void output_view_clear_buffer() {
+			if (this.output_view != null) {
+				this.output_view.clear_buffer();
+			}
+		}
+
+		private void output_view_append_text(string text) {
+			if (this.output_view != null) {
+				this.output_view.append_text(text);
+			}
+		}
+
+		private bool delete_recursive (string fileFolder, bool delete_this) {
 
 			var src=File.new_for_path(fileFolder);
 
@@ -200,7 +212,7 @@ namespace AutovalaPlugin {
 						}
 					}
 				} catch (Error e) {
-					this.output_view.append_text(_("Failed when deleting recursively the folder %s").printf(fileFolder));
+					this.output_view_append_text(_("Failed when deleting recursively the folder %s").printf(fileFolder));
 					return true;
 				}
 			}
@@ -209,7 +221,7 @@ namespace AutovalaPlugin {
 					src.delete();
 				} catch (Error e) {
 					if (srcType != GLib.FileType.DIRECTORY) {
-						this.output_view.append_text(_("Failed when deleting the file %s").printf(fileFolder));
+						this.output_view_append_text(_("Failed when deleting the file %s").printf(fileFolder));
 					}
 					return true;
 				}
@@ -250,7 +262,7 @@ namespace AutovalaPlugin {
 		private bool full_build_cb(bool clear = true) {
 
 			if (this.update_project_cb(false)) {
-				this.output_view.append_text(_("Aborting\n"));
+				this.output_view_append_text(_("Aborting\n"));
 				return true;
 			}
 
@@ -264,7 +276,7 @@ namespace AutovalaPlugin {
 			}
 
 			if (this.delete_recursive(install_path, false)) {
-				this.output_view.append_text(_("Aborting\n"));
+				this.output_view_append_text(_("Aborting\n"));
 				return true;
 			}
 
@@ -302,7 +314,7 @@ namespace AutovalaPlugin {
 		public void program_ended(int pid, int retval) {
 			this.running_command = false;
 			if (retval != 0) {
-				this.output_view.append_text(_("Aborting\n"));
+				this.output_view_append_text(_("Aborting\n"));
 			} else {
 				if (this.more_commands) {
 					var install_path = GLib.Path.build_filename(this.current_project_path,"install");
@@ -320,7 +332,7 @@ namespace AutovalaPlugin {
 					this.current_status++;
 					return;
 				} else {
-					this.output_view.append_text(_("Done\n"));
+					this.output_view_append_text(_("Done\n"));
 				}
 			}
 			this.update_buttons();
@@ -334,13 +346,13 @@ namespace AutovalaPlugin {
 		private bool refresh_project_cb(bool send_action = true) {
 			string[] msgs;
 
-			this.output_view.clear_buffer();
+			this.output_view_clear_buffer();
 			var retval=this.current_project.refresh(this.current_project_file);
 
 			msgs = this.current_project.getErrors();
-			this.output_view.append_text(_("Refreshing project file\n"));
+			this.output_view_append_text(_("Refreshing project file\n"));
 			foreach(var msg in msgs) {
-				this.output_view.append_text(msg+"\n");
+				this.output_view_append_text(msg+"\n");
 			}
 			if (send_action) {
 				this.action_refresh_project(retval);
@@ -361,9 +373,9 @@ namespace AutovalaPlugin {
 
 			var retval=this.current_project.cmake(this.current_project_file);
 			var msgs = this.current_project.getErrors();
-			this.output_view.append_text(_("Updating CMake files\n"));
+			this.output_view_append_text(_("Updating CMake files\n"));
 			foreach(var msg in msgs) {
-				this.output_view.append_text(msg+"\n");
+				this.output_view_append_text(msg+"\n");
 			}
 
 			if (send_action) {
