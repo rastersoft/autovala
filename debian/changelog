@@ -1,8 +1,14 @@
+autovala (0.99.43-Debian1) sid; urgency=low
+
+  * Allows to compile and fully rebuild the project from external editors, like Gedit
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Sun, 18 Sep 2016 23:55:00 +0200
+
 autovala (0.99.42-Debian1) sid; urgency=low
 
   * Now it pases the gresource files to the vala compiler, allowing to use Gtk Templates
 
- -- Sergio Costas Rodriguez <raster@rastersoft.com>  Sun, 18 Sep 2016 23:55:00 +0200
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Sun, 18 Sep 2016 23:50:00 +0200
 
 autovala (0.99.41-Debian1) sid; urgency=low
 
