@@ -134,7 +134,6 @@ vala_local_package: AutoVala
 *translate: vala src/autovalaLib/elementManpage.vala
 *translate: vala src/autovalaLib/genVapis.vala
 *translate: vala src/autovalaLib/elementDefine.vala
-*translate: vala src/autovalaLib/elementGResource.vala
 *translate: vala src/autovalaLib/configuration.vala
 *translate: vala src/autovalaLib/autovalaLib.vala
 *translate: vala src/autovalaLib/elementGlobal.vala
@@ -156,13 +155,11 @@ vala_local_package: AutoVala
 *translate: vala src/autovalaLib/packages_pacman.vala
 *translate: vala src/autovalaLib/packages_rpm.vala
 *translate: vala src/autovalaPlugin/outputview.vala
-*translate: vala src/autovalaPlugin/actionbuttons.vala
 *translate: vala src/autovalaPlugin/PanedPercentage.vala
 *translate: vala src/autovalaPlugin/searchview.vala
 *translate: vala src/autovalaPlugin/fileview.vala
-*translate: vala src/autovalaPlugin/projectview.vala
 *translate: vala src/autovalaPlugin/actionbuttons.vala
-*translate: vala src/autovalaPlugin/outputview.vala
+*translate: vala src/autovalaPlugin/projectview.vala
 *translate: glade data/interface/binary_properties.ui
 *translate: glade data/interface/new_project.ui
 
