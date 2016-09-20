@@ -48,7 +48,7 @@ namespace AutoVala {
 
 		public override void add_files() {
 
-			this.file_list = new Gee.ArrayList<string>(); // this doesn't return files
+			this.file_list = {}; // this doesn't return files
 		}
 
 		public override bool configureElement(string? fullPathP, string? path, string? name, bool automatic, string? condition, bool invertCondition) {

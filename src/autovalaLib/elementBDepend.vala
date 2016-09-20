@@ -28,7 +28,7 @@ namespace AutoVala {
 		}
 
 		public override void add_files() {
-			this.file_list = new Gee.ArrayList<string>();
+			this.file_list = {};
 		}
 
 		public override bool autoConfigure(string? path=null) {

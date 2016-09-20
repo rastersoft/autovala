@@ -129,16 +129,12 @@ namespace AutoVala {
 
 		public override void add_files() {
 
-			this.file_list = new Gee.ArrayList<string>();
-			var tmp = this.get_inner_files(true);
-			foreach(var f in tmp) {
-				this.file_list.add(f);
-			}
+			this.file_list = this.get_inner_files(true);
 			if (this.file_list == null) {
-				this.file_list = new Gee.ArrayList<string>();
+				this.file_list = {};
 			}
 			var full_path = GLib.Path.build_filename(this._path, this._name);
-			this.file_list.add(full_path);
+			this.file_list += full_path;
 
 		}
 

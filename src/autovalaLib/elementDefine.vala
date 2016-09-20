@@ -28,7 +28,7 @@ namespace AutoVala {
 		}
 
 		public override void add_files() {
-			this.file_list = new Gee.ArrayList<string>();
+			this.file_list = {};
 		}
 
 		public override bool configureLine(string line, bool automatic, string? condition, bool invertCondition, int lineNumber) {
