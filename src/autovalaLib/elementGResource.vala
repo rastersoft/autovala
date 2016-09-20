@@ -23,7 +23,7 @@ namespace AutoVala {
 	private class ElementGResource : ElementBase {
 
 		private string[] gresource_files;
-		private string identifier;
+		public string identifier;
 
 		public ElementGResource() {
 			this._type = ConfigType.GRESOURCE;
