@@ -43,8 +43,12 @@ namespace AutoVala {
 			string[] extensions = {};
 			extensions += "po";
 			extensions += "pot";
-			this.file_list = ElementBase.getFilesFromFolder(this._path,extensions,false);
-			this.file_list+= Path.build_filename(this._path,"POTFILES.in");
+			this.file_list = new Gee.ArrayList<string>();
+			var tmp = ElementBase.getFilesFromFolder(this._path,extensions,false);
+			foreach(var f in tmp) {
+				this.file_list.add(f);
+			}
+			this.file_list.add(Path.build_filename(this._path,"POTFILES.in"));
 		}
 
 		public override bool generateCMake(DataOutputStream dataStream) {

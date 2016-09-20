@@ -45,8 +45,11 @@ namespace AutoVala {
 				// don't add VAPI files that aren't inside this project
 				return;
 			}
-
-			this.file_list = AutoVala.ElementBase.getFilesFromFolder(this._fullPath,{".vapi"},false);
+			this.file_list = new Gee.ArrayList<string>();
+			var tmp = ElementBase.getFilesFromFolder(this._fullPath,{".vapi"},false);
+			foreach(var f in tmp) {
+				this.file_list.add(f);
+			}
 		}
 
 	}

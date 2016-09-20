@@ -34,7 +34,7 @@ namespace AutoVala {
 
 	abstract class ElementBase : GLib.Object {
 
-		public string[]? file_list = null;
+		public Gee.List<string>? file_list = null;
 
 		public static Globals globalData = null;
 		public bool processed=false;
@@ -84,9 +84,9 @@ namespace AutoVala {
 		 */
 		public virtual void add_files() {
 
-			this.file_list = {};
+			this.file_list = new Gee.ArrayList<string>();
 			var full_path = GLib.Path.build_filename(this._path, this._name);
-			this.file_list += full_path;
+			this.file_list.add(full_path);
 		}
 
 		/**

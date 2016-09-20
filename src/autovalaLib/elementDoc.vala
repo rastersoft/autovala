@@ -41,7 +41,11 @@ namespace AutoVala {
 
 		public override void add_files() {
 
-			this.file_list = ElementBase.getFilesFromFolder(this._path,null,true);
+			this.file_list = new Gee.ArrayList<string>();
+			var tmp = ElementBase.getFilesFromFolder(this._path,null,true);
+			foreach(var f in tmp) {
+				this.file_list.add(f);
+			}
 		}
 
 		public override bool generateCMake(DataOutputStream dataStream) {

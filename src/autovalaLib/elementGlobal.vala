@@ -166,29 +166,29 @@ namespace AutoVala {
 					}
 				}
 
-                // Check for files that must be available
-                foreach(var element in ElementBase.globalData.globalElements) {
+				// Check for files that must be available
+				foreach(var element in ElementBase.globalData.globalElements) {
 					if ((element.eType != ConfigType.SOURCE_DEPENDENCY) && (element.eType!=ConfigType.BINARY_DEPENDENCY)) {
 						continue;
 					}
-				    printConditions.printCondition(element.condition,element.invertCondition);
+					printConditions.printCondition(element.condition,element.invertCondition);
 					dataStream.put_string("if ( ");
 					var paths = element.path.split(" ");
 					bool first = true;
 					foreach (var path in paths) {
-					    if (path == "") {
-					        continue;
-					    }
-					    if (! first) {
-    					    dataStream.put_string(" AND ");
-					    }
-					    first = false;
-					    dataStream.put_string("(NOT EXISTS \"%s\")".printf(path));
+						if (path == "") {
+							continue;
+						}
+						if (! first) {
+							dataStream.put_string(" AND ");
+						}
+						first = false;
+						dataStream.put_string("(NOT EXISTS \"%s\")".printf(path));
 					}
 					dataStream.put_string(")\n\tmessage(FATAL_ERROR \"Can't find any of the files %s\")\nendif()\n".printf(element.path));
-					printConditions.printTail();
-					dataStream.put_string("\n");
 				}
+				printConditions.printTail();
+				dataStream.put_string("\n");
 
 				// check for PANDOC, but only if there are man pages in non-groff format
 				foreach(var element in ElementBase.globalData.globalElements) {

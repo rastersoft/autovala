@@ -402,14 +402,18 @@ namespace AutoVala {
 
 		public override void add_files() {
 
-			this.file_list = ElementBase.getFilesFromFolder(this._path,{".vala",".c",".h",".pc","deps",".cmake"},true);
+			var tmp_file_list = ElementBase.getFilesFromFolder(this._path,{".vala",".c",".h",".pc","deps",".cmake"},true);
+			this.file_list = new Gee.ArrayList<string>();
+			foreach(var f in tmp_file_list) {
+				this.file_list.add(f);
+			}
 			var files = ElementBase.getFilesFromFolder(GLib.Path.build_filename(this._path,"vapis"),{".vapi"},true);
 			foreach (var element in files) {
-				this.file_list += element;
+				this.file_list.add(element);
 			}
 			files = ElementBase.getFilesFromFolder(GLib.Path.build_filename(this._path,"dbus_generated"),{".vala"},true);
 			foreach (var element in files) {
-				this.file_list+= element;
+				this.file_list.add(element);
 			}
 		}
 

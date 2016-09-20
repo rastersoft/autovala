@@ -1,4 +1,6 @@
 ## History of versions ##
+* version 0.99.44 (2016-09-20)
+   * Allows to use conditionals in INCLUDE, SOURCE_DEPENDENCY and BINARY_DEPENDENCY commands
 * version 0.99.43 (2016-09-18)
    * Allows to compile and fully rebuild the project from external editors, like Gedit
 * version 0.99.42 (2016-09-18)

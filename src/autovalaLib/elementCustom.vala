@@ -34,10 +34,14 @@ namespace AutoVala {
 
 			var file = File.new_for_path(Path.build_filename(ElementBase.globalData.projectFolder,this.source));
 			if (file.query_file_type(FileQueryInfoFlags.NONE) == GLib.FileType.DIRECTORY) {
-				this.file_list = ElementBase.getFilesFromFolder(this._path,null,true);
+				this.file_list = new Gee.ArrayList<string>();
+				var tmp = ElementBase.getFilesFromFolder(this._path,null,true);
+				foreach(var f in tmp) {
+					this.file_list.add(f);
+				}
 			} else {
-				this.file_list = {};
-				this.file_list+=this.source;
+				this.file_list = new Gee.ArrayList<string>();
+				this.file_list.add(this.source);
 			}
 		}
 

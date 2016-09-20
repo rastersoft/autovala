@@ -345,7 +345,7 @@ namespace AutoVala {
 		 * Comparation function to sort the elements
 		 */
 		public static int compareElements (ElementBase? a, ElementBase? b) {
-			if ((a.condition==null)&&(b.condition==null)) {
+			if ((a.condition==null) && (b.condition==null)) {
 				if ((a.fullPath == null) && (b.fullPath == null)) {
 					return 0;
 				}
@@ -364,7 +364,7 @@ namespace AutoVala {
 				return 1;
 			}
 			if (a.condition==b.condition) {
-				if (a.invertCondition==b.invertCondition) {
+				if (a.invertCondition == b.invertCondition) {
 					if ((a.fullPath == null) && (b.fullPath == null)) {
 						return 0;
 					}
