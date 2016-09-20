@@ -1,3 +1,9 @@
+autovala (0.99.44-Debian1) sid; urgency=low
+
+  * Allows to use conditionals in INCLUDE, SOURCE_DEPENDENCY and BINARY_DEPENDENCY commands
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Tue, 20 Sep 2016 23:55:00 +0200
+
 autovala (0.99.43-Debian1) sid; urgency=low
 
   * Allows to compile and fully rebuild the project from external editors, like Gedit
