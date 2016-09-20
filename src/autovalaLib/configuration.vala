@@ -47,7 +47,7 @@ namespace AutoVala {
 				Intl.bindtextdomain(AutoValaConstants.GETTEXT_PACKAGE, Path.build_filename(AutoValaConstants.DATADIR,"locale"));
 			}
 
-			this.currentVersion=21; // currently we support version 21 of the syntax
+			this.currentVersion=22; // currently we support version 22 of the syntax
 			this.version=0;
 
 			this.globalData = new AutoVala.Globals(projectName,basePath);
@@ -260,10 +260,6 @@ namespace AutoVala {
 						}
 						element = new ElementValaBinary();
 					} else if (line.has_prefix("include: ")) {
-						if (this.checkConditionals(cond)) {
-							error=true;
-							continue;
-						}
 						element = new ElementInclude();
 					} else if (line.has_prefix("define: ")) {
 						if (this.checkConditionals(cond)) {
@@ -275,7 +271,7 @@ namespace AutoVala {
 						error |= this.addCondition(line.substring(3).strip());
 						ifLineNumber=this.lineNumber;
 						continue;
-					} else	if (line.strip()=="else") {
+					} else if (line.strip()=="else") {
 						error|=this.invertCondition();
 						continue;
 					} else if (line.strip()=="end") {
@@ -449,9 +445,9 @@ namespace AutoVala {
 		private void storeData(ConfigType type, GLib.DataOutputStream dataStream) {
 
 			bool printed = false;
-			var printConditions=new ConditionalText(dataStream,false);
+			var printConditions = new ConditionalText(dataStream,false);
 			foreach(var element in this.globalData.globalElements) {
-				if (element.eType==type) {
+				if (element.eType == type) {
 					printConditions.printCondition(element.condition,element.invertCondition);
 					element.storeConfig(dataStream,printConditions);
 					printed = true;

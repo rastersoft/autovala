@@ -49,11 +49,9 @@ pkg_check_modules(DEPS REQUIRED ${MODULES_TO_CHECK})
 if ( (NOT EXISTS "/usr/include/readline/readline.h"))
 	message(FATAL_ERROR "Can't find any of the files /usr/include/readline/readline.h")
 endif()
-
 if ( (NOT EXISTS "/usr/bin/pandoc"))
 	message(FATAL_ERROR "Can't find any of the files /usr/bin/pandoc")
 endif()
-
 if ( (NOT EXISTS "/usr/bin/curl"))
 	message(FATAL_ERROR "Can't find any of the files /usr/bin/curl")
 endif()

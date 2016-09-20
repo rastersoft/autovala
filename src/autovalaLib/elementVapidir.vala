@@ -45,7 +45,6 @@ namespace AutoVala {
 				// don't add VAPI files that aren't inside this project
 				return;
 			}
-
 			this.file_list = AutoVala.ElementBase.getFilesFromFolder(this._fullPath,{".vapi"},false);
 		}
 

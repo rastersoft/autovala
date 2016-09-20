@@ -43,7 +43,7 @@ namespace AutoVala {
 				return true;
 			}
 			var data = line.substring(2+this.command.length).strip();
-			return this.configureElement(null,data,data,false,null,false);
+			return this.configureElement(null,data,data,false,condition,invertCondition);
 		}
 	}
 }
