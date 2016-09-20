@@ -70,6 +70,7 @@ namespace AutoVala {
 		public string? condition {
 			get {return this._condition;}
 		}
+
 		public bool invertCondition {
 			get {return this._invertCondition;}
 		}
@@ -314,7 +315,7 @@ namespace AutoVala {
 		 * @param dataStream The data stream for the CMakeList.txt file being processed
 		 * @return //true// if there was an error; //false// if not. The error texts can be obtained by calling to returnErrors()
 		 */
-		public virtual bool storeConfig(DataOutputStream dataStream,ConditionalText printConditions) {
+		public virtual bool storeConfig(DataOutputStream dataStream, ConditionalText printConditions) {
 
 			string data;
 			if (this.fullPath == null) {

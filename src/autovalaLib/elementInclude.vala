@@ -22,20 +22,41 @@ namespace AutoVala {
 
 	private class ElementInclude : ElementBase {
 
+		private string? post_condition;
+		private bool post_invertCondition;
+
 		public ElementInclude() {
 			this._type = ConfigType.INCLUDE;
 			this.command = "include";
 		}
 
+		public override bool configureElement(string? fullPathP, string? path, string? name, bool automatic, string? condition, bool invertCondition) {
+
+			this.post_condition = condition;
+			this.post_invertCondition = invertCondition;
+
+			return base.configureElement(fullPathP, path, name, automatic, null, false);
+
+		}
+
 		public override bool generateCMakePostData(DataOutputStream dataStream,DataOutputStream dataStreamGlobal) {
 
 			try {
+				var condition = new ConditionalText(dataStream,true);
+				condition.printCondition(this.post_condition,this.post_invertCondition);
 				dataStream.put_string("include(${CMAKE_CURRENT_SOURCE_DIR}/"+this.name+")\n");
+				condition.printTail();
 			} catch (Error e) {
 				ElementBase.globalData.addError(_("Failed to write the CMakeLists file for %s").printf(this.name));
 				return true;
 			}
 			return false;
+		}
+
+		public override bool storeConfig(DataOutputStream dataStream,ConditionalText printConditions) {
+
+			printConditions.printCondition(this.post_condition,this.post_invertCondition);
+			return base.storeConfig(dataStream,printConditions);
 		}
 	}
 }

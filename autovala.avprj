@@ -140,7 +140,6 @@ vala_local_package: AutoVala
 *translate: vala src/autovalaLib/elementManpage.vala
 *translate: vala src/autovalaLib/genVapis.vala
 *translate: vala src/autovalaLib/elementDefine.vala
-*translate: vala src/autovalaLib/configuration.vala
 *translate: vala src/autovalaLib/autovalaLib.vala
 *translate: vala src/autovalaLib/elementGlobal.vala
 *translate: vala src/autovalaLib/elementBase.vala
@@ -160,6 +159,7 @@ vala_local_package: AutoVala
 *translate: vala src/autovalaLib/packages_deb.vala
 *translate: vala src/autovalaLib/packages_pacman.vala
 *translate: vala src/autovalaLib/packages_rpm.vala
+*translate: vala src/autovalaLib/configuration.vala
 *translate: vala src/autovalaPlugin/outputview.vala
 *translate: vala src/autovalaPlugin/PanedPercentage.vala
 *translate: vala src/autovalaPlugin/searchview.vala

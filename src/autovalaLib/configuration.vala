@@ -260,10 +260,6 @@ namespace AutoVala {
 						}
 						element = new ElementValaBinary();
 					} else if (line.has_prefix("include: ")) {
-						if (this.checkConditionals(cond)) {
-							error=true;
-							continue;
-						}
 						element = new ElementInclude();
 					} else if (line.has_prefix("define: ")) {
 						if (this.checkConditionals(cond)) {
@@ -449,9 +445,9 @@ namespace AutoVala {
 		private void storeData(ConfigType type, GLib.DataOutputStream dataStream) {
 
 			bool printed = false;
-			var printConditions=new ConditionalText(dataStream,false);
+			var printConditions = new ConditionalText(dataStream,false);
 			foreach(var element in this.globalData.globalElements) {
-				if (element.eType==type) {
+				if (element.eType == type) {
 					printConditions.printCondition(element.condition,element.invertCondition);
 					element.storeConfig(dataStream,printConditions);
 					printed = true;

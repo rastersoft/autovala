@@ -340,7 +340,7 @@ namespace AutoVala {
 					var condition = new ConditionalText(dataStream,true);
 					error |= globalElement.generateCMake(dataStream);
 					foreach(var element in globalData.globalElements) {
-						if (element.path!=path) {
+						if (element.path != path) {
 							continue;
 						}
 						condition.printCondition(element.condition,element.invertCondition);
