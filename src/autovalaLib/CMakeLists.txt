@@ -84,7 +84,7 @@ if (DEBUG)
 endif ()
 set (COMPILE_OPTIONS ${COMPILE_OPTIONS} --library=AutoVala --gir AutoVala-0.0.gir )
 if (DEBUG)
-	set (COMPILE_OPTIONS ${COMPILE_OPTIONS} -g --fatal-warnings )
+	set (COMPILE_OPTIONS ${COMPILE_OPTIONS} -g )
 endif ()
 
 

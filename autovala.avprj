@@ -30,7 +30,7 @@ vala_library: src/autovalaLib/autovalaLib
 *version: 0.99
 *namespace: AutoVala
 if DEBUG
-compile_options: -g --fatal-warnings
+compile_options: -g
 end
 if DEBUG
 compile_c_options: -g
@@ -91,6 +91,12 @@ c_library: readline
 vala_library: src/autovalaPlugin/autovalaPlugin
 *version: 0.99
 *namespace: AutovalaPlugin
+if DEBUG
+compile_options: -g
+end
+if DEBUG
+compile_c_options: -g
+end
 use_gresource: extras_gresource_xml
 vala_local_package: AutoVala
 *vala_check_package: atk
