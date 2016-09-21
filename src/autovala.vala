@@ -20,7 +20,7 @@ using GLib;
 using Gee;
 using Posix;
 
-//project version = 0.99.44
+//project version = 0.99.45
 
 void help() {
 

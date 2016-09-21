@@ -7,120 +7,233 @@
 <p><a href="index.html">Home</a></p>
 <h2 id="history-of-versions">History of versions</h2>
 <ul>
-<li>version 0.99.38 (2016-01-28)</li>
+<li>version 0.99.45 (2016-09-21)
+<ul>
+<li>Allows to use CMAKE_BUILD_TYPE with standard and custom-defined types</li>
+<li>Now automagically generates the debugging symbols when the build type specified should have them</li>
+<li>By default compiles with the <strong>Release</strong> build type, ensuring -O3 optimizations for the binaries</li>
+</ul></li>
+<li>version 0.99.44 (2016-09-20)
+<ul>
+<li>Allows to use conditionals in INCLUDE, SOURCE_DEPENDENCY and BINARY_DEPENDENCY commands</li>
+</ul></li>
+<li>version 0.99.43 (2016-09-18)
+<ul>
+<li>Allows to compile and fully rebuild the project from external editors, like Gedit</li>
+</ul></li>
+<li>version 0.99.42 (2016-09-18)
+<ul>
+<li>Now it pases the gresource files to the vala compiler, allowing to use Gtk Templates</li>
+</ul></li>
+<li>version 0.99.41 (2016-08-25)
+<ul>
+<li>Fixed a bug in the --vapidir folder generation</li>
+<li>Fixed some compilation warnings</li>
+</ul></li>
+<li>version 0.99.40 (2016-08-21)
+<ul>
+<li>Allows to specify --vapidir folders</li>
+<li>Now includes the files inside a GResource XML file in the project's file list</li>
+</ul></li>
+<li>version 0.99.39 (2016-08-02)
+<ul>
+<li>Allows to use GResource files in projects</li>
+<li>Uses GResources to store icons and glade files</li>
+<li>Now shows the output of autovala when it can't refresh the widgets in an editor</li>
+</ul></li>
+<li>version 0.99.38 (2016-01-28)
+<ul>
 <li>Now PKG_CONFIG_PATH takes precedence (and fully replaces) the base paths.</li>
 <li>Fixed a bug when compiling under windows</li>
-<li>version 0.99.37 (2015-12-05)</li>
+</ul></li>
+<li>version 0.99.37 (2015-12-05)
+<ul>
 <li>Now the DBUS Service files ends with the right file name (it removes the &quot;.base&quot; if requires)</li>
-<li>verwion 0.99.36 (2015-12-02)</li>
+</ul></li>
+<li>version 0.99.36 (2015-12-02)
+<ul>
 <li>Supports conditional CUSTOM and VALA_DESTINATION commands</li>
 <li>Now the Gedit plugin can be installed in the right folders both locally and globally</li>
-<li>version 0.99.35 (2015-11-24)</li>
+</ul></li>
+<li>version 0.99.35 (2015-11-24)
+<ul>
 <li>Now the buttons in the plugins for Gedit and Scratch works fine (fixed callbacks)</li>
-<li>version 0.99.34 (2015-11-22)</li>
+</ul></li>
+<li>version 0.99.34 (2015-11-22)
+<ul>
 <li>Allows to put several files in &quot;source_dependency&quot; and &quot;binary_dependency&quot; statements, allowing to search for one of the files listed fo fullfill the condition.</li>
-<li>version 0.99.33 (2015-11-09)</li>
+</ul></li>
+<li>version 0.99.33 (2015-11-09)
+<ul>
 <li>Uses the new format for AppData files</li>
 <li>Recognizes <strong>.metainfo.xml</strong> files as AppData files too</li>
-<li>version 0.99.32 (2015-11-08)</li>
+</ul></li>
+<li>version 0.99.32 (2015-11-08)
+<ul>
 <li>Recognizes AppData files, installing them in the right place and using its data when creating packages</li>
-<li>version 0.99.31 (2015-10-29)</li>
+</ul></li>
+<li>version 0.99.31 (2015-10-29)
+<ul>
 <li>Allows to use &quot;using PKG, PKG...&quot; syntax (before only allowed one package per &quot;using&quot; statement)</li>
-<li>version 0.99.30 (2015-10-14)</li>
+</ul></li>
+<li>version 0.99.30 (2015-10-14)
+<ul>
 <li>Removes multithread compilation under Arch, because doesn't work</li>
-<li>version 0.99.29 (2015-08-24)</li>
+</ul></li>
+<li>version 0.99.29 (2015-08-24)
+<ul>
 <li>Updated PKGBUILD to the new Pandoc package</li>
 <li>Updated DEBIAN control files to support both valac-0.26 and 0.28</li>
 <li>Added Windows CMake support</li>
-<li>version 0.99.28 (2015-08-15)</li>
+</ul></li>
+<li>version 0.99.28 (2015-08-15)
+<ul>
 <li>Now ensures that the Debian control file has a valid name</li>
-<li>version 0.99.27 (2015-05-31)</li>
+</ul></li>
+<li>version 0.99.27 (2015-05-31)
+<ul>
 <li>Now refreshes fine the icon cache when there are several icon themes</li>
-<li>version 0.99.26 (2015-05-11)</li>
+</ul></li>
+<li>version 0.99.26 (2015-05-11)
+<ul>
 <li>Now, for arch, installs libraries in /usr/lib instead of /usr/lib64</li>
 <li>Fixed dependencies in the DEB, RPM and Pacman files</li>
-<li>version 0.99.25 (2015-05-10)</li>
+</ul></li>
+<li>version 0.99.25 (2015-05-10)
+<ul>
 <li>Now allows to generate PKGBUILD files for Arch's Pacman that support to download the sources from a repository (like GitHub)</li>
 <li>Added packaging files for the Gedit-Plugin</li>
 <li>Now, if it is not possible to determine to which package belongs a file, the package generation process will not be stopped</li>
 <li>Fixed some extra bugs in the PGBUILD generation process</li>
-<li>version 0.99.24 (2015-05-09)</li>
+</ul></li>
+<li>version 0.99.24 (2015-05-09)
+<ul>
 <li>Now uses separated .base files when creating deb, rpm or pacman packages</li>
-<li>version 0.99.23 (2015-05-07)</li>
+</ul></li>
+<li>version 0.99.23 (2015-05-07)
+<ul>
 <li>Added support for creating preliminar PACMAN's PKGBUILD files</li>
 <li>Fixed bug when extracting translation strings in non-ascii, UTF-8 format</li>
 <li>Removed (hope this one for all) the [type: gettext/glade] entry</li>
-<li>version 0.99.22 (2015-04-26)</li>
+</ul></li>
+<li>version 0.99.22 (2015-04-26)
+<ul>
 <li>Better use of the VERSION field in packages</li>
-<li>version 0.99.21 (2015-04-23)</li>
+</ul></li>
+<li>version 0.99.21 (2015-04-23)
+<ul>
 <li>Now sets the right permissions to DEB and RPM files</li>
 <li>Added msgfmt as dependency for programs</li>
 <li>Now fills the SECTION field in DEB packages</li>
 <li>Add bash-completion.pc as dependency when there are bash-completion files</li>
-<li>version 0.99.20 (2015-04-12)</li>
+</ul></li>
+<li>version 0.99.20 (2015-04-12)
+<ul>
 <li>Now adds the field VERSION in the DEBIAN/CONTROL file</li>
 <li>Allows to set files that must be present during build (needed for readline, since it doesn't have pkg-config file)</li>
-<li>version 0.99.19 (2015-04-06)</li>
+</ul></li>
+<li>version 0.99.19 (2015-04-06)
+<ul>
 <li>Now also passes the definitions set in CMAKE with -D to the C source files</li>
 <li>Adds again the GLADE mimetype to the POTFILES.in .ui files, to ensure that intltool-update recognizes them</li>
-<li>version 0.99.18 (2015-02-23)</li>
+</ul></li>
+<li>version 0.99.18 (2015-02-23)
+<ul>
 <li>Now calls gtk-update-icon-cache with the right path</li>
 <li>Updated spanish translation and translatable strings</li>
-<li>version 0.99.17 (2015-02-17)</li>
+</ul></li>
+<li>version 0.99.17 (2015-02-17)
+<ul>
 <li>Better support for exporting Autovala projects to Valama</li>
-<li>version 0.99.16 (2015-02-17)</li>
+</ul></li>
+<li>version 0.99.16 (2015-02-17)
+<ul>
 <li>Added preliminary support to export Autovala project files to Valama project files</li>
-<li>version 0.99.15 (2015-02-15)</li>
+</ul></li>
+<li>version 0.99.15 (2015-02-15)
+<ul>
 <li>Can use the canvas size of a SVG file to determine the size entry where to put it</li>
-<li>version 0.99.14 (2015-02-12)</li>
+</ul></li>
+<li>version 0.99.14 (2015-02-12)
+<ul>
 <li>Allows to specify a different theme for icons</li>
 <li>Now parses the INDEX.THEME file from an icon theme to know where to put an icon</li>
 <li>Allows to specify extra folders where to search for .h files when compiling the C source files</li>
 <li>Fixed a bug when setting several C parameters</li>
-<li>version 0.99.13 (2015-02-02)</li>
+</ul></li>
+<li>version 0.99.13 (2015-02-02)
+<ul>
 <li>Now doesn't take into account DEFINE parameters named &quot;true&quot;, &quot;false&quot;, &quot;0&quot; or &quot;1&quot;</li>
 <li>Fixed the final directory name for bitmap icons</li>
-<li>version 0.99.12 (2015-01-11)</li>
+</ul></li>
+<li>version 0.99.12 (2015-01-11)
+<ul>
 <li>Fixed a bug when using development versions of Vala compiler</li>
 <li>Allows to use alternative CMAKE files</li>
-<li>version 0.99.11 (2014-12-12)</li>
+</ul></li>
+<li>version 0.99.11 (2014-12-12)
+<ul>
 <li>Can create automagically the metadata for .deb and .rpm packages</li>
 <li>Now honors the c_library parameters also in libraries</li>
 <li>Now only updates the project view in editor plugins when the project file has changed.</li>
 <li>Added support for GTK 3.4 (needed to allow to compile under Elementary OS Luna)</li>
-<li>version 0.99.10 (2014-11-18)</li>
+</ul></li>
+<li>version 0.99.10 (2014-11-18)
+<ul>
 <li>Added support for unitary tests</li>
-<li>version 0.99.9 (2014-09-23)</li>
+</ul></li>
+<li>version 0.99.9 (2014-09-23)
+<ul>
 <li>Now .gitignore also contains a line to ignore backup files (this is, files with a name ended in ~)</li>
 <li>Allows to set an specific vala version in the configuration file, or let autovala set automatically the most recent version available</li>
-<li>version 0.99.8 (2014-09-18)</li>
+</ul></li>
+<li>version 0.99.8 (2014-09-18)
+<ul>
 <li>Fully fixed to avoid put as a requirement the library being built when it defines a sub-namespace of its own namespace</li>
 <li>Autogenerates a .gitignore, .bzrignore and .hgignore files</li>
-<li>version 0.99.7 (2014-09-03)</li>
+</ul></li>
+<li>version 0.99.7 (2014-09-03)
+<ul>
 <li>Generates .deps files for libraries, needed with .vapi files</li>
 <li>Adds <strong>Require</strong> field in pkg-config files to list the dependencies of a library</li>
 <li>Now doesn't put as a requirement the library being built when it defines a sub-namespace of its own namespace</li>
-<li>version 0.99.6 (2014-08-27)</li>
+</ul></li>
+<li>version 0.99.6 (2014-08-27)
+<ul>
 <li>Doesn't show the message that can't resolve &quot;Using Math&quot; when using that statement</li>
-<li>version 0.99.5 (2014-08-26)</li>
+</ul></li>
+<li>version 0.99.5 (2014-08-26)
+<ul>
 <li>Allows to specify C libraries that lacks pkg-config support (like the math library, needed when using GLib.Math)</li>
-<li>version 0.99.4 (2014-08-25)</li>
+</ul></li>
+<li>version 0.99.4 (2014-08-25)
+<ul>
 <li>Added the &quot;project_files&quot; option to the text shown with &quot;help&quot;</li>
-<li>version 0.99.3 (2014-07-30)</li>
+</ul></li>
+<li>version 0.99.3 (2014-07-30)
+<ul>
 <li>Now detects valac development versions with non-classic version numbers, like <em>Vala 0.25.1.1-ba8e</em></li>
-<li>version 0.99.2 (2014-06-30)</li>
+</ul></li>
+<li>version 0.99.2 (2014-06-30)
+<ul>
 <li>Now installs manpages at .../man/manX, instead of .../man/man/manX</li>
-<li>version 0.99.1 (2014-06-30)</li>
+</ul></li>
+<li>version 0.99.1 (2014-06-30)
+<ul>
 <li>Allows to list all the files needed to compile the project. Useful to add them to GIT, Bazaar, Subversion...</li>
 <li>Now error messages are shown in STDERR instead of STDOUT</li>
 <li>Added translations for Scratch plugin</li>
-<li>version 0.99.0 (2014-06-08)</li>
+</ul></li>
+<li>version 0.99.0 (2014-06-08)
+<ul>
 <li>Added global search (searchs string in all the files in a project)</li>
 <li>Added panel to show the output of the building process</li>
 <li>Internal changes to allow to add more types of elements</li>
 <li>Now double-click is used to the files from the project view, the file view or the global search</li>
 <li>Fixed scrolling problem in the project view under scratch text editor</li>
-<li>version 0.98.0 (2014-05-26)</li>
+</ul></li>
+<li>version 0.98.0 (2014-05-26)
+<ul>
 <li>Added support for GEdit 3.12 and later in the plugin</li>
 <li>Added a plugin for Scratch Text Editor</li>
 <li>Allows to create new projects from the plugins</li>
@@ -128,17 +241,23 @@
 <li>Now it uses GNUInstallDirs with CMake, improving compatibility with non-debian-based systems</li>
 <li>Now installs the autostart file in ${XDG_CONFIG_HOME}/autostart when the code is being installed in the $HOME directory</li>
 <li>Now adds all non-conditional CHECK elements</li>
-<li>version 0.97.0 (2014-05-12)</li>
+</ul></li>
+<li>version 0.97.0 (2014-05-12)
+<ul>
 <li>Added support for the new GEdit plugin for Autovala</li>
 <li>Added two GTK3 widgets to allow to easily create plugins for text editors</li>
 <li>Now the GLOBALS object has the vapiList as an static member, allowing to read it once. This speeds up the gedit plugin</li>
 <li>Now autovala doesn't add hiden or backup source files</li>
-<li>version 0.96.0 (2014-05-04)</li>
+</ul></li>
+<li>version 0.96.0 (2014-05-04)
+<ul>
 <li>Now manages the bash-completion files automagically</li>
 <li>When installing a project to the HOME folder, it won't install the bash-completion files to avoid an error (because they should go to /etc)</li>
 <li>Added compatibility with source-based linux distributions (like gentoo), which doesn't add a link to a &quot;default&quot; vala compiler version</li>
 <li>Allows to manually specify the vala compiler to use when building a project</li>
-<li>version 0.95.0 (2014-04-02)</li>
+</ul></li>
+<li>version 0.95.0 (2014-04-02)
+<ul>
 <li>Now always copy the CMAKE folder when doing a &quot;cmake&quot; or &quot;update&quot; command</li>
 <li>Added extra checks when copying the CMAKE folder</li>
 <li>Allows to automatically update the .po files with new strings (requires gettext 0.18.3)</li>
@@ -146,123 +265,204 @@
 <li>Now checks if dbus-send and vala-dbus-binding-tool are installed if needed</li>
 <li>Removed BASH dependency</li>
 <li>Now supports several parameters in the compile_c_options statement</li>
-<li>version 0.94.0 (2014-03-21)</li>
+</ul></li>
+<li>version 0.94.0 (2014-03-21)
+<ul>
 <li>Now keeps automatic binaries when contains a manually-added DBus interface definition</li>
-<li>version 0.93.0 (2014-03-18)</li>
+</ul></li>
+<li>version 0.93.0 (2014-03-18)
+<ul>
 <li>Now remembers if a dbus interface must be generated using gdbus or dbus-glib.</li>
-<li>version 0.92.0 (2014-03-15)</li>
+</ul></li>
+<li>version 0.92.0 (2014-03-15)
+<ul>
 <li>Allows to generate automatically DBus interfaces, using DBus introspection capabilities and <em>vala-dbus-binding-tool</em>.</li>
 <li>Now adds GIO automatically if it finds <em>stdin.</em> or <em>stdout.</em> in the source code.</li>
-<li>version 0.91.0 (2014-01-18)</li>
+</ul></li>
+<li>version 0.91.0 (2014-01-18)
+<ul>
 <li>When a project creates one or more libraries, the &quot;make install&quot; command shows a message remembering to run 'sudo ldconfig'.</li>
-<li>version 0.90.0 (2014-01-16)</li>
+</ul></li>
+<li>version 0.90.0 (2014-01-16)
+<ul>
 <li>Now takes into account the dependencies for VAPI files when creating the CMake files.</li>
 <li>Now allows to specify libraries to be added when compiling the C code but not the Vala code. Useful when mixing C and Vala source files.</li>
-<li>version 0.35.0 (2013-12-26)</li>
+</ul></li>
+<li>version 0.35.0 (2013-12-26)
+<ul>
 <li>Now includes automagically the VAPIs files in the &quot;vapis&quot; folder for each binary/library</li>
 <li>Now doesn't add a vala package if a local VAPI provides the same namespaces</li>
 <li>Allows to pass flags to the C compiler/linker</li>
 <li>Allows to mix VALA and C source files in the same binary or library</li>
-<li>version 0.34.0 (2013-12-21)</li>
+</ul></li>
+<li>version 0.34.0 (2013-12-21)
+<ul>
 <li>Now adds GObject only if the source file contains classes</li>
-<li>version 0.33.0 (2013-12-14)</li>
+</ul></li>
+<li>version 0.33.0 (2013-12-14)
+<ul>
 <li>Fixed bug with libgee 0.6, which is named, due to historical reasons, as libgee-1.0</li>
-<li>version 0.32.0 (2013-12-06)</li>
+</ul></li>
+<li>version 0.32.0 (2013-12-06)
+<ul>
 <li>Always forces GLib and GObject packages to ensure that everything compiles</li>
 <li>Added GLib.File as rule to detect when automagically add GIO</li>
-<li>version 0.31.0 (2013-12-04)</li>
+</ul></li>
+<li>version 0.31.0 (2013-12-04)
+<ul>
 <li>Allows to install the projects in the local folder</li>
-<li>version 0.30.0 (2013-12-04)</li>
+</ul></li>
+<li>version 0.30.0 (2013-12-04)
+<ul>
 <li>Now shows a warning message when it can't find a package from a Using statement</li>
 <li>Now supports packages that contains more than one namespace when the user sets manually that package</li>
 <li>Now adds a tabulator inside conditionals in the CMakeLists.files</li>
 <li>Now puts the manual packages before the automatic ones in the configuration file</li>
 <li>Added support for nested namespaces in VAPI files</li>
-<li>version 0.29.0 (2013-12-02)</li>
+</ul></li>
+<li>version 0.29.0 (2013-12-02)
+<ul>
 <li>Now uses regular expressions for processing the USING and PROJECT VERSION strings, which gives more flexibility to the user</li>
 <li>Now can autodetect in some cases when to add the gio package</li>
-<li>version 0.28.0 (2013-12-01)</li>
+</ul></li>
+<li>version 0.28.0 (2013-12-01)
+<ul>
 <li>Supports the use of conditionals with COMPILE_OPTIONS statement</li>
 <li>Allows to use several COMPILE_OPTIONS in the same binary/library</li>
-<li>version 0.27.0 (2013-12-01)</li>
+</ul></li>
+<li>version 0.27.0 (2013-12-01)
+<ul>
 <li>Full refactorization to simplify future maintenance and improvements</li>
 <li>Removed the Gedit plugin (until having spare time to fix it)</li>
-<li>version 0.26.0 (2013-11-17)</li>
+</ul></li>
+<li>version 0.26.0 (2013-11-17)
+<ul>
 <li>Added support for more input formats when creating man pages</li>
 <li>Now MarkDown format is github format</li>
-<li>version 0.25.0 (2013-11-16)</li>
+</ul></li>
+<li>version 0.25.0 (2013-11-16)
+<ul>
 <li>Added support for creating and installing man pages</li>
 <li>Added manpages for Autovala</li>
-<li>version 0.24.0 (2013-10-20)</li>
+</ul></li>
+<li>version 0.24.0 (2013-10-20)
+<ul>
 <li>Added conditional compilation and conditional installation support</li>
-<li>version 0.23.0 (2013-10-14)</li>
+</ul></li>
+<li>version 0.23.0 (2013-10-14)
+<ul>
 <li>Added bash_completion support</li>
-<li>version 0.22.0 (2013-10-14)</li>
+</ul></li>
+<li>version 0.22.0 (2013-10-14)
+<ul>
 <li>Autovala and gedit plugin are now different projects, allowing to compile only the former</li>
 <li>Now supports several namespaces in the same .vapi file</li>
-<li>version 0.21.0 (2013-09-14)</li>
+</ul></li>
+<li>version 0.21.0 (2013-09-14)
+<ul>
 <li>Allows to specify GIO, GIO-unix, GObject and GModule packages for compilation</li>
-<li>version 0.20.0 (2013-05-19)</li>
+</ul></li>
+<li>version 0.20.0 (2013-05-19)
+<ul>
 <li>When initializating a new project, it will copy the needed CMAKE scripts for Vala and create an empty source file</li>
 <li>Now the CUSTOM command accepts both files and folders</li>
 <li>Now only adds CUSTOM_VAPIS_LIST command when there are a custom VAPI list</li>
 <li>Now forbides to set files in the main directory (all files/folders must be inside a folder in the main directory). This is a must to avoid failures.</li>
-<li>version 0.19.0 (2013-04-30)</li>
+</ul></li>
+<li>version 0.19.0 (2013-04-30)
+<ul>
 <li>Now the plugin deletes the content of the <em>install</em> folder, but not the folder itself</li>
-<li>version 0.18.0 (2013-04-30)</li>
+</ul></li>
+<li>version 0.18.0 (2013-04-30)
+<ul>
 <li>Allows to delete the INSTALL folder from Gedit</li>
 <li>Allows to delete the INSTALL folder, update the .avprj file, run cmake and launch make in a single step from Gedit</li>
-<li>version 0.17.0 (2013-04-28)</li>
+</ul></li>
+<li>version 0.17.0 (2013-04-28)
+<ul>
 <li>Fixed bug in plugin when updating the whole project</li>
-<li>version 0.16.0 (2013-04-28)</li>
+</ul></li>
+<li>version 0.16.0 (2013-04-28)
+<ul>
 <li>Added plugin for Gedit</li>
-<li>version 0.15.0 (2013-04-26)</li>
+</ul></li>
+<li>version 0.15.0 (2013-04-26)
+<ul>
 <li>Allows to specify manually the destination directory for binaries and libraries (useful for plugins)</li>
 <li>Allows to install files in a manually specified destination directory</li>
 <li>Autodetects autorun <em>.desktop</em> files and install them in the right place</li>
-<li>version 0.14.0 (2013-04-21)</li>
+</ul></li>
+<li>version 0.14.0 (2013-04-21)
+<ul>
 <li>Now the autovala library can use its own translated messages instead the ones from the main app (useful when embedding autovala in other programs)</li>
-<li>version 0.13.0 (2013-04-11)</li>
+</ul></li>
+<li>version 0.13.0 (2013-04-11)
+<ul>
 <li>In libraries, includes the <em>librarynamespaceConstant</em> namespace to allow to get access to build data without clash (only when the library has a namespace)</li>
 <li>Added <em>clear</em> command, to remove the automatic parts in the <em>.avprj</em> file</li>
-<li>version 0.12.0 (2013-04-09)</li>
+</ul></li>
+<li>version 0.12.0 (2013-04-09)
+<ul>
 <li>When checking VAPI files, now will give priority to the version number inside it (gir_version), and only when there is no such number will use the one in the filename</li>
-<li>version 0.11.0 (2013-04-07)</li>
+</ul></li>
+<li>version 0.11.0 (2013-04-07)
+<ul>
 <li>Includes the <em>Constant</em> namespace in the executables (but not in libraries to avoid clash)</li>
 <li>Enabled gettext to allow to translate the messages in Autovala</li>
 <li>Translation to spanish</li>
 <li>Fixed messages</li>
 <li>Fixed a bug in Constants that prevented defining the VERSION field</li>
 <li>New format for the version string inside source code, that allows to set it in libraries without clash</li>
-<li>version 0.10.0 (2013-04-07)</li>
+</ul></li>
+<li>version 0.10.0 (2013-04-07)
+<ul>
 <li>Allows to link an executable with a library from the same project</li>
 <li>Now Autovala itself is a shared library, and the command line binary uses it</li>
 <li>Fixed several bugs in the .pc generation</li>
 <li>Fixed the installation paths for include files</li>
-<li>version 0.9.0 (2013-04-06)</li>
+</ul></li>
+<li>version 0.9.0 (2013-04-06)
+<ul>
 <li>Fixed a bug in the .pc generation</li>
-<li>version 0.8.0 (2013-04-06)</li>
+</ul></li>
+<li>version 0.8.0 (2013-04-06)
+<ul>
 <li>Automatically generates the .pc file for libraries</li>
 <li>Fixed a bug with CMake when creating more than one binary and/or library</li>
-<li>version 0.7.0 (2013-04-05)</li>
+</ul></li>
+<li>version 0.7.0 (2013-04-05)
+<ul>
 <li>Now honors the IGNORE command with VAPI files and source folders</li>
-<li>version 0.6.0 (2013-04-05)</li>
+</ul></li>
+<li>version 0.6.0 (2013-04-05)
+<ul>
 <li>Added support for CUSTOM VAPI files</li>
 <li>Installs Valadoc file sin a better place</li>
 <li>Added instructions in HTML format, extracted from GitHub's wiki</li>
-<li>version 0.5.0 (2013-04-01)</li>
+</ul></li>
+<li>version 0.5.0 (2013-04-01)
+<ul>
 <li>Adds all source files at SRC and their subdirectories</li>
-<li>version 0.4.0 (2013-03-31)</li>
+</ul></li>
+<li>version 0.4.0 (2013-03-31)
+<ul>
 <li>Fixed a bug when PKG_CONFIG_PATH is empty</li>
-<li>version 0.3.0 (2013-03-30)</li>
+</ul></li>
+<li>version 0.3.0 (2013-03-30)
+<ul>
 <li>Added support for source files that are not in the same folder than the binary they belong to</li>
 <li>Added documentation about DOC command</li>
 <li>Valadoc support</li>
-<li>version 0.2.0 (2013-03-30)</li>
+</ul></li>
+<li>version 0.2.0 (2013-03-30)
+<ul>
 <li>Now recognizes the DOC folder</li>
 <li>Now also search libraries in PKG_CONFIG_PATH</li>
-<li>version 0.1.0 (2013-03-29)</li>
+</ul></li>
+<li>version 0.1.0 (2013-03-29)
+<ul>
 <li>First public version</li>
+</ul></li>
 </ul>
 <p><a href="index.html">Home</a></p>
 </div>

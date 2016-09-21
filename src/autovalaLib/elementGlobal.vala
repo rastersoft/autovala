@@ -93,6 +93,11 @@ namespace AutoVala {
 					}
 					dataStream.put_string("option(%s \"%s\" OFF)\n".printf(element.name,element.name));
 				}
+
+				dataStream.put_string("\nif( NOT CMAKE_BUILD_TYPE )\n");
+				dataStream.put_string("\tset(CMAKE_BUILD_TYPE Release)\n");
+				dataStream.put_string("endif()\n");
+
 				dataStream.put_string("\ninclude(GNUInstallDirs)\n");
 				dataStream.put_string("if( ( ${CMAKE_INSTALL_PREFIX} MATCHES \"^/usr/local\" ) )\n");
 				dataStream.put_string("\t# A workaround to ensure that works 'out of the box' in Debian-based systems\n");

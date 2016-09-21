@@ -1504,6 +1504,10 @@ namespace AutoVala {
 					}
 				}
 
+				dataStream.put_string("\nif ((${CMAKE_BUILD_TYPE} STREQUAL \"Debug\") OR (${CMAKE_BUILD_TYPE} STREQUAL \"RelWithDebInfo\"))\n");
+				dataStream.put_string("\tset(COMPILE_OPTIONS ${COMPILE_OPTIONS} \"-g\")\n");
+				dataStream.put_string("endif()\n\n");
+
 				if (this._type == ConfigType.VALA_LIBRARY) {
 					addDefines=true;
 					// If it is a library, generate the Gobject Introspection file
@@ -1519,7 +1523,20 @@ namespace AutoVala {
 				foreach(var element in this._compileOptions) {
 					addDefines=true;
 					printConditions.printCondition(element.condition,element.invertCondition);
-					dataStream.put_string("set (COMPILE_OPTIONS ${COMPILE_OPTIONS} %s )\n".printf(element.elementName));
+					if (element.elementName.strip()[0] == '@') {
+						var pos = element.elementName.index_of_char(' ');
+						if (pos == -1) {
+							ElementBase.globalData.addWarning(_("There are no compile options in %s").printf(element.elementName));
+							continue;
+						}
+						var build_type = element.elementName.substring(1,pos - 1).strip();
+						var options = element.elementName.substring(pos).strip();
+						dataStream.put_string("if (${CMAKE_BUILD_TYPE} STREQUAL \"%s\" )\n".printf(build_type));
+						dataStream.put_string("\tset (COMPILE_OPTIONS ${COMPILE_OPTIONS} %s )\n".printf(options));
+						dataStream.put_string("endif()\n");
+					} else {
+						dataStream.put_string("set (COMPILE_OPTIONS ${COMPILE_OPTIONS} %s )\n".printf(element.elementName));
+					}
 				}
 				printConditions.printTail();
 
@@ -1542,7 +1559,18 @@ namespace AutoVala {
 				foreach(var element in this._compileCOptions) {
 					addedCFlags=true;
 					printConditions.printCondition(element.condition,element.invertCondition);
-					dataStream.put_string("set (CMAKE_C_FLAGS \"${CMAKE_C_FLAGS} %s \" )\n".printf(element.elementName));
+					if (element.elementName.strip()[0] == '@') {
+						var pos = element.elementName.index_of_char(' ');
+						if (pos == -1) {
+							ElementBase.globalData.addWarning(_("There are no C compile options in %s").printf(element.elementName));
+							continue;
+						}
+						var build_type = element.elementName.substring(1,pos - 1).strip().up();
+						var options = element.elementName.substring(pos).strip();
+						dataStream.put_string("set (CMAKE_C_FLAGS_%s \"${CMAKE_C_FLAGS_%s} %s\" )\n".printf(build_type,build_type,options));
+					} else {
+						dataStream.put_string("set (CMAKE_C_FLAGS \"${CMAKE_C_FLAGS} %s\" )\n".printf(element.elementName));
+					}
 				}
 				printConditions.printTail();
 

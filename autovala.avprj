@@ -1,5 +1,5 @@
 ### AutoVala Project ###
-autovala_version: 22
+autovala_version: 23
 project_name: autovala
 vala_version: 0.30
 
@@ -10,14 +10,7 @@ custom: data/debian share/autovala/debian
 
 
 vala_binary: src/autovala
-*version: 0.99.44
-if DEBUG
-compile_options: -g
-end
-if DEBUG
-compile_c_options: -g
-end
-compile_c_options: -O2
+*version: 0.99.45
 vala_local_package: AutoVala
 *vala_package: posix
 vala_check_package: gio-2.0
@@ -29,13 +22,6 @@ vala_check_package: gio-2.0
 vala_library: src/autovalaLib/autovalaLib
 *version: 0.99
 *namespace: AutoVala
-if DEBUG
-compile_options: -g
-end
-if DEBUG
-compile_c_options: -g
-end
-compile_c_options: -O2
 *vala_package: posix
 *vala_package: readline
 *vala_check_package: cairo
@@ -91,12 +77,6 @@ c_library: readline
 vala_library: src/autovalaPlugin/autovalaPlugin
 *version: 0.99
 *namespace: AutovalaPlugin
-if DEBUG
-compile_options: -g
-end
-if DEBUG
-compile_c_options: -g
-end
 use_gresource: extras_gresource_xml
 vala_local_package: AutoVala
 *vala_check_package: atk
@@ -122,9 +102,9 @@ vala_local_package: AutoVala
 *po: po
 
 *translate: vala src/autovala.vala
+*translate: vala src/autovalaLib/configuration.vala
 *translate: vala src/autovalaLib/elementIcon.vala
 *translate: vala src/autovalaLib/elementDBus.vala
-*translate: vala src/autovalaLib/elementGResource.vala
 *translate: vala src/autovalaLib/elementDoc.vala
 *translate: vala src/autovalaLib/elementBashCompletion.vala
 *translate: vala src/autovalaLib/elementBinary.vala
@@ -142,16 +122,15 @@ vala_local_package: AutoVala
 *translate: vala src/autovalaLib/elementDefine.vala
 *translate: vala src/autovalaLib/elementInclude.vala
 *translate: vala src/autovalaLib/elementGlade.vala
-*translate: vala src/autovalaLib/elementPo.vala
 *translate: vala src/autovalaLib/elementCustom.vala
 *translate: vala src/autovalaLib/globals.vala
-*translate: vala src/autovalaLib/elementValaBinary.vala
+*translate: vala src/autovalaLib/elementGResource.vala
 *translate: vala src/autovalaLib/readPkgconfig.vala
-*translate: vala src/autovalaLib/configuration.vala
 *translate: vala src/autovalaLib/elementAppData.vala
 *translate: vala src/autovalaLib/elementGlobal.vala
 *translate: vala src/autovalaLib/elementBase.vala
 *translate: vala src/autovalaLib/elementSDepend.vala
+*translate: vala src/autovalaLib/elementPo.vala
 *translate: vala src/autovalaLib/elementVapidir.vala
 *translate: vala src/autovalaLib/gresource_xml.vala
 *translate: vala src/autovalaLib/packages.vala
@@ -160,6 +139,7 @@ vala_local_package: AutoVala
 *translate: vala src/autovalaLib/packages_rpm.vala
 *translate: vala src/autovalaLib/autovalaLib.vala
 *translate: vala src/autovalaLib/elementData.vala
+*translate: vala src/autovalaLib/elementValaBinary.vala
 *translate: vala src/autovalaPlugin/outputview.vala
 *translate: vala src/autovalaPlugin/PanedPercentage.vala
 *translate: vala src/autovalaPlugin/searchview.vala

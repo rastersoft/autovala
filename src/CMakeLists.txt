@@ -7,13 +7,13 @@ set (GETTEXT_PACKAGE "autovala")
 set (RELEASE_NAME "autovala")
 set (CMAKE_C_FLAGS "")
 set (PREFIX ${CMAKE_INSTALL_PREFIX})
-set (VERSION "0.99.44")
+set (VERSION "0.99.45")
 set (TESTSRCDIR "${CMAKE_SOURCE_DIR}")
 set (DOLLAR "$")
 
 configure_file (${CMAKE_SOURCE_DIR}/src/Config.vala.cmake ${CMAKE_BINARY_DIR}/src/Config.vala)
 add_definitions(-DGETTEXT_PACKAGE=\"${GETTEXT_PACKAGE}\")
-set (VERSION "0.99.44")
+set (VERSION "0.99.45")
 add_definitions (${DEPS_CFLAGS})
 include_directories ( ${CMAKE_BINARY_DIR}/src/autovalaLib )
 link_libraries ( ${DEPS_LIBRARIES} -lAutoVala )
@@ -33,20 +33,10 @@ set (APP_SOURCES ${APP_SOURCES} autovala.vala)
 
 set (CUSTOM_VAPIS_LIST ${CUSTOM_VAPIS_LIST} ${CMAKE_BINARY_DIR}/src/autovalaLib/AutoVala.vapi)
 
-if (DEBUG)
-	set (COMPILE_OPTIONS ${COMPILE_OPTIONS} -D DEBUG)
-	set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DDEBUG " )
-	set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DDEBUG " )
-endif ()
-if (DEBUG)
-	set (COMPILE_OPTIONS ${COMPILE_OPTIONS} -g )
-endif ()
 
-
-if (DEBUG)
-	set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g " )
-endif ()
-set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O2 " )
+if ((${CMAKE_BUILD_TYPE} STREQUAL "Debug") OR (${CMAKE_BUILD_TYPE} STREQUAL "RelWithDebInfo"))
+	set(COMPILE_OPTIONS ${COMPILE_OPTIONS} "-g")
+endif()
 
 vala_precompile(VALA_C autovala
 	${APP_SOURCES}
@@ -54,8 +44,6 @@ PACKAGES
 	${VALA_PACKAGES}
 CUSTOM_VAPIS
 	${CUSTOM_VAPIS_LIST}
-OPTIONS
-	${COMPILE_OPTIONS}
 )
 
 add_executable(autovala ${VALA_C})

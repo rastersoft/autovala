@@ -162,6 +162,9 @@ Everytime you run **autovala cmake** or **autovala update**, the CMAKE scripts c
 **autovala rpm**
   Generates the metadata needed for building an **RPM** package. The most important part that generates are the dependencies, both for source and binary packages.
 
+**autovala pacman**
+  Generates the metadata needed for building a **PACMAN** package (for Arch based distros). The most important part that generates are the dependencies.
+
 **autovala valama**
   Generates a Valama project for each binary in the current project. This allows to use Valama to edit Autovala projects. **THIS SUPPORT IS STILL EXPERIMENTAL**. Don't forget to do a *refresh* before to update the Autovala project file.
 

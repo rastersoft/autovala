@@ -4,6 +4,24 @@ Autovala-tricks(1)
 
 Autovala tricks - Several tricks for Autovala
 
+## Enabling debug symbols
+
+Version 0.99.45 of Autovala added support for the CMake standard way for enabling debug symbols. This is achieved just by using:
+
+    cmake -DCMAKE_BUILD_TYPE=Debug
+
+or
+
+    cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo
+
+The other two default options, *Release* and *MinSizeRel*, won't add debug symbols.
+
+Of course, it is possible to define new build types. Just read the section about **compile_options** and **compile_c_options** in the [file format](autovala-fileformat.5) page.
+
+When cmake is called without specifying a build type, the *Release* one will be used by default.
+
+Thanks to this change, it is possible now to remove the old lines with the conditional DEBUG statements from the .avprj files.
+
 ## Using vapidir and vapi_file commands
 
 The *vapidir* command will add a folder to the list of places where to search for .vapi files, passing them to the *valac* compiler with the *--vapidir=...* command line parameter. This is useful for programs (like Gnome-Builder 3.20) that put their vapi files in a non-standard location, or for libraries (like libkeybinder) that have .vapi files but they aren't included in Debian packages (at least at august 21, 2016). All the autovala's bells and whistles (like automatic search of pkg-config based on *Using* statements inside the source code, checking for existence during cmake execution and so on) are available for the .vapi files inside these folders. These folders are added for all the binaries and libraries in a project.
@@ -52,22 +70,6 @@ It is mandatory to include GIO in the binaries that use GResource. It is as easy
     //using GIO
 
 at the begining of any of the source files (be carefull: you must put it as a comment, because GIO has not its own VAPI file, but uses a different library).
-
-## Enabling debug symbols
-
-Just add in your .avprj file, in each binary/library section, the lines
-
-    compile_options: -g
-    compile_c_options: -g
-
-If you want to do it conditional, just use something like this:
-
-    if DEBUG
-    compile_options: -g
-    compile_c_options: -g
-    endif
-
-And use "cmake .. -DDEBUG=on" to enable the debug symbols.
 
 ## Creating packages for linux distributions
 

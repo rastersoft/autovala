@@ -77,21 +77,12 @@ set (APP_SOURCES ${APP_SOURCES} packages_pacman.vala)
 set (APP_SOURCES ${APP_SOURCES} packages_rpm.vala)
 set (APP_SOURCES ${APP_SOURCES} readPkgconfig.vala)
 
-if (DEBUG)
-	set (COMPILE_OPTIONS ${COMPILE_OPTIONS} -D DEBUG)
-	set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DDEBUG " )
-	set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DDEBUG " )
-endif ()
+
+if ((${CMAKE_BUILD_TYPE} STREQUAL "Debug") OR (${CMAKE_BUILD_TYPE} STREQUAL "RelWithDebInfo"))
+	set(COMPILE_OPTIONS ${COMPILE_OPTIONS} "-g")
+endif()
+
 set (COMPILE_OPTIONS ${COMPILE_OPTIONS} --library=AutoVala --gir AutoVala-0.0.gir )
-if (DEBUG)
-	set (COMPILE_OPTIONS ${COMPILE_OPTIONS} -g )
-endif ()
-
-
-if (DEBUG)
-	set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g " )
-endif ()
-set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O2 " )
 
 vala_precompile(VALA_C AutoVala
 	${APP_SOURCES}

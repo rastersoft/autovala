@@ -8,6 +8,15 @@
 <p>Autovala-tricks(1)</p>
 <h1 id="name">NAME</h1>
 <p>Autovala tricks - Several tricks for Autovala</p>
+<h2 id="enabling-debug-symbols">Enabling debug symbols</h2>
+<p>Version 0.99.45 of Autovala added support for the CMake standard way for enabling debug symbols. This is achieved just by using:</p>
+<pre><code>cmake -DCMAKE_BUILD_TYPE=Debug</code></pre>
+<p>or</p>
+<pre><code>cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo</code></pre>
+<p>The other two default options, <em>Release</em> and <em>MinSizeRel</em>, won't add debug symbols.</p>
+<p>Of course, it is possible to define new build types. Just read the section about <strong>compile_options</strong> and <strong>compile_c_options</strong> in the <a href="autovala-fileformat.5">file format</a> page.</p>
+<p>When cmake is called without specifying a build type, the <em>Release</em> one will be used by default.</p>
+<p>Thanks to this change, it is possible now to remove the old lines with the conditional DEBUG statements from the .avprj files.</p>
 <h2 id="using-vapidir-and-vapi_file-commands">Using vapidir and vapi_file commands</h2>
 <p>The <em>vapidir</em> command will add a folder to the list of places where to search for .vapi files, passing them to the <em>valac</em> compiler with the <em>--vapidir=...</em> command line parameter. This is useful for programs (like Gnome-Builder 3.20) that put their vapi files in a non-standard location, or for libraries (like libkeybinder) that have .vapi files but they aren't included in Debian packages (at least at august 21, 2016). All the autovala's bells and whistles (like automatic search of pkg-config based on <em>Using</em> statements inside the source code, checking for existence during cmake execution and so on) are available for the .vapi files inside these folders. These folders are added for all the binaries and libraries in a project.</p>
 <p>On the other hand, the <em>vapi_file</em> command adds an specific .vapi file (and only that .vapi file), and does it only for an specific binary or library. It is added to the sources list, like another source file, and the only thing checked is if it fulfills any of the <em>Using</em> statements in the sources. Everything else (checking for existence, adding <em>-l...</em> to the C options and so on) is left to the user, who must configure them to ensure that the compilation works. This is useful mainly when a project generates a library used by another library or binary in the same project.</p>
@@ -38,16 +47,6 @@ use_resource: datas_gresource_xml
 <p>It is mandatory to include GIO in the binaries that use GResource. It is as easy as including the line</p>
 <pre><code>//using GIO</code></pre>
 <p>at the begining of any of the source files (be carefull: you must put it as a comment, because GIO has not its own VAPI file, but uses a different library).</p>
-<h2 id="enabling-debug-symbols">Enabling debug symbols</h2>
-<p>Just add in your .avprj file, in each binary/library section, the lines</p>
-<pre><code>compile_options: -g
-compile_c_options: -g</code></pre>
-<p>If you want to do it conditional, just use something like this:</p>
-<pre><code>if DEBUG
-compile_options: -g
-compile_c_options: -g
-endif</code></pre>
-<p>And use &quot;cmake .. -DDEBUG=on&quot; to enable the debug symbols.</p>
 <h2 id="creating-packages-for-linux-distributions">Creating packages for linux distributions</h2>
 <p>AutoVala can create the metadata files for creating .deb, .rpm and pacman source packages. It should be easy to add support for other package systems.</p>
 <p>To generate .deb files, just run <strong>autovala deb</strong>. It will create a folder called <strong>debian</strong> and inside will be the <strong>control</strong>, <strong>changelog</strong> and <strong>rules</strong> files, and, if needed, <strong>preinst</strong>, <strong>prerm</strong>, <strong>postinst</strong> and <strong>postrm</strong>. The <strong>control</strong> file will have only the bare minimum, but autovala will include inside the dependencies needed both for building the package, and for running the project. These dependencies are generated automatically from the information extracted from the project. The <strong>changelog</strong> will add a boilerplate line only if there is no line for the current version, so it is strongly recommended to edit and complete this file after doing the automatic generation.</p>

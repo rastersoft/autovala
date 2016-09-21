@@ -49,22 +49,13 @@ set (APP_SOURCES ${APP_SOURCES} searchview.vala)
 
 set (CUSTOM_VAPIS_LIST ${CUSTOM_VAPIS_LIST} ${CMAKE_BINARY_DIR}/src/autovalaLib/AutoVala.vapi)
 
-if (DEBUG)
-	set (COMPILE_OPTIONS ${COMPILE_OPTIONS} -D DEBUG)
-	set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DDEBUG " )
-	set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DDEBUG " )
-endif ()
+
+if ((${CMAKE_BUILD_TYPE} STREQUAL "Debug") OR (${CMAKE_BUILD_TYPE} STREQUAL "RelWithDebInfo"))
+	set(COMPILE_OPTIONS ${COMPILE_OPTIONS} "-g")
+endif()
+
 set (COMPILE_OPTIONS ${COMPILE_OPTIONS} --library=AutovalaPlugin --gir AutovalaPlugin-0.0.gir )
-if (DEBUG)
-	set (COMPILE_OPTIONS ${COMPILE_OPTIONS} -g )
-endif ()
-
 set (COMPILE_OPTIONS ${COMPILE_OPTIONS} --gresources=${CMAKE_SOURCE_DIR}/data/extras.gresource.xml )
-
-if (DEBUG)
-	set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g " )
-endif ()
-
 
 vala_precompile(VALA_C AutovalaPlugin
 	${APP_SOURCES}
