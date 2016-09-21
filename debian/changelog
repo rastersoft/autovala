@@ -1,3 +1,11 @@
+autovala (0.99.45-Debian1) sid; urgency=low
+
+  * Allows to use CMAKE_BUILD_TYPE with standard and custom-defined types
+  * Now automagically generates the debugging symbols when the build type specified should have them
+  * By default compiles with the **Release** build type, ensuring -O3 optimizations for the binaries
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Wed, 21 Sep 2016 23:55:00 +0200
+
 autovala (0.99.44-Debian1) sid; urgency=low
 
   * Allows to use conditionals in INCLUDE, SOURCE_DEPENDENCY and BINARY_DEPENDENCY commands
