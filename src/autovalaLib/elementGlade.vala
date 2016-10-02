@@ -41,12 +41,12 @@ namespace AutoVala {
 			}
 			return error;
 		}
-		
-		public override bool configureElement(string? fullPathP, string? path, string? name, bool automatic, string? condition, bool invertCondition) {
+
+		public override bool configureElement(string? fullPathP, string? path, string? name, bool automatic, string? condition, bool invertCondition, bool accept_nonexisting_paths = false) {
 
 			bool retval;
-			
-			retval = base.configureElement(fullPathP,path,name,automatic,condition,invertCondition);
+
+			retval = base.configureElement(fullPathP,path,name,automatic,condition,invertCondition, accept_nonexisting_paths);
 			if (retval == false) {
 				var translation = new ElementTranslation();
 				translation.translate_type = TranslationType.GLADE;

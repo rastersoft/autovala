@@ -30,12 +30,12 @@ namespace AutoVala {
 			this.command = "include";
 		}
 
-		public override bool configureElement(string? fullPathP, string? path, string? name, bool automatic, string? condition, bool invertCondition) {
+		public override bool configureElement(string? fullPathP, string? path, string? name, bool automatic, string? condition, bool invertCondition, bool accept_nonexisting_paths = false) {
 
 			this.post_condition = condition;
 			this.post_invertCondition = invertCondition;
 
-			return base.configureElement(fullPathP, path, name, automatic, null, false);
+			return base.configureElement(fullPathP, path, name, automatic, null, false, accept_nonexisting_paths);
 
 		}
 

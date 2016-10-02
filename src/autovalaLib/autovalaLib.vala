@@ -52,7 +52,7 @@ namespace AutoVala {
 			var src=File.new_for_path(srcS);
 			var dest=File.new_for_path(destS);
 			if (!src.query_exists()) {
-				ElementBase.globalData.addError(_("Can't copy folder %s to %s; it doesn't exists.").printf(srcS,destS));
+				ElementBase.globalData.addError(_("Can't copy folder %s to %s; it doesn't exist.").printf(srcS,destS));
 				return true;
 			}
 
@@ -185,7 +185,7 @@ namespace AutoVala {
 				}
 				this.copy_recursive(origin,destiny);
 			} else {
-				ElementBase.globalData.addError(_("Folder %s doesn't exists. Autovala is incorrectly installed").printf(origin));
+				ElementBase.globalData.addError(_("Folder %s doesn't exist. Autovala is incorrectly installed").printf(origin));
 				return true;
 			}
 			return false;
@@ -321,6 +321,9 @@ namespace AutoVala {
 			try {
 				// and now, generate each one of the CMakeLists.txt files in each folder
 				foreach(var path in globalData.pathList) {
+					if (path[0] == GLib.Path.DIR_SEPARATOR) {
+						continue;
+					}
 					var fullPath = GLib.Path.build_filename(globalData.projectFolder,path,"CMakeLists.txt");
 					var file = File.new_for_path(fullPath);
 					if (file.query_exists()) {
@@ -366,7 +369,7 @@ namespace AutoVala {
 					dataStream.close();
 				}
 			} catch (Error e) {
-				ElementBase.globalData.addError(_("Failed while generating the CMakeLists.txt files"));
+				ElementBase.globalData.addError(_("Failed while generating the CMakeLists.txt files: %s").printf(e.message));
 				return true;
 			}
 			dataStreamGlobal.close();
@@ -507,7 +510,13 @@ namespace AutoVala {
 						ElementBase.globalData.addWarning(_("Failed to run 'xgettext' to generate the base POT file"));
 					}
 
-					ElementBase.globalData.addMessage(_("\nCommand output: %s\nError output: %s\n").printf(ls_stdout,ls_stderr));
+					if (ls_stdout != "") {
+						ElementBase.globalData.addMessage(_("Command output: %s\n").printf(ls_stdout));
+					}
+
+					if (ls_stderr != "") {
+						ElementBase.globalData.addMessage(_("Error output: %s\n").printf(ls_stderr));
+					}
 
 					// run msgmerge for all .po files, to update them.
 					var potFile=Path.build_filename(ElementBase.globalData.projectFolder,element.path);
@@ -687,7 +696,7 @@ namespace AutoVala {
 					if (retval != "") {
 						retval+="\n";
 					}
-					retval+=_("The element doesn't exists");
+					retval+=_("The element doesn't exist");
 				}
 			}
 			if (retval != "") {

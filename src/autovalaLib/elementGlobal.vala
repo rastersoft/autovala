@@ -34,12 +34,19 @@ namespace AutoVala {
 		public override void add_files() {
 		}
 
-		private void addFolderToMainCMakeLists(string element, DataOutputStream dataStream) {
+		private void addFolderToMainCMakeLists(string element, DataOutputStream dataStream,ConfigType eType) {
 
-			var path = Path.build_filename(ElementBase.globalData.projectFolder,element);
+			string path;
+			if (element[0] == GLib.Path.DIR_SEPARATOR) {
+				path = element;
+			} else {
+				path = Path.build_filename(ElementBase.globalData.projectFolder,element);
+			}
 			var dirpath=File.new_for_path(path);
 			if (dirpath.query_exists()==false) {
-				ElementBase.globalData.addWarning(_("Directory %s doesn't exists").printf(element));
+				if (eType != ConfigType.VAPIDIR) {
+					ElementBase.globalData.addWarning(_("Directory %s doesn't exist").printf(element));
+				}
 				return;
 			} else {
 				if (element!="src") {
@@ -67,10 +74,12 @@ namespace AutoVala {
 						return;
 					}
 				}
-				try {
-					dataStream.put_string("add_subdirectory("+element+")\n");
-				} catch (Error e) {
-					ElementBase.globalData.addWarning(_("Can't add subdirectory %s").printf(element));
+				if (element[0] != GLib.Path.DIR_SEPARATOR) {
+					try {
+						dataStream.put_string("add_subdirectory("+element+")\n");
+					} catch (Error e) {
+						ElementBase.globalData.addWarning(_("Can't add subdirectory %s").printf(element));
+					}
 				}
 			}
 		}
@@ -248,12 +257,12 @@ namespace AutoVala {
 						}
 						if ((element.eType!=ConfigType.VALA_LIBRARY) && (element.eType!=ConfigType.VALA_BINARY)) {
 							element.processed=true;
-							this.addFolderToMainCMakeLists(path,dataStream);
+							this.addFolderToMainCMakeLists(path,dataStream,element.eType);
 							addedOne=true;
 							continue;
 						}
 					}
-										foreach(var path in paths.keys) {
+					foreach(var path in paths.keys) {
 						var element=paths.get(path);
 						if ((element.eType==ConfigType.DEFINE) || (element.eType == ConfigType.SOURCE_DEPENDENCY) || (element.eType == ConfigType.BINARY_DEPENDENCY)) {
 							continue;
@@ -275,7 +284,7 @@ namespace AutoVala {
 								continue;
 							}
 
-							this.addFolderToMainCMakeLists(path,dataStream);
+							this.addFolderToMainCMakeLists(path,dataStream,element.eType);
 							addedOne=true;
 							element.processed=true;
 							if ((binElement.eType==ConfigType.VALA_LIBRARY)&&(binElement.currentNamespace!="")) {

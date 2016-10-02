@@ -106,7 +106,7 @@ namespace AutoVala {
 
 			var dirPath=File.new_for_path(Path.build_filename(ElementBase.globalData.projectFolder,folder));
 			if (dirPath.query_exists()==false) {
-				ElementBase.globalData.addWarning(_("Directory %s doesn't exists").printf(folder));
+				ElementBase.globalData.addWarning(_("Directory %s doesn't exist").printf(folder));
 				return files;
 			}
 
@@ -180,7 +180,7 @@ namespace AutoVala {
 		 * @param invertCondition When true, invert the condition (this is, the file is after the #else statement)
 		 * @return //true// if the file has been already processed
 		 */
-		public virtual bool configureElement(string? fullPathP, string? path, string? name, bool automatic, string? condition, bool invertCondition) {
+		public virtual bool configureElement(string? fullPathP, string? path, string? name, bool automatic, string? condition, bool invertCondition, bool accept_nonexisting_paths = false) {
 
 			if (fullPathP=="") {
 				ElementBase.globalData.addError(_("Trying to add an empty path: %s").printf(fullPath));
@@ -202,9 +202,14 @@ namespace AutoVala {
 
 			this._fullPath = fullPath;
 			if ((path==null)||(name==null)) {
-				var file = File.new_for_path(Path.build_filename(ElementBase.globalData.projectFolder,fullPath));
-				if (file.query_exists()==false) {
-					ElementBase.globalData.addWarning(_("File %s doesn't exists").printf(fullPath));
+				GLib.File file;
+				if ((fullPath != null) && (fullPath[0] == GLib.Path.DIR_SEPARATOR)) {
+					file = File.new_for_path(fullPath);
+				} else {
+					file = File.new_for_path(Path.build_filename(ElementBase.globalData.projectFolder,fullPath));
+				}
+				if ((accept_nonexisting_paths == false) && (file.query_exists()==false)) {
+					ElementBase.globalData.addWarning(_("File %s doesn't exist").printf(fullPath));
 					return false;
 				}
 				if (file.query_file_type(FileQueryInfoFlags.NONE)!=FileType.DIRECTORY) {
@@ -249,7 +254,8 @@ namespace AutoVala {
 				ElementBase.globalData.addError(_("Invalid command %s after command %s (line %d)").printf(badCommand,this.command, lineNumber));
 				return true;
 			}
-			var data=line.substring(2+this.command.length).strip();
+
+			var data=line.substring(1+this.command.length).strip();
 
 			return this.configureElement(data,null,null,automatic,condition,invertCondition);
 		}

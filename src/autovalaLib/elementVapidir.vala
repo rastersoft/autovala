@@ -39,9 +39,18 @@ namespace AutoVala {
 			return error;
 		}
 
+		public override bool configureElement(string? fullPathP, string? path, string? name, bool automatic, string? condition, bool invertCondition, bool accept_nonexisting_paths = false) {
+			var retval = base.configureElement(fullPathP,path,name,automatic,condition,invertCondition, true);
+			if (!retval) {
+				AutoVala.Globals.vapiList.fillNamespaces(fullPathP);
+			}
+			return retval;
+		}
+
+
 		public override void add_files() {
 
-			if (this._fullPath[0] == '/') {
+			if (this._fullPath[0] == GLib.Path.DIR_SEPARATOR) {
 				// don't add VAPI files that aren't inside this project
 				return;
 			}
