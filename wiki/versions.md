@@ -1,4 +1,8 @@
 ## History of versions ##
+* version 0.99.46 (2016-10-02)
+    * Fixed bug when using an absolute path for vapidir: commands
+    * Allows to add non-existing folders with vapidir
+    * Fixed several english errors ("doesn't exists" changed to "doesn't exist")
 * version 0.99.45 (2016-09-21)
     * Allows to use CMAKE_BUILD_TYPE with standard and custom-defined types
     * Now automagically generates the debugging symbols when the build type specified should have them

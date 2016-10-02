@@ -1,3 +1,11 @@
+autovala (0.99.46-Debian1) sid; urgency=low
+
+  * Fixed bug when using an absolute path for vapidir: commands
+  * Allows to add non-existing folders with vapidir
+  * Fixed several english errors ("doesn't exists" changed to "doesn't exist")
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Sun, 02 Oct 2016 23:55:00 +0200
+
 autovala (0.99.45-Debian1) sid; urgency=low
 
   * Allows to use CMAKE_BUILD_TYPE with standard and custom-defined types

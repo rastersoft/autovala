@@ -51,7 +51,7 @@ namespace AutoVala {
 			this.file_list = {}; // this doesn't return files
 		}
 
-		public override bool configureElement(string? fullPathP, string? path, string? name, bool automatic, string? condition, bool invertCondition) {
+		public override bool configureElement(string? fullPathP, string? path, string? name, bool automatic, string? condition, bool invertCondition, bool accept_nonexisting_paths = false) {
 
 			if (fullPathP=="") {
 				ElementBase.globalData.addError(_("Trying to add an empty path: %s").printf(fullPath));
@@ -84,7 +84,7 @@ namespace AutoVala {
 			if ((path==null)||(name==null)) {
 				var file = File.new_for_path(Path.build_filename(ElementBase.globalData.projectFolder,fullPath_t));
 				if (file.query_exists()==false) {
-					ElementBase.globalData.addWarning(_("File %s doesn't exists").printf(fullPath_t));
+					ElementBase.globalData.addWarning(_("File %s doesn't exist").printf(fullPath_t));
 					return false;
 				}
 				if (file.query_file_type(FileQueryInfoFlags.NONE) != GLib.FileType.DIRECTORY) {

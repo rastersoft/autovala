@@ -61,6 +61,7 @@ namespace AutoVala {
 			this.globalElements = new Gee.ArrayList<ElementBase>();
 			this.excludeFiles = {};
 			this.getValaVersion();
+
 			if (Globals.vapiList == null) {
 				Globals.vapiList = new ReadVapis(this.valaMajor,this.valaMinor);
 			}
