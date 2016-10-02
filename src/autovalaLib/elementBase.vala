@@ -348,5 +348,12 @@ namespace AutoVala {
 		public virtual void sortElements() {
 			return;
 		}
+
+		/**
+		 * Returns the sorting element, to allow to sort by any internal field
+		 */
+		public virtual string? getSortId() {
+			return this.fullPath;
+		}
 	}
 }

@@ -29,6 +29,7 @@ namespace AutoVala {
 			get {return this._translate_type;}
 			set {this._translate_type = value;}
 		}
+
 		protected string? _fullPath2; // Full file path, relative to the project's root
 
 		public string? fullPath2 {
@@ -172,6 +173,14 @@ namespace AutoVala {
 				return true;
 			}
 			return false;
+		}
+
+		public override string? getSortId() {
+			if (this.fullPath2 == null) {
+				return this.name;
+			} else {
+				return this.fullPath2;
+			}
 		}
 	}
 }

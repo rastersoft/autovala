@@ -346,17 +346,21 @@ namespace AutoVala {
 		 * Comparation function to sort the elements
 		 */
 		public static int compareElements (ElementBase? a, ElementBase? b) {
+
+			var a_data = a.getSortId();
+			var b_data = b.getSortId();
+
 			if ((a.condition==null) && (b.condition==null)) {
-				if ((a.fullPath == null) && (b.fullPath == null)) {
+				if ((a_data == null) && (b_data == null)) {
 					return 0;
 				}
-				if (a.fullPath == null) {
+				if (a_data == null) {
 					return -1;
 				}
-				if (b.fullPath == null) {
+				if (b_data == null) {
 					return 1;
 				}
-				return Posix.strcmp(a.fullPath,b.fullPath);
+				return Posix.strcmp(a_data,b_data);
 			}
 			if (a.condition==null) {
 				return -1;
@@ -366,16 +370,16 @@ namespace AutoVala {
 			}
 			if (a.condition==b.condition) {
 				if (a.invertCondition == b.invertCondition) {
-					if ((a.fullPath == null) && (b.fullPath == null)) {
+					if ((a_data == null) && (b_data == null)) {
 						return 0;
 					}
-					if (a.fullPath == null) {
+					if (a_data == null) {
 						return -1;
 					}
-					if (b.fullPath == null) {
+					if (b_data == null) {
 						return 1;
 					}
-					return Posix.strcmp(a.fullPath,b.fullPath); // both are equal; sort alphabetically
+					return Posix.strcmp(a_data,b_data); // both are equal; sort alphabetically
 				} else {
 					return a.invertCondition ? 1 : -1; // the one with the condition not inverted goes first
 				}
