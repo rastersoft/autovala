@@ -164,6 +164,7 @@ namespace AutovalaPlugin {
 			actionButtons.action_build.connect(this.build_project_cb);
 			actionButtons.action_full_build.connect(this.full_build_project_cb);
 			actionButtons.action_update_gettext.connect(this.update_gettext_cb);
+			this.update_buttons();
 			return true;
 		}
 
@@ -309,6 +310,7 @@ namespace AutovalaPlugin {
 
 			// If the new file is in the same path than the old one, do nothing
 			if ((this.current_file != null) && (Path.get_dirname(file) == Path.get_dirname(this.current_file))) {
+				this.update_buttons();
 				return;
 			}
 
@@ -826,6 +828,8 @@ namespace AutovalaPlugin {
 		private void update_buttons() {
 
 			uint32 mode = 0;
+
+			mode |= ButtonNames.NEW;
 			if (this.current_project_file != null) {
 				mode |= ButtonNames.REFRESH;
 				mode |= ButtonNames.UPDATE;
