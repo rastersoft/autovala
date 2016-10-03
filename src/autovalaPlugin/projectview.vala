@@ -8,14 +8,13 @@ using AutoVala;
 namespace AutovalaPlugin {
 
 	public enum ProjectEntryTypes { VALA_SOURCE_FILE, C_SOURCE_FILE, VAPI_FILE, C_HEADER_FILE, LIBRARY, EXECUTABLE, PROJECT_FILE, UNITEST, UNKNOWN, OTHER }
-	public enum ProjectStatus { NOT_SET, OK, WARNING, ERROR}
 
 	/**
 	 * This is a GTK3 widget that allows to manage an Autovala project
 	 * It is useful to create plugins for GTK3-based editors
 	 * The first plugins are for GEdit and Scratch
 	 * This is the main widget. The other widgets (FileViewer, ActionButtons and
-	 *  OutputView widgets) are optional and complements this one.
+	 *  output_view widgets) are optional and complements this one.
 	 */
 	public class ProjectViewer : Gtk.TreeView {
 
@@ -27,12 +26,19 @@ namespace AutovalaPlugin {
 		private AutoVala.ManageProject current_project;
 		private ProjectViewerMenu popupMenu;
 		private ProjectProperties properties;
-		private ProjectStatus projectStatus;
 
 		private FileViewer? fileViewer;
 		private ActionButtons? actionButtons;
-		private OutputView? outputView;
+		private OutputView? output_view;
 		private SearchView? searchView;
+
+		private CreateNewProject create_new_project;
+
+		private string ? current_project_path;
+
+		private bool running_command;
+		private bool more_commands;
+		private int current_status;
 
 		/**
 		 * This signal is emited when the user clicks on a file
@@ -55,12 +61,18 @@ namespace AutovalaPlugin {
 
 			this.current_project = new AutoVala.ManageProject();
 			this.current_project_file = null;
+			this.current_project_path = null;
 			this.current_file = null;
 			this.popupMenu = null;
 			this.fileViewer = null;
 			this.actionButtons = null;
-			this.outputView = null;
+			this.output_view = null;
 			this.searchView = null;
+			this.create_new_project = null;
+
+			this.running_command = false;
+			this.more_commands = false;
+			this.current_status = 0;
 
 			try {
 				Gdk.Pixbuf pixbuf;
@@ -146,38 +158,29 @@ namespace AutovalaPlugin {
 			}
 
 			this.actionButtons = actionButtons;
-			this.actionButtons.set_current_project(this.current_project);
-			this.changed_base_folder.connect( (path, project_file) => {
-				this.actionButtons.set_current_project_file(project_file);
-			});
-			this.actionButtons.action_refresh_project.connect( (retval) => {
-				this.refresh_project(true);
-			});
-			this.actionButtons.action_update_project.connect( (retval) => {
-				this.refresh_project(true);
-			});
-			if (this.outputView != null) {
-				this.actionButtons.register_output_view(this.outputView);
-			}
+			actionButtons.action_new_project.connect(this.create_new_project_cb);
+			actionButtons.action_refresh_project.connect(this.refresh_project_cb);
+			actionButtons.action_update_project.connect(this.update_project_cb);
+			actionButtons.action_build.connect(this.build_project_cb);
+			actionButtons.action_full_build.connect(this.full_build_project_cb);
+			actionButtons.action_update_gettext.connect(this.update_gettext_cb);
 			return true;
 		}
 
 		/**
 		 * Links the signals and callbacks of this ProjectViewer and an OutputView, to allow
 		 * the OutputView to receive the texts from running a command
-		 * @param outputView The OutputView widget to link to this ProjectViewer
+		 * @param output_view The OutputView widget to link to this ProjectViewer
 		 * @return true if all went fine; false if there was an OutputView object already registered
 		 */
-		public bool link_output_view(OutputView outputView) {
+		public bool link_output_view(OutputView output_view) {
 
-			if(this.outputView != null) {
+			if(this.output_view != null) {
 				return false;
 			}
 
-			this.outputView = outputView;
-			if (this.actionButtons != null) {
-				this.actionButtons.register_output_view(this.outputView);
-			}
+			this.output_view = output_view;
+			this.output_view.ended_command.connect(this.program_ended);
 			return true;
 		}
 
@@ -293,7 +296,9 @@ namespace AutovalaPlugin {
 				this.treeModel.clear();
 				this.current_project_file = null;
 				this.current_file = null;
+				this.current_project_path = null;
 				this.changed_base_folder(null,null);
+				this.update_buttons();
 				return;
 			}
 
@@ -306,8 +311,17 @@ namespace AutovalaPlugin {
 			if ((this.current_file != null) && (Path.get_dirname(file) == Path.get_dirname(this.current_file))) {
 				return;
 			}
+
+			var data = this.current_project.get_binaries_list(this.current_project_file);
+			if (data == null) {
+				this.current_project_path = null;
+			} else {
+				this.current_project_path = data.projectPath;
+			}
+
 			this.current_file = file;
 			this.refresh_project(false);
+			this.update_buttons();
 		}
 
 		/**
@@ -333,7 +347,7 @@ namespace AutovalaPlugin {
 				this.changed_base_folder(null,null);
 				var errors = this.current_project.getErrors();
 				foreach(var error in errors) {
-					this.outputView.append_text(error);
+					this.output_view.append_text(error);
 				}
 			} else if ((this.current_project_file == null) || (this.current_project_file != project.projectFile) || force) {
 				if (this.searchView != null) {
@@ -521,10 +535,321 @@ namespace AutovalaPlugin {
 			this.treeModel.append(out fileIter,null);
 			this.changed_base_folder(project.projectPath,this.current_project_file);
 		}
+
+
+		/**
+		 * Clears the output view if there is one assigned
+		 */
+		private void output_view_clear_buffer() {
+			if (this.output_view != null) {
+				this.output_view.clear_buffer();
+			}
+		}
+
+		/**
+		 * Appends some text to the output view, if it exists
+		 * @param text The text to append
+		 */
+		private void output_view_append_text(string text) {
+			if (this.output_view != null) {
+				this.output_view.append_text(text);
+			}
+		}
+
+		/**
+		 * Creates a new project
+		 */
+		private void create_new_project_cb() {
+			if (this.create_new_project != null) {
+				return;
+			}
+
+			string? project_name;
+			string? project_path;
+			this.current_project = new AutoVala.ManageProject();
+			this.create_new_project = new CreateNewProject(this.current_project);
+			if (this.create_new_project.run(out project_name, out project_path)) {
+				this.current_project.refresh(Path.build_filename(project_path,project_name+".avprj"));
+				var base_name = Path.build_filename(project_path,"src",project_name+".vala");
+				this.clicked_file(base_name);
+				this.output_view_clear_buffer();
+			}
+			this.create_new_project.destroy();
+			this.create_new_project = null;
+			this.refresh_project(true);
+		}
+
+		/**
+		 * Runs an "autovala refresh" command
+		 */
+		private void refresh_project_cb() {
+			this.current_project = new AutoVala.ManageProject();
+			if (this.refresh_project_func()) {
+				this.output_view_append_text(_("Aborting\n"));
+			} else {
+				this.output_view_append_text(_("Done\n"));
+			}
+		}
+
+		/**
+		 * Runs an "autovala update" command
+		 */
+
+		private void update_project_cb() {
+			this.current_project = new AutoVala.ManageProject();
+			if (this.update_project_func()) {
+				this.output_view_append_text(_("Aborting\n"));
+			} else {
+				this.output_view_append_text(_("Done\n"));
+			}
+		}
+
+		/**
+		 * Builds the current project
+		 */
+		private void build_project_cb() {
+			this.output_view_clear_buffer();
+			if (this.current_project_path == null) {
+				this.update_buttons();
+				return;
+			}
+			this.current_project = new AutoVala.ManageProject();
+			this.build_func();
+		}
+
+		/**
+		 * Updates the project and builds it from scratch
+		 */
+		private void full_build_project_cb() {
+			this.output_view_clear_buffer();
+			if (this.current_project_path == null) {
+				this.update_buttons();
+				return;
+			}
+			this.current_project = new AutoVala.ManageProject();
+			this.full_build_func(true);
+		}
+
+		/**
+		 * Updates the translation files
+		 */
+		private void update_gettext_cb() {
+			this.output_view_clear_buffer();
+			this.current_project = new AutoVala.ManageProject();
+			var retval = this.current_project.gettext(this.current_project_file);
+			var msgs = this.current_project.getErrors();
+			foreach(var msg in msgs) {
+				this.output_view_append_text(msg+"\n");
+			}
+		}
+
+
+		/**
+		 * This method refreshes a project
+		 * @return True if it failed; False if it was refreshed
+		 */
+
+		private bool refresh_project_func(bool send_action = true) {
+			string[] msgs;
+
+			this.output_view_clear_buffer();
+			var retval=this.current_project.refresh(this.current_project_file);
+
+			msgs = this.current_project.getErrors();
+			this.output_view_append_text(_("Refreshing project file\n"));
+			foreach(var msg in msgs) {
+				this.output_view_append_text(msg+"\n");
+			}
+			if (send_action) {
+				this.refresh_project(true);
+			}
+			return (retval);
+		}
+
+		/**
+		 * This method refreshes a project and updates the CMAKE files
+		 * @return True if it failed; False if it worked fine
+		 */
+
+		private bool update_project_func(bool send_action = true) {
+
+			if (this.refresh_project_func(false)) {
+				return true;
+			}
+			var retval=this.current_project.cmake(this.current_project_file);
+			var msgs = this.current_project.getErrors();
+			this.output_view_append_text(_("Updating CMake files\n"));
+			foreach(var msg in msgs) {
+				this.output_view_append_text(msg+"\n");
+			}
+
+			if (send_action) {
+				this.refresh_project(true);
+			}
+			return (retval);
+		}
+
+		private bool build_func(bool clear = true) {
+
+			if (this.current_project_path == null) {
+				return true;
+			}
+
+			var install_path = GLib.Path.build_filename(this.current_project_path,"install");
+
+			var install_file = GLib.File.new_for_path(install_path);
+			if (false == install_file.query_exists()) {
+				install_file.make_directory();
+			}
+
+			var makefile = GLib.File.new_for_path(GLib.Path.build_filename(install_path,"Makefile"));
+			if (false == makefile.query_exists()) {
+				return this.full_build_func(false);
+			}
+
+			string[] command = {"make"};
+			this.more_commands = false;
+			this.launch_program(install_path,command,clear);
+
+			return false;
+		}
+
+		private bool full_build_func(bool clear = true) {
+
+			if (this.update_project_func(false)) {
+				this.output_view_append_text(_("Aborting\n"));
+				return true;
+			}
+
+			this.more_commands = true;
+			this.current_status = 0;
+
+			var install_path = GLib.Path.build_filename(this.current_project_path,"install");
+			var install_file = GLib.File.new_for_path(install_path);
+			if (false == install_file.query_exists()) {
+				install_file.make_directory();
+			}
+
+			if (this.delete_recursive(install_path, false)) {
+				this.output_view_append_text(_("Aborting\n"));
+				return true;
+			}
+
+			string[] command = {"cmake",".."};
+			this.more_commands = true;
+			this.launch_program(install_path,command,clear);
+			return false;
+		}
+
+
+		private bool delete_recursive (string fileFolder, bool delete_this) {
+
+			var src=File.new_for_path(fileFolder);
+
+			GLib.FileType srcType = src.query_file_type (GLib.FileQueryInfoFlags.NONE, null);
+			if (srcType == GLib.FileType.DIRECTORY) {
+				string srcPath = src.get_path ();
+				try {
+					GLib.FileEnumerator enumerator = src.enumerate_children (GLib.FileAttribute.STANDARD_NAME, GLib.FileQueryInfoFlags.NONE, null);
+					for ( GLib.FileInfo? info = enumerator.next_file (null) ; info != null ; info = enumerator.next_file (null) ) {
+						if (delete_recursive (GLib.Path.build_filename (srcPath, info.get_name ()), true)) {
+							return true;
+						}
+					}
+				} catch (Error e) {
+					this.output_view_append_text(_("Failed when deleting recursively the folder %s").printf(fileFolder));
+					return true;
+				}
+			}
+			if (delete_this) {
+				try {
+					src.delete();
+				} catch (Error e) {
+					if (srcType != GLib.FileType.DIRECTORY) {
+						this.output_view_append_text(_("Failed when deleting the file %s").printf(fileFolder));
+					}
+					return true;
+				}
+			}
+			return false;
+		}
+
+		private void launch_program(string working_directory, string[] command_args, bool clear) {
+
+			this.running_command = true;
+			this.update_buttons();
+			if (this.output_view != null) {
+				var retval = this.output_view.run_command(command_args,working_directory,clear);
+				if (retval == -1) {
+					this.running_command = false;
+					this.update_buttons();
+				}
+				return;
+			}
+
+			string[] spawn_env = Environ.get ();
+			Pid child_pid;
+			Process.spawn_async (working_directory,command_args,spawn_env,	SpawnFlags.SEARCH_PATH | SpawnFlags.DO_NOT_REAP_CHILD,null,out child_pid);
+			ChildWatch.add (child_pid, (pid, status) => {
+				Process.close_pid (pid);
+				this.program_ended(pid,status);
+			});
+		}
+
+		public void program_ended(int pid, int retval) {
+			this.running_command = false;
+			if (retval != 0) {
+				this.output_view_append_text(_("Aborting\n"));
+			} else {
+				if (this.more_commands) {
+					var install_path = GLib.Path.build_filename(this.current_project_path,"install");
+					switch(this.current_status) {
+					case 0:
+						string[] command = {"make"};
+						this.more_commands = false;
+						this.launch_program(install_path,command,false);
+						break;
+					default:
+						this.more_commands = false;
+						this.update_buttons();
+						break;
+					}
+					this.current_status++;
+					return;
+				} else {
+					this.output_view_append_text(_("Done\n"));
+				}
+			}
+			this.update_buttons();
+		}
+
+		private void update_buttons() {
+
+			uint32 mode = 0;
+			if (this.current_project_file != null) {
+				mode |= ButtonNames.REFRESH;
+				mode |= ButtonNames.UPDATE;
+				mode |= ButtonNames.BUILD;
+				mode |= ButtonNames.FULL_BUILD;
+				mode |= ButtonNames.PO;
+			}
+			if (this.running_command) {
+				mode |= ButtonNames.REFRESH;
+				mode |= ButtonNames.UPDATE;
+				mode |= ButtonNames.BUILD;
+				mode |= ButtonNames.FULL_BUILD;
+				mode |= ButtonNames.PO;
+			}
+
+			if (this.actionButtons != null) {
+				this.actionButtons.update_buttons(mode);
+			}
+		}
+
 	}
 
 	/**
-	 * Class used to store the data of one file
+	 * Class used to store the data for one file
 	 */
 	public class ElementProjectViewer : Object {
 
@@ -556,196 +881,6 @@ namespace AutovalaPlugin {
 			} else {
 				this.type = type;
 			}
-		}
-	}
-
-	/**
-	 * This class manages the popup menu in the project view
-	 */
-	private class ProjectViewerMenu : Gtk.Menu {
-
-		private string project_path;
-		private string? file_path;
-		private string binary_name;
-		private ProjectEntryTypes type;
-		private Gtk.MenuItem action_open;
-		private Gtk.MenuItem action_new_binary;
-		private Gtk.MenuItem action_edit_binary;
-		private Gtk.MenuItem action_delete_binary;
-
-		public signal void open(string file);
-		public signal void new_binary();
-		public signal void edit_binary(string ?binary_name);
-		public signal void remove_binary(string ?binary_name);
-
-		public ProjectViewerMenu(string ?project_path, string ?file_path, string ?binary_name, ProjectEntryTypes type) {
-
-			this.project_path = project_path;
-			this.file_path = file_path;
-			this.binary_name = binary_name;
-			this.type = type;
-
-			this.action_open = new Gtk.MenuItem.with_label(_("Open"));
-			this.action_new_binary = new Gtk.MenuItem.with_label(_("New executable/library"));
-			this.action_edit_binary = new Gtk.MenuItem.with_label((type == ProjectEntryTypes.LIBRARY) ? _("Edit library properties") : _("Edit executable properties"));
-			this.action_delete_binary = new Gtk.MenuItem.with_label((type == ProjectEntryTypes.LIBRARY) ? _("Remove library") : _("Remove executable"));
-
-			switch (type) {
-			case ProjectEntryTypes.VALA_SOURCE_FILE:
-			case ProjectEntryTypes.C_SOURCE_FILE:
-			case ProjectEntryTypes.C_HEADER_FILE:
-			case ProjectEntryTypes.VAPI_FILE:
-			case ProjectEntryTypes.PROJECT_FILE:
-				this.append(this.action_open);
-				this.append(new Gtk.SeparatorMenuItem());
-			break;
-			}
-
-			this.append(this.action_new_binary);
-
-			if ((type == ProjectEntryTypes.EXECUTABLE)||(type == ProjectEntryTypes.LIBRARY)) {
-				this.append(this.action_edit_binary);
-				this.append(this.action_delete_binary);
-			}
-
-			this.action_open.activate.connect( () => {
-				this.open(this.file_path);
-			});
-			this.action_new_binary.activate.connect( () => {
-				this.new_binary();
-			});
-			this.action_edit_binary.activate.connect( () => {
-				this.edit_binary(binary_name);
-			});
-			this.action_delete_binary.activate.connect( () => {
-				this.remove_binary(binary_name);
-			});
-		}
-	}
-
-	/**
-	 * Creates a dialog to add a new binary to a project, or to modify a current one
-	 */
-	private class ProjectProperties : Object {
-
-		private Gtk.Dialog main_window;
-		private Gtk.Entry name;
-		private Gtk.FileChooserButton path;
-		private Gtk.RadioButton is_library;
-		private Gtk.RadioButton is_executable;
-		private AutoVala.ManageProject project;
-		private Gtk.Entry vala_options;
-		private Gtk.Entry c_options;
-		private Gtk.Entry libraries;
-		private Gtk.Button accept_button;
-		private Gtk.Label error_message;
-		private string project_file;
-		private string? binary_name;
-		private bool editing;
-
-		/**
-		 * Constructor
-		 *
-		 * @param binary_name The name of the executable/library to edit, or null to create a new one
-		 * @param project_file The full path to the current project file where to edit or create the binary
-		 * @param project A project class
-		 */
-		public ProjectProperties(string? binary_name, string project_file, AutoVala.ManageProject project) {
-
-			this.project = project;
-			this.project_file = project_file;
-			this.binary_name = binary_name;
-			if (binary_name == null) {
-				this.editing = false;
-			} else {
-				this.editing = true;
-			}
-
-			var builder = new Gtk.Builder();
-			builder.set_translation_domain(AutovalaPluginConstants.GETTEXT_PACKAGE);
-			builder.add_from_resource("/com/rastersoft/autovala/interface/binary_properties.ui");
-			this.main_window = (Gtk.Dialog) builder.get_object("binary_properties");
-			this.name = (Gtk.Entry) builder.get_object("binary_name");
-			this.path = (Gtk.FileChooserButton) builder.get_object("path");
-			this.is_library = (Gtk.RadioButton) builder.get_object("is_library");
-			this.is_executable = (Gtk.RadioButton) builder.get_object("is_executable");
-			this.vala_options = (Gtk.Entry) builder.get_object("vala_compile_options");
-			this.c_options = (Gtk.Entry) builder.get_object("c_compile_options");
-			this.libraries = (Gtk.Entry) builder.get_object("libraries");
-			this.accept_button = (Gtk.Button) builder.get_object("button_accept");
-			this.error_message = (Gtk.Label) builder.get_object("error_message");
-
-            this.path.file_set.connect(this.path_changed);
-            this.path.current_folder_changed.connect(this.path_changed);
-            this.name.changed.connect(this.name_changed);
-
-			if(this.editing) {
-				var project_data = project.get_binaries_list(project_file);
-				if (project_data != null) {
-					foreach(var element in project_data.binaries) {
-						if (((element.type == AutoVala.ConfigType.VALA_BINARY) || (element.type == AutoVala.ConfigType.VALA_LIBRARY)) && (element.name == binary_name)) {
-							this.name.text = element.name;
-							this.path.set_filename(Path.build_filename(project_data.projectPath,element.fullPath));
-							if (element.type == AutoVala.ConfigType.VALA_BINARY) {
-								this.is_executable.active = true;
-							} else {
-								this.is_library.active = true;
-							}
-							this.vala_options.text=element.vala_opts;
-							this.c_options.text=element.c_opts;
-							this.libraries.text=element.libraries;
-						}
-					}
-				}
-			} else {
-				this.path.set_filename(Path.get_dirname(project_file));
-			}
-			this.main_window.show_all();
-			this.set_status();
-		}
-
-		public void run() {
-			if (this.main_window == null) {
-				return;
-			}
-			while(true) {
-				var retval = this.main_window.run();
-				if (retval != 2) {
-					break;
-				}
-				var retMsg = this.project.process_binary(this.binary_name,this.project_file,this.name.text,this.is_library.active,this.path.get_filename(),this.vala_options.text,this.c_options.text,this.libraries.text);
-				if (null == retMsg) {
-					break;
-				} else {
-					this.error_message.set_text(retMsg);
-				}
-			}
-		}
-
-		public void destroy() {
-			this.main_window.destroy();
-			this.main_window = null;
-		}
-
-		[CCode(instance_pos=-1)]
-		public void name_changed() {
-			this.set_status();
-		}
-
-		[CCode(instance_pos=-1)]
-		public void path_changed(Gtk.FileChooser entry) {
-			this.set_status();
-		}
-
-		public void set_status() {
-			bool status = true;
-			if (this.name.text == "") {
-				status = false;
-			}
-			if ((this.path.get_filename() == "") || (this.path.get_filename() == null)) {
-				status = false;
-			}
-			this.accept_button.sensitive = status;
 		}
 	}
 }
