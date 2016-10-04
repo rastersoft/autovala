@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-10-04 01:06+0200\n"
+"POT-Creation-Date: 2016-10-04 22:48+0200\n"
 "PO-Revision-Date: 2016-10-02 13:23+0200\n"
 "Last-Translator: Sergio Costas <rastersoft@gmail.com>\n"
 "Language-Team: Español; Castellano <rastersoft@gmail.com>\n"
@@ -72,11 +72,11 @@ msgstr ""
 #: src/autovala.vala:104 src/autovala.vala:111 src/autovala.vala:127
 #: src/autovala.vala:141 src/autovala.vala:155 src/autovala.vala:169
 #: src/autovala.vala:183 src/autovala.vala:197 src/autovala.vala:211
-#: src/autovala.vala:228 src/autovalaPlugin/projectview.vala:589
-#: src/autovalaPlugin/projectview.vala:602
-#: src/autovalaPlugin/projectview.vala:721
-#: src/autovalaPlugin/projectview.vala:735
-#: src/autovalaPlugin/projectview.vala:806
+#: src/autovala.vala:228 src/autovalaPlugin/projectview.vala:579
+#: src/autovalaPlugin/projectview.vala:588
+#: src/autovalaPlugin/projectview.vala:701
+#: src/autovalaPlugin/projectview.vala:715
+#: src/autovalaPlugin/projectview.vala:783
 msgid "Aborting\n"
 msgstr "Abortando\n"
 
@@ -84,9 +84,9 @@ msgstr "Abortando\n"
 #: src/autovala.vala:130 src/autovala.vala:144 src/autovala.vala:158
 #: src/autovala.vala:172 src/autovala.vala:186 src/autovala.vala:200
 #: src/autovala.vala:217 src/autovala.vala:232
-#: src/autovalaPlugin/projectview.vala:591
-#: src/autovalaPlugin/projectview.vala:604
-#: src/autovalaPlugin/projectview.vala:824
+#: src/autovalaPlugin/projectview.vala:581
+#: src/autovalaPlugin/projectview.vala:590
+#: src/autovalaPlugin/projectview.vala:801
 msgid "Done\n"
 msgstr "Hecho\n"
 
@@ -94,7 +94,7 @@ msgstr "Hecho\n"
 msgid "Updating project file\n"
 msgstr "Actualizando el fichero de proyecto\n"
 
-#: src/autovala.vala:107 src/autovalaPlugin/projectview.vala:682
+#: src/autovala.vala:107 src/autovalaPlugin/projectview.vala:662
 msgid "Updating CMake files\n"
 msgstr "Actualizando los ficheros de CMake\n"
 
@@ -143,12 +143,12 @@ msgstr "Ha fallado la copia recursiva del directorio %s a %s"
 msgid "Failed when copying the file %s to %s"
 msgstr "Incapaz de copiar el fichero %s a %s"
 
-#: src/autovalaLib/autovalaLib.vala:108 src/autovalaPlugin/projectview.vala:761
+#: src/autovalaLib/autovalaLib.vala:108 src/autovalaPlugin/projectview.vala:741
 #, c-format
 msgid "Failed when deleting recursively the folder %s"
 msgstr "Ha fallado el borrado recursivo del directorio %s"
 
-#: src/autovalaLib/autovalaLib.vala:116 src/autovalaPlugin/projectview.vala:770
+#: src/autovalaLib/autovalaLib.vala:116 src/autovalaPlugin/projectview.vala:750
 #, c-format
 msgid "Failed when deleting the file %s"
 msgstr "Incapaz de borrar el fichero %s"
@@ -1095,24 +1095,24 @@ msgstr "Borrar biblioteca"
 msgid "Remove executable"
 msgstr "Borrar ejecutable"
 
-#: src/autovalaPlugin/actionbuttons.vala:59
+#: src/autovalaPlugin/actionbuttons.vala:57
 msgid "Creates a new Autovala project"
 msgstr "Crea un nuevo proyecto de Autovala"
 
-#: src/autovalaPlugin/actionbuttons.vala:69
+#: src/autovalaPlugin/actionbuttons.vala:67
 msgid "Refreshes the Autovala project"
 msgstr "Refresca el proyecto de Autovala"
 
-#: src/autovalaPlugin/actionbuttons.vala:73
+#: src/autovalaPlugin/actionbuttons.vala:71
 msgid "Updates the project and rebuilds the CMake files"
 msgstr "Actualiza el proyecto y regenera los ficheros de CMake"
 
-#: src/autovalaPlugin/actionbuttons.vala:77
-#: src/autovalaPlugin/actionbuttons.vala:81
+#: src/autovalaPlugin/actionbuttons.vala:75
+#: src/autovalaPlugin/actionbuttons.vala:79
 msgid "Builds the Autovala project"
 msgstr "Compila el proyecto de Autovala"
 
-#: src/autovalaPlugin/actionbuttons.vala:91
+#: src/autovalaPlugin/actionbuttons.vala:89
 msgid "Updates the language translation files"
 msgstr "Actualiza las traducciones"
 
@@ -1148,22 +1148,22 @@ msgstr "Fichero sin título"
 msgid "Untitled folder"
 msgstr "Directorio sin título"
 
-#: src/autovalaPlugin/projectview.vala:510
+#: src/autovalaPlugin/projectview.vala:486
 #, c-format
 msgid "%s <b>(Project file)</b>"
 msgstr "%s <b>(Fichero de proyecto)</b>"
 
-#: src/autovalaPlugin/projectview.vala:524
+#: src/autovalaPlugin/projectview.vala:500
 #, c-format
 msgid "%s <b>(executable)</b>"
 msgstr "%s <b>(ejecutable)</b>"
 
-#: src/autovalaPlugin/projectview.vala:531
+#: src/autovalaPlugin/projectview.vala:507
 #, c-format
 msgid "%s <b>(library)</b>"
 msgstr "%s <b>(biblioteca)</b>"
 
-#: src/autovalaPlugin/projectview.vala:660
+#: src/autovalaPlugin/projectview.vala:640
 msgid "Refreshing project file\n"
 msgstr "Refrescando el proyecto\n"
 

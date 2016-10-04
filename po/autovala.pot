@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-10-04 01:06+0200\n"
+"POT-Creation-Date: 2016-10-04 23:00+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -47,11 +47,11 @@ msgstr ""
 #: src/autovala.vala:104 src/autovala.vala:111 src/autovala.vala:127
 #: src/autovala.vala:141 src/autovala.vala:155 src/autovala.vala:169
 #: src/autovala.vala:183 src/autovala.vala:197 src/autovala.vala:211
-#: src/autovala.vala:228 src/autovalaPlugin/projectview.vala:589
-#: src/autovalaPlugin/projectview.vala:602
-#: src/autovalaPlugin/projectview.vala:721
-#: src/autovalaPlugin/projectview.vala:735
-#: src/autovalaPlugin/projectview.vala:806
+#: src/autovala.vala:228 src/autovalaPlugin/projectview.vala:579
+#: src/autovalaPlugin/projectview.vala:588
+#: src/autovalaPlugin/projectview.vala:701
+#: src/autovalaPlugin/projectview.vala:715
+#: src/autovalaPlugin/projectview.vala:783
 msgid "Aborting\n"
 msgstr ""
 
@@ -59,9 +59,9 @@ msgstr ""
 #: src/autovala.vala:130 src/autovala.vala:144 src/autovala.vala:158
 #: src/autovala.vala:172 src/autovala.vala:186 src/autovala.vala:200
 #: src/autovala.vala:217 src/autovala.vala:232
-#: src/autovalaPlugin/projectview.vala:591
-#: src/autovalaPlugin/projectview.vala:604
-#: src/autovalaPlugin/projectview.vala:824
+#: src/autovalaPlugin/projectview.vala:581
+#: src/autovalaPlugin/projectview.vala:590
+#: src/autovalaPlugin/projectview.vala:801
 msgid "Done\n"
 msgstr ""
 
@@ -69,7 +69,7 @@ msgstr ""
 msgid "Updating project file\n"
 msgstr ""
 
-#: src/autovala.vala:107 src/autovalaPlugin/projectview.vala:682
+#: src/autovala.vala:107 src/autovalaPlugin/projectview.vala:662
 msgid "Updating CMake files\n"
 msgstr ""
 
@@ -118,12 +118,12 @@ msgstr ""
 msgid "Failed when copying the file %s to %s"
 msgstr ""
 
-#: src/autovalaLib/autovalaLib.vala:108 src/autovalaPlugin/projectview.vala:761
+#: src/autovalaLib/autovalaLib.vala:108 src/autovalaPlugin/projectview.vala:741
 #, c-format
 msgid "Failed when deleting recursively the folder %s"
 msgstr ""
 
-#: src/autovalaLib/autovalaLib.vala:116 src/autovalaPlugin/projectview.vala:770
+#: src/autovalaLib/autovalaLib.vala:116 src/autovalaPlugin/projectview.vala:750
 #, c-format
 msgid "Failed when deleting the file %s"
 msgstr ""
@@ -1024,24 +1024,24 @@ msgstr ""
 msgid "Remove executable"
 msgstr ""
 
-#: src/autovalaPlugin/actionbuttons.vala:59
+#: src/autovalaPlugin/actionbuttons.vala:57
 msgid "Creates a new Autovala project"
 msgstr ""
 
-#: src/autovalaPlugin/actionbuttons.vala:69
+#: src/autovalaPlugin/actionbuttons.vala:67
 msgid "Refreshes the Autovala project"
 msgstr ""
 
-#: src/autovalaPlugin/actionbuttons.vala:73
+#: src/autovalaPlugin/actionbuttons.vala:71
 msgid "Updates the project and rebuilds the CMake files"
 msgstr ""
 
-#: src/autovalaPlugin/actionbuttons.vala:77
-#: src/autovalaPlugin/actionbuttons.vala:81
+#: src/autovalaPlugin/actionbuttons.vala:75
+#: src/autovalaPlugin/actionbuttons.vala:79
 msgid "Builds the Autovala project"
 msgstr ""
 
-#: src/autovalaPlugin/actionbuttons.vala:91
+#: src/autovalaPlugin/actionbuttons.vala:89
 msgid "Updates the language translation files"
 msgstr ""
 
@@ -1077,22 +1077,22 @@ msgstr ""
 msgid "Untitled folder"
 msgstr ""
 
-#: src/autovalaPlugin/projectview.vala:510
+#: src/autovalaPlugin/projectview.vala:486
 #, c-format
 msgid "%s <b>(Project file)</b>"
 msgstr ""
 
-#: src/autovalaPlugin/projectview.vala:524
+#: src/autovalaPlugin/projectview.vala:500
 #, c-format
 msgid "%s <b>(executable)</b>"
 msgstr ""
 
-#: src/autovalaPlugin/projectview.vala:531
+#: src/autovalaPlugin/projectview.vala:507
 #, c-format
 msgid "%s <b>(library)</b>"
 msgstr ""
 
-#: src/autovalaPlugin/projectview.vala:660
+#: src/autovalaPlugin/projectview.vala:640
 msgid "Refreshing project file\n"
 msgstr ""
 

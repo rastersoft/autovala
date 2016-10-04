@@ -145,30 +145,6 @@ namespace AutovalaPlugin {
 		}
 
 		/**
-		 * Links the signals and callbacks of this ProjectViewer and an ActionButtons, to allow
-		 * a ProjectViewer to know when the user asked to create a new project, update the current one...
-		 * and to allow the ActionButtons to change its status
-		 * @param actionButtons The ActionButtons widget to link to this ProjectViewer
-		 * @return true if all went fine; false if there was an ActionButtons object already registered
-		 */
-		public bool link_action_buttons(ActionButtons actionButtons) {
-
-			if(this.actionButtons != null) {
-				return false;
-			}
-
-			this.actionButtons = actionButtons;
-			actionButtons.action_new_project.connect(this.create_new_project_cb);
-			actionButtons.action_refresh_project.connect(this.refresh_project_cb);
-			actionButtons.action_update_project.connect(this.update_project_cb);
-			actionButtons.action_build.connect(this.build_project_cb);
-			actionButtons.action_full_build.connect(this.full_build_project_cb);
-			actionButtons.action_update_gettext.connect(this.update_gettext_cb);
-			this.update_buttons();
-			return true;
-		}
-
-		/**
 		 * Links the signals and callbacks of this ProjectViewer and an OutputView, to allow
 		 * the OutputView to receive the texts from running a command
 		 * @param output_view The OutputView widget to link to this ProjectViewer
@@ -558,93 +534,96 @@ namespace AutovalaPlugin {
 			}
 		}
 
+
 		/**
-		 * Creates a new project
+		 * Links the signals and callbacks of this ProjectViewer and an ActionButtons, to allow
+		 * a ProjectViewer to know when the user asked to create a new project, update the current one...
+		 * and to allow the ActionButtons to change its status
+		 * @param actionButtons The ActionButtons widget to link to this ProjectViewer
+		 * @return true if all went fine; false if there was an ActionButtons object already registered
 		 */
-		private void create_new_project_cb() {
-			if (this.create_new_project != null) {
-				return;
+		public bool link_action_buttons(ActionButtons actionButtons) {
+
+			if(this.actionButtons != null) {
+				return false;
 			}
 
-			string? project_name;
-			string? project_path;
-			this.current_project = new AutoVala.ManageProject();
-			this.create_new_project = new CreateNewProject(this.current_project);
-			if (this.create_new_project.run(out project_name, out project_path)) {
-				this.current_project.refresh(Path.build_filename(project_path,project_name+".avprj"));
-				var base_name = Path.build_filename(project_path,"src",project_name+".vala");
-				this.clicked_file(base_name);
+			this.actionButtons = actionButtons;
+
+			actionButtons.action_new_project.connect( () => {
+
+				string? project_name;
+				string? project_path;
+
+				if (this.create_new_project != null) {
+					return;
+				}
+
+				this.current_project = new AutoVala.ManageProject();
+				this.create_new_project = new CreateNewProject(this.current_project);
+				if (this.create_new_project.run(out project_name, out project_path)) {
+					this.current_project.refresh(Path.build_filename(project_path,project_name+".avprj"));
+					var base_name = Path.build_filename(project_path,"src",project_name+".vala");
+					this.clicked_file(base_name);
+					this.output_view_clear_buffer();
+				}
+				this.create_new_project.destroy();
+				this.create_new_project = null;
+				this.refresh_project(true);
+			});
+
+			actionButtons.action_refresh_project.connect( () => {
+
+				this.current_project = new AutoVala.ManageProject();
+				if (this.refresh_project_func()) {
+					this.output_view_append_text(_("Aborting\n"));
+				} else {
+					this.output_view_append_text(_("Done\n"));
+				}
+			});
+
+			actionButtons.action_update_project.connect( () => {
+				this.current_project = new AutoVala.ManageProject();
+				if (this.update_project_func()) {
+					this.output_view_append_text(_("Aborting\n"));
+				} else {
+					this.output_view_append_text(_("Done\n"));
+				}
+			});
+
+			actionButtons.action_build.connect( () => {
 				this.output_view_clear_buffer();
-			}
-			this.create_new_project.destroy();
-			this.create_new_project = null;
-			this.refresh_project(true);
+				if (this.current_project_path == null) {
+					this.update_buttons();
+					return;
+				}
+				this.current_project = new AutoVala.ManageProject();
+				this.build_func();
+			});
+
+			actionButtons.action_full_build.connect( () => {
+				this.output_view_clear_buffer();
+				if (this.current_project_path == null) {
+					this.update_buttons();
+					return;
+				}
+				this.current_project = new AutoVala.ManageProject();
+				this.full_build_func(true);
+			});
+
+			actionButtons.action_update_gettext.connect( () => {
+				this.output_view_clear_buffer();
+				this.current_project = new AutoVala.ManageProject();
+				var retval = this.current_project.gettext(this.current_project_file);
+				var msgs = this.current_project.getErrors();
+				foreach(var msg in msgs) {
+					this.output_view_append_text(msg+"\n");
+				}
+			});
+
+			this.update_buttons();
+			return true;
 		}
-
-		/**
-		 * Runs an "autovala refresh" command
-		 */
-		private void refresh_project_cb() {
-			this.current_project = new AutoVala.ManageProject();
-			if (this.refresh_project_func()) {
-				this.output_view_append_text(_("Aborting\n"));
-			} else {
-				this.output_view_append_text(_("Done\n"));
-			}
-		}
-
-		/**
-		 * Runs an "autovala update" command
-		 */
-
-		private void update_project_cb() {
-			this.current_project = new AutoVala.ManageProject();
-			if (this.update_project_func()) {
-				this.output_view_append_text(_("Aborting\n"));
-			} else {
-				this.output_view_append_text(_("Done\n"));
-			}
-		}
-
-		/**
-		 * Builds the current project
-		 */
-		private void build_project_cb() {
-			this.output_view_clear_buffer();
-			if (this.current_project_path == null) {
-				this.update_buttons();
-				return;
-			}
-			this.current_project = new AutoVala.ManageProject();
-			this.build_func();
-		}
-
-		/**
-		 * Updates the project and builds it from scratch
-		 */
-		private void full_build_project_cb() {
-			this.output_view_clear_buffer();
-			if (this.current_project_path == null) {
-				this.update_buttons();
-				return;
-			}
-			this.current_project = new AutoVala.ManageProject();
-			this.full_build_func(true);
-		}
-
-		/**
-		 * Updates the translation files
-		 */
-		private void update_gettext_cb() {
-			this.output_view_clear_buffer();
-			this.current_project = new AutoVala.ManageProject();
-			var retval = this.current_project.gettext(this.current_project_file);
-			var msgs = this.current_project.getErrors();
-			foreach(var msg in msgs) {
-				this.output_view_append_text(msg+"\n");
-			}
-		}
-
 
 		/**
 		 * This method refreshes a project
@@ -849,7 +828,6 @@ namespace AutovalaPlugin {
 				this.actionButtons.update_buttons(mode);
 			}
 		}
-
 	}
 
 	/**
