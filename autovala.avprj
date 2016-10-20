@@ -92,7 +92,10 @@ vala_local_package: AutoVala
 *vala_check_package: pangocairo
 *vala_check_package: vte-2.91
 *vala_check_package: x11
+*vala_source: CreateNewProject.vala
 *vala_source: PanedPercentage.vala
+*vala_source: ProjectProperties.vala
+*vala_source: ProjectViewerMenu.vala
 *vala_source: actionbuttons.vala
 *vala_source: fileview.vala
 *vala_source: outputview.vala
@@ -142,7 +145,10 @@ vala_local_package: AutoVala
 *translate: vala src/autovalaLib/packages_pacman.vala
 *translate: vala src/autovalaLib/packages_rpm.vala
 *translate: vala src/autovalaLib/readPkgconfig.vala
+*translate: vala src/autovalaPlugin/CreateNewProject.vala
 *translate: vala src/autovalaPlugin/PanedPercentage.vala
+*translate: vala src/autovalaPlugin/ProjectProperties.vala
+*translate: vala src/autovalaPlugin/ProjectViewerMenu.vala
 *translate: vala src/autovalaPlugin/actionbuttons.vala
 *translate: vala src/autovalaPlugin/fileview.vala
 *translate: vala src/autovalaPlugin/outputview.vala
