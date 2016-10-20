@@ -290,16 +290,16 @@ namespace AutovalaPlugin {
 				return;
 			}
 
+			this.current_file = file;
+			this.refresh_project(false);
+			this.update_buttons();
+
 			var data = this.current_project.get_binaries_list(this.current_project_file);
 			if (data == null) {
 				this.current_project_path = null;
 			} else {
 				this.current_project_path = data.projectPath;
 			}
-
-			this.current_file = file;
-			this.refresh_project(false);
-			this.update_buttons();
 		}
 
 		/**
