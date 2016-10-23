@@ -44,6 +44,7 @@ set (VALA_PACKAGES ${VALA_PACKAGES} libpeas-1.0)
 set (VALA_PACKAGES ${VALA_PACKAGES} libxml-2.0)
 set (VALA_PACKAGES ${VALA_PACKAGES} pango)
 set (VALA_PACKAGES ${VALA_PACKAGES} pangocairo)
+set (VALA_PACKAGES ${VALA_PACKAGES} vte-2.91)
 set (VALA_PACKAGES ${VALA_PACKAGES} x11)
 
 set (APP_SOURCES ${APP_SOURCES} ${CMAKE_CURRENT_BINARY_DIR}/Config.vala)
@@ -64,6 +65,11 @@ if (OLD_GEDIT)
 	set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DOLD_GEDIT " )
 	set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DOLD_GEDIT " )
 endif ()
+
+if ((${CMAKE_BUILD_TYPE} STREQUAL "Debug") OR (${CMAKE_BUILD_TYPE} STREQUAL "RelWithDebInfo"))
+	set(COMPILE_OPTIONS ${COMPILE_OPTIONS} "-g")
+endif()
+
 set (COMPILE_OPTIONS ${COMPILE_OPTIONS} --library=autovalagedit --gir autovalagedit-1.0.gir )
 
 vala_precompile(VALA_C autovalagedit
