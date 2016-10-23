@@ -8,7 +8,6 @@ custom: data/cmake share/autovala/cmake
 
 *gresource: extras_gresource_xml data/extras.gresource.xml
 
-
 vala_binary: src/autovala
 *version: 0.99.47
 vala_local_package: AutoVala
@@ -102,6 +101,7 @@ vala_check_package: atk
 *vala_source: outputview.vala
 *vala_source: projectview.vala
 *vala_source: searchview.vala
+
 
 *po: po
 
