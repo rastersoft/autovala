@@ -712,7 +712,8 @@ namespace AutoVala {
 					line = "vala_binary: ";
 				}
 				line+=Path.build_filename(base_path3,binary_name);
-				if (element.configureLine(line,false,null,false,0)) {
+
+				if (element.configureLine(line,false,null,false,0,null)) {
 					var errors = config.globalData.getErrorList();
 					string retString = "";
 					foreach(var error in errors) {
@@ -720,17 +721,17 @@ namespace AutoVala {
 					}
 					return retString;
 				}
-				element.setCompileOptions(vala_options,false, null, false, 0);
-				element.setCompileCOptions(c_options,false, null, false, 0);
-				element.setCLibrary(libraries,false,null,false,0);
+				element.setCompileOptions(vala_options,false, null, false, 0,null);
+				element.setCompileCOptions(c_options,false, null, false, 0,null);
+				element.setCLibrary(libraries,false,null,false,0,null);
 				element.autoConfigure();
 			} else {
 				original_element.set_name(binary_name);
 				original_element.set_type(is_library);
 				original_element.set_path(base_path3);
-				original_element.setCompileOptions(vala_options,false, null, false, 0,true);
-				original_element.setCompileCOptions(c_options,false, null, false, 0,true);
-				original_element.setCLibrary(libraries,false,null,false,0,true);
+				original_element.setCompileOptions(vala_options,false, null, false, 0,null,true);
+				original_element.setCompileCOptions(c_options,false, null, false, 0,null,true);
+				original_element.setCLibrary(libraries,false,null,false,0,null,true);
 				original_element.autoConfigure();
 			}
 			config.saveConfiguration();
@@ -832,9 +833,10 @@ namespace AutoVala {
 		/**
 		 * Returns an object with all the binaries in this project and its source files
 		 * @param basePath A base file or folder; the code will check if that file is a valid .avprj file; if not (or if it is a folder) will search in the folder containing it if there is a valid .avprj file. If not, will search upwards until a valid .avprj file is found, or the root is reached. NULL means to start searching in the current working directory
+		 * @param owner The application identifier that is asking for the data, to include the EXTERNAL data
 		 * @return NULL if there was an error; or a ValaProject object with the data of this project
 		 */
-		public ValaProject ? get_binaries_list(string ?basePath = null) {
+		public ValaProject ? get_binaries_list(string ?basePath = null, string? owner = null) {
 
 			this.config = new AutoVala.Configuration(basePath);
 			if (config.globalData.error) {
@@ -861,8 +863,60 @@ namespace AutoVala {
 					project.add_glade(element as ElementGlade);
 					continue;
 				}
+				if ((owner != null) && (element.eType == ConfigType.EXTERNAL)) {
+					var element2 = element as ElementExternal;
+					if (element2.owner == owner) {
+						project.external.add(element2.data);
+					}
+				}
 			}
 			return project;
+		}
+
+		/**
+		 * Allows to update the external data for an specific owner
+		 * @param owner the owner identifier of the data to update
+		 * @param data a list of the strings to store in the project file
+		 * @param basePath A base file or folder; the code will check if that file is a valid .avprj file; if not (or if it is a folder) will search in the folder containing it if there is a valid .avprj file. If not, will search upwards until a valid .avprj file is found, or the root is reached. NULL means to start searching in the current working directory
+		 * @return True if there was an error; False if everything worked fine
+		 */
+		public bool set_external_data(string owner,Gee.List<string> data, string ?basePath = null) {
+
+			var config=new AutoVala.Configuration(basePath);
+			if (config.globalData.error) {
+				return true;
+			}
+
+			if (config.readConfiguration()) {
+				return true;
+			}
+
+			ElementBase.globalData.generateExtraData();
+
+			ElementExternal[] tmpList = {};//new Gee.ArrayList<ElementExternal>();
+
+			foreach (var element in config.globalData.globalElements) {
+				if (element.eType == ConfigType.EXTERNAL) {
+					var element2 = element as ElementExternal;
+					if (element2.owner == owner) {
+						tmpList += element2; // we have to create a different list before removing the elements in the globalElements list
+					}
+				}
+			}
+
+			foreach(var element in tmpList) {
+				// we remove the External data from the project
+				config.globalData.globalElements.remove(element);
+			}
+
+			foreach(var extdata in data) {
+				var element = new ElementExternal();
+				element.owner = owner;
+				element.data = extdata;
+				element.configureElement(null,null,null,false,null,false);
+			}
+			config.saveConfiguration();
+			return false;
 		}
 	}
 
@@ -873,10 +927,12 @@ namespace AutoVala {
 		public string projectFile;
 		public Gee.List<PublicBinary>? binaries;
 		public Gee.List<PublicGlade>? ui;
+		public Gee.List<string>external;
 
 		public ValaProject() {
 			this.binaries = new Gee.ArrayList<PublicBinary>();
 			this.ui = new Gee.ArrayList<PublicGlade>();
+			this.external = new Gee.ArrayList<string>();
 		}
 	}
 

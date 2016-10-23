@@ -8,13 +8,15 @@ autovala fileformat - The syntax for autovala configuration file
 
 The project file has a very simple format. Usually you don't need to manually edit it, but when the guesses of autovala are incorrect, you can do it, and your changes will be remembered each time you refresh the file.
 
-The current version for the project file format is **23**.
+The current version for the project file format is **24**.
 
 The file is based on commands in the format:
 
         command: data
 
-one in each line. Every line that starts with # is ignored (is a comment), but also will be removed when the file is recreated.
+one in each line. Each command can be optionally be prefixed with an asterisk (*). In that case, it is assumed that the command has been created automatically by AutoVala, after applying the guessing rules, and will be erased and regerenated every time the .avprj file is recreated. If the command lacks the asterisk, it is assumed that it has been manually added by the user, so it will be preserved between refreshes.
+
+Every line that starts with # is ignored (is a comment), but they will be associated with the next command. This means that comments will be preserved, as long as they are associated with a manually added command; comments put before an automatically added command will be lost.
 
 Except where otherwise is specified, the paths must be relative to the project path.
 
@@ -199,6 +201,13 @@ After that, it comes several commands, some of them repeated several times, to s
  * **source_dependency**: followed by one or more path/filenames (separated by spaces), it defines a system file needed for compiling the source, so, when creating a system package, the package that contains that file will be added to the build dependencies list. It will also be checked when creating the CMAKE files. If there are several paths, only one must exists to fullfill the condition. This is useful, for example, when checking for *pkgconfig* files, because in debian-based 64-bit systems they are stored at */usr/lib/pkgconfig*, but in fedora-based 64-bit systems they are at */usr/lib64/pkgconfig*.
 
  * **binary_dependency**: followed by one or more path/filenames (separated by spaces), it defines a system file needed for running the project, so, when creating a system package, the package that contains that file will be added to the dependencies list. It will also be checked when creating the CMAKE files. This is useful, for example, when checking for library files, because in debian-based 64-bit systems they are stored at */usr/lib*, but in fedora-based 64-bit systems they are at */usr/lib64*.
+
+* **external**: followed by an onwer ID and a free-form text, allows to store custom data inside the project file, useful for external apps that integrates with autovala. Example:
+
+            external: GEDIT custom_margin: 8
+            external: GNOME_BUILDER ask_exit
+
+It is possible to ask autovalaLib to return all the external data for an specific owner, and to overwrite it, again for an specific owner, leaving unmodified the external data of other owners.
 
 It is also possible to add conditions to nearly all of these commands (more specifically, all can be conditional with the exception of **vala_version**, **vala_binary**, **vala_library**, **version**, **namespace**, **project_name**, **define** and **autovala_version**). To do so, you can use the commands **if CONDITION**, **else** and **end**. The format for the **CONDITION** string is the CMake format (statements that can be true or false, parenteses, and AND, OR and NOT operators).
 

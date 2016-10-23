@@ -1,4 +1,8 @@
 ## History of versions ##
+* version 0.99.47 (2016-10-23)
+    * Now the list of files to translate is kept ordered between executions, reducing the number of changes in repositories due to changes in the file order
+    * Added support for external data (useful to store data for external programs that use autovala)
+    * Added support for persistent comments in the AVPRJ file
 * version 0.99.46 (2016-10-02)
     * Fixed bug when using an absolute path for vapidir: commands
     * Allows to add non-existing folders with vapidir

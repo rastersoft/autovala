@@ -27,6 +27,7 @@ namespace AutoVala {
 		public string? condition;
 		public bool invertCondition;
 		public bool automatic;
+		public string[]? comments = null;
 	}
 
 	public class PackageElement:GenericElement {
@@ -298,7 +299,7 @@ namespace AutoVala {
 					}
 				}
 			}
-			this.setCLibrary(library, true, null, false, 0);
+			this.setCLibrary(library, true, null, false, 0,null);
 		}
 
 		public static bool autoGenerate() {
@@ -362,7 +363,7 @@ namespace AutoVala {
 				var unitestsFolder=Path.build_filename(this._path,"unitests");
 				var files = ElementBase.getFilesFromFolder(unitestsFolder,{".vala"},true,true,"unitests");
 				foreach (var element in files) {
-					error |= this.addUnitest(element,true,null,false,-1);
+					error |= this.addUnitest(element,true,null,false,-1,null);
 					error |= this.processSource(element);
 				}
 				var unitestsFullFolder=Path.build_filename(this._fullPath,"unitests");
@@ -371,18 +372,18 @@ namespace AutoVala {
 
 			var files = ElementBase.getFilesFromFolder(this._path,{".vala"},true,true);
 			foreach (var element in files) {
-				error |= this.addSource(element,true,null,false,-1);
+				error |= this.addSource(element,true,null,false,-1,null);
 				error |= this.processSource(element);
 			}
 
 			files = ElementBase.getFilesFromFolder(this._path,{".c"},true,true);
 			foreach (var element in files) {
-				error |= this.addCSource(element,true,null,false,-1);
+				error |= this.addCSource(element,true,null,false,-1,null);
 			}
 
 			files = ElementBase.getFilesFromFolder(this._path,{".h"},true,true);
 			foreach (var element in files) {
-				error |= this.addHFolder(GLib.Path.get_dirname(element),true,null,false,-1);
+				error |= this.addHFolder(GLib.Path.get_dirname(element),true,null,false,-1,null);
 			}
 
 			ElementBase.globalData.addExclude(this._path);
@@ -427,7 +428,7 @@ namespace AutoVala {
 			var files = ElementBase.getFilesFromFolder(vapisPath,{".vapi"},true,true);
 			bool error=false;
 			foreach (var element in files) {
-				error |= this.addVapi(GLib.Path.build_filename("vapis",element),true,null,false,-1);
+				error |= this.addVapi(GLib.Path.build_filename("vapis",element),true,null,false,-1,null);
 			}
 			ElementBase.globalData.addExclude(vapisPath);
 			return error;
@@ -471,11 +472,11 @@ namespace AutoVala {
 					bool isCheckable=false;
 					this.usingList.remove(element);
 					var filename = Globals.vapiList.getPackageFromNamespace(element, out isCheckable);
-					this.addPackage(filename,isCheckable ? packageType.DO_CHECK : packageType.NO_CHECK, true, null, false, -1);
+					this.addPackage(filename,isCheckable ? packageType.DO_CHECK : packageType.NO_CHECK, true, null, false, -1,null);
 					var dependencies = Globals.vapiList.getDependenciesFromPackage(filename);
 					if (dependencies!=null) {
 						foreach (var dep in dependencies) {
-							this.addPackage(dep,packageType.DO_CHECK, true, null, false, -1);
+							this.addPackage(dep,packageType.DO_CHECK, true, null, false, -1,null);
 						}
 					}
 				}
@@ -773,7 +774,7 @@ namespace AutoVala {
 			return false;
 		}
 
-		public bool setCLibrary(string libraries, bool automatic, string? condition, bool invertCondition, int lineNumber, bool erase_all=false) {
+		public bool setCLibrary(string libraries, bool automatic, string? condition, bool invertCondition, int lineNumber, string[]? comments, bool erase_all=false) {
 
 			if (erase_all) {
 				// remove the manually added libraries
@@ -801,12 +802,13 @@ namespace AutoVala {
 			}
 
 			var element=new LibraryElement(libraries,automatic,condition,invertCondition);
+			element.comments = comments;
 			this._link_libraries.add(element);
 
 			return false;
 		}
 
-		public bool setCompileOptions(string options, bool automatic, string? condition, bool invertCondition, int lineNumber, bool erase_all=false) {
+		public bool setCompileOptions(string options, bool automatic, string? condition, bool invertCondition, int lineNumber, string[]? comments, bool erase_all=false) {
 
 			if (erase_all) {
 				this._compileOptions = new Gee.ArrayList<CompileElement ?>();
@@ -827,12 +829,13 @@ namespace AutoVala {
 			}
 
 			var element=new CompileElement(options,automatic,condition,invertCondition);
+			element.comments = comments;
 			this._compileOptions.add(element);
 
 			return false;
 		}
 
-		public bool setCompileCOptions(string options, bool automatic, string? condition, bool invertCondition, int lineNumber, bool erase_all=false) {
+		public bool setCompileCOptions(string options, bool automatic, string? condition, bool invertCondition, int lineNumber, string[]? comments, bool erase_all=false) {
 
 			if (erase_all) {
 				this._compileOptions = new Gee.ArrayList<CompileElement ?>();
@@ -853,12 +856,13 @@ namespace AutoVala {
 			}
 
 			var element=new CompileElement(options,automatic,condition,invertCondition);
+			element.comments = comments;
 			this._compileCOptions.add(element);
 
 			return false;
 		}
 
-		private bool setDestination(string destination, bool automatic, string? condition, bool invertCondition, int lineNumber) {
+		private bool setDestination(string destination, bool automatic, string? condition, bool invertCondition, int lineNumber, string[]? comments) {
 
 			if (condition!= null) {
 				automatic = false;
@@ -880,11 +884,12 @@ namespace AutoVala {
 			}
 
 			var element=new DestinationElement(destination,automatic,condition,invertCondition);
+			element.comments = comments;
 			this._destination.add(element);
 			return false;
 		}
 
-		private bool addPackage(string package, packageType type, bool automatic, string? condition, bool invertCondition, int lineNumber) {
+		private bool addPackage(string package, packageType type, bool automatic, string? condition, bool invertCondition, int lineNumber, string[]? comments) {
 
 			// if a package is conditional, it MUST be manual, because conditions are not added automatically
 			if (condition!=null) {
@@ -903,11 +908,12 @@ namespace AutoVala {
 			}
 
 			var element=new PackageElement(package,type,automatic,condition,invertCondition);
+			element.comments = comments;
 			this._packages.add(element);
 			return false;
 		}
 
-		private bool addSource(string sourceFile, bool automatic, string? condition, bool invertCondition, int lineNumber) {
+		private bool addSource(string sourceFile, bool automatic, string? condition, bool invertCondition, int lineNumber, string[]? comments) {
 
 			if (condition!=null) {
 				automatic=false; // if a source file is conditional, it MUST be manual, because conditions are not added automatically
@@ -924,6 +930,7 @@ namespace AutoVala {
 				}
 			}
 			var element=new SourceElement(sourceFile,automatic,condition, invertCondition);
+			element.comments = comments;
 			this._sources.add(element);
 			var translation = new ElementTranslation();
 			translation.translate_type = TranslationType.VALA;
@@ -931,7 +938,7 @@ namespace AutoVala {
 			return false;
 		}
 
-		private bool addResource(string resourceFile, bool automatic, string? condition, bool invertCondition, int lineNumber) {
+		private bool addResource(string resourceFile, bool automatic, string? condition, bool invertCondition, int lineNumber, string[]? comments) {
 
 			if (condition!=null) {
 				automatic=false; // if a resource file is conditional, it MUST be manual, because conditions are not added automatically
@@ -949,11 +956,12 @@ namespace AutoVala {
 			}
 
 			var element=new ResourceElement(resourceFile,automatic,condition, invertCondition);
+			element.comments = comments;
 			this._resources.add(element);
 			return false;
 		}
 
-		private bool addUnitest(string unitestFile, bool automatic, string? condition, bool invertCondition, int lineNumber) {
+		private bool addUnitest(string unitestFile, bool automatic, string? condition, bool invertCondition, int lineNumber, string[]? comments) {
 
 			if (condition!=null) {
 				automatic=false; // if a source file is conditional, it MUST be manual, because conditions are not added automatically
@@ -970,11 +978,12 @@ namespace AutoVala {
 				}
 			}
 			var element=new SourceElement(unitestFile,automatic,condition, invertCondition);
+			element.comments = comments;
 			this._unitests.add(element);
 			return false;
 		}
 
-		private bool addCSource(string sourceFile, bool automatic, string? condition, bool invertCondition, int lineNumber) {
+		private bool addCSource(string sourceFile, bool automatic, string? condition, bool invertCondition, int lineNumber, string[]? comments) {
 
 			if (condition!=null) {
 				automatic=false; // if a source file is conditional, it MUST be manual, because conditions are not added automatically
@@ -991,6 +1000,7 @@ namespace AutoVala {
 				}
 			}
 			var element=new SourceElement(sourceFile,automatic,condition, invertCondition);
+			element.comments = comments;
 			this._cSources.add(element);
 			var translation = new ElementTranslation();
 			translation.translate_type = TranslationType.C;
@@ -998,7 +1008,7 @@ namespace AutoVala {
 			return false;
 		}
 
-		private bool addVapi(string vapiFile, bool automatic, string? condition, bool invertCondition, int lineNumber) {
+		private bool addVapi(string vapiFile, bool automatic, string? condition, bool invertCondition, int lineNumber, string[]? comments) {
 
 			if (condition!=null) {
 				automatic=false; // if a VAPI file is conditional, it MUST be manual, because conditions are not added automatically
@@ -1015,11 +1025,12 @@ namespace AutoVala {
 				}
 			}
 			var element=new VapiElement(vapiFile,automatic,condition, invertCondition);
+			element.comments = comments;
 			this._vapis.add(element);
 			return false;
 		}
 
-		private bool addDBus(string DBusLine, bool automatic, string? condition, bool invertCondition, int lineNumber) {
+		private bool addDBus(string DBusLine, bool automatic, string? condition, bool invertCondition, int lineNumber, string[]? comments) {
 
 			if (condition!=null) {
 				ElementBase.globalData.addError(_("DBus definitions can't be conditional (line %d)").printf(lineNumber));
@@ -1072,11 +1083,12 @@ namespace AutoVala {
 			}
 
 			var element=new DBusElement(datas2[0],datas2[1],systemBus,GDBus,automatic);
+			element.comments = comments;
 			this._dbusElements.add(element);
 			return false;
 		}
 
-		private bool addHFolder(string includeFolder, bool automatic, string? condition, bool invertCondition, int lineNumber) {
+		private bool addHFolder(string includeFolder, bool automatic, string? condition, bool invertCondition, int lineNumber, string[]? comments) {
 
 			if (condition!=null) {
 				automatic=false; // if an include folder is conditional, it MUST be manual, because conditions are not added automatically
@@ -1093,52 +1105,55 @@ namespace AutoVala {
 				}
 			}
 			var element=new SourceElement(includeFolder,automatic,condition, invertCondition);
+			element.comments = comments;
 			this._hFolders.add(element);
 			return false;
 		}
 
-		public override bool configureLine(string line, bool automatic, string? condition, bool invertCondition, int lineNumber) {
+		public override bool configureLine(string line, bool automatic, string? condition, bool invertCondition, int lineNumber, string[]? comments) {
 
 			if (line.has_prefix("vala_binary: ")) {
 				this._type = ConfigType.VALA_BINARY;
 				this.command = "vala_binary";
+				this.comments = comments;
 			} else if (line.has_prefix("vala_library: ")) {
 				this._type = ConfigType.VALA_LIBRARY;
 				this.command = "vala_library";
+				this.comments = comments;
 			} else if (line.has_prefix("version: ")) {
 				return this.setVersion(line.substring(9).strip(),automatic,lineNumber);
 			} else if (line.has_prefix("namespace: ")) {
 				return this.setNamespace(line.substring(11).strip(),automatic,lineNumber);
 			} else if (line.has_prefix("compile_options: ")) {
-				return this.setCompileOptions(line.substring(17).strip(),automatic, condition, invertCondition, lineNumber);
+				return this.setCompileOptions(line.substring(17).strip(),automatic, condition, invertCondition, lineNumber, comments);
 			} else if (line.has_prefix("compile_c_options: ")) {
-				return this.setCompileCOptions(line.substring(19).strip(),automatic, condition, invertCondition, lineNumber);
+				return this.setCompileCOptions(line.substring(19).strip(),automatic, condition, invertCondition, lineNumber, comments);
 			} else if (line.has_prefix("vala_destination: ")) {
-				return this.setDestination(line.substring(18).strip(),automatic,condition, invertCondition,lineNumber);
+				return this.setDestination(line.substring(18).strip(),automatic,condition, invertCondition,lineNumber, comments);
 			} else if (line.has_prefix("vala_package: ")) {
-				return this.addPackage(line.substring(14).strip(),packageType.NO_CHECK,automatic,condition,invertCondition,lineNumber);
+				return this.addPackage(line.substring(14).strip(),packageType.NO_CHECK,automatic,condition,invertCondition,lineNumber, comments);
 			} else if (line.has_prefix("vala_check_package: ")) {
-				return this.addPackage(line.substring(20).strip(),packageType.DO_CHECK,automatic,condition,invertCondition,lineNumber);
+				return this.addPackage(line.substring(20).strip(),packageType.DO_CHECK,automatic,condition,invertCondition,lineNumber, comments);
 			} else if (line.has_prefix("vala_local_package: ")) {
-				return this.addPackage(line.substring(20).strip(),packageType.LOCAL,automatic,condition,invertCondition,lineNumber);
+				return this.addPackage(line.substring(20).strip(),packageType.LOCAL,automatic,condition,invertCondition,lineNumber, comments);
 			} else if (line.has_prefix("c_check_package: ")) {
-				return this.addPackage(line.substring(17).strip(),packageType.C_DO_CHECK,automatic,condition,invertCondition,lineNumber);
+				return this.addPackage(line.substring(17).strip(),packageType.C_DO_CHECK,automatic,condition,invertCondition,lineNumber, comments);
 			} else if (line.has_prefix("vala_source: ")) {
-				return this.addSource(line.substring(13).strip(),automatic,condition,invertCondition,lineNumber);
+				return this.addSource(line.substring(13).strip(),automatic,condition,invertCondition,lineNumber, comments);
 			} else if (line.has_prefix("c_source: ")) {
-				return this.addCSource(line.substring(10).strip(),automatic,condition,invertCondition,lineNumber);
+				return this.addCSource(line.substring(10).strip(),automatic,condition,invertCondition,lineNumber, comments);
 			} else if (line.has_prefix("unitest: ")) {
-				return this.addUnitest(line.substring(9).strip(),automatic,condition,invertCondition,lineNumber);
+				return this.addUnitest(line.substring(9).strip(),automatic,condition,invertCondition,lineNumber, comments);
 			} else if (line.has_prefix("vala_vapi: ")) {
-				return this.addVapi(line.substring(11).strip(),automatic,condition,invertCondition,lineNumber);
+				return this.addVapi(line.substring(11).strip(),automatic,condition,invertCondition,lineNumber, comments);
 			} else if (line.has_prefix("dbus_interface: ")) {
-				return this.addDBus(line.substring(16).strip(),automatic,condition,invertCondition,lineNumber);
+				return this.addDBus(line.substring(16).strip(),automatic,condition,invertCondition,lineNumber, comments);
 			} else if (line.has_prefix("c_library: ")) {
-				return this.setCLibrary(line.substring(11).strip(),automatic,condition,invertCondition,lineNumber);
+				return this.setCLibrary(line.substring(11).strip(),automatic,condition,invertCondition,lineNumber, comments);
 			} else if (line.has_prefix("h_folder: ")) {
-				return this.addHFolder(line.substring(10).strip(),automatic,condition,invertCondition,lineNumber);
+				return this.addHFolder(line.substring(10).strip(),automatic,condition,invertCondition,lineNumber, comments);
 			} else if (line.has_prefix("use_gresource: ")) {
-				return this.addResource(line.substring(14).strip(),automatic,condition,invertCondition,lineNumber);
+				return this.addResource(line.substring(14).strip(),automatic,condition,invertCondition,lineNumber, comments);
 			} else {
 				var badCommand = line.split(": ")[0];
 				ElementBase.globalData.addError(_("Invalid command %s after command %s (line %d)").printf(badCommand,this.command, lineNumber));
@@ -1239,7 +1254,7 @@ namespace AutoVala {
 
 					var files = ElementBase.getFilesFromFolder(GLib.Path.build_filename(this._path,"dbus_generated"),{".vala"},true,true);
 					foreach (var iface in files) {
-						this.addSource(GLib.Path.build_filename("dbus_generated",iface),true,null,false,-1);
+						this.addSource(GLib.Path.build_filename("dbus_generated",iface),true,null,false,-1,null);
 					}
 				}
 			}
@@ -1821,7 +1836,6 @@ namespace AutoVala {
 			}
 
 			try {
-				dataStream.put_string("\n");
 				if (this._automatic) {
 					dataStream.put_string("*");
 				}
@@ -1836,7 +1850,7 @@ namespace AutoVala {
 					}
 					dataStream.put_string("version: %s\n".printf(this.version));
 				}
-				if ((this._currentNamespace!=null)&&(this._type==ConfigType.VALA_LIBRARY)) {
+				if ((this._currentNamespace!=null) && (this._type==ConfigType.VALA_LIBRARY)) {
 					if (this.namespaceAutomatic) {
 						dataStream.put_string("*");
 					}
@@ -1845,6 +1859,11 @@ namespace AutoVala {
 
 				foreach(var element in this._destination) {
 					printConditions.printCondition(element.condition,element.invertCondition);
+					if (element.comments != null) {
+						foreach(var comment in element.comments) {
+							dataStream.put_string("%s\n".printf(comment));
+						}
+					}
 					if (element.automatic) {
 						dataStream.put_string("*");
 					}
@@ -1854,6 +1873,11 @@ namespace AutoVala {
 
 				foreach(var element in this._compileOptions) {
 					printConditions.printCondition(element.condition,element.invertCondition);
+					if (element.comments != null) {
+						foreach(var comment in element.comments) {
+							dataStream.put_string("%s\n".printf(comment));
+						}
+					}
 					if (element.automatic) {
 						dataStream.put_string("*");
 					}
@@ -1863,6 +1887,11 @@ namespace AutoVala {
 
 				foreach(var element in this._compileCOptions) {
 					printConditions.printCondition(element.condition,element.invertCondition);
+					if (element.comments != null) {
+						foreach(var comment in element.comments) {
+							dataStream.put_string("%s\n".printf(comment));
+						}
+					}
 					if (element.automatic) {
 						dataStream.put_string("*");
 					}
@@ -1872,6 +1901,11 @@ namespace AutoVala {
 
 				foreach(var element in this._resources) {
 					printConditions.printCondition(element.condition,element.invertCondition);
+					if (element.comments != null) {
+						foreach(var comment in element.comments) {
+							dataStream.put_string("%s\n".printf(comment));
+						}
+					}
 					if (element.automatic) {
 						dataStream.put_string("*");
 					}
@@ -1882,6 +1916,11 @@ namespace AutoVala {
 				foreach(var element in this._packages) {
 					if (element.type == packageType.LOCAL) {
 						printConditions.printCondition(element.condition,element.invertCondition);
+						if (element.comments != null) {
+							foreach(var comment in element.comments) {
+								dataStream.put_string("%s\n".printf(comment));
+							}
+						}
 						if (element.automatic) {
 							dataStream.put_string("*");
 						}
@@ -1892,6 +1931,11 @@ namespace AutoVala {
 
 				foreach(var element in this._vapis) {
 					printConditions.printCondition(element.condition,element.invertCondition);
+					if (element.comments != null) {
+						foreach(var comment in element.comments) {
+							dataStream.put_string("%s\n".printf(comment));
+						}
+					}
 					if (element.automatic) {
 						dataStream.put_string("*");
 					}
@@ -1902,6 +1946,11 @@ namespace AutoVala {
 				foreach(var element in this._packages) {
 					if (element.type == packageType.C_DO_CHECK) {
 						printConditions.printCondition(element.condition,element.invertCondition);
+						if (element.comments != null) {
+							foreach(var comment in element.comments) {
+								dataStream.put_string("%s\n".printf(comment));
+							}
+						}
 						if (element.automatic) {
 							dataStream.put_string("*");
 						}
@@ -1913,6 +1962,11 @@ namespace AutoVala {
 				foreach(var element in this._packages) {
 					if (element.type == packageType.NO_CHECK) {
 						printConditions.printCondition(element.condition,element.invertCondition);
+						if (element.comments != null) {
+							foreach(var comment in element.comments) {
+								dataStream.put_string("%s\n".printf(comment));
+							}
+						}
 						if (element.automatic) {
 							dataStream.put_string("*");
 						}
@@ -1924,6 +1978,11 @@ namespace AutoVala {
 				foreach(var element in this._packages) {
 					if (element.type == packageType.DO_CHECK) {
 						printConditions.printCondition(element.condition,element.invertCondition);
+						if (element.comments != null) {
+							foreach(var comment in element.comments) {
+								dataStream.put_string("%s\n".printf(comment));
+							}
+						}
 						if (element.automatic) {
 							dataStream.put_string("*");
 						}
@@ -1934,6 +1993,11 @@ namespace AutoVala {
 
 				foreach(var element in this._link_libraries) {
 					printConditions.printCondition(element.condition,element.invertCondition);
+					if (element.comments != null) {
+						foreach(var comment in element.comments) {
+							dataStream.put_string("%s\n".printf(comment));
+						}
+					}
 					if (element.automatic) {
 						dataStream.put_string("*");
 					}
@@ -1943,6 +2007,11 @@ namespace AutoVala {
 
 				foreach(var element in this._sources) {
 					printConditions.printCondition(element.condition,element.invertCondition);
+					if (element.comments != null) {
+						foreach(var comment in element.comments) {
+							dataStream.put_string("%s\n".printf(comment));
+						}
+					}
 					if (element.automatic) {
 						dataStream.put_string("*");
 					}
@@ -1952,6 +2021,11 @@ namespace AutoVala {
 
 				foreach(var element in this._unitests) {
 					printConditions.printCondition(element.condition,element.invertCondition);
+					if (element.comments != null) {
+						foreach(var comment in element.comments) {
+							dataStream.put_string("%s\n".printf(comment));
+						}
+					}
 					if (element.automatic) {
 						dataStream.put_string("*");
 					}
@@ -1961,6 +2035,11 @@ namespace AutoVala {
 
 				foreach(var element in this._dbusElements) {
 					printConditions.printCondition(element.condition,element.invertCondition);
+					if (element.comments != null) {
+						foreach(var comment in element.comments) {
+							dataStream.put_string("%s\n".printf(comment));
+						}
+					}
 					if (element.automatic) {
 						dataStream.put_string("*");
 					}
@@ -1970,6 +2049,11 @@ namespace AutoVala {
 
 				foreach(var element in this._cSources) {
 					printConditions.printCondition(element.condition,element.invertCondition);
+					if (element.comments != null) {
+						foreach(var comment in element.comments) {
+							dataStream.put_string("%s\n".printf(comment));
+						}
+					}
 					if (element.automatic) {
 						dataStream.put_string("*");
 					}
@@ -1979,6 +2063,11 @@ namespace AutoVala {
 
 				foreach(var element in this._hFolders) {
 					printConditions.printCondition(element.condition,element.invertCondition);
+					if (element.comments != null) {
+						foreach(var comment in element.comments) {
+							dataStream.put_string("%s\n".printf(comment));
+						}
+					}
 					if (element.automatic) {
 						dataStream.put_string("*");
 					}
@@ -1989,6 +2078,7 @@ namespace AutoVala {
 				ElementBase.globalData.addError(_("Failed to store ': %s' at config").printf(this.fullPath));
 				return true;
 			}
+			dataStream.put_string("\n");
 			return false;
 		}
 

@@ -27,7 +27,7 @@ namespace AutoVala {
 			this.command = "ignore";
 		}
 
-		public override bool configureLine(string line, bool automatic, string? condition, bool invertCondition, int lineNumber) {
+		public override bool configureLine(string line, bool automatic, string? condition, bool invertCondition, int lineNumber, string[]? comments) {
 
 			if (false == line.has_prefix("ignore: ")) {
 				var badCommand = line.split(": ")[0];
@@ -40,6 +40,7 @@ namespace AutoVala {
 				data=data.substring(0,data.length-1);
 			}
 			ElementBase.globalData.addExclude(data);
+			this.comments = comments;
 			return this.configureElement(data,data,data,automatic,condition,invertCondition);
 		}
 	}

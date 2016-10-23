@@ -47,7 +47,7 @@ namespace AutoVala {
 				Intl.bindtextdomain(AutoValaConstants.GETTEXT_PACKAGE, Path.build_filename(AutoValaConstants.DATADIR,"locale"));
 			}
 
-			this.currentVersion=23; // currently we support version 23 of the syntax
+			this.currentVersion=24; // currently we support version 24 of the syntax
 			this.version=0;
 
 			this.globalData = new AutoVala.Globals(projectName,basePath);
@@ -188,6 +188,8 @@ namespace AutoVala {
 				ElementBase element=null;
 				bool automatic=false;
 
+				string[] comments = {};
+
 				while((line = dis.read_line(null))!=null) {
 					string ?cond=null;
 					bool invert=false;
@@ -195,7 +197,15 @@ namespace AutoVala {
 
 					this.lineNumber++;
 
-					if ((line[0]=='#')||(line[0]==';')) { // it is a comment; forget it
+					if (line[0]==';') { // it is a comment; forget it
+						continue;
+					}
+
+					if (line[0]=='#') { // it is a comment; append it to the comment lis
+						if (line.has_prefix("### AutoVala Project ###")) {
+							continue; // don't add the header comment
+						}
+						comments += line.strip();
 						continue;
 					}
 					var finalline=line.strip();
@@ -209,7 +219,9 @@ namespace AutoVala {
 						automatic=false;
 					}
 
-					if (line.has_prefix("vapidir: ")) {
+					if (line.has_prefix("external: ")) {
+						element = new ElementExternal();
+					} else if (line.has_prefix("vapidir: ")) {
 						element = new ElementVapidir();
 					} else if (line.has_prefix("translate: ")) {
 						element = new ElementTranslation();
@@ -329,7 +341,8 @@ namespace AutoVala {
 						}
 						continue;
 					}
-					error|=element.configureLine(line,automatic,cond,invert,lineNumber);
+					error|=element.configureLine(line,automatic,cond,invert,lineNumber,comments);
+					comments = {};
 				}
 			} catch (Error e) {
 				this.globalData.configFile="";
@@ -436,6 +449,7 @@ namespace AutoVala {
 				this.storeData(ConfigType.BASH_COMPLETION,data_stream);
 				this.storeData(ConfigType.SOURCE_DEPENDENCY,data_stream);
 				this.storeData(ConfigType.BINARY_DEPENDENCY,data_stream);
+				this.storeData(ConfigType.EXTERNAL,data_stream);
 			} catch (Error e) {
 				this.globalData.addError(_("Can't create the config file %s").printf(this.globalData.configFile));
 				return true;
@@ -449,6 +463,11 @@ namespace AutoVala {
 			foreach(var element in this.globalData.globalElements) {
 				if (element.eType == type) {
 					printConditions.printCondition(element.condition,element.invertCondition);
+					if (element.comments != null) {
+						foreach(var comment in element.comments) {
+							dataStream.put_string("%s\n".printf(comment));
+						}
+					}
 					element.storeConfig(dataStream,printConditions);
 					printed = true;
 				}

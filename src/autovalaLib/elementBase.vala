@@ -23,7 +23,7 @@ namespace AutoVala {
 
 	public enum ConfigType {GLOBAL, VALA_BINARY, VALA_LIBRARY, BINARY, ICON, PIXMAP, PO, GLADE, DBUS_SERVICE, DESKTOP, AUTOSTART,
 							 EOS_PLUG, SCHEME, DATA, DOC, INCLUDE, IGNORE, CUSTOM, DEFINE, MANPAGE, BASH_COMPLETION, SOURCE_DEPENDENCY,
-							 BINARY_DEPENDENCY, APPDATA, GRESOURCE, TRANSLATION, VAPIDIR }
+							 BINARY_DEPENDENCY, APPDATA, GRESOURCE, TRANSLATION, VAPIDIR, EXTERNAL }
 
 	/**
 	 * Represents a generic file of the project, with its path, filename, compilation condition...
@@ -44,6 +44,8 @@ namespace AutoVala {
 		protected string _name; // File name
 		protected ConfigType _type; // File type
 		protected string command; // command in the config file
+
+		public string[]? comments = null;
 
 		public string? fullPath {
 			get {return this._fullPath;}
@@ -77,7 +79,6 @@ namespace AutoVala {
 
 		public ElementBase() {
 		}
-
 
 		/**
 		 * fills the list of files for this element
@@ -247,7 +248,7 @@ namespace AutoVala {
 		 * @param invertCondition When true, invert the condition (this is, the file is after the #else statement)
 		 * return //true// if there was an error; //false// if not. The error texts can be obtained by calling to returnErrors()
 		 */
-		public virtual bool configureLine(string line, bool automatic, string? condition, bool invertCondition, int lineNumber) {
+		public virtual bool configureLine(string line, bool automatic, string? condition, bool invertCondition, int lineNumber,string[]? comments) {
 
 			if (false == line.has_prefix(this.command+": ")) {
 				var badCommand = line.split(": ")[0];
@@ -256,6 +257,7 @@ namespace AutoVala {
 			}
 
 			var data=line.substring(1+this.command.length).strip();
+			this.comments = comments;
 
 			return this.configureElement(data,null,null,automatic,condition,invertCondition);
 		}

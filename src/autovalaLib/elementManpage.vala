@@ -62,7 +62,7 @@ namespace AutoVala {
 			return error;
 		}
 
-		public override bool configureLine(string line, bool automatic, string? condition, bool invertCondition, int lineNumber) {
+		public override bool configureLine(string line, bool automatic, string? condition, bool invertCondition, int lineNumber, string[]? comments) {
 
 			if (false == line.has_prefix("manpage: ")) {
 				var badCommand = line.split(": ")[0];
@@ -101,6 +101,7 @@ namespace AutoVala {
 				}
 			break;
 			}
+			this.comments = comments;
 			return this.configureElement(filename,null,null,automatic,condition,invertCondition);
 		}
 

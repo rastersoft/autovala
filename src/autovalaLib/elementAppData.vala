@@ -40,7 +40,7 @@ namespace AutoVala {
 			return error;
 		}
 
-		public override bool configureLine(string line, bool automatic, string? condition, bool invertCondition, int lineNumber) {
+		public override bool configureLine(string line, bool automatic, string? condition, bool invertCondition, int lineNumber, string[]? comments) {
 
 			// The line starts with 'appdata: '
 			if (line.has_prefix("appdata: ")) {
@@ -52,6 +52,7 @@ namespace AutoVala {
 				return true;
 			}
 			var data=line.substring(2+this.command.length).strip();
+			this.comments = comments;
 			return this.configureElement(data,null,null,automatic,condition,invertCondition);
 		}
 

@@ -281,7 +281,7 @@ namespace AutoVala {
 			this.updateThemes += theme;
 		}
 
-		public override bool configureLine(string line, bool automatic, string? condition, bool invertCondition, int lineNumber) {
+		public override bool configureLine(string line, bool automatic, string? condition, bool invertCondition, int lineNumber, string[]? comments) {
 
 			var command = line.split(": ")[0];
 			if ((command != "icon") && (command != "full_icon") && (command != "fixed_size_icon")) {
@@ -331,6 +331,7 @@ namespace AutoVala {
 
 			this.add_theme(this.iconTheme);
 
+			this.comments = comments;
 			// fixed_size_icon must be always manually added
 			return this.configureElement(data,null,null,this.fixed_size ? false : automatic,condition,invertCondition);
 		}

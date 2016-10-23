@@ -35,7 +35,7 @@ namespace AutoVala {
 			return false;
 		}
 
-		public override bool configureLine(string line, bool automatic, string? condition, bool invertCondition, int lineNumber) {
+		public override bool configureLine(string line, bool automatic, string? condition, bool invertCondition, int lineNumber, string[]? comments) {
 
 			if (false == line.has_prefix(this.command+": ")) {
 				var badCommand = line.split(": ")[0];
@@ -43,6 +43,7 @@ namespace AutoVala {
 				return true;
 			}
 			var data = line.substring(2+this.command.length).strip();
+			this.comments = comments;
 			return this.configureElement(null,data,data,false,condition,invertCondition);
 		}
 	}

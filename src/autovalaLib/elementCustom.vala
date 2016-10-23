@@ -41,7 +41,7 @@ namespace AutoVala {
 			}
 		}
 
-		public override bool configureLine(string line, bool automatic, string? condition, bool invertCondition, int lineNumber) {
+		public override bool configureLine(string line, bool automatic, string? condition, bool invertCondition, int lineNumber, string[]? comments) {
 
 			if (false == line.has_prefix("custom: ")) {
 				var badCommand = line.split(": ")[0];
@@ -70,7 +70,7 @@ namespace AutoVala {
 				this._path = this.source;
 				this._name = "";
 			}
-
+			this.comments = comments;
 			return retval;
 		}
 

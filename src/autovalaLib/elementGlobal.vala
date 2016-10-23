@@ -27,7 +27,7 @@ namespace AutoVala {
 			this.command = "";
 		}
 
-		public override bool configureLine(string line, bool automatic, string? condition, bool invertCondition, int lineNumber) {
+		public override bool configureLine(string line, bool automatic, string? condition, bool invertCondition, int lineNumber, string[]? comments) {
 			return false;
 		}
 
