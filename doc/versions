@@ -7,6 +7,12 @@
 <p><a href="index.html">Home</a></p>
 <h2 id="history-of-versions">History of versions</h2>
 <ul>
+<li>version 0.99.46 (2016-10-02)
+<ul>
+<li>Fixed bug when using an absolute path for vapidir: commands</li>
+<li>Allows to add non-existing folders with vapidir</li>
+<li>Fixed several english errors (&quot;doesn't exists&quot; changed to &quot;doesn't exist&quot;)</li>
+</ul></li>
 <li>version 0.99.45 (2016-09-21)
 <ul>
 <li>Allows to use CMAKE_BUILD_TYPE with standard and custom-defined types</li>
