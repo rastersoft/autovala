@@ -1,5 +1,5 @@
 pkgname=autovala
-pkgver=0.99.46
+pkgver=0.99.47
 pkgrel=1
 pkgdesc="Autovala is a program and a library designed to help in the creation
 of projects with Vala and CMake.
