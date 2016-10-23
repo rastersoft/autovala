@@ -6,7 +6,7 @@ Build-Depends: build-essential, po-debconf,valac-0.28, gedit-dev, libatk1.0-dev,
 
 Package: autovala-gedit
 Architecture: any
-Version: 0.99.36
+Version: 0.99.47
 Depends: libgtksourceview-3.0-1, libpeas-1.0-0, libgtk-3-0, libpangocairo-1.0-0, libpango-1.0-0, libatk1.0-0, libcairo-gobject2, libcairo2, libgdk-pixbuf2.0-0, libglib2.0-0, libgirepository-1.0-1, libgee-0.8-2, libx11-6, autovala
 Description: This is a plugin for GEdit 3 that integrates the project manager
  AutoVala, allowing to use GEdit as a fully-fledged IDE for creating
