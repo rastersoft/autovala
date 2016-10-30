@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   id="svg2"
+   sodipodi:docname="test_vala.svg"
+   inkscape:export-filename="/datas/wiki/tick.png"
+   viewBox="0 0 48 48"
+   sodipodi:version="0.32"
+   inkscape:export-xdpi="90.000000"
+   version="1.0"
+   inkscape:output_extension="org.inkscape.output.svg.inkscape"
+   inkscape:export-ydpi="90.000000"
+   inkscape:version="0.48.4 r9939"
+   width="100%"
+   height="100%">
+  <defs
+     id="defs4">
+    <linearGradient
+       id="linearGradient1341"
+       y2="47.451"
+       gradientUnits="userSpaceOnUse"
+       x2="84.911003"
+       y1="32.362"
+       x1="74.911003"
+       inkscape:collect="always">
+      <stop
+         id="stop1366"
+         style="stop-color:#236b0d"
+         offset="0" />
+      <stop
+         id="stop1368"
+         style="stop-color:#081b04"
+         offset="1" />
+    </linearGradient>
+    <linearGradient
+       id="linearGradient1343"
+       y2="43.714001"
+       gradientUnits="userSpaceOnUse"
+       x2="76.875"
+       y1="34.429001"
+       x1="73.838997"
+       inkscape:collect="always">
+      <stop
+         id="stop2124"
+         style="stop-color:#2edc32"
+         offset="0" />
+      <stop
+         id="stop2126"
+         style="stop-color:#11661d"
+         offset="1" />
+    </linearGradient>
+    <linearGradient
+       id="linearGradient1345"
+       y2="47.375"
+       gradientUnits="userSpaceOnUse"
+       x2="85"
+       y1="35.589001"
+       x1="72.945999"
+       inkscape:collect="always">
+      <stop
+         id="stop1317"
+         style="stop-color:#97ff82"
+         offset="0" />
+      <stop
+         id="stop1319"
+         style="stop-color:#ceff24;stop-opacity:0"
+         offset="1" />
+    </linearGradient>
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     bordercolor="#666666"
+     inkscape:grid-points="true"
+     inkscape:pageshadow="2"
+     inkscape:window-y="30"
+     pagecolor="#ffffff"
+     inkscape:window-height="1025"
+     inkscape:grid-bbox="true"
+     inkscape:zoom="15.850977"
+     inkscape:window-x="0"
+     showgrid="true"
+     borderopacity="1.0"
+     inkscape:current-layer="layer1"
+     inkscape:cx="18.680945"
+     inkscape:cy="23.446816"
+     inkscape:window-width="1920"
+     inkscape:pageopacity="0.0"
+     inkscape:document-units="px"
+     inkscape:window-maximized="1" />
+  <g
+     id="layer1"
+     inkscape:label="Calque 1"
+     inkscape:groupmode="layer"
+     transform="translate(0,12)">
+    <rect
+       style="fill:none;stroke:#000000;stroke-width:4;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       id="rect3004"
+       width="35.458382"
+       height="34.625793"
+       x="2.2711535"
+       y="-2.4203436"
+       ry="10.268661" />
+    <g
+       id="g1330"
+       transform="matrix(1.6698,0,0,1.6698,-109.03221,-51.684934)">
+      <path
+         id="path1362"
+         style="fill:url(#linearGradient1341)"
+         d="m 92.844,27.406 c -0.135,0.026 -0.263,0.079 -0.375,0.156 L 75.031,39.188 67.594,33.594 c -0.374,-0.281 -0.894,-0.259 -1.243,0.052 -0.349,0.311 -0.431,0.825 -0.195,1.229 l 8,13 c 0.155,0.268 0.427,0.448 0.735,0.485 0.307,0.037 0.614,-0.073 0.828,-0.298 l 18,-19 c 0.301,-0.304 0.369,-0.769 0.169,-1.148 -0.2,-0.379 -0.623,-0.584 -1.044,-0.508 z"
+         inkscape:connector-curvature="0" />
+      <path
+         id="path2120"
+         style="fill:url(#linearGradient1343)"
+         transform="translate(0,-0.012817)"
+         d="m 92.969,27.969 c -0.067,0.004 -0.132,0.026 -0.188,0.062 L 75,39.875 67.25,34.062 c -0.147,-0.163 -0.399,-0.177 -0.562,-0.031 -0.164,0.147 -0.178,0.399 -0.032,0.563 l 8,13 c 0.065,0.104 0.175,0.173 0.297,0.185 0.123,0.012 0.244,-0.033 0.328,-0.123 l 18,-19 c 0.128,-0.115 0.167,-0.301 0.095,-0.458 -0.071,-0.157 -0.236,-0.25 -0.407,-0.229 z"
+         inkscape:connector-curvature="0" />
+      <path
+         id="path1323"
+         style="fill:url(#linearGradient1345)"
+         transform="translate(0,-0.012817)"
+         d="M 92.906,28.469 75,40.406 67.094,34.469 75.031,47.344 92.906,28.469 z"
+         inkscape:connector-curvature="0" />
+    </g>
+  </g>
+  <metadata
+     id="metadata3002">
+    <rdf:RDF>
+      <cc:Work>
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <cc:license
+           rdf:resource="http://creativecommons.org/licenses/publicdomain/" />
+        <dc:publisher>
+          <cc:Agent
+             rdf:about="http://openclipart.org/">
+            <dc:title>Openclipart</dc:title>
+          </cc:Agent>
+        </dc:publisher>
+        <dc:title>tick</dc:title>
+        <dc:date>2008-05-26T12:09:44</dc:date>
+        <dc:description />
+        <dc:source>https://openclipart.org/detail/17056/tick-by-jean_victor_balin</dc:source>
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>jean_victor_balin</dc:title>
+          </cc:Agent>
+        </dc:creator>
+        <dc:subject>
+          <rdf:Bag>
+            <rdf:li>icon</rdf:li>
+            <rdf:li>validation</rdf:li>
+          </rdf:Bag>
+        </dc:subject>
+      </cc:Work>
+      <cc:License
+         rdf:about="http://creativecommons.org/licenses/publicdomain/">
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Reproduction" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Distribution" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+</svg>

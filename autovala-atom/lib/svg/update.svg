@@ -1,0 +1,1248 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="422.77637"
+   height="442.10736"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.91 r13725"
+   sodipodi:docname="update.svg">
+  <defs
+     id="defs4">
+    <linearGradient
+       id="linearGradient4112">
+      <stop
+         id="stop6217"
+         offset="0"
+         style="stop-color:#800000;stop-opacity:1" />
+      <stop
+         style="stop-color:#ff4614;stop-opacity:1;"
+         offset="0.61237836"
+         id="stop6219" />
+      <stop
+         id="stop6221"
+         offset="1"
+         style="stop-color:#d40000;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient
+       id="linearGradient5401">
+      <stop
+         id="stop5403"
+         offset="0"
+         style="stop-color:#1d6a1d;stop-opacity:1;" />
+      <stop
+         style="stop-color:#2edd2e;stop-opacity:1;"
+         offset="0.61237836"
+         id="stop5405" />
+      <stop
+         id="stop5407"
+         offset="1"
+         style="stop-color:#1dbd1d;stop-opacity:1;" />
+    </linearGradient>
+    <linearGradient
+       id="linearGradient4573">
+      <stop
+         id="stop4575"
+         offset="0"
+         style="stop-color:#e06700;stop-opacity:1;" />
+      <stop
+         style="stop-color:#ecde39;stop-opacity:1;"
+         offset="0.61237836"
+         id="stop4577" />
+      <stop
+         id="stop4579"
+         offset="1"
+         style="stop-color:#faa900;stop-opacity:1;" />
+    </linearGradient>
+    <linearGradient
+       id="linearGradient6223">
+      <stop
+         style="stop-color:#1516a2;stop-opacity:1"
+         offset="0"
+         id="stop4114" />
+      <stop
+         id="stop4120"
+         offset="0.61237836"
+         style="stop-color:#5859e9;stop-opacity:1" />
+      <stop
+         style="stop-color:#2223e2;stop-opacity:1"
+         offset="1"
+         id="stop4116" />
+    </linearGradient>
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="61.17897 : 626.78651 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="-260.60016 : 708.35847 : 1"
+       inkscape:persp3d-origin="372.04724 : 350.78739 : 1"
+       id="perspective2985" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient4112"
+       id="linearGradient4877"
+       gradientUnits="userSpaceOnUse"
+       x1="111.83297"
+       y1="353.7692"
+       x2="157.99779"
+       y2="354.18417" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient4112"
+       id="linearGradient4879"
+       gradientUnits="userSpaceOnUse"
+       x1="111.83297"
+       y1="353.7692"
+       x2="157.99779"
+       y2="354.18417" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient4112"
+       id="linearGradient4881"
+       gradientUnits="userSpaceOnUse"
+       x1="111.83297"
+       y1="353.7692"
+       x2="157.99779"
+       y2="354.18417" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient4112"
+       id="linearGradient4883"
+       gradientUnits="userSpaceOnUse"
+       x1="111.83297"
+       y1="353.7692"
+       x2="157.99779"
+       y2="354.18417" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient4112"
+       id="linearGradient4885"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(0.98531672,0,0,0.98531672,211.61536,-189.63723)"
+       x1="111.83297"
+       y1="353.7692"
+       x2="157.99779"
+       y2="354.18417" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient4112"
+       id="linearGradient4887"
+       gradientUnits="userSpaceOnUse"
+       x1="111.83297"
+       y1="353.7692"
+       x2="157.99779"
+       y2="354.18417" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient4112"
+       id="linearGradient4889"
+       gradientUnits="userSpaceOnUse"
+       x1="111.83297"
+       y1="353.7692"
+       x2="157.99779"
+       y2="354.18417" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient4112"
+       id="linearGradient4891"
+       gradientUnits="userSpaceOnUse"
+       x1="111.83297"
+       y1="353.7692"
+       x2="157.99779"
+       y2="354.18417" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient4112"
+       id="linearGradient5165"
+       gradientUnits="userSpaceOnUse"
+       x1="111.83297"
+       y1="353.7692"
+       x2="157.99779"
+       y2="354.18417" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient4112"
+       id="linearGradient5167"
+       gradientUnits="userSpaceOnUse"
+       x1="111.83297"
+       y1="353.7692"
+       x2="157.99779"
+       y2="354.18417" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient4112"
+       id="linearGradient5169"
+       gradientUnits="userSpaceOnUse"
+       x1="111.83297"
+       y1="353.7692"
+       x2="157.99779"
+       y2="354.18417" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient4112"
+       id="linearGradient5171"
+       gradientUnits="userSpaceOnUse"
+       x1="111.83297"
+       y1="353.7692"
+       x2="157.99779"
+       y2="354.18417" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient4112"
+       id="linearGradient5173"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(0.98531672,0,0,0.98531672,211.61536,-189.63723)"
+       x1="111.83297"
+       y1="353.7692"
+       x2="157.99779"
+       y2="354.18417" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient4112"
+       id="linearGradient5175"
+       gradientUnits="userSpaceOnUse"
+       x1="111.83297"
+       y1="353.7692"
+       x2="157.99779"
+       y2="354.18417" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient4112"
+       id="linearGradient5177"
+       gradientUnits="userSpaceOnUse"
+       x1="111.83297"
+       y1="353.7692"
+       x2="157.99779"
+       y2="354.18417" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient4112"
+       id="linearGradient5179"
+       gradientUnits="userSpaceOnUse"
+       x1="111.83297"
+       y1="353.7692"
+       x2="157.99779"
+       y2="354.18417" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient4573"
+       id="linearGradient5275"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="translate(19.377428,190.442)"
+       x1="111.83297"
+       y1="353.7692"
+       x2="157.99779"
+       y2="354.18417" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient4573"
+       id="linearGradient5277"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(1.0236145,0,0,1.0236145,63.769688,203.14592)"
+       x1="111.83297"
+       y1="353.7692"
+       x2="157.99779"
+       y2="354.18417" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient4573"
+       id="linearGradient5279"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(1.0236145,0,0,1.0236145,121.18429,186.74175)"
+       x1="111.83297"
+       y1="353.7692"
+       x2="157.99779"
+       y2="354.18417" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient4573"
+       id="linearGradient5281"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(0.98531672,0,0,0.98531672,183.4207,184.53147)"
+       x1="111.83297"
+       y1="353.7692"
+       x2="157.99779"
+       y2="354.18417" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient4573"
+       id="linearGradient5283"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(0.98531672,0,0,0.98531672,239.74168,167.03369)"
+       x1="111.83297"
+       y1="353.7692"
+       x2="157.99779"
+       y2="354.18417" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient4573"
+       id="linearGradient5285"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="translate(77.338828,174.58464)"
+       x1="111.83297"
+       y1="353.7692"
+       x2="157.99779"
+       y2="354.18417" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient4573"
+       id="linearGradient5287"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(0.98098831,0,0,0.98098831,136.87324,165.77491)"
+       x1="111.83297"
+       y1="353.7692"
+       x2="157.99779"
+       y2="354.18417" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient4573"
+       id="linearGradient5289"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(0.98098831,0,0,0.98098831,193.74103,149.37074)"
+       x1="111.83297"
+       y1="353.7692"
+       x2="157.99779"
+       y2="354.18417" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient5401"
+       id="linearGradient5449"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="translate(160.65368,-136.02989)"
+       x1="111.83297"
+       y1="353.7692"
+       x2="157.99779"
+       y2="354.18417" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient5401"
+       id="linearGradient5451"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(1.0236145,0,0,1.0236145,205.04594,-123.32597)"
+       x1="111.83297"
+       y1="353.7692"
+       x2="157.99779"
+       y2="354.18417" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient5401"
+       id="linearGradient5453"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(1.0236145,0,0,1.0236145,262.46054,-139.73014)"
+       x1="111.83297"
+       y1="353.7692"
+       x2="157.99779"
+       y2="354.18417" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient5401"
+       id="linearGradient5455"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(0.98531672,0,0,0.98531672,324.69695,-141.94042)"
+       x1="111.83297"
+       y1="353.7692"
+       x2="157.99779"
+       y2="354.18417" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient5401"
+       id="linearGradient5457"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(0.98531672,0,0,0.98531672,381.01793,-159.4382)"
+       x1="111.83297"
+       y1="353.7692"
+       x2="157.99779"
+       y2="354.18417" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient5401"
+       id="linearGradient5459"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="translate(218.61508,-151.88725)"
+       x1="111.83297"
+       y1="353.7692"
+       x2="157.99779"
+       y2="354.18417" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient5401"
+       id="linearGradient5461"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(0.98098831,0,0,0.98098831,278.14949,-160.69698)"
+       x1="111.83297"
+       y1="353.7692"
+       x2="157.99779"
+       y2="354.18417" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient5401"
+       id="linearGradient5463"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(0.98098831,0,0,0.98098831,335.01728,-177.10115)"
+       x1="111.83297"
+       y1="353.7692"
+       x2="157.99779"
+       y2="354.18417" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient4112"
+       id="linearGradient5514"
+       gradientUnits="userSpaceOnUse"
+       x1="111.83297"
+       y1="353.7692"
+       x2="157.99779"
+       y2="354.18417" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient4112"
+       id="linearGradient5516"
+       gradientUnits="userSpaceOnUse"
+       x1="111.83297"
+       y1="353.7692"
+       x2="157.99779"
+       y2="354.18417" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient4112"
+       id="linearGradient5518"
+       gradientUnits="userSpaceOnUse"
+       x1="111.83297"
+       y1="353.7692"
+       x2="157.99779"
+       y2="354.18417" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient4112"
+       id="linearGradient5520"
+       gradientUnits="userSpaceOnUse"
+       x1="111.83297"
+       y1="353.7692"
+       x2="157.99779"
+       y2="354.18417" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient4112"
+       id="linearGradient5522"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(0.98531672,0,0,0.98531672,211.61536,-189.63723)"
+       x1="111.83297"
+       y1="353.7692"
+       x2="157.99779"
+       y2="354.18417" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient4112"
+       id="linearGradient5524"
+       gradientUnits="userSpaceOnUse"
+       x1="111.83297"
+       y1="353.7692"
+       x2="157.99779"
+       y2="354.18417" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient4112"
+       id="linearGradient5526"
+       gradientUnits="userSpaceOnUse"
+       x1="111.83297"
+       y1="353.7692"
+       x2="157.99779"
+       y2="354.18417" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient4112"
+       id="linearGradient5528"
+       gradientUnits="userSpaceOnUse"
+       x1="111.83297"
+       y1="353.7692"
+       x2="157.99779"
+       y2="354.18417" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient4112"
+       id="linearGradient5555"
+       gradientUnits="userSpaceOnUse"
+       x1="111.83297"
+       y1="353.7692"
+       x2="157.99779"
+       y2="354.18417" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient4112"
+       id="linearGradient5557"
+       gradientUnits="userSpaceOnUse"
+       x1="111.83297"
+       y1="353.7692"
+       x2="157.99779"
+       y2="354.18417" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient4112"
+       id="linearGradient5559"
+       gradientUnits="userSpaceOnUse"
+       x1="111.83297"
+       y1="353.7692"
+       x2="157.99779"
+       y2="354.18417" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient4112"
+       id="linearGradient5561"
+       gradientUnits="userSpaceOnUse"
+       x1="111.83297"
+       y1="353.7692"
+       x2="157.99779"
+       y2="354.18417" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient4112"
+       id="linearGradient5563"
+       gradientUnits="userSpaceOnUse"
+       x1="111.83297"
+       y1="353.7692"
+       x2="157.99779"
+       y2="354.18417" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient4112"
+       id="linearGradient5565"
+       gradientUnits="userSpaceOnUse"
+       x1="111.83297"
+       y1="353.7692"
+       x2="157.99779"
+       y2="354.18417" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient4112"
+       id="linearGradient5567"
+       gradientUnits="userSpaceOnUse"
+       x1="111.83297"
+       y1="353.7692"
+       x2="157.99779"
+       y2="354.18417" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient6223"
+       id="linearGradient6233"
+       x1="414.17712"
+       y1="422.03949"
+       x2="459.80957"
+       y2="422.03949"
+       gradientUnits="userSpaceOnUse" />
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.77187949"
+     inkscape:cx="101.07887"
+     inkscape:cy="292.53825"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     showguides="true"
+     inkscape:guide-bbox="true"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0"
+     inkscape:window-width="1243"
+     inkscape:window-height="736"
+     inkscape:window-x="128"
+     inkscape:window-y="155"
+     inkscape:window-maximized="0" />
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-69.765776,-305.21455)">
+    <path
+       sodipodi:nodetypes="ccccc"
+       inkscape:connector-curvature="0"
+       id="path4823"
+       d="m 105.09118,633.25721 1.01965,80.21244 92.46721,33.55228 -2.33525,-80.35129 z"
+       style="fill:#e02400;stroke:#000000;stroke-width:0.60000002;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;fill-opacity:1"
+       inkscape:export-filename="/Users/EIB/Dropbox/ullvi/bilder och info/legoSAMR"
+       inkscape:export-xdpi="150.14"
+       inkscape:export-ydpi="150.14" />
+    <path
+       sodipodi:nodetypes="ccccc"
+       inkscape:connector-curvature="0"
+       id="path4825"
+       d="m 197.59836,746.08419 231.55657,-63.30228 -0.2262,-80.7645 -232.68594,64.65323 z"
+       style="fill:#ff401c;stroke:#000000;stroke-width:0.60000002;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;fill-opacity:1"
+       inkscape:export-filename="/Users/EIB/Dropbox/ullvi/bilder och info/legoSAMR"
+       inkscape:export-xdpi="150.14"
+       inkscape:export-ydpi="150.14" />
+    <path
+       sodipodi:nodetypes="ccccc"
+       inkscape:connector-curvature="0"
+       id="path4827"
+       d="M 105.36814,633.23624 324.71863,572.86288 428.6441,601.97 195.56303,666.67064 Z"
+       style="fill:#aa0000;stroke:#000000;stroke-width:0.60000002;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       inkscape:export-filename="/Users/EIB/Dropbox/ullvi/bilder och info/legoSAMR"
+       inkscape:export-xdpi="150.14"
+       inkscape:export-ydpi="150.14" />
+    <g
+       id="g4829"
+       transform="translate(29.611968,433.11305)"
+       inkscape:export-filename="/Users/EIB/Dropbox/ullvi/bilder och info/legoSAMR"
+       inkscape:export-xdpi="150.14"
+       inkscape:export-ydpi="150.14">
+      <g
+         id="g4831"
+         style="stroke:#000000;stroke-width:0.25"
+         transform="translate(-8.7488906,-166.22892)">
+        <path
+           sodipodi:nodetypes="ccsccc"
+           inkscape:connector-curvature="0"
+           id="path4833"
+           d="m 111.62549,347.85595 0.10374,17.53225 c 0,0 8.08934,5.18706 22.71932,5.18706 16.59858,0 23.23802,-6.53569 23.23802,-6.53569 l -0.20749,-16.49485 z"
+           style="fill:url(#linearGradient4877);fill-opacity:1;stroke:#000000;stroke-width:0.25" />
+        <path
+           sodipodi:nodetypes="csssccc"
+           inkscape:connector-curvature="0"
+           id="path4835"
+           d="m 157.50113,347.49095 c 0,2.99738 -10.26819,5.42724 -22.93465,5.42724 -12.66646,0 -22.93464,-2.42986 -22.93464,-5.42724 0,-2.99738 10.26818,-5.42724 22.93464,-5.42724 12.50162,0 22.70024,2.3693 22.93075,5.32717 l -0.1184,0.29339 z"
+           style="fill:#aa0000;fill-opacity:1;stroke:#000000;stroke-width:0.25" />
+      </g>
+      <g
+         style="stroke:#000000;stroke-width:0.25"
+         id="g4837"
+         transform="matrix(1.0236145,0,0,1.0236145,35.643373,-153.525)">
+        <path
+           style="fill:url(#linearGradient4879);fill-opacity:1;stroke:#000000;stroke-width:0.25"
+           d="m 111.62549,347.85595 0.10374,17.53225 c 0,0 8.08934,5.18706 22.71932,5.18706 16.59858,0 23.23802,-6.53569 23.23802,-6.53569 l -0.20749,-16.49485 z"
+           id="path4839"
+           inkscape:connector-curvature="0"
+           sodipodi:nodetypes="ccsccc" />
+        <path
+           style="fill:#aa0000;fill-opacity:1;stroke:#000000;stroke-width:0.25"
+           d="m 157.50113,347.49095 c 0,2.99738 -10.26819,5.42724 -22.93465,5.42724 -12.66646,0 -22.93464,-2.42986 -22.93464,-5.42724 0,-2.99738 10.26818,-5.42724 22.93464,-5.42724 12.50162,0 22.70024,2.3693 22.93075,5.32717 l -0.1184,0.29339 z"
+           id="path4841"
+           inkscape:connector-curvature="0"
+           sodipodi:nodetypes="csssccc" />
+      </g>
+      <g
+         transform="matrix(1.0236145,0,0,1.0236145,93.057969,-169.92917)"
+         id="g4843"
+         style="stroke:#000000;stroke-width:0.25">
+        <path
+           sodipodi:nodetypes="ccsccc"
+           inkscape:connector-curvature="0"
+           id="path4845"
+           d="m 111.62549,347.85595 0.10374,17.53225 c 0,0 8.08934,5.18706 22.71932,5.18706 16.59858,0 23.23802,-6.53569 23.23802,-6.53569 l -0.20749,-16.49485 z"
+           style="fill:url(#linearGradient4881);fill-opacity:1;stroke:#000000;stroke-width:0.25" />
+        <path
+           sodipodi:nodetypes="csssccc"
+           inkscape:connector-curvature="0"
+           id="path4847"
+           d="m 157.50113,347.49095 c 0,2.99738 -10.26819,5.42724 -22.93465,5.42724 -12.66646,0 -22.93464,-2.42986 -22.93464,-5.42724 0,-2.99738 10.26818,-5.42724 22.93464,-5.42724 12.50162,0 22.70024,2.3693 22.93075,5.32717 l -0.1184,0.29339 z"
+           style="fill:#aa0000;fill-opacity:1;stroke:#000000;stroke-width:0.25" />
+      </g>
+      <g
+         style="stroke:#000000;stroke-width:0.25"
+         id="g4849"
+         transform="matrix(0.98531672,0,0,0.98531672,155.29438,-172.13945)">
+        <path
+           style="fill:url(#linearGradient4883);fill-opacity:1;stroke:#000000;stroke-width:0.25"
+           d="m 111.62549,347.85595 0.10374,17.53225 c 0,0 8.08934,5.18706 22.71932,5.18706 16.59858,0 23.23802,-6.53569 23.23802,-6.53569 l -0.20749,-16.49485 z"
+           id="path4851"
+           inkscape:connector-curvature="0"
+           sodipodi:nodetypes="ccsccc" />
+        <path
+           style="fill:#aa0000;fill-opacity:1;stroke:#000000;stroke-width:0.25"
+           d="m 157.50113,347.49095 c 0,2.99738 -10.26819,5.42724 -22.93465,5.42724 -12.66646,0 -22.93464,-2.42986 -22.93464,-5.42724 0,-2.99738 10.26818,-5.42724 22.93464,-5.42724 12.50162,0 22.70024,2.3693 22.93075,5.32717 l -0.1184,0.29339 z"
+           id="path4853"
+           inkscape:connector-curvature="0"
+           sodipodi:nodetypes="csssccc" />
+      </g>
+      <path
+         style="fill:url(#linearGradient4885);fill-opacity:1;stroke:#000000;stroke-width:0.24632917"
+         d="m 321.60182,153.11105 0.10222,17.27482 c 0,0 7.97056,5.1109 22.38572,5.1109 16.35486,0 22.89681,-6.43972 22.89681,-6.43972 l -0.20444,-16.25266 z"
+         id="path4855"
+         inkscape:connector-curvature="0"
+         sodipodi:nodetypes="ccsccc" />
+      <path
+         style="fill:#aa0000;fill-opacity:1;stroke:#000000;stroke-width:0.24632917"
+         d="m 366.80386,152.75141 c 0,2.95337 -10.11742,5.34755 -22.5979,5.34755 -12.48047,0 -22.59788,-2.39418 -22.59788,-5.34755 0,-2.95337 10.11741,-5.34755 22.59788,-5.34755 12.31806,0 22.36693,2.33451 22.59405,5.24895 l -0.11666,0.28908 z"
+         id="path4857"
+         inkscape:connector-curvature="0"
+         sodipodi:nodetypes="csssccc" />
+      <g
+         style="stroke:#000000;stroke-width:0.25"
+         id="g4859"
+         transform="translate(49.21251,-182.08628)">
+        <path
+           style="fill:url(#linearGradient4887);fill-opacity:1;stroke:#000000;stroke-width:0.25"
+           d="m 111.62549,347.85595 0.10374,17.53225 c 0,0 8.08934,5.18706 22.71932,5.18706 16.59858,0 23.23802,-6.53569 23.23802,-6.53569 l -0.20749,-16.49485 z"
+           id="path4861"
+           inkscape:connector-curvature="0"
+           sodipodi:nodetypes="ccsccc" />
+        <path
+           style="fill:#aa0000;fill-opacity:1;stroke:#000000;stroke-width:0.25"
+           d="m 157.50113,347.49095 c 0,2.99738 -10.26819,5.42724 -22.93465,5.42724 -12.66646,0 -22.93464,-2.42986 -22.93464,-5.42724 0,-2.99738 10.26818,-5.42724 22.93464,-5.42724 12.50162,0 22.70024,2.3693 22.93075,5.32717 l -0.1184,0.29339 z"
+           id="path4863"
+           inkscape:connector-curvature="0"
+           sodipodi:nodetypes="csssccc" />
+      </g>
+      <g
+         transform="matrix(0.98098831,0,0,0.98098831,108.74692,-190.89601)"
+         id="g4865"
+         style="stroke:#000000;stroke-width:0.25">
+        <path
+           sodipodi:nodetypes="ccsccc"
+           inkscape:connector-curvature="0"
+           id="path4867"
+           d="m 111.62549,347.85595 0.10374,17.53225 c 0,0 8.08934,5.18706 22.71932,5.18706 16.59858,0 23.23802,-6.53569 23.23802,-6.53569 l -0.20749,-16.49485 z"
+           style="fill:url(#linearGradient4889);fill-opacity:1;stroke:#000000;stroke-width:0.25" />
+        <path
+           sodipodi:nodetypes="csssccc"
+           inkscape:connector-curvature="0"
+           id="path4869"
+           d="m 157.50113,347.49095 c 0,2.99738 -10.26819,5.42724 -22.93465,5.42724 -12.66646,0 -22.93464,-2.42986 -22.93464,-5.42724 0,-2.99738 10.26818,-5.42724 22.93464,-5.42724 12.50162,0 22.70024,2.3693 22.93075,5.32717 l -0.1184,0.29339 z"
+           style="fill:#aa0000;fill-opacity:1;stroke:#000000;stroke-width:0.25" />
+      </g>
+      <g
+         style="stroke:#000000;stroke-width:0.25"
+         id="g4871"
+         transform="matrix(0.98098831,0,0,0.98098831,165.61471,-207.30018)">
+        <path
+           style="fill:url(#linearGradient4891);fill-opacity:1;stroke:#000000;stroke-width:0.25"
+           d="m 111.62549,347.85595 0.10374,17.53225 c 0,0 8.08934,5.18706 22.71932,5.18706 16.59858,0 23.23802,-6.53569 23.23802,-6.53569 l -0.20749,-16.49485 z"
+           id="path4873"
+           inkscape:connector-curvature="0"
+           sodipodi:nodetypes="ccsccc" />
+        <path
+           style="fill:#aa0000;fill-opacity:1;stroke:#000000;stroke-width:0.25"
+           d="m 157.50113,347.49095 c 0,2.99738 -10.26819,5.42724 -22.93465,5.42724 -12.66646,0 -22.93464,-2.42986 -22.93464,-5.42724 0,-2.99738 10.26818,-5.42724 22.93464,-5.42724 12.50162,0 22.70024,2.3693 22.93075,5.32717 l -0.1184,0.29339 z"
+           id="path4875"
+           inkscape:connector-curvature="0"
+           sodipodi:nodetypes="csssccc" />
+      </g>
+    </g>
+    <path
+       sodipodi:nodetypes="ccccc"
+       inkscape:connector-curvature="0"
+       id="path4345"
+       d="m 102.96772,554.58271 0.70074,79.25571 91.51246,33.24133 -0.74269,-79.08361 z"
+       style="fill:#faa900;fill-opacity:1;stroke:#000000;stroke-width:0.60000002;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       inkscape:export-filename="/Users/EIB/Dropbox/ullvi/bilder och info/legoSAMR"
+       inkscape:export-xdpi="150.14"
+       inkscape:export-ydpi="150.14" />
+    <path
+       sodipodi:nodetypes="ccccc"
+       inkscape:connector-curvature="0"
+       id="path4347"
+       d="m 196.11668,666.78181 231.54862,-63.40273 -0.63781,-80.7244 -232.27035,67.57383 z"
+       style="fill:#fcd200;fill-opacity:1;stroke:#000000;stroke-width:0.60000002;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       inkscape:export-filename="/Users/EIB/Dropbox/ullvi/bilder och info/legoSAMR"
+       inkscape:export-xdpi="150.14"
+       inkscape:export-ydpi="150.14" />
+    <path
+       sodipodi:nodetypes="ccccc"
+       inkscape:connector-curvature="0"
+       id="path4349"
+       d="M 103.24468,554.24283 323.8708,493.23166 426.66663,522.65467 194.07738,590.22851 Z"
+       style="fill:#faa900;fill-opacity:1;stroke:#000000;stroke-width:0.60000002;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       inkscape:export-filename="/Users/EIB/Dropbox/ullvi/bilder och info/legoSAMR"
+       inkscape:export-xdpi="150.14"
+       inkscape:export-ydpi="150.14" />
+    <path
+       sodipodi:nodetypes="ccsccc"
+       inkscape:connector-curvature="0"
+       id="path4367"
+       d="m 235.44576,542.81214 0.10619,17.94627 c 0,0 8.28037,5.30955 23.25583,5.30955 16.99054,0 23.78677,-6.69003 23.78677,-6.69003 l -0.21239,-16.88437 z"
+       style="fill:url(#linearGradient5279);fill-opacity:1;stroke:#000000;stroke-width:0.25590363"
+       inkscape:export-filename="/Users/EIB/Dropbox/ullvi/bilder och info/legoSAMR"
+       inkscape:export-xdpi="150.14"
+       inkscape:export-ydpi="150.14" />
+    <path
+       sodipodi:nodetypes="csssccc"
+       inkscape:connector-curvature="0"
+       id="path4369"
+       d="m 282.40473,542.43853 c 0,3.06816 -10.51067,5.5554 -23.47624,5.5554 -12.96557,0 -23.47623,-2.48724 -23.47623,-5.5554 0,-3.06817 10.51066,-5.55541 23.47623,-5.55541 12.79684,0 23.23629,2.42525 23.47225,5.45297 l -0.1212,0.30032 z"
+       style="fill:#faa900;fill-opacity:1;stroke:#000000;stroke-width:0.25590363"
+       inkscape:export-filename="/Users/EIB/Dropbox/ullvi/bilder och info/legoSAMR"
+       inkscape:export-xdpi="150.14"
+       inkscape:export-ydpi="150.14" />
+    <path
+       style="fill:url(#linearGradient5281);fill-opacity:1;stroke:#000000;stroke-width:0.24632917"
+       d="m 293.40716,527.27975 0.10222,17.27482 c 0,0 7.97056,5.1109 22.38572,5.1109 16.35486,0 22.89681,-6.43972 22.89681,-6.43972 l -0.20444,-16.25266 z"
+       id="path4373"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccsccc"
+       inkscape:export-filename="/Users/EIB/Dropbox/ullvi/bilder och info/legoSAMR"
+       inkscape:export-xdpi="150.14"
+       inkscape:export-ydpi="150.14" />
+    <path
+       style="fill:#faa900;fill-opacity:1;stroke:#000000;stroke-width:0.24632917"
+       d="m 338.6092,526.92011 c 0,2.95337 -10.11742,5.34755 -22.5979,5.34755 -12.48047,0 -22.59788,-2.39418 -22.59788,-5.34755 0,-2.95337 10.11741,-5.34755 22.59788,-5.34755 12.31806,0 22.36693,2.33451 22.59405,5.24895 l -0.11666,0.28908 z"
+       id="path4375"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="csssccc"
+       inkscape:export-filename="/Users/EIB/Dropbox/ullvi/bilder och info/legoSAMR"
+       inkscape:export-xdpi="150.14"
+       inkscape:export-ydpi="150.14" />
+    <path
+       sodipodi:nodetypes="ccsccc"
+       inkscape:connector-curvature="0"
+       id="path4379"
+       d="m 349.72814,509.78197 0.10222,17.27482 c 0,0 7.97056,5.1109 22.38572,5.1109 16.35486,0 22.89681,-6.43972 22.89681,-6.43972 l -0.20444,-16.25266 z"
+       style="fill:url(#linearGradient5283);fill-opacity:1;stroke:#000000;stroke-width:0.24632917"
+       inkscape:export-filename="/Users/EIB/Dropbox/ullvi/bilder och info/legoSAMR"
+       inkscape:export-xdpi="150.14"
+       inkscape:export-ydpi="150.14" />
+    <path
+       sodipodi:nodetypes="csssccc"
+       inkscape:connector-curvature="0"
+       id="path4381"
+       d="m 394.93018,509.42233 c 0,2.95337 -10.11742,5.34755 -22.5979,5.34755 -12.48047,0 -22.59788,-2.39418 -22.59788,-5.34755 0,-2.95337 10.11741,-5.34755 22.59788,-5.34755 12.31806,0 22.36693,2.33451 22.59405,5.24895 l -0.11666,0.28908 z"
+       style="fill:#faa900;fill-opacity:1;stroke:#000000;stroke-width:0.24632917"
+       inkscape:export-filename="/Users/EIB/Dropbox/ullvi/bilder och info/legoSAMR"
+       inkscape:export-xdpi="150.14"
+       inkscape:export-ydpi="150.14" />
+    <path
+       style="fill:url(#linearGradient5285);fill-opacity:1;stroke:#000000;stroke-width:0.25"
+       d="m 188.96432,522.44059 0.10374,17.53225 c 0,0 8.08934,5.18706 22.71932,5.18706 16.59858,0 23.23802,-6.53569 23.23802,-6.53569 l -0.20749,-16.49485 z"
+       id="path4385"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccsccc"
+       inkscape:export-filename="/Users/EIB/Dropbox/ullvi/bilder och info/legoSAMR"
+       inkscape:export-xdpi="150.14"
+       inkscape:export-ydpi="150.14" />
+    <path
+       style="fill:#faa900;fill-opacity:1;stroke:#000000;stroke-width:0.25"
+       d="m 234.83996,522.07559 c 0,2.99738 -10.26819,5.42724 -22.93465,5.42724 -12.66646,0 -22.93464,-2.42986 -22.93464,-5.42724 0,-2.99738 10.26818,-5.42724 22.93464,-5.42724 12.50162,0 22.70024,2.3693 22.93075,5.32717 l -0.1184,0.29339 z"
+       id="path4387"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="csssccc"
+       inkscape:export-filename="/Users/EIB/Dropbox/ullvi/bilder och info/legoSAMR"
+       inkscape:export-xdpi="150.14"
+       inkscape:export-ydpi="150.14" />
+    <path
+       sodipodi:nodetypes="ccsccc"
+       inkscape:connector-curvature="0"
+       id="path4391"
+       d="m 246.37654,507.01753 0.10177,17.19893 c 0,0 7.93555,5.08845 22.28739,5.08845 16.28301,0 22.79622,-6.41144 22.79622,-6.41144 l -0.20354,-16.18125 z"
+       style="fill:url(#linearGradient5287);fill-opacity:1;stroke:#000000;stroke-width:0.24524708"
+       inkscape:export-filename="/Users/EIB/Dropbox/ullvi/bilder och info/legoSAMR"
+       inkscape:export-xdpi="150.14"
+       inkscape:export-ydpi="150.14" />
+    <path
+       sodipodi:nodetypes="csssccc"
+       inkscape:connector-curvature="0"
+       id="path4393"
+       d="m 291.38001,506.65947 c 0,2.94039 -10.07298,5.32406 -22.49863,5.32406 -12.42565,0 -22.49861,-2.38367 -22.49861,-5.32406 0,-2.94039 10.07296,-5.32406 22.49861,-5.32406 12.26395,0 22.26867,2.32426 22.4948,5.22589 l -0.11615,0.28781 z"
+       style="fill:#faa900;fill-opacity:1;stroke:#000000;stroke-width:0.24524708"
+       inkscape:export-filename="/Users/EIB/Dropbox/ullvi/bilder och info/legoSAMR"
+       inkscape:export-xdpi="150.14"
+       inkscape:export-ydpi="150.14" />
+    <path
+       style="fill:url(#linearGradient5289);fill-opacity:1;stroke:#000000;stroke-width:0.24524708"
+       d="m 303.24433,490.61336 0.10177,17.19893 c 0,0 7.93555,5.08845 22.28739,5.08845 16.28301,0 22.79622,-6.41144 22.79622,-6.41144 l -0.20354,-16.18125 z"
+       id="path4397"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccsccc"
+       inkscape:export-filename="/Users/EIB/Dropbox/ullvi/bilder och info/legoSAMR"
+       inkscape:export-xdpi="150.14"
+       inkscape:export-ydpi="150.14" />
+    <path
+       style="fill:#faa900;fill-opacity:1;stroke:#000000;stroke-width:0.24524708"
+       d="m 348.2478,490.2553 c 0,2.94039 -10.07298,5.32406 -22.49863,5.32406 -12.42565,0 -22.49861,-2.38367 -22.49861,-5.32406 0,-2.94039 10.07296,-5.32406 22.49861,-5.32406 12.26395,0 22.26867,2.32426 22.4948,5.22589 l -0.11615,0.28781 z"
+       id="path4399"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="csssccc"
+       inkscape:export-filename="/Users/EIB/Dropbox/ullvi/bilder och info/legoSAMR"
+       inkscape:export-xdpi="150.14"
+       inkscape:export-ydpi="150.14" />
+    <path
+       style="fill:#1b1cce;stroke:#000000;stroke-width:0.60000002;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;fill-opacity:1"
+       d="m 168.17839,458.03349 1.01965,80.21244 92.46721,33.55228 -2.33525,-80.35129 z"
+       id="path5111"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccccc"
+       inkscape:export-filename="/Users/EIB/Dropbox/ullvi/bilder och info/legoSAMR"
+       inkscape:export-xdpi="150.14"
+       inkscape:export-ydpi="150.14" />
+    <path
+       style="fill:#3334e4;stroke:#000000;stroke-width:0.60000002;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;fill-opacity:1"
+       d="m 260.68557,570.86047 231.55657,-63.30228 -0.2262,-80.7645 L 259.33,491.44692 Z"
+       id="path5113"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccccc"
+       inkscape:export-filename="/Users/EIB/Dropbox/ullvi/bilder och info/legoSAMR"
+       inkscape:export-xdpi="150.14"
+       inkscape:export-ydpi="150.14" />
+    <path
+       style="fill:#1b1cce;stroke:#000000;stroke-width:0.60000002;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;fill-opacity:1"
+       d="m 168.45535,458.01252 219.35049,-60.37336 103.92547,29.10712 -233.08107,64.70064 z"
+       id="path5115"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccccc"
+       inkscape:export-filename="/Users/EIB/Dropbox/ullvi/bilder och info/legoSAMR"
+       inkscape:export-xdpi="150.14"
+       inkscape:export-ydpi="150.14" />
+    <g
+       transform="matrix(1.0236145,0,0,1.0236145,185.75714,87.960156)"
+       id="g5131"
+       style="stroke:#000000;stroke-width:0.25"
+       inkscape:export-filename="/Users/EIB/Dropbox/ullvi/bilder och info/legoSAMR"
+       inkscape:export-xdpi="150.14"
+       inkscape:export-ydpi="150.14">
+      <path
+         sodipodi:nodetypes="ccsccc"
+         inkscape:connector-curvature="0"
+         id="path5133"
+         d="m 111.62549,347.85595 0.10374,17.53225 c 0,0 8.08934,5.18706 22.71932,5.18706 16.59858,0 23.23802,-6.53569 23.23802,-6.53569 l -0.20749,-16.49485 z"
+         style="fill:url(#linearGradient5555);fill-opacity:1;stroke:#000000;stroke-width:0.25" />
+      <path
+         sodipodi:nodetypes="csssccc"
+         inkscape:connector-curvature="0"
+         id="path5135"
+         d="m 157.50113,347.49095 c 0,2.99738 -10.26819,5.42724 -22.93465,5.42724 -12.66646,0 -22.93464,-2.42986 -22.93464,-5.42724 0,-2.99738 10.26818,-5.42724 22.93464,-5.42724 12.50162,0 22.70024,2.3693 22.93075,5.32717 l -0.1184,0.29339 z"
+         style="fill:#aa0000;fill-opacity:1;stroke:#000000;stroke-width:0.25" />
+    </g>
+    <g
+       style="stroke:#000000;stroke-width:0.25"
+       id="g5137"
+       transform="matrix(0.98531672,0,0,0.98531672,247.99356,85.749876)"
+       inkscape:export-filename="/Users/EIB/Dropbox/ullvi/bilder och info/legoSAMR"
+       inkscape:export-xdpi="150.14"
+       inkscape:export-ydpi="150.14">
+      <path
+         style="fill:url(#linearGradient5557);fill-opacity:1;stroke:#000000;stroke-width:0.25"
+         d="m 111.62549,347.85595 0.10374,17.53225 c 0,0 8.08934,5.18706 22.71932,5.18706 16.59858,0 23.23802,-6.53569 23.23802,-6.53569 l -0.20749,-16.49485 z"
+         id="path5139"
+         inkscape:connector-curvature="0"
+         sodipodi:nodetypes="ccsccc" />
+      <path
+         style="fill:#aa0000;fill-opacity:1;stroke:#000000;stroke-width:0.25"
+         d="m 157.50113,347.49095 c 0,2.99738 -10.26819,5.42724 -22.93465,5.42724 -12.66646,0 -22.93464,-2.42986 -22.93464,-5.42724 0,-2.99738 10.26818,-5.42724 22.93464,-5.42724 12.50162,0 22.70024,2.3693 22.93075,5.32717 l -0.1184,0.29339 z"
+         id="path5141"
+         inkscape:connector-curvature="0"
+         sodipodi:nodetypes="csssccc" />
+    </g>
+    <path
+       style="fill:url(#linearGradient6233);fill-opacity:1.0;stroke:#000000;stroke-width:0.24632917"
+       d="m 414.301,411.00038 0.10222,17.27482 c 0,0 7.97056,5.1109 22.38572,5.1109 16.35486,0 22.89681,-6.43972 22.89681,-6.43972 l -0.20444,-16.25266 z"
+       id="path5143"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccsccc"
+       inkscape:export-filename="/Users/EIB/Dropbox/ullvi/bilder och info/legoSAMR"
+       inkscape:export-xdpi="150.14"
+       inkscape:export-ydpi="150.14" />
+    <path
+       style="fill:#1b1cce;fill-opacity:1;stroke:#000000;stroke-width:0.24632917"
+       d="m 459.50304,410.64074 c 0,2.95337 -10.11742,5.34755 -22.5979,5.34755 -12.48047,0 -22.59788,-2.39418 -22.59788,-5.34755 0,-2.95337 10.11741,-5.34755 22.59788,-5.34755 12.31806,0 22.36693,2.33451 22.59405,5.24895 l -0.11666,0.28908 z"
+       id="path5145"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="csssccc"
+       inkscape:export-filename="/Users/EIB/Dropbox/ullvi/bilder och info/legoSAMR"
+       inkscape:export-xdpi="150.14"
+       inkscape:export-ydpi="150.14" />
+    <g
+       style="stroke:#000000;stroke-width:0.25"
+       id="g5147"
+       transform="translate(141.91168,75.803046)"
+       inkscape:export-filename="/Users/EIB/Dropbox/ullvi/bilder och info/legoSAMR"
+       inkscape:export-xdpi="150.14"
+       inkscape:export-ydpi="150.14">
+      <path
+         style="fill:url(#linearGradient5559);fill-opacity:1;stroke:#000000;stroke-width:0.25"
+         d="m 111.62549,347.85595 0.10374,17.53225 c 0,0 8.08934,5.18706 22.71932,5.18706 16.59858,0 23.23802,-6.53569 23.23802,-6.53569 l -0.20749,-16.49485 z"
+         id="path5149"
+         inkscape:connector-curvature="0"
+         sodipodi:nodetypes="ccsccc" />
+      <path
+         style="fill:#aa0000;fill-opacity:1;stroke:#000000;stroke-width:0.25"
+         d="m 157.50113,347.49095 c 0,2.99738 -10.26819,5.42724 -22.93465,5.42724 -12.66646,0 -22.93464,-2.42986 -22.93464,-5.42724 0,-2.99738 10.26818,-5.42724 22.93464,-5.42724 12.50162,0 22.70024,2.3693 22.93075,5.32717 l -0.1184,0.29339 z"
+         id="path5151"
+         inkscape:connector-curvature="0"
+         sodipodi:nodetypes="csssccc" />
+    </g>
+    <g
+       transform="matrix(0.98098831,0,0,0.98098831,201.4461,66.993316)"
+       id="g5153"
+       style="stroke:#000000;stroke-width:0.25"
+       inkscape:export-filename="/Users/EIB/Dropbox/ullvi/bilder och info/legoSAMR"
+       inkscape:export-xdpi="150.14"
+       inkscape:export-ydpi="150.14">
+      <path
+         sodipodi:nodetypes="ccsccc"
+         inkscape:connector-curvature="0"
+         id="path5155"
+         d="m 111.62549,347.85595 0.10374,17.53225 c 0,0 8.08934,5.18706 22.71932,5.18706 16.59858,0 23.23802,-6.53569 23.23802,-6.53569 l -0.20749,-16.49485 z"
+         style="fill:url(#linearGradient5561);fill-opacity:1;stroke:#000000;stroke-width:0.25" />
+      <path
+         sodipodi:nodetypes="csssccc"
+         inkscape:connector-curvature="0"
+         id="path5157"
+         d="m 157.50113,347.49095 c 0,2.99738 -10.26819,5.42724 -22.93465,5.42724 -12.66646,0 -22.93464,-2.42986 -22.93464,-5.42724 0,-2.99738 10.26818,-5.42724 22.93464,-5.42724 12.50162,0 22.70024,2.3693 22.93075,5.32717 l -0.1184,0.29339 z"
+         style="fill:#aa0000;fill-opacity:1;stroke:#000000;stroke-width:0.25" />
+    </g>
+    <g
+       style="stroke:#000000;stroke-width:0.25"
+       id="g5159"
+       transform="matrix(0.98098831,0,0,0.98098831,258.31389,50.589146)"
+       inkscape:export-filename="/Users/EIB/Dropbox/ullvi/bilder och info/legoSAMR"
+       inkscape:export-xdpi="150.14"
+       inkscape:export-ydpi="150.14">
+      <path
+         style="fill:url(#linearGradient5563);fill-opacity:1;stroke:#000000;stroke-width:0.25"
+         d="m 111.62549,347.85595 0.10374,17.53225 c 0,0 8.08934,5.18706 22.71932,5.18706 16.59858,0 23.23802,-6.53569 23.23802,-6.53569 l -0.20749,-16.49485 z"
+         id="path5161"
+         inkscape:connector-curvature="0"
+         sodipodi:nodetypes="ccsccc" />
+      <path
+         style="fill:#aa0000;fill-opacity:1;stroke:#000000;stroke-width:0.25"
+         d="m 157.50113,347.49095 c 0,2.99738 -10.26819,5.42724 -22.93465,5.42724 -12.66646,0 -22.93464,-2.42986 -22.93464,-5.42724 0,-2.99738 10.26818,-5.42724 22.93464,-5.42724 12.50162,0 22.70024,2.3693 22.93075,5.32717 l -0.1184,0.29339 z"
+         id="path5163"
+         inkscape:connector-curvature="0"
+         sodipodi:nodetypes="csssccc" />
+    </g>
+    <g
+       id="g5119"
+       style="stroke:#000000;stroke-width:0.25"
+       transform="translate(83.950283,91.660406)"
+       inkscape:export-filename="/Users/EIB/Dropbox/ullvi/bilder och info/legoSAMR"
+       inkscape:export-xdpi="150.14"
+       inkscape:export-ydpi="150.14">
+      <path
+         sodipodi:nodetypes="ccsccc"
+         inkscape:connector-curvature="0"
+         id="path5121"
+         d="m 111.62549,347.85595 0.10374,17.53225 c 0,0 8.08934,5.18706 22.71932,5.18706 16.59858,0 23.23802,-6.53569 23.23802,-6.53569 l -0.20749,-16.49485 z"
+         style="fill:url(#linearGradient5565);fill-opacity:1;stroke:#000000;stroke-width:0.25" />
+      <path
+         sodipodi:nodetypes="csssccc"
+         inkscape:connector-curvature="0"
+         id="path5123"
+         d="m 157.50113,347.49095 c 0,2.99738 -10.26819,5.42724 -22.93465,5.42724 -12.66646,0 -22.93464,-2.42986 -22.93464,-5.42724 0,-2.99738 10.26818,-5.42724 22.93464,-5.42724 12.50162,0 22.70024,2.3693 22.93075,5.32717 l -0.1184,0.29339 z"
+         style="fill:#aa0000;fill-opacity:1;stroke:#000000;stroke-width:0.25" />
+    </g>
+    <g
+       style="stroke:#000000;stroke-width:0.25"
+       id="g5125"
+       transform="matrix(1.0236145,0,0,1.0236145,128.34255,104.36433)"
+       inkscape:export-filename="/Users/EIB/Dropbox/ullvi/bilder och info/legoSAMR"
+       inkscape:export-xdpi="150.14"
+       inkscape:export-ydpi="150.14">
+      <path
+         style="fill:url(#linearGradient5567);fill-opacity:1;stroke:#000000;stroke-width:0.25"
+         d="m 111.62549,347.85595 0.10374,17.53225 c 0,0 8.08934,5.18706 22.71932,5.18706 16.59858,0 23.23802,-6.53569 23.23802,-6.53569 l -0.20749,-16.49485 z"
+         id="path5127"
+         inkscape:connector-curvature="0"
+         sodipodi:nodetypes="ccsccc" />
+      <path
+         style="fill:#aa0000;fill-opacity:1;stroke:#000000;stroke-width:0.25"
+         d="m 157.50113,347.49095 c 0,2.99738 -10.26819,5.42724 -22.93465,5.42724 -12.66646,0 -22.93464,-2.42986 -22.93464,-5.42724 0,-2.99738 10.26818,-5.42724 22.93464,-5.42724 12.50162,0 22.70024,2.3693 22.93075,5.32717 l -0.1184,0.29339 z"
+         id="path5129"
+         inkscape:connector-curvature="0"
+         sodipodi:nodetypes="csssccc" />
+    </g>
+    <g
+       id="g6191"
+       transform="translate(-65.417694,18.231161)">
+      <path
+         inkscape:export-ydpi="150.14"
+         inkscape:export-xdpi="150.14"
+         inkscape:export-filename="/Users/EIB/Dropbox/ullvi/bilder och info/legoSAMR"
+         style="fill:#209720;fill-opacity:1;stroke:#000000;stroke-width:0.60000002;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         d="m 167.12027,377.22101 1.01965,80.21244 92.46721,33.55228 -2.33525,-80.35129 z"
+         id="path5183"
+         inkscape:connector-curvature="0"
+         sodipodi:nodetypes="ccccc" />
+      <path
+         inkscape:export-ydpi="150.14"
+         inkscape:export-xdpi="150.14"
+         inkscape:export-filename="/Users/EIB/Dropbox/ullvi/bilder och info/legoSAMR"
+         style="fill:#1fc91f;fill-opacity:1;stroke:#000000;stroke-width:0.60000002;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         d="m 259.62745,490.04799 231.55657,-63.30228 -0.2262,-80.7645 -232.68594,64.65323 z"
+         id="path5185"
+         inkscape:connector-curvature="0"
+         sodipodi:nodetypes="ccccc" />
+      <path
+         inkscape:export-ydpi="150.14"
+         inkscape:export-xdpi="150.14"
+         inkscape:export-filename="/Users/EIB/Dropbox/ullvi/bilder och info/legoSAMR"
+         style="fill:#1d8a1d;fill-opacity:1;stroke:#000000;stroke-width:0.60000002;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         d="M 167.39723,377.20004 386.74772,316.82668 490.67319,345.9338 257.59212,410.63444 Z"
+         id="path5187"
+         inkscape:connector-curvature="0"
+         sodipodi:nodetypes="ccccc" />
+      <g
+         inkscape:export-ydpi="150.14"
+         inkscape:export-xdpi="150.14"
+         inkscape:export-filename="/Users/EIB/Dropbox/ullvi/bilder och info/legoSAMR"
+         transform="translate(-77.761514,146.87782)"
+         id="g5409">
+        <path
+           sodipodi:nodetypes="ccsccc"
+           inkscape:connector-curvature="0"
+           id="path5193"
+           d="m 272.27917,211.82606 0.10374,17.53225 c 0,0 8.08934,5.18706 22.71932,5.18706 16.59858,0 23.23802,-6.53569 23.23802,-6.53569 l -0.20749,-16.49485 z"
+           style="fill:url(#linearGradient5449);fill-opacity:1;stroke:#000000;stroke-width:0.25" />
+        <path
+           sodipodi:nodetypes="csssccc"
+           inkscape:connector-curvature="0"
+           id="path5195"
+           d="m 318.15481,211.46106 c 0,2.99738 -10.26819,5.42724 -22.93465,5.42724 -12.66646,0 -22.93464,-2.42986 -22.93464,-5.42724 0,-2.99738 10.26818,-5.42724 22.93464,-5.42724 12.50162,0 22.70024,2.3693 22.93075,5.32717 l -0.1184,0.29339 z"
+           style="fill:#1d8a1d;fill-opacity:1;stroke:#000000;stroke-width:0.25" />
+        <path
+           style="fill:url(#linearGradient5451);fill-opacity:1;stroke:#000000;stroke-width:0.25590363"
+           d="m 319.30741,232.74442 0.10619,17.94627 c 0,0 8.28037,5.30955 23.25583,5.30955 16.99054,0 23.78677,-6.69003 23.78677,-6.69003 l -0.21239,-16.88437 z"
+           id="path5199"
+           inkscape:connector-curvature="0"
+           sodipodi:nodetypes="ccsccc" />
+        <path
+           style="fill:#1d8a1d;fill-opacity:1;stroke:#000000;stroke-width:0.25590363"
+           d="m 366.26638,232.37081 c 0,3.06816 -10.51067,5.5554 -23.47624,5.5554 -12.96557,0 -23.47623,-2.48724 -23.47623,-5.5554 0,-3.06817 10.51066,-5.55541 23.47623,-5.55541 12.79684,0 23.23629,2.42525 23.47225,5.45297 l -0.1212,0.30032 z"
+           id="path5201"
+           inkscape:connector-curvature="0"
+           sodipodi:nodetypes="csssccc" />
+        <path
+           sodipodi:nodetypes="ccsccc"
+           inkscape:connector-curvature="0"
+           id="path5205"
+           d="m 376.72201,216.34025 0.10619,17.94627 c 0,0 8.28037,5.30955 23.25583,5.30955 16.99054,0 23.78677,-6.69003 23.78677,-6.69003 l -0.21239,-16.88437 z"
+           style="fill:url(#linearGradient5453);fill-opacity:1;stroke:#000000;stroke-width:0.25590363" />
+        <path
+           sodipodi:nodetypes="csssccc"
+           inkscape:connector-curvature="0"
+           id="path5207"
+           d="m 423.68098,215.96664 c 0,3.06816 -10.51067,5.5554 -23.47624,5.5554 -12.96557,0 -23.47623,-2.48724 -23.47623,-5.5554 0,-3.06817 10.51066,-5.55541 23.47623,-5.55541 12.79684,0 23.23629,2.42525 23.47225,5.45297 l -0.1212,0.30032 z"
+           style="fill:#1d8a1d;fill-opacity:1;stroke:#000000;stroke-width:0.25590363" />
+        <path
+           style="fill:url(#linearGradient5455);fill-opacity:1;stroke:#000000;stroke-width:0.24632917"
+           d="m 434.68341,200.80786 0.10222,17.27482 c 0,0 7.97056,5.1109 22.38572,5.1109 16.35486,0 22.89681,-6.43972 22.89681,-6.43972 l -0.20444,-16.25266 z"
+           id="path5211"
+           inkscape:connector-curvature="0"
+           sodipodi:nodetypes="ccsccc" />
+        <path
+           style="fill:#1d8a1d;fill-opacity:1;stroke:#000000;stroke-width:0.24632917"
+           d="m 479.88545,200.44822 c 0,2.95337 -10.11742,5.34755 -22.5979,5.34755 -12.48047,0 -22.59788,-2.39418 -22.59788,-5.34755 0,-2.95337 10.11741,-5.34755 22.59788,-5.34755 12.31806,0 22.36693,2.33451 22.59405,5.24895 l -0.11666,0.28908 z"
+           id="path5213"
+           inkscape:connector-curvature="0"
+           sodipodi:nodetypes="csssccc" />
+        <path
+           sodipodi:nodetypes="ccsccc"
+           inkscape:connector-curvature="0"
+           id="path5215"
+           d="m 491.00439,183.31008 0.10222,17.27482 c 0,0 7.97056,5.1109 22.38572,5.1109 16.35486,0 22.89681,-6.43972 22.89681,-6.43972 l -0.20444,-16.25266 z"
+           style="fill:url(#linearGradient5457);fill-opacity:1;stroke:#000000;stroke-width:0.24632917" />
+        <path
+           sodipodi:nodetypes="csssccc"
+           inkscape:connector-curvature="0"
+           id="path5217"
+           d="m 536.20643,182.95044 c 0,2.95337 -10.11742,5.34755 -22.5979,5.34755 -12.48047,0 -22.59788,-2.39418 -22.59788,-5.34755 0,-2.95337 10.11741,-5.34755 22.59788,-5.34755 12.31806,0 22.36693,2.33451 22.59405,5.24895 l -0.11666,0.28908 z"
+           style="fill:#1d8a1d;fill-opacity:1;stroke:#000000;stroke-width:0.24632917" />
+        <path
+           style="fill:url(#linearGradient5459);fill-opacity:1;stroke:#000000;stroke-width:0.25"
+           d="m 330.24057,195.9687 0.10374,17.53225 c 0,0 8.08934,5.18706 22.71932,5.18706 16.59858,0 23.23802,-6.53569 23.23802,-6.53569 l -0.20749,-16.49485 z"
+           id="path5221"
+           inkscape:connector-curvature="0"
+           sodipodi:nodetypes="ccsccc" />
+        <path
+           style="fill:#1d8a1d;fill-opacity:1;stroke:#000000;stroke-width:0.25"
+           d="m 376.11621,195.6037 c 0,2.99738 -10.26819,5.42724 -22.93465,5.42724 -12.66646,0 -22.93464,-2.42986 -22.93464,-5.42724 0,-2.99738 10.26818,-5.42724 22.93464,-5.42724 12.50162,0 22.70024,2.3693 22.93075,5.32717 l -0.1184,0.29339 z"
+           id="path5223"
+           inkscape:connector-curvature="0"
+           sodipodi:nodetypes="csssccc" />
+        <path
+           sodipodi:nodetypes="ccsccc"
+           inkscape:connector-curvature="0"
+           id="path5227"
+           d="m 387.65279,180.54564 0.10177,17.19893 c 0,0 7.93555,5.08845 22.28739,5.08845 16.28301,0 22.79622,-6.41144 22.79622,-6.41144 l -0.20354,-16.18125 z"
+           style="fill:url(#linearGradient5461);fill-opacity:1;stroke:#000000;stroke-width:0.24524708" />
+        <path
+           sodipodi:nodetypes="csssccc"
+           inkscape:connector-curvature="0"
+           id="path5229"
+           d="m 432.65626,180.18758 c 0,2.94039 -10.07298,5.32406 -22.49863,5.32406 -12.42565,0 -22.49861,-2.38367 -22.49861,-5.32406 0,-2.94039 10.07296,-5.32406 22.49861,-5.32406 12.26395,0 22.26867,2.32426 22.4948,5.22589 l -0.11615,0.28781 z"
+           style="fill:#1d8a1d;fill-opacity:1;stroke:#000000;stroke-width:0.24524708" />
+        <path
+           style="fill:url(#linearGradient5463);fill-opacity:1;stroke:#000000;stroke-width:0.24524708"
+           d="m 444.52058,164.14147 0.10177,17.19893 c 0,0 7.93555,5.08845 22.28739,5.08845 16.28301,0 22.79622,-6.41144 22.79622,-6.41144 l -0.20354,-16.18125 z"
+           id="path5233"
+           inkscape:connector-curvature="0"
+           sodipodi:nodetypes="ccsccc" />
+        <path
+           style="fill:#1d8a1d;fill-opacity:1;stroke:#000000;stroke-width:0.24524708"
+           d="m 489.52405,163.78341 c 0,2.94039 -10.07298,5.32406 -22.49863,5.32406 -12.42565,0 -22.49861,-2.38367 -22.49861,-5.32406 0,-2.94039 10.07296,-5.32406 22.49861,-5.32406 12.26395,0 22.26867,2.32426 22.4948,5.22589 l -0.11615,0.28781 z"
+           id="path5235"
+           inkscape:connector-curvature="0"
+           sodipodi:nodetypes="csssccc" />
+      </g>
+    </g>
+    <path
+       sodipodi:nodetypes="ccsccc"
+       inkscape:connector-curvature="0"
+       id="path4355"
+       d="m 131.00292,538.29795 0.10374,17.53225 c 0,0 8.08934,5.18706 22.71932,5.18706 16.59858,0 23.23802,-6.53569 23.23802,-6.53569 l -0.20749,-16.49485 z"
+       style="fill:url(#linearGradient5275);fill-opacity:1;stroke:#000000;stroke-width:0.25"
+       inkscape:export-filename="/Users/EIB/Dropbox/ullvi/bilder och info/legoSAMR"
+       inkscape:export-xdpi="150.14"
+       inkscape:export-ydpi="150.14" />
+    <path
+       sodipodi:nodetypes="csssccc"
+       inkscape:connector-curvature="0"
+       id="path4357"
+       d="m 176.87856,537.93295 c 0,2.99738 -10.26819,5.42724 -22.93465,5.42724 -12.66646,0 -22.93464,-2.42986 -22.93464,-5.42724 0,-2.99738 10.26818,-5.42724 22.93464,-5.42724 12.50162,0 22.70024,2.3693 22.93075,5.32717 l -0.1184,0.29339 z"
+       style="fill:#faa900;fill-opacity:1;stroke:#000000;stroke-width:0.25"
+       inkscape:export-filename="/Users/EIB/Dropbox/ullvi/bilder och info/legoSAMR"
+       inkscape:export-xdpi="150.14"
+       inkscape:export-ydpi="150.14" />
+    <path
+       style="fill:url(#linearGradient5277);fill-opacity:1;stroke:#000000;stroke-width:0.25590363"
+       d="m 178.03116,559.21631 0.10619,17.94627 c 0,0 8.28037,5.30955 23.25583,5.30955 16.99054,0 23.78677,-6.69003 23.78677,-6.69003 l -0.21239,-16.88437 z"
+       id="path4361"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccsccc"
+       inkscape:export-filename="/Users/EIB/Dropbox/ullvi/bilder och info/legoSAMR"
+       inkscape:export-xdpi="150.14"
+       inkscape:export-ydpi="150.14" />
+    <path
+       style="fill:#faa900;fill-opacity:1;stroke:#000000;stroke-width:0.25590363"
+       d="m 224.99013,558.8427 c 0,3.06816 -10.51067,5.5554 -23.47624,5.5554 -12.96557,0 -23.47623,-2.48724 -23.47623,-5.5554 0,-3.06817 10.51066,-5.55541 23.47623,-5.55541 12.79684,0 23.23629,2.42525 23.47225,5.45297 l -0.1212,0.30032 z"
+       id="path4363"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="csssccc"
+       inkscape:export-filename="/Users/EIB/Dropbox/ullvi/bilder och info/legoSAMR"
+       inkscape:export-xdpi="150.14"
+       inkscape:export-ydpi="150.14" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:18px;line-height:125%;font-family:'MP Serif';-inkscape-font-specification:'MP Serif';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="241.64827"
+       y="621.84668"
+       id="text4660"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan4662"
+         x="241.64827"
+         y="621.84668" /></text>
+  </g>
+</svg>

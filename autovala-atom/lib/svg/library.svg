@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   id="svg1"
+   height="368.42499"
+   width="295.84381"
+   version="1.1"
+   inkscape:version="0.48.4 r9939"
+   sodipodi:docname="library.svg">
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="840"
+     inkscape:window-height="984"
+     id="namedview3070"
+     showgrid="false"
+     fit-margin-top="2"
+     fit-margin-left="2"
+     fit-margin-bottom="2"
+     fit-margin-right="2"
+     inkscape:zoom="1.0613709"
+     inkscape:cx="147.92191"
+     inkscape:cy="184.21249"
+     inkscape:window-x="0"
+     inkscape:window-y="27"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg1" />
+  <defs
+     id="defs3">
+    <radialGradient
+       id="radialGradient1096"
+       cy="169.46703"
+       cx="248.26759"
+       r="323.95688"
+       gradientTransform="scale(0.9137584,1.0943812)"
+       fx="248.26759"
+       fy="169.46703"
+       gradientUnits="userSpaceOnUse">
+      <stop
+         id="stop1086"
+         stop-color="#e8e8e8"
+         offset="0"
+         style="stop-color:#e8e8e8;stop-opacity:1;" />
+      <stop
+         id="stop1087"
+         stop-color="#b4b4b4"
+         offset="1"
+         style="stop-color:#b4b4b4;stop-opacity:1;" />
+    </radialGradient>
+    <radialGradient
+       inkscape:collect="always"
+       xlink:href="#radialGradient3262"
+       id="radialGradient3050"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(1,0,0,0.31532,-0.88388,29.2879)"
+       cx="25.455999"
+       cy="39.160999"
+       r="19.622" />
+    <radialGradient
+       id="radialGradient3262"
+       gradientUnits="userSpaceOnUse"
+       cy="39.160999"
+       cx="25.455999"
+       gradientTransform="matrix(1,0,0,0.31532,0,26.813)"
+       r="19.622">
+      <stop
+         id="stop3258"
+         offset="0" />
+      <stop
+         id="stop3260"
+         stop-opacity="0"
+         offset="1" />
+    </radialGradient>
+    <radialGradient
+       r="19.622"
+       cy="39.160999"
+       cx="25.455999"
+       gradientTransform="matrix(9.3028835,0,0,2.9333852,-87.377991,213.54002)"
+       gradientUnits="userSpaceOnUse"
+       id="radialGradient3084"
+       xlink:href="#radialGradient3262"
+       inkscape:collect="always" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#radialGradient1096"
+       id="linearGradient4438"
+       x1="26.50963"
+       y1="32.525482"
+       x2="281.58472"
+       y2="339.67542"
+       gradientUnits="userSpaceOnUse" />
+  </defs>
+  <path
+     inkscape:connector-curvature="0"
+     d="m 331.97743,328.41203 a 182.5412,57.558809 0 0 1 -365.082399,0 182.5412,57.558809 0 1 1 365.082399,0 z"
+     style="opacity:0.40909005;color:#000000;fill:url(#radialGradient3084)"
+     id="path3254" />
+  <path
+     inkscape:connector-curvature="0"
+     style="fill:url(#linearGradient4438);fill-opacity:1;fill-rule:evenodd;stroke:#808080;stroke-width:12.50000000000000000;stroke-linejoin:round;stroke-opacity:1"
+     d="m 8.26301,8.25708 0,279.74999 101.6,0 c 6.2,1.22 18.24,5.49 15.4,20.12 -3.77,19.52 -35.88,6.5 -22.65,34.69 7.67,9.21 20.98,14.28 34.09,15.97 0.21,0.03 0.42,0.07 0.63,0.09 4.61,0.97 9.89,1.46 15.5,1.25 15.2,-0.56 32.25,-5.65 41.34,-16.56 13.23,-28.19 -18.91,-15.17 -22.69,-34.69 -3.78,-19.51 18.91,-20.59 18.91,-20.59 l 97.19,-0.28 -0.63,-98.25 c 0,0 -1.08,-22.69 -20.59,-18.91 -19.52,3.78 -6.5,35.92 -34.69,22.69 -10.91,-9.1 -16,-26.14 -16.56,-41.34 -0.21,-5.61 0.28,-10.89 1.25,-15.5 0.02,-0.21 0.07,-0.42 0.09,-0.63 1.7,-13.11 6.76,-26.42 15.97,-34.09 28.19,-13.23 15.17,18.87 34.69,22.65 18.21,3.53 20.26,-15.34 20.47,-17.96 l 0,-98.40999 z"
+     id="path1163"
+     sodipodi:nodetypes="ccccccccccccccccccccccc" />
+  <metadata
+     id="metadata3068">
+    <rdf:RDF>
+      <cc:Work>
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <cc:license
+           rdf:resource="http://creativecommons.org/licenses/publicdomain/" />
+        <dc:publisher>
+          <cc:Agent
+             rdf:about="http://openclipart.org/">
+            <dc:title>Openclipart</dc:title>
+          </cc:Agent>
+        </dc:publisher>
+        <dc:title>Red Jigsaw piece 07</dc:title>
+        <dc:date>2008-02-28T12:58:03</dc:date>
+        <dc:description>A Jigsaw puzzle piece (red)</dc:description>
+        <dc:source>http://openclipart.org/detail/15157/red-jigsaw-piece-07-by-nicubunu</dc:source>
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>nicubunu</dc:title>
+          </cc:Agent>
+        </dc:creator>
+        <dc:subject>
+          <rdf:Bag>
+            <rdf:li>clip art</rdf:li>
+            <rdf:li>clipart</rdf:li>
+            <rdf:li>game</rdf:li>
+            <rdf:li>image</rdf:li>
+            <rdf:li>jigsaw</rdf:li>
+            <rdf:li>media</rdf:li>
+            <rdf:li>png</rdf:li>
+            <rdf:li>public domain</rdf:li>
+            <rdf:li>puzzle</rdf:li>
+            <rdf:li>shape</rdf:li>
+            <rdf:li>svg</rdf:li>
+          </rdf:Bag>
+        </dc:subject>
+      </cc:Work>
+      <cc:License
+         rdf:about="http://creativecommons.org/licenses/publicdomain/">
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Reproduction" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Distribution" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+  <metadata
+     id="metadata3072">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:title>Clipart by Nicu Buculei - jigsaw_red_10</dc:title>
+        <dc:rights>
+          <cc:Agent>
+            <dc:title>Nicu Buculei</dc:title>
+          </cc:Agent>
+        </dc:rights>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <cc:license
+           rdf:resource="http://web.resource.org/cc/PublicDomain" />
+      </cc:Work>
+      <cc:License
+         rdf:about="http://web.resource.org/cc/PublicDomain">
+        <cc:permits
+           rdf:resource="http://web.resource.org/cc/Reproduction" />
+        <cc:permits
+           rdf:resource="http://web.resource.org/cc/Distribution" />
+        <cc:permits
+           rdf:resource="http://web.resource.org/cc/DerivativeWorks" />
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+</svg>

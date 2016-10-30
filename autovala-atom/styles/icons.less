@@ -1,0 +1,16 @@
+@iconlist: application,build,c,full_build,h,library,project,refresh_langs,refresh,test_vala,update,vala,vapi;
+
+.myloop(@mycounter) when (@mycounter < length(@iconlist)) {
+	@iconName: extract(@iconlist,@mycounter);
+	.autovala_@{iconName} {
+		background-image: url("atom://autovala-atom/lib/svg/@{iconName}.svg");
+		background-repeat: no-repeat;
+		background-size: 16px 16px;
+		padding-left: 18px;
+		margin-top: 1px;
+		margin-bottom: 1px;
+	}
+	.myloop((@mycounter + 1));
+}
+
+.myloop(1);
