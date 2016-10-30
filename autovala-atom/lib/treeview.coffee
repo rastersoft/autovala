@@ -64,10 +64,10 @@ module.exports =
 
 	TreeView: class TreeView extends ScrollView
 		@content: ->
-			@div class: 'tree-view-resizer tool-panel', 'data-show-on-right-side': 'false', =>
-				@div class: 'tree-view-scroller order--center', =>
-					@ul class: 'list-tree full-menu has-collapsable-children', outlet: 'root'
-				@div class: 'tree-view-resize-handle'
+			@div class: 'tree-view-resizer tool-panel', 'data-show-on-right-side': atom.config.get('tree-view.showOnRightSide'), =>
+				@div class: 'tree-view-scroller order--center', outlet: 'scroller', =>
+					@ul class: 'tree-view full-menu list-tree has-collapsable-children focusable-panel', outlet: 'root'
+				@div class: 'tree-view-resize-handle', outlet: 'resizeHandle'
 
 		initialize: ->
 			super
