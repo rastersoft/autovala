@@ -1,5 +1,11 @@
 # autovala-atom package
 
-A short description of your package.
+This is an Atom package that simplifies working with AutoVala.
 
-![A screenshot of your package](https://f.cloud.github.com/assets/69169/2290250/c35d867a-a017-11e3-86be-cd7c5bf3ff9b.gif)
+Autovala can be obtained from the GIT repository, at
+
+	git://github.com/rastersoft/autovala
+
+or from the author's homepage:
+
+	http://www.rastersoft.com
