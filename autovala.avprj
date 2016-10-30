@@ -3,6 +3,7 @@ autovala_version: 24
 project_name: autovala
 vala_version: 0.30
 
+
 custom: data/debian share/autovala/debian
 custom: data/cmake share/autovala/cmake
 
@@ -175,4 +176,3 @@ source_dependency: /usr/include/readline/readline.h
 
 binary_dependency: /usr/bin/pandoc
 binary_dependency: /usr/bin/curl
-

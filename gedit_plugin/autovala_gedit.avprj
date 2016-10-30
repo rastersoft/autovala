@@ -1,7 +1,7 @@
 ### AutoVala Project ###
 autovala_version: 24
 project_name: autovala_gedit
-vala_version: 0.24
+vala_version: 0.30
 
 if ATHOME
 custom: data/autovala.plugin share/gedit/plugins/autovala

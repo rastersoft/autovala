@@ -2,12 +2,12 @@ Source: autovala-gedit
 Maintainer: Sergio Costas <rastersoft@gmail.com>
 Priority: optional
 Section: misc
-Build-Depends: build-essential, po-debconf,valac-0.28, gedit-dev, libatk1.0-dev, libcairo2-dev, libgtk-3-dev, libgdk-pixbuf2.0-dev, libgee-0.8-dev, libglib2.0-dev, libgirepository1.0-dev, libgtksourceview-3.0-dev, libpeas-dev, libpango1.0-dev, libx11-dev, cmake, gettext, pkg-config, gcc, g++, make-guile, intltool, autovala
+Build-Depends: build-essential, po-debconf, valac, gedit-dev, autovala, libatk1.0-dev, libcairo2-dev, libgtk-3-dev, libgdk-pixbuf2.0-dev, libgee-0.8-dev, libglib2.0-dev, libgirepository1.0-dev, libgtksourceview-3.0-dev, libpeas-dev, libxml2-dev, libpango1.0-dev, libvte-2.91-dev, libx11-dev, cmake, gettext, pkg-config, gcc, g++, make, intltool
 
 Package: autovala-gedit
 Architecture: any
 Version: 0.99.47
-Depends: libgtksourceview-3.0-1, libpeas-1.0-0, libgtk-3-0, libpangocairo-1.0-0, libpango-1.0-0, libatk1.0-0, libcairo-gobject2, libcairo2, libgdk-pixbuf2.0-0, libglib2.0-0, libgirepository-1.0-1, libgee-0.8-2, libx11-6, autovala
+Depends: libgtksourceview-3.0-1, libpeas-1.0-0, libgtk-3-0, libpangocairo-1.0-0, libpango-1.0-0, libatk1.0-0, libcairo-gobject2, libcairo2, libgdk-pixbuf2.0-0, libglib2.0-0, libgirepository-1.0-1, autovala, libgee-0.8-2, libxml2, libvte-2.91-0, zlib1g, libpcre2-8-0, libgnutls30, libx11-6
 Description: This is a plugin for GEdit 3 that integrates the project manager
  AutoVala, allowing to use GEdit as a fully-fledged IDE for creating
  projects in VALA language.
