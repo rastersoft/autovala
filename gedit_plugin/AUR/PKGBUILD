@@ -1,0 +1,41 @@
+pkgname=gedit_plugin
+pkgver=1.0.0
+pkgrel=1
+pkgdesc="This is a plugin for GEdit 3 that integrates the project manager
+AutoVala, allowing to use GEdit as a fully-fledged IDE for creating
+projects in VALA language.
+
+The plugin adds a left panel which shows the binaries and libraries
+being created by an AutoVala project and its source files, allowing
+to choose them just by clicking on each. It also shows all the other
+files in the project (doc, po, data...) and the AVPRJ file.
+
+To open an AutoVala project, just open any of the files belonging to
+it, and the plugin will autodetect the project and show all the data.
+
+Remember that you need Autovala installed in your system.
+"
+arch=('i686' 'x86_64')
+source=( 'https://github.com/rastersoft/autovala/archive/master.zip' )
+md5sums=( 'bdec2290a79b8e035dfd942fc3ab0d01' )
+depends=( 'gtksourceview3' 'libpeas' 'gtk3' 'pango' 'atk' 'cairo' 'gdk-pixbuf2' 'glib2' 'gobject-introspection-runtime' 'libgee' 'libx11' 'autovala' )
+makedepends=( 'vala' 'gedit' 'autovala' 'atk' 'cairo' 'gtk3' 'gdk-pixbuf2' 'libgee' 'glib2' 'gobject-introspection' 'gtksourceview3' 'libpeas' 'pango' 'libx11' 'cmake' 'gettext' 'pkg-config' 'gcc' 'make' 'intltool' )
+build() {
+	cd $srcdir
+	TMP1=`find | grep -F "gedit_plugin.avprj"` 
+	cd `dirname $TMP1`
+	rm -rf install
+	mkdir install
+	cd install
+	cmake .. -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_INSTALL_LIBDIR=/usr/lib
+	make
+}
+
+package() {
+	cd $srcdir
+	TMP1=`find | grep -F "gedit_plugin.avprj"` 
+	cd `dirname $TMP1`
+	cd install
+	make DESTDIR="$pkgdir/" install
+}
+
