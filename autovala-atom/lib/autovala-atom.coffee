@@ -83,6 +83,11 @@ module.exports = AutovalaAtom =
 			@projectFileChanged()
 			return
 
+		if (typeof currentFile is 'undefined') or (currentFile is null)
+			@currentProjectFile = null
+			@projectFileChanged()
+			return
+
 		f = new File(currentFile)
 		@currentProjectFile = null
 		if currentFile.endsWith(".avprj")

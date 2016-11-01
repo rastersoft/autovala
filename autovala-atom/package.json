@@ -1,17 +1,16 @@
 {
   "name": "autovala-atom",
   "main": "./lib/autovala-atom",
-  "version": "0.1.0",
+  "version": "0.4.0",
   "description": "Adds support for Autovala, simplifying the development of code in Vala.",
-  "keywords": [
-  ],
+  "keywords": [],
   "repository": "https://github.com/rastersoft/autovala-atom",
   "license": "MIT",
   "engines": {
     "atom": ">=1.0.0 <2.0.0"
   },
   "dependencies": {
-     "atom-space-pen-views": ">=0.1.0",
-     "event-kit": ">=0.1.0"
+    "atom-space-pen-views": ">=0.1.0",
+    "event-kit": ">=0.1.0"
   }
 }
