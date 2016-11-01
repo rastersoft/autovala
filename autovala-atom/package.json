@@ -1,7 +1,7 @@
 {
   "name": "autovala-atom",
   "main": "./lib/autovala-atom",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "Adds support for Autovala, simplifying the development of code in Vala.",
   "keywords": [],
   "repository": "https://github.com/rastersoft/autovala-atom",

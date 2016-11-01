@@ -7,13 +7,15 @@ module.exports =
 			if children
 				@li class: 'list-nested-item list-selectable-item', =>
 					@div class: 'list-item', =>
-						@span class: "icon #{icon}", label
+						@span class: "icon #{icon}", ""
+						@span class: "icon", label
 					@ul class: 'list-tree', =>
 						for child in children
 							@subview 'child', new TreeNode(child)
 			else
 				@li class: 'list-item list-selectable-item', =>
-					@span class: "icon #{icon}", label
+					@span class: "icon #{icon}", ""
+					@span class: "icon", label
 
 		initialize: (item) ->
 			@emitter = new Emitter
@@ -64,10 +66,10 @@ module.exports =
 
 	TreeView: class TreeView extends ScrollView
 		@content: ->
-			@div class: 'tree-view-resizer tool-panel', 'data-show-on-right-side': atom.config.get('tree-view.showOnRightSide'), =>
-				@div class: 'tree-view-scroller order--center', outlet: 'scroller', =>
+			@div class: 'tree-view-resizer tool-panel', 'data-show-on-right-side': atom.config.get('tree-view.showOnRightSide'),  =>
+				@div class: 'tree-view-scroller order--center', outlet: 'scrollerAutovala', =>
 					@ul class: 'tree-view full-menu list-tree has-collapsable-children focusable-panel', outlet: 'root'
-				@div class: 'tree-view-resize-handle', outlet: 'resizeHandle'
+				@div class: 'tree-view-resize-handle', outlet: 'resizeHandleAutovala'
 
 		initialize: ->
 			super

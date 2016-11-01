@@ -12,7 +12,7 @@
    height="368.42499"
    width="295.84381"
    version="1.1"
-   inkscape:version="0.48.4 r9939"
+   inkscape:version="0.91 r13725"
    sodipodi:docname="library.svg">
   <sodipodi:namedview
      pagecolor="#ffffff"
@@ -23,8 +23,8 @@
      guidetolerance="10"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:window-width="840"
-     inkscape:window-height="984"
+     inkscape:window-width="1920"
+     inkscape:window-height="1016"
      id="namedview3070"
      showgrid="false"
      fit-margin-top="2"
@@ -32,11 +32,11 @@
      fit-margin-bottom="2"
      fit-margin-right="2"
      inkscape:zoom="1.0613709"
-     inkscape:cx="147.92191"
+     inkscape:cx="149.80627"
      inkscape:cy="184.21249"
      inkscape:window-x="0"
      inkscape:window-y="27"
-     inkscape:window-maximized="0"
+     inkscape:window-maximized="1"
      inkscape:current-layer="svg1" />
   <defs
      id="defs3">
@@ -84,15 +84,6 @@
          stop-opacity="0"
          offset="1" />
     </radialGradient>
-    <radialGradient
-       r="19.622"
-       cy="39.160999"
-       cx="25.455999"
-       gradientTransform="matrix(9.3028835,0,0,2.9333852,-87.377991,213.54002)"
-       gradientUnits="userSpaceOnUse"
-       id="radialGradient3084"
-       xlink:href="#radialGradient3262"
-       inkscape:collect="always" />
     <linearGradient
        inkscape:collect="always"
        xlink:href="#radialGradient1096"
@@ -103,11 +94,6 @@
        y2="339.67542"
        gradientUnits="userSpaceOnUse" />
   </defs>
-  <path
-     inkscape:connector-curvature="0"
-     d="m 331.97743,328.41203 a 182.5412,57.558809 0 0 1 -365.082399,0 182.5412,57.558809 0 1 1 365.082399,0 z"
-     style="opacity:0.40909005;color:#000000;fill:url(#radialGradient3084)"
-     id="path3254" />
   <path
      inkscape:connector-curvature="0"
      style="fill:url(#linearGradient4438);fill-opacity:1;fill-rule:evenodd;stroke:#808080;stroke-width:12.50000000000000000;stroke-linejoin:round;stroke-opacity:1"

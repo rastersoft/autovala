@@ -1,5 +1,5 @@
 {CompositeDisposable,File,Directory} = require 'atom'
-{TreeView,TreeNode} = require './treeview'
+{TreeView} = require './treeview'
 
 fs = require 'fs'
 path = require 'path'
@@ -131,7 +131,7 @@ module.exports = AutovalaAtom =
 		# This is needed to be able to access the PATH api from the callbacks
 		@path = path
 		if (@myView is null)
-			@myView = new TreeView
+			@myView = new TreeView(@state)
 			atom.workspace.addLeftPanel(item: @myView)
 			lista = []
 			@myView.setRoot({label: "root", icon: null, children: lista})
