@@ -281,7 +281,7 @@ namespace AutoVala {
 			try {
 				this.regexVersion = new GLib.Regex("^[ \t]*// *project +version *= *[0-9]+.[0-9]+(.[0-9]+)?;?$");
 				this.regexPackages = new GLib.Regex("^([ \t]*// *)?[Uu]sing +[^;]+;?");
-				this.regexPackages2 = new GLib.Regex("^([ \t]*// *)?uses +[a-zA-Z_][a-zA-Z0-9_-]+ *$");
+				this.regexPackages2 = new GLib.Regex("^([ \t]*// *)?uses +[a-zA-Z_][a-zA-Z0-9_, -]+ *$");
 				this.regexClasses = new GLib.Regex("^[ \t]*(public )?(private )?[ \t]*class[ ]+");
 			} catch (GLib.Error e) {
 				ElementBase.globalData.addError(_("Can't generate the Regexps"));
