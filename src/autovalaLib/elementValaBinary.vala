@@ -181,6 +181,7 @@ namespace AutoVala {
 
 		private GLib.Regex regexVersion;
 		private GLib.Regex regexPackages;
+		private GLib.Regex regexPackages2;
 		private GLib.Regex regexClasses;
 
 		public string get_vala_opts() {
@@ -280,6 +281,7 @@ namespace AutoVala {
 			try {
 				this.regexVersion = new GLib.Regex("^[ \t]*// *project +version *= *[0-9]+.[0-9]+(.[0-9]+)?;?$");
 				this.regexPackages = new GLib.Regex("^([ \t]*// *)?[Uu]sing +[^;]+;?");
+				this.regexPackages2 = new GLib.Regex("^([ \t]*// *)?uses +[a-zA-Z_][a-zA-Z0-9_-]+ *$");
 				this.regexClasses = new GLib.Regex("^[ \t]*(public )?(private )?[ \t]*class[ ]+");
 			} catch (GLib.Error e) {
 				ElementBase.globalData.addError(_("Can't generate the Regexps"));
@@ -496,7 +498,9 @@ namespace AutoVala {
 			int lineCounter=0;
 			string regexString;
 			MatchInfo regexMatch;
+			bool isGenie;
 
+			isGenie = pathP.has_suffix(".gs");
 			string path = GLib.Path.build_filename(ElementBase.globalData.projectFolder,this._path,pathP);
 			try {
 				var file=File.new_for_path(path);
@@ -536,14 +540,29 @@ namespace AutoVala {
 						continue;
 					}
 					// add the packages used by this source file ("using" statement)
-					if (this.regexPackages.match(line,0, out regexMatch)) {
-						regexString = regexMatch.fetch(0);
-						var pos=regexString.index_of(";");
-						var pos2=regexString.index_of("g ");
-						if (pos==-1) {
-							pos=regexString.length; // allow to put //using without a ; at the end, but also accept with it
+
+					bool retval;
+					if (isGenie) {
+						retval = this.regexPackages2.match(line,0, out regexMatch);
+					} else {
+						retval = this.regexPackages.match(line,0, out regexMatch);
+					}
+
+					if (retval) {
+						regexString = regexMatch.fetch(0).strip();
+						int pos;
+						int pos2;
+						if (isGenie) {
+							pos = -1;
+							pos2 = 5 + regexString.index_of("uses ");
+						} else {
+							pos = regexString.index_of(";");
+							pos2 = 2 + regexString.index_of("g ");
 						}
-						var namespacesFound=regexString.substring(pos2+2,pos-pos2-2).split(",");
+						if (pos == -1) {
+							pos = regexString.length; // allow to put //using without a ; at the end, but also accept with it
+						}
+						var namespacesFound=regexString.substring(pos2,pos-pos2).split(",");
 						foreach(var namespaceFound_tmp in namespacesFound) {
 							var namespaceFound = namespaceFound_tmp.strip();
 							if ((namespaceFound == "Math") || (namespaceFound == "GLib.Math")) {
