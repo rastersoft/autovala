@@ -56,7 +56,7 @@ namespace AutovalaPlugin {
 				if (retval != 2) {
 					return false;
 				}
-				if(this.project.init(this.name.text,this.path.get_filename())) {
+				if(this.project.init(this.name.text,false,this.path.get_filename())) {
 					var messages = this.project.getErrors();
 					string text = "";
 					bool first = true;

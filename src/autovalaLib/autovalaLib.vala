@@ -191,14 +191,14 @@ namespace AutoVala {
 			return false;
 		}
 
-
 		/**
 		 * Creates a new Autovala project in an specified path
 		 * @param projectName The name for the project
+		 * @param isGenie True if it is a Genie project; false if it is a Vala project
 		 * @param basePath The path where to create the project, or NULL to create in the working path
 		 * @return TRUE if there was an error; FALSE if everything went fine
 		 */
-		public bool init(string projectName,string ?basePath = null) {
+		public bool init(string projectName, bool isGenie, string ?basePath = null) {
 
 			bool error=false;
 
@@ -253,7 +253,8 @@ namespace AutoVala {
 			error|=this.createIgnore(configPath,".hgignore");
 
 			try {
-				var srcFile=File.new_for_path(Path.build_filename(configPath,"src",projectName+".vala"));
+				var extension = isGenie ? ".gs" : ".vala";
+				var srcFile=File.new_for_path(Path.build_filename(configPath,"src",projectName+extension));
 				if (false==srcFile.query_exists()) {
 					srcFile.create(FileCreateFlags.NONE);
 				}

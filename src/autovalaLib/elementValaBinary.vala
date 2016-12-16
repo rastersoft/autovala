@@ -361,7 +361,7 @@ namespace AutoVala {
 			var unitestsAccess = File.new_for_path(unitestsCompleteFolder);
 			if (unitestsAccess.query_exists()) {
 				var unitestsFolder=Path.build_filename(this._path,"unitests");
-				var files = ElementBase.getFilesFromFolder(unitestsFolder,{".vala"},true,true,"unitests");
+				var files = ElementBase.getFilesFromFolder(unitestsFolder,{".vala",".gs"},true,true,"unitests");
 				foreach (var element in files) {
 					error |= this.addUnitest(element,true,null,false,-1,null);
 					error |= this.processSource(element);
@@ -370,7 +370,7 @@ namespace AutoVala {
 				ElementBase.globalData.addExclude(unitestsFullFolder);
 			}
 
-			var files = ElementBase.getFilesFromFolder(this._path,{".vala"},true,true);
+			var files = ElementBase.getFilesFromFolder(this._path,{".vala",".gs"},true,true);
 			foreach (var element in files) {
 				error |= this.addSource(element,true,null,false,-1,null);
 				error |= this.processSource(element);
@@ -403,12 +403,8 @@ namespace AutoVala {
 
 		public override void add_files() {
 
-			this.file_list = ElementBase.getFilesFromFolder(this._path,{".vala",".c",".h",".pc","deps",".cmake"},true);
-			var files = ElementBase.getFilesFromFolder(GLib.Path.build_filename(this._path,"vapis"),{".vapi"},true);
-			foreach (var element in files) {
-				this.file_list += element;
-			}
-			files = ElementBase.getFilesFromFolder(GLib.Path.build_filename(this._path,"dbus_generated"),{".vala"},true);
+			this.file_list = ElementBase.getFilesFromFolder(this._path,{".vala",".vapi",".gs",".c",".h",".pc",".deps",".cmake"},true);
+			var files = ElementBase.getFilesFromFolder(GLib.Path.build_filename(this._path,"dbus_generated"),{".vala"},true);
 			foreach (var element in files) {
 				this.file_list+= element;
 			}
@@ -933,7 +929,11 @@ namespace AutoVala {
 			element.comments = comments;
 			this._sources.add(element);
 			var translation = new ElementTranslation();
-			translation.translate_type = TranslationType.VALA;
+			if (sourceFile.has_suffix(".gs")) {
+				translation.translate_type = TranslationType.GENIE;
+			} else {
+				translation.translate_type = TranslationType.VALA;
+			}
 			translation.configureElement(GLib.Path.build_filename(this._path,sourceFile),null,null,automatic,condition,invertCondition);
 			return false;
 		}

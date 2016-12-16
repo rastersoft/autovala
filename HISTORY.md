@@ -1,4 +1,7 @@
 ## History of versions ##
+* version 0.99.48 (2016-12-16)
+    * Added initial support for Genie
+    * Now adds the .VAPI and .GS (Genie) files in all src/ folder to the list of files generated for SCM systems like GIT
 * version 0.99.47 (2016-10-23)
     * Now the list of files to translate is kept ordered between executions, reducing the number of changes in repositories due to changes in the file order
     * Added support for external data (useful to store data for external programs that use autovala)

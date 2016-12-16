@@ -20,7 +20,7 @@ using GLib;
 
 namespace AutoVala {
 
-	public enum TranslationType {C, VALA, GLADE}
+	public enum TranslationType {C, VALA, GLADE, GENIE}
 
 	private class ElementTranslation : ElementBase {
 
@@ -136,6 +136,9 @@ namespace AutoVala {
 				case "glade":
 					this._translate_type = TranslationType.GLADE;
 				break;
+				case "genie":
+					this._translate_type = TranslationType.GENIE;
+				break;
 			}
 			this.comments = comments;
 			return this.configureElement(data.substring(pos+1).strip(),null,null,automatic,condition,invertCondition);
@@ -161,6 +164,9 @@ namespace AutoVala {
 				break;
 				case TranslationType.VALA:
 					type_v = "vala";
+				break;
+				case TranslationType.GENIE:
+					type_v = "genie";
 				break;
 			}
 
