@@ -199,31 +199,32 @@ namespace AutoVala {
 		public ThemeList() {
 
 			this.themes = new Gee.ArrayList<Theme ?>();
-			var pathvar = GLib.Environment.get_variable("XDG_DATA_DIRS");
-			if (pathvar != null) {
-				var paths = pathvar.split(":");
+			string? pathvar = GLib.Environment.get_variable("XDG_DATA_DIRS");
+			if ((pathvar == null) || (pathvar == "")) {
+				pathvar = "/usr/share/:/usr/local/share/";
+			}
+			var paths = pathvar.split(":");
 
-				foreach (var path in paths) {
-					var fullpath = GLib.Path.build_filename(path,"icons");
-					var directory = File.new_for_path(fullpath);
-					if ((!directory.query_exists()) || (directory.query_file_type(GLib.FileQueryInfoFlags.NONE) != GLib.FileType.DIRECTORY)) {
-						continue;
-					}
-					try {
-						var enumerator = directory.enumerate_children (FileAttribute.STANDARD_NAME+","+FileAttribute.STANDARD_TYPE, 0);
+			foreach (var path in paths) {
+				var fullpath = GLib.Path.build_filename(path,"icons");
+				var directory = File.new_for_path(fullpath);
+				if ((!directory.query_exists()) || (directory.query_file_type(GLib.FileQueryInfoFlags.NONE) != GLib.FileType.DIRECTORY)) {
+					continue;
+				}
+				try {
+					var enumerator = directory.enumerate_children (FileAttribute.STANDARD_NAME+","+FileAttribute.STANDARD_TYPE, 0);
 
-						FileInfo file_info;
-						while ((file_info = enumerator.next_file ()) != null) {
-							if (file_info.get_file_type() != GLib.FileType.DIRECTORY) {
-								continue;
-							}
-							var theme = new Theme(GLib.Path.build_filename(fullpath,file_info.get_name()),file_info.get_name());
-							if (theme.name != null) {
-								this.themes.add(theme);
-							}
+					FileInfo file_info;
+					while ((file_info = enumerator.next_file ()) != null) {
+						if (file_info.get_file_type() != GLib.FileType.DIRECTORY) {
+							continue;
 						}
-					} catch (Error e) {
+						var theme = new Theme(GLib.Path.build_filename(fullpath,file_info.get_name()),file_info.get_name());
+						if (theme.name != null) {
+							this.themes.add(theme);
+						}
 					}
+				} catch (Error e) {
 				}
 			}
 		}

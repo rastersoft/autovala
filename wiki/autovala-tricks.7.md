@@ -4,6 +4,16 @@ Autovala-tricks(1)
 
 Autovala tricks - Several tricks for Autovala
 
+## Working with GENIE
+
+Genie is another syntax for the Vala compiler. It can be used with Autovala since version 0.99.48.
+
+To create a Genie project just use
+
+    autovala ginit PROJECT_NAME
+
+This will create all the folders for a standard project and an empty **.gs** file to begin writting source code. Autovala will do the same tricks with Genie, like peeking the source files to discover which packages they need to be compiled, or simplify building libraries, or mixing C, Vala and Genie code in the same project.
+
 ## Enabling debug symbols
 
 Version 0.99.45 of Autovala added support for the CMake standard way for enabling debug symbols. This is achieved just by using:

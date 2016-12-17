@@ -102,7 +102,7 @@ After that, it comes several commands, some of them repeated several times, to s
 
     * **vala_local_package**: is like **vala_package**, but these packages aren't installed in the system. Instead, they belong to this project, and will be compiled automatically before this binary/library.
 
-    * **vala_source**: this command specifies one VALA source file that belongs to this binary. The path must be relative to the binary/library path.
+    * **vala_source**: this command specifies one VALA or GENIE source file that belongs to this binary. The path must be relative to the binary/library path.
 
     * **c_source**: this command specifies one C source file that belongs to this binary. The path must be relative to the binary/library path.
 
