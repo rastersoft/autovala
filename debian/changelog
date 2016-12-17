@@ -1,3 +1,11 @@
+autovala (0.99.48-Debian1) sid; urgency=low
+
+  * Added initial support for Genie
+  * Now adds the .VAPI and .GS (Genie) files in all src/ folder to the list of files generated for SCM systems like GIT
+  * Now can find the icon themes even if XDG_DATA_DIRS is not defined
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Fry, 16 Dec 2016 23:55:00 +0200
+
 autovala (0.99.47-Debian1) sid; urgency=low
 
   * Now the list of files to translate is kept ordered between executions, reducing the number of changes in repositories due to changes in the file order
