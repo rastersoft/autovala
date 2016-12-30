@@ -7,6 +7,22 @@
 <p><a href="index.html">Home</a></p>
 <h2 id="history-of-versions">History of versions</h2>
 <ul>
+<li>version 1.0.0 (2016-12-30)
+<ul>
+<li>Updated version to 1.0.0</li>
+</ul></li>
+<li>version 0.99.48 (2016-12-16)
+<ul>
+<li>Added initial support for Genie</li>
+<li>Now adds the .VAPI and .GS (Genie) files in all src/ folder to the list of files generated for SCM systems like GIT</li>
+<li>Now can find the icon themes even if XDG_DATA_DIRS is not defined</li>
+</ul></li>
+<li>version 0.99.47 (2016-10-23)
+<ul>
+<li>Now the list of files to translate is kept ordered between executions, reducing the number of changes in repositories due to changes in the file order</li>
+<li>Added support for external data (useful to store data for external programs that use autovala)</li>
+<li>Added support for persistent comments in the AVPRJ file</li>
+</ul></li>
 <li>version 0.99.46 (2016-10-02)
 <ul>
 <li>Fixed bug when using an absolute path for vapidir: commands</li>

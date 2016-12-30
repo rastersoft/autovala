@@ -1,5 +1,5 @@
 Name: autovala
-Version: 0.99.48
+Version: 1.0.0
 Release: 1
 License: Unknown/not set
 Summary: Simplify the creation of Vala projects

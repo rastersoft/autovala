@@ -8,6 +8,11 @@
 <p>Autovala-tricks(1)</p>
 <h1 id="name">NAME</h1>
 <p>Autovala tricks - Several tricks for Autovala</p>
+<h2 id="working-with-genie">Working with GENIE</h2>
+<p>Genie is another syntax for the Vala compiler. It can be used with Autovala since version 0.99.48.</p>
+<p>To create a Genie project just use</p>
+<pre><code>autovala ginit PROJECT_NAME</code></pre>
+<p>This will create all the folders for a standard project and an empty <strong>.gs</strong> file to begin writting source code. Autovala will do the same tricks with Genie, like peeking the source files to discover which packages they need to be compiled, or simplify building libraries, or mixing C, Vala and Genie code in the same project.</p>
 <h2 id="enabling-debug-symbols">Enabling debug symbols</h2>
 <p>Version 0.99.45 of Autovala added support for the CMake standard way for enabling debug symbols. This is achieved just by using:</p>
 <pre><code>cmake -DCMAKE_BUILD_TYPE=Debug</code></pre>

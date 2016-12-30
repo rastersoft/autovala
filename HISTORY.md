@@ -1,4 +1,6 @@
 ## History of versions ##
+* version 1.0.0 (2016-12-30)
+    * Updated version to 1.0.0
 * version 0.99.48 (2016-12-16)
     * Added initial support for Genie
     * Now adds the .VAPI and .GS (Genie) files in all src/ folder to the list of files generated for SCM systems like GIT

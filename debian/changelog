@@ -1,3 +1,9 @@
+autovala (1.0.0-Debian1) sid; urgency=low
+
+  * Updated version to 1.0.0
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Fry, 30 Dec 2016 23:55:00 +0200
+
 autovala (0.99.48-Debian1) sid; urgency=low
 
   * Added initial support for Genie
