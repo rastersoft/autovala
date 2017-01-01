@@ -139,6 +139,25 @@ namespace AutoVala {
 
 		}
 
+		public override bool generateMeson(DataOutputStream dataStream) {
+
+			this.add_inner_files();
+
+			var c_name = this._name+".c";
+			var h_name = this._name+".h";
+
+			try {
+				dataStream.put_string("%s_generator = generator(find_program('glib-compile-resources'), arguments: [ '--sourcedir=@SOURCE_DIR@/%s' , '--generate-source', '--target=@BUILD_DIR@/%s.c', '@INPUT@'], output: '@PLAINNAME@.c')\n\n".printf(this._name.replace(".","_"),this.path,this._name));
+				dataStream.put_string("%s_file_c = %s_generator.process(['%s'])\n\n".printf(this._name.replace(".","_"),this._name.replace(".","_"),this.fullPath));
+				
+			} catch (Error e) {
+				ElementBase.globalData.addError(_("Failed to install local files at %s").printf(this.fullPath));
+				return true;
+			}
+			return false;
+		}
+
+
 		public override bool generateCMake(DataOutputStream dataStream) {
 
 			this.add_inner_files();

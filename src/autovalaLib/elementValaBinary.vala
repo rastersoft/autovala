@@ -1291,9 +1291,9 @@ namespace AutoVala {
 					dataStream.put_string("set (TESTSRCDIR \"${CMAKE_SOURCE_DIR}\")\n");
 					dataStream.put_string("set (DOLLAR \"$\")\n\n");
 					if (this._path!="") {
-						dataStream.put_string("configure_file (${CMAKE_SOURCE_DIR}/"+this._path+"/Config.vala.cmake ${CMAKE_BINARY_DIR}/"+this._path+"/Config.vala)\n");
+						dataStream.put_string("configure_file (${CMAKE_SOURCE_DIR}/"+this._path+"/Config.vala.base ${CMAKE_BINARY_DIR}/"+this._path+"/Config.vala)\n");
 					} else {
-						dataStream.put_string("configure_file (${CMAKE_SOURCE_DIR}/Config.vala.cmake ${CMAKE_BINARY_DIR}/Config.vala)\n");
+						dataStream.put_string("configure_file (${CMAKE_SOURCE_DIR}/Config.vala.base ${CMAKE_BINARY_DIR}/Config.vala)\n");
 					}
 					dataStream.put_string("add_definitions(-DGETTEXT_PACKAGE=\\\"${GETTEXT_PACKAGE}\\\")\n");
 				}
@@ -1324,21 +1324,8 @@ namespace AutoVala {
 			return false;
 		}
 
-		public override bool generateCMake(DataOutputStream dataStream) {
-
-			string girFilename="";
-			string libFilename=this.name;
-			if (this._currentNamespace!=null) {
-				// Build the GIR filename
-				girFilename=this._currentNamespace+"-"+this.version.split(".")[0]+".0.gir";
-				libFilename=this._currentNamespace;
-			}
-
-			if (this._type == ConfigType.VALA_LIBRARY) {
-				this.remove_self_package();
-			}
-
-			var fname=File.new_for_path(Path.build_filename(ElementBase.globalData.projectFolder,this._path,"Config.vala.cmake"));
+		private bool generateConfigBase(string libFilename) {
+			var fname = File.new_for_path(Path.build_filename(ElementBase.globalData.projectFolder,this._path,"Config.vala.base"));
 			try {
 				if (fname.query_exists()) {
 					fname.delete();
@@ -1359,7 +1346,129 @@ namespace AutoVala {
 				dataStream2.put_string("}\n");
 				dataStream2.close();
 			} catch (GLib.Error e) {
-				ElementBase.globalData.addError(_("Failed to create the Config.vala.cmake file"));
+				ElementBase.globalData.addError(_("Failed to create the Config.vala.base file"));
+				return true;
+			}
+			return false;
+		}
+
+		public override bool generateMeson(DataOutputStream dataStream) {
+
+			string girFilename="";
+			string libFilename=this.name;
+			if (this._currentNamespace!=null) {
+				// Build the GIR filename
+				girFilename=this._currentNamespace+"-"+this.version.split(".")[0]+".0.gir";
+				libFilename=this._currentNamespace;
+			}
+
+			if (this.generateConfigBase(libFilename)) {
+				return true;
+			}
+			dataStream.put_string("cfg_%s = configuration_data()\n".printf(this.name));
+			dataStream.put_string("cfg_%s.set('DATADIR', join_paths(get_option('prefix'),get_option('datadir')))\n".printf(this.name));
+			dataStream.put_string("cfg_%s.set('PKGDATADIR', join_paths(get_option('prefix'),get_option('datadir'),'%s'))\n".printf(this.name,ElementBase.globalData.projectName));
+			dataStream.put_string("cfg_%s.set('GETTEXT_PACKAGE', '%s')\n".printf(this.name,ElementBase.globalData.projectName));
+			dataStream.put_string("cfg_%s.set('RELEASE_NAME', '%s')\n".printf(this.name,ElementBase.globalData.projectName));
+			dataStream.put_string("cfg_%s.set('PREFIX', get_option('prefix'))\n".printf(this.name));
+			dataStream.put_string("cfg_%s.set('VERSION', '%s')\n".printf(this.name,this.version));
+			dataStream.put_string("cfg_%s.set('TESTSRCDIR', '')\n\n".printf(this.name));
+			
+			var counter = Globals.counter;
+			var input_file = Path.build_filename(this._path,"Config.vala.base");
+			var output_file = Path.build_filename("Config_%d.vala".printf(counter));
+			dataStream.put_string("cfgfile_%d = configure_file(input: '%s',output: '%s',configuration: cfg_%s)\n\n".printf(counter,input_file,output_file,this.name));
+
+			dataStream.put_string("%s_deps = []\n".printf(this.name));
+			var printConditions = new ConditionalText(dataStream, ConditionalType.MESON);
+			foreach(var module in this.packages) {
+				if ((module.type==packageType.DO_CHECK)||(module.type==packageType.C_DO_CHECK)) {
+					printConditions.printCondition(module.condition,module.invertCondition);
+					dataStream.put_string("%s_deps += [%s_dep]\n".printf(this.name,module.elementName.replace("-","_").replace("+","").replace(".","_")));
+				}
+			}
+			printConditions.printTail();
+			
+			dataStream.put_string("%s_sources = [cfgfile_%d]\n".printf(this.name,counter));
+			foreach(var source in this._sources) {
+				printConditions.printCondition(source.condition,source.invertCondition);
+				dataStream.put_string("%s_sources += ['%s']\n".printf(this.name,Path.build_filename(this._path,source.elementName)));
+			}
+			printConditions.printTail();
+			
+			foreach(var source in this._cSources) {
+				printConditions.printCondition(source.condition,source.invertCondition);
+				dataStream.put_string("%s_sources += ['%s']\n".printf(this.name,Path.build_filename(this._path,source.elementName)));
+			}
+			printConditions.printTail();
+
+			foreach (var element in globalData.globalElements) {
+				if (element.eType != ConfigType.GRESOURCE) {
+					continue;
+				}
+				var e = element as ElementGResource;
+				dataStream.put_string("%s_sources += [%s_file_c]\n".printf(this.name,e.name.replace(".","_")));
+			}
+
+			foreach (var filename in this._vapis) {
+				printConditions.printCondition(filename.condition,filename.invertCondition);
+				dataStream.put_string("%s_sources += [join_paths(meson.current_source_dir(),'%s')]\n".printf(this.name,Path.build_filename(this._path,filename.elementName)));
+			}
+			printConditions.printTail();
+			
+			dataStream.put_string("%s_vala_args = []\n".printf(this.name));
+			foreach(var module in this.packages) {
+				if ((module.type==packageType.DO_CHECK)||(module.type==packageType.C_DO_CHECK)) {
+					continue;
+				}
+				printConditions.printCondition(module.condition,module.invertCondition);
+				dataStream.put_string("%s_vala_args += ['--pkg=%s']\n".printf(this.name,module.elementName));
+			}
+			printConditions.printTail();
+			
+			foreach(var element in ElementBase.globalData.globalElements) {
+				if (element.eType==ConfigType.VAPIDIR) {
+					printConditions.printCondition(element.condition,element.invertCondition);
+					if (element.fullPath[0] == GLib.Path.DIR_SEPARATOR) {
+						// should check if it exists...
+						dataStream.put_string("%s_vala_args += ['--vapidir='+join_paths(meson.current_source_dir(),'%s')]\n".printf(this.name,element.fullPath));
+					} else {
+						dataStream.put_string("%s_vala_args += ['--vapidir='+join_paths(meson.current_source_dir(),'%s')]\n".printf(this.name,element.fullPath));
+					}
+				}
+			}
+
+			foreach (var resource in this._resources) {
+				foreach(var element in ElementBase.globalData.globalElements) {
+					if (element.eType==ConfigType.GRESOURCE) {
+						var gresource = element as ElementGResource;
+						if (gresource.identifier == resource.elementName) {
+							dataStream.put_string("%s_vala_args += ['--gresources='+join_paths(meson.current_source_dir(),'%s')]\n".printf(this.name,element.fullPath));
+						}
+					}
+				}
+			}
+
+			dataStream.put_string("executable('%s',%s_sources,dependencies: %s_deps, vala_args: %s_vala_args)\n".printf(this.name,this.name,this.name,this.name));
+
+			return false;
+		}
+
+		public override bool generateCMake(DataOutputStream dataStream) {
+
+			string girFilename="";
+			string libFilename=this.name;
+			if (this._currentNamespace!=null) {
+				// Build the GIR filename
+				girFilename=this._currentNamespace+"-"+this.version.split(".")[0]+".0.gir";
+				libFilename=this._currentNamespace;
+			}
+
+			if (this._type == ConfigType.VALA_LIBRARY) {
+				this.remove_self_package();
+			}
+
+			if (this.generateConfigBase(libFilename)) {
 				return true;
 			}
 
@@ -1368,7 +1477,7 @@ namespace AutoVala {
 				string depsFilename=libFilename+".deps";
 
 				if (this._type == ConfigType.VALA_LIBRARY) {
-					fname=File.new_for_path(Path.build_filename(ElementBase.globalData.projectFolder,this._path,pcFilename));
+					var fname=File.new_for_path(Path.build_filename(ElementBase.globalData.projectFolder,this._path,pcFilename));
 					if (fname.query_exists()) {
 						fname.delete();
 					}

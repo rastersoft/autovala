@@ -48,6 +48,22 @@ namespace AutoVala {
 
 		public static ReadVapis? vapiList = null;
 
+		private static int _counter = 0;
+		
+		/**
+		 * This counter is used for cases where different filenames are needed
+		 */
+		public static int counter {
+				get {
+					Globals._counter++;
+					return _counter;
+				}
+		}
+
+		public static void resetCounter() {
+			Globals._counter = 0;
+		}
+
 		public Globals(string projectName, string ?searchPath = null) {
 
 			ElementBase.globalData = this;

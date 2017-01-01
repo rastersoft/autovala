@@ -285,6 +285,8 @@ namespace AutoVala {
 
 			bool error;
 
+			Globals.resetCounter();
+
 			this.config = new AutoVala.Configuration(basePath);
 			if(this.config.globalData.error) {
 				return true; // if there was at least one error during initialization, return
@@ -336,7 +338,9 @@ namespace AutoVala {
 			if(this.config.globalData.error) {
 				return true; // if there was at least one error during initialization, return
 			}
+
 			var globalData = ElementBase.globalData;
+			globalData.resetCounter();
 
 			error=config.readConfiguration();
 			if (error) {

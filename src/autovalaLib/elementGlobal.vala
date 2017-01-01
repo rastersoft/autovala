@@ -363,6 +363,8 @@ namespace AutoVala {
 				dataStream.put_string("\n");
 			}
 
+			dataStream.put_string("add_global_arguments('-DGETTEXT_PACKAGE=\"%s\"',language: 'c')\n\n".printf(ElementBase.globalData.projectName));
+
 			Gee.Set<string> tocheck=new Gee.HashSet<string>();
 			Gee.List<GenericElement> elements=new Gee.ArrayList<GenericElement>();
 
@@ -411,7 +413,6 @@ namespace AutoVala {
 			if (found) {
 				dataStream.put_string("\n");
 			}
-
 			return false;
 		}
 	}
