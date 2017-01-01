@@ -42,7 +42,7 @@ namespace AutoVala {
 		public override bool generateCMakePostData(DataOutputStream dataStream,DataOutputStream dataStreamGlobal) {
 
 			try {
-				var condition = new ConditionalText(dataStream,true);
+				var condition = new ConditionalText(dataStream,ConditionalType.CMAKE);
 				condition.printCondition(this.post_condition,this.post_invertCondition);
 				dataStream.put_string("include(${CMAKE_CURRENT_SOURCE_DIR}/"+this.name+")\n");
 				condition.printTail();

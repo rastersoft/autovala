@@ -311,6 +311,14 @@ namespace AutoVala {
 		public virtual void endedCMakeFile() {
 		}
 
+		/**
+		 * Adds the specific data for this element to a Meson build file
+		 * @param dataStream The data stream for the meson.build file being processed
+		 * @return //true// if there was an error; //false// if not. The error texts can be obtained by calling to returnErrors()
+		 */
+		public virtual bool generateMeson(DataOutputStream dataStream) {
+			return false;
+		}
 
 		/**
 		 * Removes all the automatic data in the element

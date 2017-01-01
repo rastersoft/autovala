@@ -1469,7 +1469,7 @@ namespace AutoVala {
 				dataStream.put_string("ensure_vala_version (\"%d.%d\" MINIMUM)\n".printf(ElementBase.globalData.valaVersionMajor,ElementBase.globalData.valaVersionMinor));
 				dataStream.put_string("include (ValaPrecompile)\n\n");
 
-				var printConditions=new ConditionalText(dataStream,true);
+				var printConditions=new ConditionalText(dataStream,ConditionalType.CMAKE);
 
 				bool found_local=false;
 				foreach(var module in this._packages) {

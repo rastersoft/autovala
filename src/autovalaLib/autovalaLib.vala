@@ -277,6 +277,53 @@ namespace AutoVala {
 		}
 
 		/**
+		 * Generates the MESON.BUILD file for a project
+		 * @param basePath A base file or folder; the code will check if that file is a valid .avprj file; if not (or if it is a folder) will search in the folder containing it if there is a valid .avprj file. If not, will search upwards until a valid .avprj file is found, or the root is reached. NULL means to start searching in the current working directory
+		 * @return TRUE if there was an error; FALSE if everything went fine
+		 */
+		public bool meson(string ?basePath = null) {
+
+			bool error;
+
+			this.config = new AutoVala.Configuration(basePath);
+			if(this.config.globalData.error) {
+				return true; // if there was at least one error during initialization, return
+			}
+			var globalData = ElementBase.globalData;
+
+			error = config.readConfiguration();
+			if (error) {
+				return true;
+			}
+
+			string configPath = this.config.globalData.projectFolder;
+
+			globalData.generateExtraData();
+
+			var globalElement = new ElementGlobal();
+			DataOutputStream dataStream;
+			try {
+				var mainPath = GLib.Path.build_filename(globalData.projectFolder,"meson.build");
+				var file = File.new_for_path(mainPath);
+				if (file.query_exists()) {
+					file.delete();
+				}
+				var dis = file.create(FileCreateFlags.NONE);
+				dataStream = new DataOutputStream(dis);
+				error |= globalElement.generateMeson(dataStream);
+				foreach(var element in globalData.globalElements) {
+					error |= element.generateMeson(dataStream);
+				}
+			} catch (Error e) {
+				ElementBase.globalData.addError(_("Failed while generating the meson.build file"));
+				return true;
+			}
+
+			dataStream.close();
+			return error;
+		}
+
+		/**
 		 * Generates the CMAKE files for a project
 		 * @param basePath A base file or folder; the code will check if that file is a valid .avprj file; if not (or if it is a folder) will search in the folder containing it if there is a valid .avprj file. If not, will search upwards until a valid .avprj file is found, or the root is reached. NULL means to start searching in the current working directory
 		 * @return TRUE if there was an error; FALSE if everything went fine
@@ -341,7 +388,7 @@ namespace AutoVala {
 						error |= element.generateCMakeHeader(dataStream);
 					}
 
-					var condition = new ConditionalText(dataStream,true);
+					var condition = new ConditionalText(dataStream,ConditionalType.CMAKE);
 					error |= globalElement.generateCMake(dataStream);
 					foreach(var element in globalData.globalElements) {
 						if (element.path != path) {

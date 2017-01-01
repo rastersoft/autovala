@@ -22,6 +22,8 @@ using Posix;
 
 namespace AutoVala {
 
+	public enum ConditionalType {AUTOVALA, CMAKE, MESON}
+
 	/**
 	 * This class manages the conditional texts in the configuration and CMakeLists.txt files
 	 * It decides when to write an 'if', an 'else' and an 'end'
@@ -31,7 +33,7 @@ namespace AutoVala {
 		string? currentCondition;
 		bool invertedCondition;
 		DataOutputStream dataStream;
-		bool cmakeFormat;
+		ConditionalType condType;
 
 		public static Globals globalData = null;
 
@@ -39,9 +41,9 @@ namespace AutoVala {
 		 * @param stream The file stream to which write the statements
 		 * @param cmake //true// if we are writting to a CMakeLists.txt file; //false// if it is a .avprj file
 		 */
-		public ConditionalText(DataOutputStream stream,bool cmake) {
+		public ConditionalText(DataOutputStream stream,ConditionalType condType) {
 			this.dataStream=stream;
-			this.cmakeFormat=cmake;
+			this.condType = condType;
 			this.reset();
 		}
 
@@ -67,15 +69,22 @@ namespace AutoVala {
 						 * to reverse the condition
 						 */
 						if (inverted!=this.invertedCondition) {
-							if (this.cmakeFormat) {
-								this.dataStream.put_string("else ()\n");
-							} else {
-								this.dataStream.put_string("else\n");
+							switch(this.condType) {
+								case ConditionalType.CMAKE:
+									this.dataStream.put_string("else ()\n");
+									break;
+								case ConditionalType.AUTOVALA:
+								case ConditionalType.MESON:
+									this.dataStream.put_string("else\n");
+									break;
 							}
 							this.invertedCondition=inverted;
 						}
-						if (this.cmakeFormat) {
-							this.dataStream.put_string("\t");
+						switch(this.condType) {
+							case ConditionalType.CMAKE:
+							case ConditionalType.MESON:
+								this.dataStream.put_string("\t");
+								break;
 						}
 					}
 				} catch (Error e) {
@@ -88,10 +97,16 @@ namespace AutoVala {
 				 */
 				if(this.currentCondition!=null) {
 					try {
-						if (this.cmakeFormat) {
-							this.dataStream.put_string("endif ()\n");
-						} else {
-							this.dataStream.put_string("end\n");
+						switch(this.condType) {
+							case ConditionalType.CMAKE:
+								this.dataStream.put_string("endif ()\n");
+								break;
+							case ConditionalType.MESON:
+								this.dataStream.put_string("endif\n");
+								break;
+							case ConditionalType.AUTOVALA:
+								this.dataStream.put_string("end\n");
+								break;
 						}
 					} catch (Error e) {
 						ElementBase.globalData.addError(_("Failed to store ENDIF condition at config"));
@@ -102,20 +117,40 @@ namespace AutoVala {
 				if(condition!=null) {
 					if (inverted==false) {
 						try {
-							if (this.cmakeFormat) {
-								this.dataStream.put_string("if (%s)\n\t".printf(condition));
-							} else {
-								this.dataStream.put_string("if %s\n".printf(condition));
+							switch(this.condType) {
+								case ConditionalType.CMAKE:
+									this.dataStream.put_string("if (%s)\n\t".printf(condition));
+									break;
+								case ConditionalType.MESON:
+									var condition2 = " " + condition.replace("("," ( ").replace(")"," ) ") + " ";
+									condition2 = condition2.replace(" AND "," and ");
+									condition2 = condition2.replace(" OR "," or ");
+									condition2 = condition2.replace(" NOT "," not ").strip();
+									this.dataStream.put_string("if %s\n\t".printf(condition2));
+									break;
+								case ConditionalType.AUTOVALA:
+									this.dataStream.put_string("if %s\n".printf(condition));
+									break;
 							}
 						} catch (Error e) {
 							ElementBase.globalData.addError(_("Failed to store IF at config"));
 						}
 					} else {
 						try {
-							if (this.cmakeFormat) {
-								this.dataStream.put_string("if (NOT(%s))\n\t".printf(condition));
-							} else {
-								this.dataStream.put_string("if %s\nelse\n".printf(condition));
+							switch(this.condType) {
+								case ConditionalType.CMAKE:
+									this.dataStream.put_string("if (NOT(%s))\n\t".printf(condition));
+									break;
+								case ConditionalType.MESON:
+									var condition2 = " " + condition.replace("("," ( ").replace(")"," ) ") + " ";
+									condition2 = condition2.replace(" AND "," and ");
+									condition2 = condition2.replace(" OR "," or ");
+									condition2 = condition2.replace(" NOT "," not ").strip();
+									this.dataStream.put_string("if (not %s)\n\t".printf(condition2));
+									break;
+								case ConditionalType.AUTOVALA:
+									this.dataStream.put_string("if %s\nelse\n".printf(condition));
+									break;
 							}
 						} catch (Error e) {
 							ElementBase.globalData.addError(_("Failed to store IF NOT/ELSE at config"));
@@ -131,10 +166,16 @@ namespace AutoVala {
 		public void printTail() {
 			if (this.currentCondition!=null) {
 				try {
-					if (this.cmakeFormat) {
-						this.dataStream.put_string("endif ()\n\n");
-					} else {
-						this.dataStream.put_string("end\n");
+					switch(this.condType) {
+						case ConditionalType.CMAKE:
+							this.dataStream.put_string("endif ()\n");
+							break;
+						case ConditionalType.MESON:
+							this.dataStream.put_string("endif\n");
+							break;
+						case ConditionalType.AUTOVALA:
+							this.dataStream.put_string("end\n");
+							break;
 					}
 				} catch (Error e) {
 					ElementBase.globalData.addError(_("Failed to store TAIL at config"));

@@ -459,7 +459,7 @@ namespace AutoVala {
 		private void storeData(ConfigType type, GLib.DataOutputStream dataStream) {
 
 			bool printed = false;
-			var printConditions = new ConditionalText(dataStream,false);
+			var printConditions = new ConditionalText(dataStream,ConditionalType.AUTOVALA);
 			foreach(var element in this.globalData.globalElements) {
 				if (element.eType == type) {
 					printConditions.printCondition(element.condition,element.invertCondition);
@@ -483,4 +483,3 @@ namespace AutoVala {
 		}
 	}
 }
-
