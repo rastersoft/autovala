@@ -1361,10 +1361,15 @@ namespace AutoVala {
 				girFilename=this._currentNamespace+"-"+this.version.split(".")[0]+".0.gir";
 				libFilename=this._currentNamespace;
 			}
+			
+			if (this._type == ConfigType.VALA_LIBRARY) {
+				this.remove_self_package();
+			}
 
 			if (this.generateConfigBase(libFilename)) {
 				return true;
 			}
+
 			dataStream.put_string("cfg_%s = configuration_data()\n".printf(this.name));
 			dataStream.put_string("cfg_%s.set('DATADIR', join_paths(get_option('prefix'),get_option('datadir')))\n".printf(this.name));
 			dataStream.put_string("cfg_%s.set('PKGDATADIR', join_paths(get_option('prefix'),get_option('datadir'),'%s'))\n".printf(this.name,ElementBase.globalData.projectName));
@@ -1506,6 +1511,11 @@ namespace AutoVala {
 				dataStream.put_string(",link_with: %s_dependencies".printf(this.name));
 			}
 			dataStream.put_string(")\n\n");
+
+			if ((this._type == ConfigType.VALA_LIBRARY) && (this._currentNamespace != null)) {
+				dataStream.put_string("pkg_mod = import('pkgconfig')\n");
+				dataStream.put_string("pkg_mod.generate(libraries : %s_library,\n\tversion : '%s',\n\tname : '%s',\n\tfilebase : '%s',\n\tdescription : '%s')\n\n".printf(this._currentNamespace,this.version,this.name,libFilename,libFilename));
+			}
 
 			return false;
 		}
