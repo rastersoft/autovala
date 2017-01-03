@@ -21,7 +21,7 @@ using Gee;
 using Posix;
 using Readline;
 
-// project version=0.99
+// project version=1.0
 
 namespace AutoVala {
 
