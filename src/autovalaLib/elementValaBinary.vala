@@ -1415,14 +1415,15 @@ namespace AutoVala {
 				dataStream.put_string("%s_sources += [join_paths(meson.current_source_dir(),'%s')]\n".printf(this.name,Path.build_filename(this._path,filename.elementName)));
 			}
 			printConditions.printTail();
-			
+
+
 			dataStream.put_string("%s_vala_args = []\n".printf(this.name));
 			foreach(var module in this.packages) {
-				if ((module.type==packageType.DO_CHECK)||(module.type==packageType.C_DO_CHECK)) {
+				if ((module.type==packageType.DO_CHECK)||(module.type==packageType.C_DO_CHECK)||(module.type==packageType.LOCAL)) {
 					continue;
 				}
 				printConditions.printCondition(module.condition,module.invertCondition);
-				dataStream.put_string("%s_vala_args += ['--pkg=%s']\n".printf(this.name,module.elementName));
+				dataStream.put_string("%s_vala_args += ['--pkg','%s']\n".printf(this.name,module.elementName));
 			}
 			printConditions.printTail();
 			
@@ -1449,7 +1450,62 @@ namespace AutoVala {
 				}
 			}
 
-			dataStream.put_string("executable('%s',%s_sources,dependencies: %s_deps, vala_args: %s_vala_args)\n".printf(this.name,this.name,this.name,this.name));
+			bool localPackages = false;
+			foreach(var package in this.packages) {
+				if (package.type == packageType.LOCAL) {
+					if (localPackages == false) {
+						localPackages = true;
+						dataStream.put_string("%s_dependencies = []\n".printf(this.name));
+					}
+					dataStream.put_string("%s_dependencies += [%s_library]\n".printf(this.name,package.elementName));
+					break;
+				}
+			}
+
+			foreach(var option in this._compileOptions) {
+				dataStream.put_string("%s_vala_args += ['%s']\n".printf(this.name,option.elementName));
+			}
+
+			dataStream.put_string("%s_c_args = []\n".printf(this.name));
+			foreach(var option in this._compileCOptions) {
+				dataStream.put_string("%s_c_args += ['%s']\n".printf(this.name,option.elementName));
+			}
+
+			dataStream.put_string("%s_link_args = []\n".printf(this.name));
+			foreach(var option in this._link_libraries) {
+				if ((option.elementName == "threads") || (option.elementName == "pthreads")) {
+					dataStream.put_string("%s_thread_dep = dependency('threads')\n".printf(this.name));
+					dataStream.put_string("%s_dependencies += ['%s_thread_dep']\n".printf(this.name,this.name));
+					continue;
+				}
+				if (option.elementName == "m") {
+					/*dataStream.put_string("cc_%d = meson.get_compiler('c')\n");
+					dataStream.put_string("m_dep = cc.find_library('m', required : false)\n");*/
+					dataStream.put_string("%s_deps += [ meson.get_compiler('c').find_library('m', required : false) ]\n".printf(this.name));
+					continue;
+				}
+				dataStream.put_string("%s_link_args += ['-l%s']\n".printf(this.name,option.elementName));
+			}
+			
+
+			if (this._type == ConfigType.VALA_BINARY) {
+				dataStream.put_string("\nexecutable");
+			} else {
+				if (this._currentNamespace == null) {
+					dataStream.put_string("\nshared_library");
+				} else {
+					dataStream.put_string("\n%s_library = shared_library".printf(this._currentNamespace));
+				}
+			}
+			dataStream.put_string("('%s',%s_sources".printf(this.name,this.name));
+			dataStream.put_string(",dependencies: %s_deps".printf(this.name));
+			dataStream.put_string(",vala_args: %s_vala_args".printf(this.name));
+			dataStream.put_string(",c_args: %s_c_args".printf(this.name));
+			dataStream.put_string(",link_args: %s_link_args".printf(this.name));
+			if (localPackages) {
+				dataStream.put_string(",link_with: %s_dependencies".printf(this.name));
+			}
+			dataStream.put_string(")\n\n");
 
 			return false;
 		}

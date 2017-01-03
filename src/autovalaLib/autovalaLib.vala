@@ -303,6 +303,7 @@ namespace AutoVala {
 			globalData.generateExtraData();
 
 			var globalElement = new ElementGlobal();
+		
 			DataOutputStream dataStream;
 			try {
 				var mainPath = GLib.Path.build_filename(globalData.projectFolder,"meson.build");
@@ -314,7 +315,66 @@ namespace AutoVala {
 				dataStream = new DataOutputStream(dis);
 				error |= globalElement.generateMeson(dataStream);
 				foreach(var element in globalData.globalElements) {
+					if ((element.eType == ConfigType.VALA_BINARY) || (element.eType == ConfigType.VALA_LIBRARY)) {
+						element.processed = false;
+						continue;
+					}
 					error |= element.generateMeson(dataStream);
+					element.processed = true;
+				}
+				
+				bool allProcessed=false;
+				Gee.Set<string> packagesFound=new Gee.HashSet<string>();
+				while(allProcessed == false) {
+					bool addedOne = false;
+					allProcessed = true;
+					foreach(var element in globalData.globalElements) {
+						if ((element.eType != ConfigType.VALA_BINARY) && (element.eType != ConfigType.VALA_LIBRARY)) {
+							continue;
+						}
+						if (element.processed) {
+							continue;
+						}
+						var binElement = element as ElementValaBinary;
+						var valid = true;
+						allProcessed = false;
+						foreach(var package in binElement.packages) {
+							if((package.type == packageType.LOCAL) && (false == packagesFound.contains(package.elementName))) {
+								valid=false;
+								break;
+							}
+						}
+						if (valid == false) { // has dependencies still not satisfied
+							continue;
+						}
+						addedOne = true;
+						element.processed = true;
+						error |= element.generateMeson(dataStream);
+						if ((binElement.eType == ConfigType.VALA_LIBRARY) && (binElement.currentNamespace != "")) {
+							packagesFound.add(binElement.currentNamespace);
+						}
+					}
+					if ((allProcessed == false) && (addedOne == false)) {
+						string text_error = _("The following local dependencies cannot be satisfied:");
+						foreach(var element in globalData.globalElements) {
+							if ((element.processed) || ((element.eType != ConfigType.VALA_LIBRARY) && (element.eType != ConfigType.VALA_BINARY))) {
+								continue;
+							}
+							if (element.eType == ConfigType.VALA_LIBRARY) {
+								text_error += _("\n\tLibrary %s, packages:").printf(Path.build_filename(element.path,element.name));
+							} else {
+								text_error += _("\n\tBinary %s, packages:").printf(Path.build_filename(element.path,element.name));
+							}
+							var binElement = element as ElementValaBinary;
+							foreach(var package in binElement.packages) {
+								if((package.type == packageType.LOCAL) && (false == packagesFound.contains(package.elementName))) {
+									text_error += " "+package.elementName;
+								}
+							}
+						}
+						ElementBase.globalData.addError(text_error);
+						return true;
+					}
 				}
 			} catch (Error e) {
 				ElementBase.globalData.addError(_("Failed while generating the meson.build file"));
