@@ -1510,6 +1510,7 @@ namespace AutoVala {
 			if (localPackages) {
 				dataStream.put_string(",link_with: %s_dependencies".printf(this.name));
 			}
+			dataStream.put_string(",install: true");
 			dataStream.put_string(")\n\n");
 
 			if ((this._type == ConfigType.VALA_LIBRARY) && (this._currentNamespace != null)) {
