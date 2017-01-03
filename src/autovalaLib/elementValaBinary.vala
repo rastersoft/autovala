@@ -1526,8 +1526,7 @@ namespace AutoVala {
 					dataStream.put_string("\n%s_library = shared_library".printf(this._currentNamespace));
 				}
 				dataStream.put_string("('%s',%s_sources".printf(libFilename,this.name));
-				string depsFilename = libFilename+".deps";
-				if (this.createDepsFile(depsFilename)) {
+				if (this.createDepsFile(libFilename+".deps")) {
 					return true;
 				}
 			}
