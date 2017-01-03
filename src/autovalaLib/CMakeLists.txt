@@ -7,15 +7,15 @@ set (GETTEXT_PACKAGE "autovala")
 set (RELEASE_NAME "autovala")
 set (CMAKE_C_FLAGS "")
 set (PREFIX ${CMAKE_INSTALL_PREFIX})
-set (VERSION "0.99")
+set (VERSION "1.0")
 set (TESTSRCDIR "${CMAKE_SOURCE_DIR}")
 set (DOLLAR "$")
 
-configure_file (${CMAKE_SOURCE_DIR}/src/autovalaLib/Config.vala.cmake ${CMAKE_BINARY_DIR}/src/autovalaLib/Config.vala)
+configure_file (${CMAKE_SOURCE_DIR}/src/autovalaLib/Config.vala.base ${CMAKE_BINARY_DIR}/src/autovalaLib/Config.vala)
 add_definitions(-DGETTEXT_PACKAGE=\"${GETTEXT_PACKAGE}\")
 configure_file (${CMAKE_CURRENT_SOURCE_DIR}/AutoVala.pc ${CMAKE_CURRENT_BINARY_DIR}/AutoVala.pc)
 configure_file (${CMAKE_CURRENT_SOURCE_DIR}/AutoVala.deps ${CMAKE_CURRENT_BINARY_DIR}/AutoVala.deps)
-set (VERSION "0.99")
+set (VERSION "1.0")
 add_definitions (${DEPS_CFLAGS})
 link_libraries ( ${DEPS_LIBRARIES} )
 link_directories ( ${DEPS_LIBRARY_DIRS} )
@@ -83,7 +83,7 @@ if ((${CMAKE_BUILD_TYPE} STREQUAL "Debug") OR (${CMAKE_BUILD_TYPE} STREQUAL "Rel
 	set(COMPILE_OPTIONS ${COMPILE_OPTIONS} "-g")
 endif()
 
-set (COMPILE_OPTIONS ${COMPILE_OPTIONS} --library=AutoVala --gir AutoVala-0.0.gir )
+set (COMPILE_OPTIONS ${COMPILE_OPTIONS} --library=AutoVala --gir AutoVala-1.0.gir )
 
 vala_precompile(VALA_C AutoVala
 	${APP_SOURCES}
@@ -102,9 +102,9 @@ add_library(AutoVala SHARED ${VALA_C})
 target_link_libraries( AutoVala readline )
 set_target_properties( AutoVala PROPERTIES
 VERSION
-	0.99
+	1.0
 SOVERSION
-	0 )
+	1 )
 
 
 install(TARGETS
@@ -128,7 +128,7 @@ DESTINATION
 	${CMAKE_INSTALL_DATAROOTDIR}/vala/vapi/
 )
 install(FILES
-	${CMAKE_CURRENT_BINARY_DIR}/AutoVala-0.0.gir
+	${CMAKE_CURRENT_BINARY_DIR}/AutoVala-1.0.gir
 DESTINATION
 	${CMAKE_INSTALL_DATAROOTDIR}/gir-1.0/
 )

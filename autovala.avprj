@@ -19,7 +19,7 @@ vala_check_package: gio-2.0
 
 
 vala_library: src/autovalaLib/autovalaLib
-*version: 0.99
+*version: 1.0
 *namespace: AutoVala
 *vala_package: posix
 *vala_package: readline

@@ -1377,180 +1377,240 @@ namespace AutoVala {
 
 		public override bool generateMeson(DataOutputStream dataStream) {
 
-			string girFilename="";
-			string libFilename=this.name;
-			if (this._currentNamespace!=null) {
+			string girFilename = "";
+			string libFilename = this.name;
+			if (this._currentNamespace != null) {
 				// Build the GIR filename
-				girFilename=this._currentNamespace+"-"+this.version.split(".")[0]+".0.gir";
-				libFilename=this._currentNamespace;
+				girFilename = this._currentNamespace + "-" + this.version.split(".")[0] + "." + this.version.split(".")[1] + ".gir";
+				libFilename = this._currentNamespace;
 			}
-			
-			if (this._type == ConfigType.VALA_LIBRARY) {
-				this.remove_self_package();
-			}
+			string depsFilename = libFilename+".deps";
 
-			if (this.generateConfigBase(libFilename)) {
-				return true;
-			}
-
-			dataStream.put_string("cfg_%s = configuration_data()\n".printf(this.name));
-			dataStream.put_string("cfg_%s.set('DATADIR', join_paths(get_option('prefix'),get_option('datadir')))\n".printf(this.name));
-			dataStream.put_string("cfg_%s.set('PKGDATADIR', join_paths(get_option('prefix'),get_option('datadir'),'%s'))\n".printf(this.name,ElementBase.globalData.projectName));
-			dataStream.put_string("cfg_%s.set('GETTEXT_PACKAGE', '%s')\n".printf(this.name,ElementBase.globalData.projectName));
-			dataStream.put_string("cfg_%s.set('RELEASE_NAME', '%s')\n".printf(this.name,ElementBase.globalData.projectName));
-			dataStream.put_string("cfg_%s.set('PREFIX', get_option('prefix'))\n".printf(this.name));
-			dataStream.put_string("cfg_%s.set('VERSION', '%s')\n".printf(this.name,this.version));
-			dataStream.put_string("cfg_%s.set('TESTSRCDIR', '')\n\n".printf(this.name));
-			
-			var counter = Globals.counter;
-			var input_file = Path.build_filename(this._path,"Config.vala.base");
-			var output_file = Path.build_filename("Config_%d.vala".printf(counter));
-			dataStream.put_string("cfgfile_%d = configure_file(input: '%s',output: '%s',configuration: cfg_%s)\n\n".printf(counter,input_file,output_file,this.name));
-
-			dataStream.put_string("%s_deps = []\n".printf(this.name));
-			var printConditions = new ConditionalText(dataStream, ConditionalType.MESON);
-			foreach(var module in this.packages) {
-				if ((module.type==packageType.DO_CHECK)||(module.type==packageType.C_DO_CHECK)) {
-					printConditions.printCondition(module.condition,module.invertCondition);
-					dataStream.put_string("%s_deps += [%s_dep]\n".printf(this.name,module.elementName.replace("-","_").replace("+","").replace(".","_")));
+			try {
+				if (this._type == ConfigType.VALA_LIBRARY) {
+					this.remove_self_package();
 				}
-			}
-			printConditions.printTail();
-			
-			dataStream.put_string("%s_sources = [cfgfile_%d]\n".printf(this.name,counter));
-			foreach(var source in this._sources) {
-				printConditions.printCondition(source.condition,source.invertCondition);
-				dataStream.put_string("%s_sources += ['%s']\n".printf(this.name,Path.build_filename(this._path,source.elementName)));
-			}
-			printConditions.printTail();
-			
-			foreach(var source in this._cSources) {
-				printConditions.printCondition(source.condition,source.invertCondition);
-				dataStream.put_string("%s_sources += ['%s']\n".printf(this.name,Path.build_filename(this._path,source.elementName)));
-			}
-			printConditions.printTail();
 
-			foreach (var element in globalData.globalElements) {
-				if (element.eType != ConfigType.GRESOURCE) {
-					continue;
+				if (this.generateConfigBase(libFilename)) {
+					return true;
 				}
-				var e = element as ElementGResource;
-				dataStream.put_string("%s_sources += [%s_file_c]\n".printf(this.name,e.name.replace(".","_")));
-			}
 
-			foreach (var filename in this._vapis) {
-				printConditions.printCondition(filename.condition,filename.invertCondition);
-				dataStream.put_string("%s_sources += [join_paths(meson.current_source_dir(),'%s')]\n".printf(this.name,Path.build_filename(this._path,filename.elementName)));
-			}
-			printConditions.printTail();
+				dataStream.put_string("cfg_%s = configuration_data()\n".printf(this.name));
+				dataStream.put_string("cfg_%s.set('DATADIR', join_paths(get_option('prefix'),get_option('datadir')))\n".printf(this.name));
+				dataStream.put_string("cfg_%s.set('PKGDATADIR', join_paths(get_option('prefix'),get_option('datadir'),'%s'))\n".printf(this.name,ElementBase.globalData.projectName));
+				dataStream.put_string("cfg_%s.set('GETTEXT_PACKAGE', '%s')\n".printf(this.name,ElementBase.globalData.projectName));
+				dataStream.put_string("cfg_%s.set('RELEASE_NAME', '%s')\n".printf(this.name,ElementBase.globalData.projectName));
+				dataStream.put_string("cfg_%s.set('PREFIX', get_option('prefix'))\n".printf(this.name));
+				dataStream.put_string("cfg_%s.set('VERSION', '%s')\n".printf(this.name,this.version));
+				dataStream.put_string("cfg_%s.set('TESTSRCDIR', '')\n\n".printf(this.name));
+				
+				var counter = Globals.counter;
+				var input_file = Path.build_filename(this._path,"Config.vala.base");
+				var output_file = Path.build_filename("Config_%d.vala".printf(counter));
+				dataStream.put_string("cfgfile_%d = configure_file(input: '%s',output: '%s',configuration: cfg_%s)\n\n".printf(counter,input_file,output_file,this.name));
 
-
-			dataStream.put_string("%s_vala_args = []\n".printf(this.name));
-			foreach(var module in this.packages) {
-				if ((module.type==packageType.DO_CHECK)||(module.type==packageType.C_DO_CHECK)||(module.type==packageType.LOCAL)) {
-					continue;
-				}
-				printConditions.printCondition(module.condition,module.invertCondition);
-				dataStream.put_string("%s_vala_args += ['--pkg','%s']\n".printf(this.name,module.elementName));
-			}
-			printConditions.printTail();
-			
-			foreach(var element in ElementBase.globalData.globalElements) {
-				if (element.eType==ConfigType.VAPIDIR) {
-					printConditions.printCondition(element.condition,element.invertCondition);
-					if (element.fullPath[0] == GLib.Path.DIR_SEPARATOR) {
-						// should check if it exists...
-						dataStream.put_string("%s_vala_args += ['--vapidir='+join_paths(meson.current_source_dir(),'%s')]\n".printf(this.name,element.fullPath));
-					} else {
-						dataStream.put_string("%s_vala_args += ['--vapidir='+join_paths(meson.current_source_dir(),'%s')]\n".printf(this.name,element.fullPath));
+				dataStream.put_string("%s_deps = []\n".printf(this.name));
+				var printConditions = new ConditionalText(dataStream, ConditionalType.MESON);
+				foreach(var module in this.packages) {
+					if ((module.type==packageType.DO_CHECK)||(module.type==packageType.C_DO_CHECK)) {
+						printConditions.printCondition(module.condition,module.invertCondition);
+						dataStream.put_string("%s_deps += [%s_dep]\n".printf(this.name,module.elementName.replace("-","_").replace("+","").replace(".","_")));
 					}
 				}
-			}
+				printConditions.printTail();
+				
+				dataStream.put_string("%s_sources = [cfgfile_%d]\n".printf(this.name,counter));
+				foreach(var source in this._sources) {
+					printConditions.printCondition(source.condition,source.invertCondition);
+					dataStream.put_string("%s_sources += ['%s']\n".printf(this.name,Path.build_filename(this._path,source.elementName)));
+				}
+				printConditions.printTail();
+				
+				foreach(var source in this._cSources) {
+					printConditions.printCondition(source.condition,source.invertCondition);
+					dataStream.put_string("%s_sources += ['%s']\n".printf(this.name,Path.build_filename(this._path,source.elementName)));
+				}
+				printConditions.printTail();
 
-			foreach (var resource in this._resources) {
+				foreach (var element in globalData.globalElements) {
+					if (element.eType != ConfigType.GRESOURCE) {
+						continue;
+					}
+					var e = element as ElementGResource;
+					dataStream.put_string("%s_sources += [%s_file_c]\n".printf(this.name,e.name.replace(".","_")));
+				}
+
+				foreach (var filename in this._vapis) {
+					printConditions.printCondition(filename.condition,filename.invertCondition);
+					dataStream.put_string("%s_sources += [join_paths(meson.current_source_dir(),'%s')]\n".printf(this.name,Path.build_filename(this._path,filename.elementName)));
+				}
+				printConditions.printTail();
+
+
+				dataStream.put_string("%s_vala_args = []\n".printf(this.name));
+				foreach(var module in this.packages) {
+					if ((module.type==packageType.DO_CHECK)||(module.type==packageType.C_DO_CHECK)||(module.type==packageType.LOCAL)) {
+						continue;
+					}
+					printConditions.printCondition(module.condition,module.invertCondition);
+					dataStream.put_string("%s_vala_args += ['--pkg','%s']\n".printf(this.name,module.elementName));
+				}
+				printConditions.printTail();
+				
 				foreach(var element in ElementBase.globalData.globalElements) {
-					if (element.eType==ConfigType.GRESOURCE) {
-						var gresource = element as ElementGResource;
-						if (gresource.identifier == resource.elementName) {
-							dataStream.put_string("%s_vala_args += ['--gresources='+join_paths(meson.current_source_dir(),'%s')]\n".printf(this.name,element.fullPath));
+					if (element.eType==ConfigType.VAPIDIR) {
+						printConditions.printCondition(element.condition,element.invertCondition);
+						if (element.fullPath[0] == GLib.Path.DIR_SEPARATOR) {
+							// should check if it exists...
+							dataStream.put_string("%s_vala_args += ['--vapidir='+join_paths(meson.current_source_dir(),'%s')]\n".printf(this.name,element.fullPath));
+						} else {
+							dataStream.put_string("%s_vala_args += ['--vapidir='+join_paths(meson.current_source_dir(),'%s')]\n".printf(this.name,element.fullPath));
 						}
 					}
 				}
-			}
+				printConditions.printTail();
 
-			bool localPackages = false;
-			foreach(var package in this.packages) {
-				if (package.type == packageType.LOCAL) {
-					if (localPackages == false) {
-						localPackages = true;
-						dataStream.put_string("%s_dependencies = []\n".printf(this.name));
+				foreach (var resource in this._resources) {
+					foreach(var element in ElementBase.globalData.globalElements) {
+						if (element.eType==ConfigType.GRESOURCE) {
+							var gresource = element as ElementGResource;
+							if (gresource.identifier == resource.elementName) {
+								printConditions.printCondition(element.condition,element.invertCondition);
+								dataStream.put_string("%s_vala_args += ['--gresources='+join_paths(meson.current_source_dir(),'%s')]\n".printf(this.name,element.fullPath));
+							}
+						}
 					}
-					dataStream.put_string("%s_dependencies += [%s_library]\n".printf(this.name,package.elementName));
-					break;
 				}
-			}
+				printConditions.printTail();
 
-			foreach(var option in this._compileOptions) {
-				dataStream.put_string("%s_vala_args += ['%s']\n".printf(this.name,option.elementName));
-			}
-
-			dataStream.put_string("%s_c_args = []\n".printf(this.name));
-			foreach(var option in this._compileCOptions) {
-				dataStream.put_string("%s_c_args += ['%s']\n".printf(this.name,option.elementName));
-			}
-
-			dataStream.put_string("%s_link_args = []\n".printf(this.name));
-			foreach(var option in this._link_libraries) {
-				if ((option.elementName == "threads") || (option.elementName == "pthreads")) {
-					dataStream.put_string("%s_thread_dep = dependency('threads')\n".printf(this.name));
-					dataStream.put_string("%s_dependencies += ['%s_thread_dep']\n".printf(this.name,this.name));
-					continue;
+				bool localPackages = false;
+				foreach(var package in this.packages) {
+					if (package.type == packageType.LOCAL) {
+						printConditions.printCondition(package.condition,package.invertCondition);
+						if (localPackages == false) {
+							localPackages = true;
+							dataStream.put_string("%s_dependencies = []\n".printf(this.name));
+						}
+						dataStream.put_string("%s_dependencies += [%s_library]\n".printf(this.name,package.elementName));
+					}
 				}
-				if (option.elementName == "m") {
-					/*dataStream.put_string("cc_%d = meson.get_compiler('c')\n");
-					dataStream.put_string("m_dep = cc.find_library('m', required : false)\n");*/
-					dataStream.put_string("%s_deps += [ meson.get_compiler('c').find_library('m', required : false) ]\n".printf(this.name));
-					continue;
-				}
-				dataStream.put_string("%s_link_args += ['-l%s']\n".printf(this.name,option.elementName));
-			}
-			
+				printConditions.printTail();
 
-			if (this._type == ConfigType.VALA_BINARY) {
-				dataStream.put_string("\nexecutable");
-				dataStream.put_string("('%s',%s_sources".printf(this.name,this.name));
-			} else {
-				if (this._currentNamespace == null) {
-					dataStream.put_string("\nshared_library");
-				} else {
-					dataStream.put_string("\n%s_library = shared_library".printf(this._currentNamespace));
+				foreach(var option in this._compileOptions) {
+					printConditions.printCondition(option.condition,option.invertCondition);
+					dataStream.put_string("%s_vala_args += ['%s']\n".printf(this.name,option.elementName));
 				}
-				dataStream.put_string("('%s',%s_sources".printf(libFilename,this.name));
-				if (this.createDepsFile(libFilename+".deps")) {
-					return true;
+				printConditions.printTail();
+
+				dataStream.put_string("%s_c_args = []\n".printf(this.name));
+				foreach(var option in this._compileCOptions) {
+					printConditions.printCondition(option.condition,option.invertCondition);
+					dataStream.put_string("%s_c_args += ['%s']\n".printf(this.name,option.elementName));
 				}
-			}
+				printConditions.printTail();
 
-			dataStream.put_string(",dependencies: %s_deps".printf(this.name));
-			dataStream.put_string(",vala_args: %s_vala_args".printf(this.name));
-			dataStream.put_string(",c_args: %s_c_args".printf(this.name));
-			dataStream.put_string(",link_args: %s_link_args".printf(this.name));
-			if (localPackages) {
-				dataStream.put_string(",link_with: %s_dependencies".printf(this.name));
-			}
-			dataStream.put_string(",install: true");
-			dataStream.put_string(")\n\n");
-
-			if ((this._type == ConfigType.VALA_LIBRARY) && (this._currentNamespace != null)) {
-				dataStream.put_string("%s_requires = []\n".printf(this.name));
-				foreach(var module in this._packages) {
-					if ((module.type != packageType.DO_CHECK) && (module.type != packageType.LOCAL)){
+				dataStream.put_string("%s_link_args = []\n".printf(this.name));
+				foreach(var llibrary in this._link_libraries) {
+					printConditions.printCondition(llibrary.condition,llibrary.invertCondition);
+					if ((llibrary.elementName == "threads") || (llibrary.elementName == "pthreads")) {
+						dataStream.put_string("%s_thread_dep = dependency('threads')\n".printf(this.name));
+						dataStream.put_string("%s_dependencies += ['%s_thread_dep']\n".printf(this.name,this.name));
 						continue;
 					}
-					dataStream.put_string("%s_requires += ['%s']\n".printf(this.name,module.elementName));
+					if (llibrary.elementName == "m") {
+						/*dataStream.put_string("cc_%d = meson.get_compiler('c')\n");
+						dataStream.put_string("m_dep = cc.find_library('m', required : false)\n");*/
+						dataStream.put_string("%s_deps += [ meson.get_compiler('c').find_library('m', required : false) ]\n".printf(this.name));
+						continue;
+					}
+					dataStream.put_string("%s_link_args += ['-l%s']\n".printf(this.name,llibrary.elementName));
 				}
-				dataStream.put_string("pkg_mod = import('pkgconfig')\n");
-				dataStream.put_string("pkg_mod.generate(libraries : %s_library,\n\tversion : '%s',\n\tname : '%s',\n\tfilebase : '%s',\n\tdescription : '%s',\n\trequires : %s_requires)\n\n".printf(this._currentNamespace,this.version,libFilename,libFilename,libFilename,this.name));
+				printConditions.printTail();
+				
+				bool hFolders = false;
+				foreach(var element in this._hFolders) {
+					if (hFolders == false) {
+						dataStream.put_string("%s_hfolders = []\n".printf(this.name));
+						hFolders = true;
+					}
+					printConditions.printCondition(element.condition,element.invertCondition);
+					dataStream.put_string("%s_hfolders += [include_directories('%s')] )\n".printf(this.name,element.elementName));
+				}
+				printConditions.printTail();
+
+				if (this._type == ConfigType.VALA_BINARY) {
+					dataStream.put_string("\nexecutable");
+					dataStream.put_string("('%s',%s_sources".printf(this.name,this.name));
+				} else {
+					if (girFilename != "") {
+						dataStream.put_string("\n%s_vala_args += ['--gir=%s']\n\n".printf(this.name,girFilename));
+					}
+					if (this._currentNamespace == null) {
+						dataStream.put_string("\nshared_library");
+					} else {
+						dataStream.put_string("\n%s_library = shared_library".printf(this._currentNamespace));
+					}
+					dataStream.put_string("('%s',%s_sources".printf(libFilename,this.name));
+					if (this.createDepsFile(depsFilename)) {
+						return true;
+					}
+				}
+
+				dataStream.put_string(",dependencies: %s_deps".printf(this.name));
+				dataStream.put_string(",vala_args: %s_vala_args".printf(this.name));
+				dataStream.put_string(",c_args: %s_c_args".printf(this.name));
+				dataStream.put_string(",link_args: %s_link_args".printf(this.name));
+				if (localPackages) {
+					dataStream.put_string(",link_with: %s_dependencies".printf(this.name));
+				}
+				if (hFolders) {
+					dataStream.put_string(",include_directories: %s_hfolders".printf(this.name));
+				}
+				dataStream.put_string(",install: true");
+				dataStream.put_string(")\n\n");
+
+				if ((this._type == ConfigType.VALA_LIBRARY) && (this._currentNamespace != null)) {
+					dataStream.put_string("%s_requires = []\n".printf(this.name));
+					foreach(var module in this._packages) {
+						if ((module.type != packageType.DO_CHECK) && (module.type != packageType.LOCAL)){
+							continue;
+						}
+						dataStream.put_string("%s_requires += ['%s']\n".printf(this.name,module.elementName));
+					}
+					dataStream.put_string("pkg_mod = import('pkgconfig')\n");
+					dataStream.put_string("pkg_mod.generate(libraries : %s_library,\n\tversion : '%s',\n\tname : '%s',\n\tfilebase : '%s',\n\tdescription : '%s',\n\trequires : %s_requires)\n\n".printf(this._currentNamespace,this.version,libFilename,libFilename,libFilename,this.name));
+				}
+
+				if (this._type == ConfigType.VALA_LIBRARY) {
+					dataStream.put_string("install_data(join_paths(meson.current_source_dir(),'%s'),install_dir: join_paths(get_option('prefix'),'share','vala','vapi'))\n".printf(Path.build_filename(this._path,depsFilename)));
+
+					var scriptPath = File.new_for_path(Path.build_filename(ElementBase.globalData.projectFolder,"meson_scripts"));
+					try {
+						scriptPath.make_directory_with_parents();
+					} catch(GLib.Error e) {
+					}
+
+					var script_path = Path.build_filename("meson_scripts","install_%s.sh".printf(this.name));
+					scriptPath = File.new_for_path(Path.build_filename(ElementBase.globalData.projectFolder,script_path));
+					if (scriptPath.query_exists()) {
+						scriptPath.delete();
+					}
+					var dis = scriptPath.create(FileCreateFlags.NONE);
+					var dataStream2 = new DataOutputStream(dis);
+					dataStream2.put_string("""#!/bin/sh
+
+mkdir -p "${DESTDIR}${MESON_INSTALL_PREFIX}/share/vala/vapi"
+mkdir -p "${DESTDIR}${MESON_INSTALL_PREFIX}/share/gir-1.0"
+
+install -m 644 "${MESON_BUILD_ROOT}/%s.vapi" "${DESTDIR}${MESON_INSTALL_PREFIX}/share/vala/vapi"
+install -m 644 "${MESON_BUILD_ROOT}/%s@sha/%s" "${DESTDIR}${MESON_INSTALL_PREFIX}/share/gir-1.0"
+""".printf(libFilename,libFilename,girFilename));
+					dataStream2.close();
+					dataStream.put_string("meson.add_install_script(join_paths(meson.current_source_dir(),'%s'))\n\n".printf(script_path));
+				}
+			} catch(GLib.Error e) {
+				ElementBase.globalData.addError(_("Failed to create the data for the binary %s".printf(this.name)));
+				return true;
 			}
 
 			return false;
@@ -1562,7 +1622,7 @@ namespace AutoVala {
 			string libFilename=this.name;
 			if (this._currentNamespace!=null) {
 				// Build the GIR filename
-				girFilename=this._currentNamespace+"-"+this.version.split(".")[0]+".0.gir";
+				girFilename=this._currentNamespace+"-"+this.version.split(".")[0]+ "." + this.version.split(".")[1] + ".gir";
 				libFilename=this._currentNamespace;
 			}
 
