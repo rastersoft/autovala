@@ -1817,6 +1817,7 @@ namespace AutoVala {
 					dataStream.put_string("include_directories (AFTER %s )\n".printf(element.elementName));
 				}
 				if (addedCFlags) {
+					printConditions.printTail();
 					dataStream.put_string("\n");
 				}
 
