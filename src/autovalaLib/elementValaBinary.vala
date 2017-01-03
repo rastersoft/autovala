@@ -1495,14 +1495,16 @@ namespace AutoVala {
 
 			if (this._type == ConfigType.VALA_BINARY) {
 				dataStream.put_string("\nexecutable");
+				dataStream.put_string("('%s',%s_sources".printf(this.name,this.name));
 			} else {
 				if (this._currentNamespace == null) {
 					dataStream.put_string("\nshared_library");
 				} else {
 					dataStream.put_string("\n%s_library = shared_library".printf(this._currentNamespace));
 				}
+				dataStream.put_string("('%s',%s_sources".printf(libFilename,this.name));
 			}
-			dataStream.put_string("('%s',%s_sources".printf(this.name,this.name));
+
 			dataStream.put_string(",dependencies: %s_deps".printf(this.name));
 			dataStream.put_string(",vala_args: %s_vala_args".printf(this.name));
 			dataStream.put_string(",c_args: %s_c_args".printf(this.name));
@@ -1514,8 +1516,15 @@ namespace AutoVala {
 			dataStream.put_string(")\n\n");
 
 			if ((this._type == ConfigType.VALA_LIBRARY) && (this._currentNamespace != null)) {
+				dataStream.put_string("%s_requires = []\n".printf(this.name));
+				foreach(var module in this._packages) {
+					if ((module.type != packageType.DO_CHECK) && (module.type != packageType.LOCAL)){
+						continue;
+					}
+					dataStream.put_string("%s_requires += ['%s']\n".printf(this.name,module.elementName));
+				}
 				dataStream.put_string("pkg_mod = import('pkgconfig')\n");
-				dataStream.put_string("pkg_mod.generate(libraries : %s_library,\n\tversion : '%s',\n\tname : '%s',\n\tfilebase : '%s',\n\tdescription : '%s')\n\n".printf(this._currentNamespace,this.version,this.name,libFilename,libFilename));
+				dataStream.put_string("pkg_mod.generate(libraries : %s_library,\n\tversion : '%s',\n\tname : '%s',\n\tfilebase : '%s',\n\tdescription : '%s',\n\trequires : %s_requires)\n\n".printf(this._currentNamespace,this.version,libFilename,libFilename,libFilename,this.name));
 			}
 
 			return false;
