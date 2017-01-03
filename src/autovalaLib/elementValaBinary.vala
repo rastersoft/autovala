@@ -853,7 +853,7 @@ namespace AutoVala {
 		public bool setCompileCOptions(string options, bool automatic, string? condition, bool invertCondition, int lineNumber, string[]? comments, bool erase_all=false) {
 
 			if (erase_all) {
-				this._compileOptions = new Gee.ArrayList<CompileElement ?>();
+				this._compileCOptions = new Gee.ArrayList<CompileElement ?>();
 			}
 
 			if (options == "") {
