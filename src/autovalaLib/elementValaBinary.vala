@@ -1352,6 +1352,29 @@ namespace AutoVala {
 			return false;
 		}
 
+		private bool createDepsFile(string depsFilename) {
+
+			var fname = File.new_for_path(Path.build_filename(ElementBase.globalData.projectFolder,this._path,depsFilename));
+			if (fname.query_exists()) {
+				fname.delete();
+			}
+			try {
+				var dis = fname.create(FileCreateFlags.NONE);
+				var dataStream2 = new DataOutputStream(dis);
+				foreach(var module in this._packages) {
+					if ((module.type == packageType.C_DO_CHECK)) {
+						continue;
+					}
+					dataStream2.put_string("%s\n".printf(module.elementName));
+				}
+				dataStream2.close();
+			} catch (GLib.Error e) {
+				ElementBase.globalData.addError(_("Failed to create the .DEPS file"));
+				return true;
+			}
+			return false;
+		}
+
 		public override bool generateMeson(DataOutputStream dataStream) {
 
 			string girFilename="";
@@ -1503,6 +1526,10 @@ namespace AutoVala {
 					dataStream.put_string("\n%s_library = shared_library".printf(this._currentNamespace));
 				}
 				dataStream.put_string("('%s',%s_sources".printf(libFilename,this.name));
+				string depsFilename = libFilename+".deps";
+				if (this.createDepsFile(depsFilename)) {
+					return true;
+				}
 			}
 
 			dataStream.put_string(",dependencies: %s_deps".printf(this.name));
@@ -1592,24 +1619,10 @@ namespace AutoVala {
 					}
 					dataStream.put_string("configure_file (${CMAKE_CURRENT_SOURCE_DIR}/"+pcFilename+" ${CMAKE_CURRENT_BINARY_DIR}/"+pcFilename+")\n");
 
-					fname=File.new_for_path(Path.build_filename(ElementBase.globalData.projectFolder,this._path,depsFilename));
-					if (fname.query_exists()) {
-						fname.delete();
-					}
-					try {
-						var dis = fname.create(FileCreateFlags.NONE);
-						var dataStream2 = new DataOutputStream(dis);
-						foreach(var module in this._packages) {
-							if ((module.type == packageType.C_DO_CHECK)) {
-								continue;
-							}
-							dataStream2.put_string("%s\n".printf(module.elementName));
-						}
-						dataStream2.close();
-					} catch (GLib.Error e) {
-						ElementBase.globalData.addError(_("Failed to create the .DEPS file"));
+					if (this.createDepsFile(depsFilename)) {
 						return true;
 					}
+					
 					dataStream.put_string("configure_file (${CMAKE_CURRENT_SOURCE_DIR}/"+depsFilename+" ${CMAKE_CURRENT_BINARY_DIR}/"+depsFilename+")\n");
 				}
 
