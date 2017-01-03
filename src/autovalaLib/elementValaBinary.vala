@@ -1601,10 +1601,12 @@ namespace AutoVala {
 
 mkdir -p "${DESTDIR}${MESON_INSTALL_PREFIX}/share/vala/vapi"
 mkdir -p "${DESTDIR}${MESON_INSTALL_PREFIX}/share/gir-1.0"
+mkdir -p "${DESTDIR}${MESON_INSTALL_PREFIX}/include"
 
 install -m 644 "${MESON_BUILD_ROOT}/%s.vapi" "${DESTDIR}${MESON_INSTALL_PREFIX}/share/vala/vapi"
+install -m 644 "${MESON_BUILD_ROOT}/%s.h" "${DESTDIR}${MESON_INSTALL_PREFIX}/include"
 install -m 644 "${MESON_BUILD_ROOT}/%s@sha/%s" "${DESTDIR}${MESON_INSTALL_PREFIX}/share/gir-1.0"
-""".printf(libFilename,libFilename,girFilename));
+""".printf(libFilename,libFilename,libFilename,girFilename));
 					dataStream2.close();
 					dataStream.put_string("meson.add_install_script(join_paths(meson.current_source_dir(),'%s'))\n\n".printf(script_path));
 				}
@@ -1622,7 +1624,7 @@ install -m 644 "${MESON_BUILD_ROOT}/%s@sha/%s" "${DESTDIR}${MESON_INSTALL_PREFIX
 			string libFilename=this.name;
 			if (this._currentNamespace!=null) {
 				// Build the GIR filename
-				girFilename=this._currentNamespace+"-"+this.version.split(".")[0]+ "." + this.version.split(".")[1] + ".gir";
+				girFilename=this._currentNamespace+"-"+this.version.split(".")[0]+".0.gir";
 				libFilename=this._currentNamespace;
 			}
 
