@@ -1445,7 +1445,7 @@ namespace AutoVala {
 				dataStream.put_string("cfg_%s.set('RELEASE_NAME', '%s')\n".printf(this.name,ElementBase.globalData.projectName));
 				dataStream.put_string("cfg_%s.set('PREFIX', get_option('prefix'))\n".printf(this.name));
 				dataStream.put_string("cfg_%s.set('VERSION', '%s')\n".printf(this.name,this.version));
-				dataStream.put_string("cfg_%s.set('TESTSRCDIR', '')\n\n".printf(this.name));
+				dataStream.put_string("cfg_%s.set('TESTSRCDIR', meson.current_source_dir())\n\n".printf(this.name));
 				
 				var counter = Globals.counter;
 				var input_file = Path.build_filename(this._path,"Config.vala.base");
@@ -1685,12 +1685,12 @@ install -m 644 "${MESON_BUILD_ROOT}/%s@sha/%s" "${DESTDIR}${MESON_INSTALL_PREFIX
 					if (this._meson_arrays.contains("vala_args")) {
 						dataStream.put_string("%s_vala_args + ".printf(this.name));
 					}
-					dataStream.put_string("['-D','UNITEST','-D','TESTSRCDIR=%s']\n".printf(ElementBase.globalData.projectFolder));
+					dataStream.put_string("['-D','UNITEST']\n");
 					dataStream.put_string("%s_tests_c_args = ".printf(this.name));
 					if (this._meson_arrays.contains("c_args")) {
 						dataStream.put_string("%s_c_args + ".printf(this.name));
 					}
-					dataStream.put_string("['-DUNITEST','-DTESTSRCDIR=%s']\n".printf(ElementBase.globalData.projectFolder));
+					dataStream.put_string("['-DUNITEST']\n");
 
 					foreach (var unitest in this._unitests) {
 						

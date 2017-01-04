@@ -28,7 +28,7 @@ cfg_autovalaLib.set('GETTEXT_PACKAGE', 'autovala')
 cfg_autovalaLib.set('RELEASE_NAME', 'autovala')
 cfg_autovalaLib.set('PREFIX', get_option('prefix'))
 cfg_autovalaLib.set('VERSION', '1.0')
-cfg_autovalaLib.set('TESTSRCDIR', '')
+cfg_autovalaLib.set('TESTSRCDIR', meson.current_source_dir())
 
 cfgfile_1 = configure_file(input: 'src/autovalaLib/Config.vala.base',output: 'Config_1.vala',configuration: cfg_autovalaLib)
 
@@ -120,7 +120,7 @@ cfg_autovalaPlugin.set('GETTEXT_PACKAGE', 'autovala')
 cfg_autovalaPlugin.set('RELEASE_NAME', 'autovala')
 cfg_autovalaPlugin.set('PREFIX', get_option('prefix'))
 cfg_autovalaPlugin.set('VERSION', '0.99')
-cfg_autovalaPlugin.set('TESTSRCDIR', '')
+cfg_autovalaPlugin.set('TESTSRCDIR', meson.current_source_dir())
 
 cfgfile_2 = configure_file(input: 'src/autovalaPlugin/Config.vala.base',output: 'Config_2.vala',configuration: cfg_autovalaPlugin)
 
@@ -188,7 +188,7 @@ cfg_autovala.set('GETTEXT_PACKAGE', 'autovala')
 cfg_autovala.set('RELEASE_NAME', 'autovala')
 cfg_autovala.set('PREFIX', get_option('prefix'))
 cfg_autovala.set('VERSION', '1.0.0')
-cfg_autovala.set('TESTSRCDIR', '')
+cfg_autovala.set('TESTSRCDIR', meson.current_source_dir())
 
 cfgfile_3 = configure_file(input: 'src/Config.vala.base',output: 'Config_3.vala',configuration: cfg_autovala)
 
