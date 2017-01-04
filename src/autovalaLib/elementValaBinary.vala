@@ -358,7 +358,7 @@ namespace AutoVala {
 
 			// Don't add automatically the files inside dbus_generated, because they are
 			// automatically (re)generated
-			var dbusFolder=Path.build_filename(this._fullPath,"dbus_generated");
+			var dbusFolder = Path.build_filename(this._fullPath,"dbus_generated");
 			ElementBase.globalData.addExclude(dbusFolder);
 
 			// Check if there are unitary tests
@@ -413,6 +413,7 @@ namespace AutoVala {
 			foreach (var element in files) {
 				this.file_list+= element;
 			}
+			this.file_list += Path.build_filename("meson_scripts","install_%s.sh".printf(this.name));
 		}
 
 		private bool checkVAPIs() {
@@ -1549,6 +1550,14 @@ namespace AutoVala {
 					this.setMesonVar(dataStream,"c_args",this.splitInStrings(option.elementName));
 				}
 				printConditions.printTail();
+
+				foreach(var element in globalData.globalElements) {
+					if (element.eType != ConfigType.DEFINE) {
+						continue;
+					}
+					dataStream.put_string("if %s\n    ".printf(element.name));
+					this.setMesonVar(dataStream,"vala_args","'-D%s'".printf(element.name));
+				}
 
 				foreach(var llibrary in this._link_libraries) {
 					

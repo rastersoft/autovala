@@ -545,6 +545,15 @@ namespace AutoVala {
 			return error;
 		}
 
+		private bool check_file(Gee.ArrayList<string> list,string file) {
+			var f = File.new_for_path(Path.build_filename(ElementBase.globalData.projectFolder,file));
+			if (f.query_exists()) {
+				list.add(file);
+				return true;
+			}
+			return false;
+		}
+
 		/**
 		 * Returns all the files belonging to a project. Useful for version control systems.
 		 * @param basePath A base file or folder; the code will check if that file is a valid .avprj file; if not (or if it is a folder) will search in the folder containing it if there is a valid .avprj file. If not, will search upwards until a valid .avprj file is found, or the root is reached. NULL means to start searching in the current working directory
@@ -552,7 +561,7 @@ namespace AutoVala {
 		 */
 		public string[]? get_files(string ?basePath = null) {
 
-			string[] all_files = {};
+			Gee.ArrayList<string> all_files = new Gee.ArrayList<string>();;
 
 			this.config = new AutoVala.Configuration(basePath);
 			if(this.config.globalData.error) {
@@ -565,26 +574,34 @@ namespace AutoVala {
 			}
 
 			ElementBase.globalData.generateExtraData();
-			all_files += GLib.Path.get_basename(ElementBase.globalData.configFile);
-			all_files += "CMakeLists.txt";
+			this.check_file(all_files,GLib.Path.get_basename(ElementBase.globalData.configFile));
+			
+			this.check_file(all_files,"CMakeLists");
+			this.check_file(all_files,"meson.build");
 			foreach(var path in ElementBase.globalData.pathList) {
-				all_files+= GLib.Path.build_filename(path,"CMakeLists.txt");
+				this.check_file(all_files,GLib.Path.build_filename(path,"CMakeLists.txt"));
 			}
 			var cmake_files = ElementBase.getFilesFromFolder("cmake",null,true);
 			foreach(var element2 in cmake_files) {
-				all_files+=element2;
+				this.check_file(all_files,element2);
 			}
-			var file = File.new_for_path(Path.build_filename(ElementBase.globalData.projectFolder,"cmake","CMakeLists.txt"));
-			if (file.query_exists()) {
-				all_files+=Path.build_filename("cmake","CMakeLists.txt");
-			}
+			this.check_file(all_files,Path.build_filename("cmake","CMakeLists.txt"));
 			foreach(var element in ElementBase.globalData.globalElements) {
 				element.add_files();
 				foreach(var element2 in element.file_list) {
-					all_files+=element2;
+					this.check_file(all_files,element2);
 				}
 			}
-			return all_files;
+
+#if PRUEBA
+	ldkfeikls
+#endif
+			all_files.sort();
+			string[] all_files2 = {};
+			foreach (var element in all_files) {
+				all_files2 += element;
+			}
+			return all_files2;
 		}
 
 		/**

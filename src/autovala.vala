@@ -114,7 +114,7 @@ int main(string[] argv) {
 			return -1;
 		}
 		var gen = new AutoVala.ManageProject();
-		var retval2=gen.get_files();
+		var retval2 = gen.get_files();
 		if (retval2 == null) {
 			gen.showErrors();
 			GLib.stderr.printf(_("Aborting\n"));
