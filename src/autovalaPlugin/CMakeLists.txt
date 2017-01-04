@@ -57,7 +57,7 @@ if ((${CMAKE_BUILD_TYPE} STREQUAL "Debug") OR (${CMAKE_BUILD_TYPE} STREQUAL "Rel
 	set(COMPILE_OPTIONS ${COMPILE_OPTIONS} "-g")
 endif()
 
-set (COMPILE_OPTIONS ${COMPILE_OPTIONS} --library=AutovalaPlugin --gir AutovalaPlugin-0.0.gir )
+set (COMPILE_OPTIONS ${COMPILE_OPTIONS} --library=AutovalaPlugin --gir AutovalaPlugin-0.99.gir )
 set (COMPILE_OPTIONS ${COMPILE_OPTIONS} --gresources=${CMAKE_SOURCE_DIR}/data/extras.gresource.xml )
 
 vala_precompile(VALA_C AutovalaPlugin
@@ -106,7 +106,7 @@ DESTINATION
 	${CMAKE_INSTALL_DATAROOTDIR}/vala/vapi/
 )
 install(FILES
-	${CMAKE_CURRENT_BINARY_DIR}/AutovalaPlugin-0.0.gir
+	${CMAKE_CURRENT_BINARY_DIR}/AutovalaPlugin-0.99.gir
 DESTINATION
 	${CMAKE_INSTALL_DATAROOTDIR}/gir-1.0/
 )
