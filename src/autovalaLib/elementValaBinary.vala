@@ -1381,7 +1381,7 @@ namespace AutoVala {
 			string libFilename = this.name;
 			if (this._currentNamespace != null) {
 				// Build the GIR filename
-				girFilename = this._currentNamespace + "-" + this.version.split(".")[0] + "." + this.version.split(".")[1] + ".gir";
+				girFilename = this._currentNamespace + "-" + this.version.split(".")[0] + ".0.gir";
 				libFilename = this._currentNamespace;
 			}
 			string depsFilename = libFilename+".deps";
