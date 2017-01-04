@@ -1555,8 +1555,11 @@ namespace AutoVala {
 					if (element.eType != ConfigType.DEFINE) {
 						continue;
 					}
-					dataStream.put_string("if %s\n    ".printf(element.name));
-					this.setMesonVar(dataStream,"vala_args","'-D%s'".printf(element.name));
+					dataStream.put_string("if %s\n  ".printf(element.name));
+					this.setMesonVar(dataStream,"vala_args","'-D', '%s'".printf(element.name));
+					dataStream.put_string("  ");
+					this.setMesonVar(dataStream,"c_args","'-D%s'".printf(element.name));
+					dataStream.put_string("endif\n");
 				}
 
 				foreach(var llibrary in this._link_libraries) {

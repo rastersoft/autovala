@@ -593,9 +593,6 @@ namespace AutoVala {
 				}
 			}
 
-#if PRUEBA
-	ldkfeikls
-#endif
 			all_files.sort();
 			string[] all_files2 = {};
 			foreach (var element in all_files) {
