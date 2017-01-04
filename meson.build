@@ -94,7 +94,7 @@ autovalaLib_link_args += ['-lreadline']
 autovalaLib_vala_args += ['--gir=AutoVala-1.0.gir']
 
 
-AutoVala_library = shared_library('AutoVala',autovalaLib_sources,dependencies: autovalaLib_deps,vala_args: autovalaLib_vala_args,c_args: autovalaLib_c_args,link_args: autovalaLib_link_args,install: true)
+AutoVala_library = shared_library('AutoVala',autovalaLib_sources,dependencies: autovalaLib_deps,vala_args: autovalaLib_vala_args,c_args: autovalaLib_c_args,link_args: autovalaLib_link_args,version: '1.0',soversion: '1',install: true)
 
 autovalaLib_requires = []
 autovalaLib_requires += ['cairo']
@@ -161,10 +161,10 @@ autovalaPlugin_dependencies += [AutoVala_library]
 autovalaPlugin_c_args = []
 autovalaPlugin_link_args = []
 
-autovalaPlugin_vala_args += ['--gir=AutovalaPlugin-0.99.gir']
+autovalaPlugin_vala_args += ['--gir=AutovalaPlugin-0.0.gir']
 
 
-AutovalaPlugin_library = shared_library('AutovalaPlugin',autovalaPlugin_sources,dependencies: autovalaPlugin_deps,vala_args: autovalaPlugin_vala_args,c_args: autovalaPlugin_c_args,link_args: autovalaPlugin_link_args,link_with: autovalaPlugin_dependencies,install: true)
+AutovalaPlugin_library = shared_library('AutovalaPlugin',autovalaPlugin_sources,dependencies: autovalaPlugin_deps,vala_args: autovalaPlugin_vala_args,c_args: autovalaPlugin_c_args,link_args: autovalaPlugin_link_args,link_with: autovalaPlugin_dependencies,version: '0.99',soversion: '0',install: true)
 
 autovalaPlugin_requires = []
 autovalaPlugin_requires += ['AutoVala']

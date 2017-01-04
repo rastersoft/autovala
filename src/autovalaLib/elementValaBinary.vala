@@ -1189,6 +1189,43 @@ namespace AutoVala {
 
 		public override bool generateCMakeHeader(DataOutputStream dataStream) {
 
+			if (this.generateDBus()) {
+				return true;
+			}
+
+			try {
+				if (ElementValaBinary.addedValaBinaries==false) {
+					dataStream.put_string("set (DATADIR \"${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATAROOTDIR}\")\n");
+					dataStream.put_string("set (PKGDATADIR \"${DATADIR}/"+ElementBase.globalData.projectName+"\")\n");
+					dataStream.put_string("set (GETTEXT_PACKAGE \""+ElementBase.globalData.projectName+"\")\n");
+					dataStream.put_string("set (RELEASE_NAME \""+ElementBase.globalData.projectName+"\")\n");
+					dataStream.put_string("set (CMAKE_C_FLAGS \"\")\n");
+					dataStream.put_string("set (PREFIX ${CMAKE_INSTALL_PREFIX})\n");
+					dataStream.put_string("set (VERSION \""+this.version+"\")\n");
+					dataStream.put_string("set (TESTSRCDIR \"${CMAKE_SOURCE_DIR}\")\n");
+					dataStream.put_string("set (DOLLAR \"$\")\n\n");
+					if (this._path!="") {
+						dataStream.put_string("configure_file (${CMAKE_SOURCE_DIR}/"+this._path+"/Config.vala.base ${CMAKE_BINARY_DIR}/"+this._path+"/Config.vala)\n");
+					} else {
+						dataStream.put_string("configure_file (${CMAKE_SOURCE_DIR}/Config.vala.base ${CMAKE_BINARY_DIR}/Config.vala)\n");
+					}
+					dataStream.put_string("add_definitions(-DGETTEXT_PACKAGE=\\\"${GETTEXT_PACKAGE}\\\")\n");
+				}
+				ElementValaBinary.addedValaBinaries=true;
+			} catch (GLib.Error e) {
+				ElementBase.globalData.addError(_("Failed to write the header for binary file %s").printf(this.fullPath));
+				return true;
+			}
+			return false;
+		}
+
+		public override bool generateMesonHeader(DataOutputStream dataStream) {
+			
+			return this.generateDBus();
+		}
+
+		private bool generateDBus() {
+
 			int retval;
 
 			// Delete the dbus_generated folder and recreate all the dbus interfaces
@@ -1201,7 +1238,7 @@ namespace AutoVala {
 					ElementBase.globalData.addWarning(_("Failed to delete the path %s").printf(pathDbus));
 				}
 			}
-			if (this._dbusElements.size!=0) {
+			if (this._dbusElements.size != 0) {
 				foreach (var element in this._dbusElements) {
 					var elementPathS=GLib.Path.build_filename(pathDbus,element.elementName,element.obj);
 					var elementPath=File.new_for_path(elementPathS);
@@ -1276,31 +1313,6 @@ namespace AutoVala {
 						this.addSource(GLib.Path.build_filename("dbus_generated",iface),true,null,false,-1,null);
 					}
 				}
-			}
-
-
-			try {
-				if (ElementValaBinary.addedValaBinaries==false) {
-					dataStream.put_string("set (DATADIR \"${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATAROOTDIR}\")\n");
-					dataStream.put_string("set (PKGDATADIR \"${DATADIR}/"+ElementBase.globalData.projectName+"\")\n");
-					dataStream.put_string("set (GETTEXT_PACKAGE \""+ElementBase.globalData.projectName+"\")\n");
-					dataStream.put_string("set (RELEASE_NAME \""+ElementBase.globalData.projectName+"\")\n");
-					dataStream.put_string("set (CMAKE_C_FLAGS \"\")\n");
-					dataStream.put_string("set (PREFIX ${CMAKE_INSTALL_PREFIX})\n");
-					dataStream.put_string("set (VERSION \""+this.version+"\")\n");
-					dataStream.put_string("set (TESTSRCDIR \"${CMAKE_SOURCE_DIR}\")\n");
-					dataStream.put_string("set (DOLLAR \"$\")\n\n");
-					if (this._path!="") {
-						dataStream.put_string("configure_file (${CMAKE_SOURCE_DIR}/"+this._path+"/Config.vala.base ${CMAKE_BINARY_DIR}/"+this._path+"/Config.vala)\n");
-					} else {
-						dataStream.put_string("configure_file (${CMAKE_SOURCE_DIR}/Config.vala.base ${CMAKE_BINARY_DIR}/Config.vala)\n");
-					}
-					dataStream.put_string("add_definitions(-DGETTEXT_PACKAGE=\\\"${GETTEXT_PACKAGE}\\\")\n");
-				}
-				ElementValaBinary.addedValaBinaries=true;
-			} catch (GLib.Error e) {
-				ElementBase.globalData.addError(_("Failed to write the header for binary file %s").printf(this.fullPath));
-				return true;
 			}
 			return false;
 		}
@@ -1565,6 +1577,10 @@ namespace AutoVala {
 				}
 				if (hFolders) {
 					dataStream.put_string(",include_directories: %s_hfolders".printf(this.name));
+				}
+				if (this._type == ConfigType.VALA_LIBRARY) {
+					dataStream.put_string(",version: '%s'".printf(this.version));
+					dataStream.put_string(",soversion: '%s'".printf(this.version.split(".")[0]));
 				}
 				dataStream.put_string(",install: true");
 				dataStream.put_string(")\n\n");

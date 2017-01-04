@@ -314,6 +314,11 @@ namespace AutoVala {
 				var dis = file.create(FileCreateFlags.NONE);
 				dataStream = new DataOutputStream(dis);
 				error |= globalElement.generateMeson(dataStream);
+				
+				foreach(var element in globalData.globalElements) {
+					error |= element.generateMesonHeader(dataStream);
+				}
+				
 				foreach(var element in globalData.globalElements) {
 					if ((element.eType == ConfigType.VALA_BINARY) || (element.eType == ConfigType.VALA_LIBRARY)) {
 						element.processed = false;

@@ -312,6 +312,15 @@ namespace AutoVala {
 		}
 
 		/**
+		 * Adds the specific data for this element to a Meson build file that must be added before anything
+		 * @param dataStream The data stream for the meson.build file being processed
+		 * @return //true// if there was an error; //false// if not. The error texts can be obtained by calling to returnErrors()
+		 */
+		public virtual bool generateMesonHeader(DataOutputStream dataStream) {
+			return false;
+		}
+
+		/**
 		 * Adds the specific data for this element to a Meson build file
 		 * @param dataStream The data stream for the meson.build file being processed
 		 * @return //true// if there was an error; //false// if not. The error texts can be obtained by calling to returnErrors()
