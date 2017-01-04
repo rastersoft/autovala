@@ -121,6 +121,8 @@ namespace AutoVala {
 		public string version;
 		private bool versionSet;
 		private bool versionAutomatic;
+		
+		private Gee.HashSet<string>? _meson_arrays;
 
 		private Gee.List<ResourceElement ?> _resources;
 		public Gee.List<ResourceElement ?> resources {
@@ -254,6 +256,7 @@ namespace AutoVala {
 		}
 
 		public ElementValaBinary() {
+			this._meson_arrays = null;
 			this.command = "";
 			this.version="1.0.0";
 			this.versionSet=false;
@@ -1387,7 +1390,34 @@ namespace AutoVala {
 			return false;
 		}
 
+		private void setMesonVar(DataOutputStream dataStream, string variable, string var_value) {
+			bool exists = this._meson_arrays.contains(variable);
+			dataStream.put_string("%s_%s %s= [%s]\n".printf(this.name,variable,exists ? "+" : "",var_value));
+			this._meson_arrays.add(variable);
+		}
+
+		private void setMesonPrecondition(DataOutputStream datastream,string? condition, string variable) {
+			if ((condition != null) && (false == this._meson_arrays.contains(variable))) {
+				this.setMesonVar(datastream,variable,"");
+			}
+		}
+
+		private string splitInStrings(string input) {
+			
+			var elements = input.split(" ");
+			var output = "";
+			foreach(var e in elements) {
+				if (output != "") {
+					output += ", ";
+				}
+				output += "'%s'".printf(e);
+			}
+			return output;
+		}
+
 		public override bool generateMeson(DataOutputStream dataStream) {
+
+			this._meson_arrays = new Gee.HashSet<string>();
 
 			string girFilename = "";
 			string libFilename = this.name;
@@ -1421,26 +1451,27 @@ namespace AutoVala {
 				var output_file = Path.build_filename("Config_%d.vala".printf(counter));
 				dataStream.put_string("cfgfile_%d = configure_file(input: '%s',output: '%s',configuration: cfg_%s)\n\n".printf(counter,input_file,output_file,this.name));
 
-				dataStream.put_string("%s_deps = []\n".printf(this.name));
+
 				var printConditions = new ConditionalText(dataStream, ConditionalType.MESON);
 				foreach(var module in this.packages) {
 					if ((module.type==packageType.DO_CHECK)||(module.type==packageType.C_DO_CHECK)) {
+						this.setMesonPrecondition(dataStream,module.condition,"deps");
 						printConditions.printCondition(module.condition,module.invertCondition);
-						dataStream.put_string("%s_deps += [%s_dep]\n".printf(this.name,module.elementName.replace("-","_").replace("+","").replace(".","_")));
+						this.setMesonVar(dataStream,"deps","%s_dep".printf(module.elementName.replace("-","_").replace("+","").replace(".","_")));
 					}
 				}
 				printConditions.printTail();
 				
-				dataStream.put_string("%s_sources = [cfgfile_%d]\n".printf(this.name,counter));
+				this.setMesonVar(dataStream,"sources","cfgfile_%d".printf(counter));
 				foreach(var source in this._sources) {
 					printConditions.printCondition(source.condition,source.invertCondition);
-					dataStream.put_string("%s_sources += ['%s']\n".printf(this.name,Path.build_filename(this._path,source.elementName)));
+					this.setMesonVar(dataStream,"sources","'%s'".printf(Path.build_filename(this._path,source.elementName)));
 				}
 				printConditions.printTail();
 				
 				foreach(var source in this._cSources) {
 					printConditions.printCondition(source.condition,source.invertCondition);
-					dataStream.put_string("%s_sources += ['%s']\n".printf(this.name,Path.build_filename(this._path,source.elementName)));
+					this.setMesonVar(dataStream,"sources","'%s'".printf(Path.build_filename(this._path,source.elementName)));
 				}
 				printConditions.printTail();
 
@@ -1449,34 +1480,34 @@ namespace AutoVala {
 						continue;
 					}
 					var e = element as ElementGResource;
-					dataStream.put_string("%s_sources += [%s_file_c]\n".printf(this.name,e.name.replace(".","_")));
+					this.setMesonVar(dataStream,"sources","%s_file_c".printf(e.name.replace(".","_")));
 				}
 
 				foreach (var filename in this._vapis) {
 					printConditions.printCondition(filename.condition,filename.invertCondition);
-					dataStream.put_string("%s_sources += [join_paths(meson.current_source_dir(),'%s')]\n".printf(this.name,Path.build_filename(this._path,filename.elementName)));
+					this.setMesonVar(dataStream,"sources","join_paths(meson.current_source_dir(),'%s')".printf(Path.build_filename(this._path,filename.elementName)));
 				}
 				printConditions.printTail();
 
-
-				dataStream.put_string("%s_vala_args = []\n".printf(this.name));
 				foreach(var module in this.packages) {
 					if ((module.type==packageType.DO_CHECK)||(module.type==packageType.C_DO_CHECK)||(module.type==packageType.LOCAL)) {
 						continue;
 					}
+					this.setMesonPrecondition(dataStream,module.condition,"vala_args");
 					printConditions.printCondition(module.condition,module.invertCondition);
-					dataStream.put_string("%s_vala_args += ['--pkg','%s']\n".printf(this.name,module.elementName));
+					this.setMesonVar(dataStream,"vala_args","'--pkg','%s'".printf(module.elementName));
 				}
 				printConditions.printTail();
 				
 				foreach(var element in ElementBase.globalData.globalElements) {
 					if (element.eType==ConfigType.VAPIDIR) {
+						this.setMesonPrecondition(dataStream,element.condition,"vala_args");
 						printConditions.printCondition(element.condition,element.invertCondition);
 						if (element.fullPath[0] == GLib.Path.DIR_SEPARATOR) {
 							// should check if it exists...
-							dataStream.put_string("%s_vala_args += ['--vapidir='+join_paths(meson.current_source_dir(),'%s')]\n".printf(this.name,element.fullPath));
+							this.setMesonVar(dataStream,"vala_args","'--vapidir='+join_paths(meson.current_source_dir(),'%s')".printf(element.fullPath));
 						} else {
-							dataStream.put_string("%s_vala_args += ['--vapidir='+join_paths(meson.current_source_dir(),'%s')]\n".printf(this.name,element.fullPath));
+							this.setMesonVar(dataStream,"vala_args","'--vapidir='+join_paths(meson.current_source_dir(),'%s')".printf(element.fullPath));
 						}
 					}
 				}
@@ -1487,66 +1518,65 @@ namespace AutoVala {
 						if (element.eType==ConfigType.GRESOURCE) {
 							var gresource = element as ElementGResource;
 							if (gresource.identifier == resource.elementName) {
+								this.setMesonPrecondition(dataStream,element.condition,"vala_args");
 								printConditions.printCondition(element.condition,element.invertCondition);
-								dataStream.put_string("%s_vala_args += ['--gresources='+join_paths(meson.current_source_dir(),'%s')]\n".printf(this.name,element.fullPath));
+								this.setMesonVar(dataStream,"vala_args","'--gresources='+join_paths(meson.current_source_dir(),'%s')".printf(element.fullPath));
 							}
 						}
 					}
 				}
 				printConditions.printTail();
 
-				bool localPackages = false;
+				foreach(var option in this._compileOptions) {
+					this.setMesonPrecondition(dataStream,option.condition,"vala_args");
+					printConditions.printCondition(option.condition,option.invertCondition);
+					this.setMesonVar(dataStream,"vala_args",this.splitInStrings(option.elementName));
+				}
+				printConditions.printTail();
+
 				foreach(var package in this.packages) {
 					if (package.type == packageType.LOCAL) {
+						this.setMesonPrecondition(dataStream,package.condition,"dependencies");
 						printConditions.printCondition(package.condition,package.invertCondition);
-						if (localPackages == false) {
-							localPackages = true;
-							dataStream.put_string("%s_dependencies = []\n".printf(this.name));
-						}
-						dataStream.put_string("%s_dependencies += [%s_library]\n".printf(this.name,package.elementName));
+						this.setMesonVar(dataStream,"dependencies","%s_library".printf(package.elementName));
 					}
 				}
 				printConditions.printTail();
 
-				foreach(var option in this._compileOptions) {
-					printConditions.printCondition(option.condition,option.invertCondition);
-					dataStream.put_string("%s_vala_args += ['%s']\n".printf(this.name,option.elementName));
-				}
-				printConditions.printTail();
-
-				dataStream.put_string("%s_c_args = []\n".printf(this.name));
 				foreach(var option in this._compileCOptions) {
+					this.setMesonPrecondition(dataStream,option.condition,"c_args");
 					printConditions.printCondition(option.condition,option.invertCondition);
-					dataStream.put_string("%s_c_args += ['%s']\n".printf(this.name,option.elementName));
+					this.setMesonVar(dataStream,"c_args",this.splitInStrings(option.elementName));
 				}
 				printConditions.printTail();
 
-				dataStream.put_string("%s_link_args = []\n".printf(this.name));
 				foreach(var llibrary in this._link_libraries) {
-					printConditions.printCondition(llibrary.condition,llibrary.invertCondition);
+					
 					if ((llibrary.elementName == "threads") || (llibrary.elementName == "pthreads")) {
+						this.setMesonPrecondition(dataStream,llibrary.condition,"dependencies");
+						printConditions.printCondition(llibrary.condition,llibrary.invertCondition);
 						dataStream.put_string("%s_thread_dep = dependency('threads')\n".printf(this.name));
-						dataStream.put_string("%s_dependencies += ['%s_thread_dep']\n".printf(this.name,this.name));
+						this.setMesonVar(dataStream,"dependencies","'%s_thread_dep'".printf(this.name));
 						continue;
 					}
 					if (llibrary.elementName == "m") {
 						/*dataStream.put_string("cc_%d = meson.get_compiler('c')\n");
 						dataStream.put_string("m_dep = cc.find_library('m', required : false)\n");*/
-						dataStream.put_string("%s_deps += [ meson.get_compiler('c').find_library('m', required : false) ]\n".printf(this.name));
+						this.setMesonPrecondition(dataStream,llibrary.condition,"deps");
+						printConditions.printCondition(llibrary.condition,llibrary.invertCondition);
+						this.setMesonVar(dataStream,"deps","meson.get_compiler('c').find_library('m', required : false)");
 						continue;
 					}
-					dataStream.put_string("%s_link_args += ['-l%s']\n".printf(this.name,llibrary.elementName));
+					this.setMesonPrecondition(dataStream,llibrary.condition,"link_args");
+					printConditions.printCondition(llibrary.condition,llibrary.invertCondition);
+					this.setMesonVar(dataStream,"link_args","'-l%s'".printf(llibrary.elementName));
 				}
 				printConditions.printTail();
 				
-				bool hFolders = false;
 				foreach(var element in this._hFolders) {
-					if (hFolders == false) {
-						dataStream.put_string("%s_hfolders = []\n".printf(this.name));
-						hFolders = true;
-					}
+					this.setMesonPrecondition(dataStream,element.condition,"hfolders");
 					printConditions.printCondition(element.condition,element.invertCondition);
-					dataStream.put_string("%s_hfolders += [include_directories('%s')] )\n".printf(this.name,element.elementName));
+					this.setMesonVar(dataStream,"hfolders","include_directories('%s')".printf(element.elementName));
 				}
 				printConditions.printTail();
 
@@ -1555,7 +1585,8 @@ namespace AutoVala {
 					dataStream.put_string("('%s',%s_sources".printf(this.name,this.name));
 				} else {
 					if (girFilename != "") {
-						dataStream.put_string("\n%s_vala_args += ['--gir=%s']\n\n".printf(this.name,girFilename));
+						this.setMesonVar(dataStream,"vala_args","'--gir=%s'".printf(girFilename));
+						dataStream.put_string("\n");
 					}
 					if (this._currentNamespace == null) {
 						dataStream.put_string("\nshared_library");
@@ -1568,14 +1599,22 @@ namespace AutoVala {
 					}
 				}
 
-				dataStream.put_string(",dependencies: %s_deps".printf(this.name));
-				dataStream.put_string(",vala_args: %s_vala_args".printf(this.name));
-				dataStream.put_string(",c_args: %s_c_args".printf(this.name));
-				dataStream.put_string(",link_args: %s_link_args".printf(this.name));
-				if (localPackages) {
+				if (this._meson_arrays.contains("deps")) {
+					dataStream.put_string(",dependencies: %s_deps".printf(this.name));
+				}
+				if (this._meson_arrays.contains("vala_args")) {
+					dataStream.put_string(",vala_args: %s_vala_args".printf(this.name));
+				}
+				if (this._meson_arrays.contains("c_args")) {
+					dataStream.put_string(",c_args: %s_c_args".printf(this.name));
+				}
+				if (this._meson_arrays.contains("link_args")) {
+					dataStream.put_string(",link_args: %s_link_args".printf(this.name));
+				}
+				if (this._meson_arrays.contains("dependencies")) {
 					dataStream.put_string(",link_with: %s_dependencies".printf(this.name));
 				}
-				if (hFolders) {
+				if (this._meson_arrays.contains("hfolders")) {
 					dataStream.put_string(",include_directories: %s_hfolders".printf(this.name));
 				}
 				if (this._type == ConfigType.VALA_LIBRARY) {

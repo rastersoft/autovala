@@ -32,8 +32,7 @@ cfg_autovalaLib.set('TESTSRCDIR', '')
 
 cfgfile_1 = configure_file(input: 'src/autovalaLib/Config.vala.base',output: 'Config_1.vala',configuration: cfg_autovalaLib)
 
-autovalaLib_deps = []
-autovalaLib_deps += [cairo_dep]
+autovalaLib_deps = [cairo_dep]
 autovalaLib_deps += [gdk_3_0_dep]
 autovalaLib_deps += [gdk_pixbuf_2_0_dep]
 autovalaLib_deps += [gee_0_8_dep]
@@ -84,17 +83,13 @@ autovalaLib_sources += ['src/autovalaLib/packages_pacman.vala']
 autovalaLib_sources += ['src/autovalaLib/packages_rpm.vala']
 autovalaLib_sources += ['src/autovalaLib/readPkgconfig.vala']
 autovalaLib_sources += [extras_gresource_xml_file_c]
-autovalaLib_vala_args = []
-autovalaLib_vala_args += ['--pkg','posix']
+autovalaLib_vala_args = ['--pkg','posix']
 autovalaLib_vala_args += ['--pkg','readline']
-autovalaLib_c_args = []
-autovalaLib_link_args = []
-autovalaLib_link_args += ['-lreadline']
-
+autovalaLib_link_args = ['-lreadline']
 autovalaLib_vala_args += ['--gir=AutoVala-1.0.gir']
 
 
-AutoVala_library = shared_library('AutoVala',autovalaLib_sources,dependencies: autovalaLib_deps,vala_args: autovalaLib_vala_args,c_args: autovalaLib_c_args,link_args: autovalaLib_link_args,version: '1.0',soversion: '1',install: true)
+AutoVala_library = shared_library('AutoVala',autovalaLib_sources,dependencies: autovalaLib_deps,vala_args: autovalaLib_vala_args,link_args: autovalaLib_link_args,version: '1.0',soversion: '1',install: true)
 
 autovalaLib_requires = []
 autovalaLib_requires += ['cairo']
@@ -129,8 +124,7 @@ cfg_autovalaPlugin.set('TESTSRCDIR', '')
 
 cfgfile_2 = configure_file(input: 'src/autovalaPlugin/Config.vala.base',output: 'Config_2.vala',configuration: cfg_autovalaPlugin)
 
-autovalaPlugin_deps = []
-autovalaPlugin_deps += [atk_dep]
+autovalaPlugin_deps = [atk_dep]
 autovalaPlugin_deps += [cairo_dep]
 autovalaPlugin_deps += [gdk_3_0_dep]
 autovalaPlugin_deps += [gdk_pixbuf_2_0_dep]
@@ -154,17 +148,12 @@ autovalaPlugin_sources += ['src/autovalaPlugin/outputview.vala']
 autovalaPlugin_sources += ['src/autovalaPlugin/projectview.vala']
 autovalaPlugin_sources += ['src/autovalaPlugin/searchview.vala']
 autovalaPlugin_sources += [extras_gresource_xml_file_c]
-autovalaPlugin_vala_args = []
-autovalaPlugin_vala_args += ['--gresources='+join_paths(meson.current_source_dir(),'data/extras.gresource.xml')]
-autovalaPlugin_dependencies = []
-autovalaPlugin_dependencies += [AutoVala_library]
-autovalaPlugin_c_args = []
-autovalaPlugin_link_args = []
-
+autovalaPlugin_vala_args = ['--gresources='+join_paths(meson.current_source_dir(),'data/extras.gresource.xml')]
+autovalaPlugin_dependencies = [AutoVala_library]
 autovalaPlugin_vala_args += ['--gir=AutovalaPlugin-0.0.gir']
 
 
-AutovalaPlugin_library = shared_library('AutovalaPlugin',autovalaPlugin_sources,dependencies: autovalaPlugin_deps,vala_args: autovalaPlugin_vala_args,c_args: autovalaPlugin_c_args,link_args: autovalaPlugin_link_args,link_with: autovalaPlugin_dependencies,version: '0.99',soversion: '0',install: true)
+AutovalaPlugin_library = shared_library('AutovalaPlugin',autovalaPlugin_sources,dependencies: autovalaPlugin_deps,vala_args: autovalaPlugin_vala_args,link_with: autovalaPlugin_dependencies,version: '0.99',soversion: '0',install: true)
 
 autovalaPlugin_requires = []
 autovalaPlugin_requires += ['AutoVala']
@@ -203,19 +192,14 @@ cfg_autovala.set('TESTSRCDIR', '')
 
 cfgfile_3 = configure_file(input: 'src/Config.vala.base',output: 'Config_3.vala',configuration: cfg_autovala)
 
-autovala_deps = []
-autovala_deps += [gio_2_0_dep]
+autovala_deps = [gio_2_0_dep]
 autovala_deps += [gee_0_8_dep]
 autovala_deps += [glib_2_0_dep]
 autovala_sources = [cfgfile_3]
 autovala_sources += ['src/autovala.vala']
 autovala_sources += [extras_gresource_xml_file_c]
-autovala_vala_args = []
-autovala_vala_args += ['--pkg','posix']
-autovala_dependencies = []
-autovala_dependencies += [AutoVala_library]
-autovala_c_args = []
-autovala_link_args = []
+autovala_vala_args = ['--pkg','posix']
+autovala_dependencies = [AutoVala_library]
 
-executable('autovala',autovala_sources,dependencies: autovala_deps,vala_args: autovala_vala_args,c_args: autovala_c_args,link_args: autovala_link_args,link_with: autovala_dependencies,install: true)
+executable('autovala',autovala_sources,dependencies: autovala_deps,vala_args: autovala_vala_args,link_with: autovala_dependencies,install: true)
 
