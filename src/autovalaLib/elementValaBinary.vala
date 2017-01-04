@@ -1716,26 +1716,6 @@ install -m 644 "${MESON_BUILD_ROOT}/%s@sha/%s" "${DESTDIR}${MESON_INSTALL_PREFIX
 
 						dataStream.put_string("test('%s_test%d', %s_test%d_exec)\n\n".printf(this.name,ElementValaBinary.counter,this.name,ElementValaBinary.counter));
 
-						/*if (has_custom_VAPIs) {
-							dataStream.put_string("CUSTOM_VAPIS\n");
-							dataStream.put_string("\t${CUSTOM_VAPIS_LIST}\n");
-						}
-
-						dataStream.put_string("OPTIONS\n");
-						dataStream.put_string("\t${COMPILE_OPTIONS_UTEST}\n");
-
-						dataStream.put_string("DIRECTORY\n");
-						dataStream.put_string("\t${CMAKE_CURRENT_BINARY_DIR}/unitests/test%d\n".printf(ElementValaBinary.counter));
-
-						dataStream.put_string(")\n\n");
-						dataStream.put_string("add_executable( test%d ${VALA_C_%d})\n".printf(ElementValaBinary.counter,ElementValaBinary.counter));
-						foreach (var element in this._link_libraries) {
-							printConditions.printCondition(element.condition,element.invertCondition);
-							dataStream.put_string("target_link_libraries( test%d %s)\n".printf(ElementValaBinary.counter,element.elementName));
-						}
-						printConditions.printTail();
-						dataStream.put_string("add_test(NAME test%d COMMAND test%d)\n".printf(ElementValaBinary.counter,ElementValaBinary.counter));
-						*/
 						dataStream.put_string("\n");
 						ElementValaBinary.counter++;
 					}
