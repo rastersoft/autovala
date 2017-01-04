@@ -1677,6 +1677,70 @@ install -m 644 "${MESON_BUILD_ROOT}/%s@sha/%s" "${DESTDIR}${MESON_INSTALL_PREFIX
 					dataStream2.close();
 					dataStream.put_string("meson.add_install_script(join_paths(meson.current_source_dir(),'%s'))\n\n".printf(script_path));
 				}
+				
+				
+				// unitary tests
+				if (this._unitests.size != 0) {
+					dataStream.put_string("%s_tests_vala_args = ".printf(this.name));
+					if (this._meson_arrays.contains("vala_args")) {
+						dataStream.put_string("%s_vala_args + ".printf(this.name));
+					}
+					dataStream.put_string("['-D','UNITEST','-D','TESTSRCDIR=%s']\n".printf(ElementBase.globalData.projectFolder));
+					dataStream.put_string("%s_tests_c_args = ".printf(this.name));
+					if (this._meson_arrays.contains("c_args")) {
+						dataStream.put_string("%s_c_args + ".printf(this.name));
+					}
+					dataStream.put_string("['-DUNITEST','-DTESTSRCDIR=%s']\n".printf(ElementBase.globalData.projectFolder));
+
+					foreach (var unitest in this._unitests) {
+						
+						dataStream.put_string("\n%s_test%d_exec = executable".printf(this.name,ElementValaBinary.counter));
+						dataStream.put_string("('%s_test%d',%s_sources + [join_paths(meson.current_source_dir(),'%s')]".printf(this.name,ElementValaBinary.counter,this.name,Path.build_filename(this._path,unitest.elementName)));
+
+						if (this._meson_arrays.contains("deps")) {
+							dataStream.put_string(",dependencies: %s_deps".printf(this.name));
+						}
+						dataStream.put_string(",vala_args: %s_tests_vala_args".printf(this.name));
+						dataStream.put_string(",c_args: %s_tests_c_args".printf(this.name));
+						if (this._meson_arrays.contains("link_args")) {
+							dataStream.put_string(",link_args: %s_link_args".printf(this.name));
+						}
+						if (this._meson_arrays.contains("dependencies")) {
+							dataStream.put_string(",link_with: %s_dependencies".printf(this.name));
+						}
+						if (this._meson_arrays.contains("hfolders")) {
+							dataStream.put_string(",include_directories: %s_hfolders".printf(this.name));
+						}
+						dataStream.put_string(",install: false");
+						dataStream.put_string(")\n");
+
+						dataStream.put_string("test('%s_test%d', %s_test%d_exec)\n\n".printf(this.name,ElementValaBinary.counter,this.name,ElementValaBinary.counter));
+
+						/*if (has_custom_VAPIs) {
+							dataStream.put_string("CUSTOM_VAPIS\n");
+							dataStream.put_string("\t${CUSTOM_VAPIS_LIST}\n");
+						}
+
+						dataStream.put_string("OPTIONS\n");
+						dataStream.put_string("\t${COMPILE_OPTIONS_UTEST}\n");
+
+						dataStream.put_string("DIRECTORY\n");
+						dataStream.put_string("\t${CMAKE_CURRENT_BINARY_DIR}/unitests/test%d\n".printf(ElementValaBinary.counter));
+
+						dataStream.put_string(")\n\n");
+						dataStream.put_string("add_executable( test%d ${VALA_C_%d})\n".printf(ElementValaBinary.counter,ElementValaBinary.counter));
+						foreach (var element in this._link_libraries) {
+							printConditions.printCondition(element.condition,element.invertCondition);
+							dataStream.put_string("target_link_libraries( test%d %s)\n".printf(ElementValaBinary.counter,element.elementName));
+						}
+						printConditions.printTail();
+						dataStream.put_string("add_test(NAME test%d COMMAND test%d)\n".printf(ElementValaBinary.counter,ElementValaBinary.counter));
+						*/
+						dataStream.put_string("\n");
+						ElementValaBinary.counter++;
+					}
+				}
+				
 			} catch(GLib.Error e) {
 				ElementBase.globalData.addError(_("Failed to create the data for the binary %s".printf(this.name)));
 				return true;

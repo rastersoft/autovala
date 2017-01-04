@@ -45,7 +45,11 @@ void help() {
 """));
 }
 
+#if UNITEST
+int main2(string[] argv) {
+#else
 int main(string[] argv) {
+#endif
 
 	Intl.bindtextdomain(Constants.GETTEXT_PACKAGE, Path.build_filename(Constants.DATADIR,"locale"));
 	Intl.setlocale (LocaleCategory.ALL, "");
