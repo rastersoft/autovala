@@ -21,6 +21,7 @@ extras_gresource_xml_generator = generator(find_program('glib-compile-resources'
 
 extras_gresource_xml_file_c = extras_gresource_xml_generator.process(['data/extras.gresource.xml'])
 
+install_data(join_paths(meson.current_source_dir(),'data/com.rastersoft.autovala.metainfo.xml'), install_dir: join_paths(get_option('prefix'),'appdata'))
 files('/usr/include/readline/readline.h')
 find_program('/usr/bin/pandoc')
 find_program('/usr/bin/curl')
