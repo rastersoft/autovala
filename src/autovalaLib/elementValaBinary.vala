@@ -1555,6 +1555,8 @@ namespace AutoVala {
 					if (element.eType != ConfigType.DEFINE) {
 						continue;
 					}
+					this.setMesonPrecondition(dataStream,"","vala_args");
+					this.setMesonPrecondition(dataStream,"","c_args");
 					dataStream.put_string("if %s\n  ".printf(element.name));
 					this.setMesonVar(dataStream,"vala_args","'-D', '%s'".printf(element.name));
 					dataStream.put_string("  ");

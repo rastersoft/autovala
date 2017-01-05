@@ -50,7 +50,16 @@ namespace AutoVala {
 				ElementBase.globalData.addError(_("Failed to add binary %s").printf(this.name));
 				return true;
 			}
+			return false;
+		}
 
+		public override bool generateMeson(DataOutputStream dataStream) {
+			try {
+				dataStream.put_string("install_data(join_paths(meson.current_source_dir(),'%s'), install_dir: join_paths(get_option('prefix'),'bin'))\n".printf(Path.build_filename(this._path,this._name)));
+			} catch (GLib.Error e) {
+				ElementBase.globalData.addError(_("Failed to write to meson.build file."));
+				return true;
+			}
 			return false;
 		}
 	}
