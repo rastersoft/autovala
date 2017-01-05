@@ -334,84 +334,90 @@ namespace AutoVala {
 		}
 		
 		public override bool generateMeson(DataOutputStream dataStream) {
-			dataStream.put_string("project('%s',['c','vala'])\n\n".printf(ElementBase.globalData.projectName));
 
-			// Let's check if there are options
-			DataOutputStream? optionsStream = null;
-			var found = false;
-			foreach(var element in ElementBase.globalData.globalElements) {
-				if (element.eType != ConfigType.DEFINE) {
-					continue;
-				}
-				found = true;
-				if (optionsStream == null) {
-					var mainPath = GLib.Path.build_filename(globalData.projectFolder,"meson_options.txt");
-					var file = File.new_for_path(mainPath);
-					if (file.query_exists()) {
-						file.delete();
+			try {
+				dataStream.put_string("project('%s',['c','vala'])\n\n".printf(ElementBase.globalData.projectName));
+
+				// Let's check if there are options
+				DataOutputStream? optionsStream = null;
+				var found = false;
+				foreach(var element in ElementBase.globalData.globalElements) {
+					if (element.eType != ConfigType.DEFINE) {
+						continue;
 					}
-					var dis = file.create(FileCreateFlags.NONE);
-					optionsStream = new DataOutputStream(dis);
-				}
-				dataStream.put_string("%s = (get_option('%s') != '')\n".printf(element.name,element.name));
-				optionsStream.put_string("option('%s',type : 'string', value: '')\n".printf(element.name));
-			}
-			if (optionsStream != null) {
-				optionsStream.close();
-			}
-			if (found) {
-				dataStream.put_string("\n");
-			}
-
-			dataStream.put_string("add_global_arguments('-DGETTEXT_PACKAGE=\"%s\"',language: 'c')\n\n".printf(ElementBase.globalData.projectName));
-
-			Gee.Set<string> tocheck=new Gee.HashSet<string>();
-			Gee.List<GenericElement> elements=new Gee.ArrayList<GenericElement>();
-
-			// First add the ones without conditions
-			foreach(var element in ElementBase.globalData.globalElements) {
-				if ((element.eType!=ConfigType.VALA_BINARY)&&(element.eType!=ConfigType.VALA_LIBRARY)) {
-					continue;
-				}
-				var binElement = element as ElementValaBinary;
-				foreach(var module in binElement.packages) {
-					if (((module.type==packageType.DO_CHECK)||(module.type==packageType.C_DO_CHECK))&&(module.condition==null)) {
-						if (tocheck.contains(module.elementName)) {
-							continue;
+					found = true;
+					if (optionsStream == null) {
+						var mainPath = GLib.Path.build_filename(globalData.projectFolder,"meson_options.txt");
+						var file = File.new_for_path(mainPath);
+						if (file.query_exists()) {
+							file.delete();
 						}
-						elements.add(module);
-						tocheck.add(module.elementName);
+						var dis = file.create(FileCreateFlags.NONE);
+						optionsStream = new DataOutputStream(dis);
 					}
+					dataStream.put_string("%s = (get_option('%s') != '')\n".printf(element.name,element.name));
+					optionsStream.put_string("option('%s',type : 'string', value: '')\n".printf(element.name));
 				}
-			}
+				if (optionsStream != null) {
+					optionsStream.close();
+				}
+				if (found) {
+					dataStream.put_string("\n");
+				}
 
-			// And now add the ones with conditions, so those present with and without conditions will be checked unconditionally
-			foreach(var element in ElementBase.globalData.globalElements) {
-				if ((element.eType!=ConfigType.VALA_BINARY)&&(element.eType!=ConfigType.VALA_LIBRARY)) {
-					continue;
-				}
-				var binElement = element as ElementValaBinary;
-				foreach(var module in binElement.packages) {
-					if (((module.type==packageType.DO_CHECK)||(module.type==packageType.C_DO_CHECK))&&(module.condition!=null)) {
-						if (tocheck.contains(module.elementName)) {
-							continue;
+				dataStream.put_string("add_global_arguments('-DGETTEXT_PACKAGE=\"%s\"',language: 'c')\n\n".printf(ElementBase.globalData.projectName));
+
+				Gee.Set<string> tocheck=new Gee.HashSet<string>();
+				Gee.List<GenericElement> elements=new Gee.ArrayList<GenericElement>();
+
+				// First add the ones without conditions
+				foreach(var element in ElementBase.globalData.globalElements) {
+					if ((element.eType!=ConfigType.VALA_BINARY)&&(element.eType!=ConfigType.VALA_LIBRARY)) {
+						continue;
+					}
+					var binElement = element as ElementValaBinary;
+					foreach(var module in binElement.packages) {
+						if (((module.type==packageType.DO_CHECK)||(module.type==packageType.C_DO_CHECK))&&(module.condition==null)) {
+							if (tocheck.contains(module.elementName)) {
+								continue;
+							}
+							elements.add(module);
+							tocheck.add(module.elementName);
 						}
-						elements.add(module);
 					}
 				}
-			}
 
-			elements.sort(ElementValaBinary.comparePackages);
-			found = false;
-			var printConditions = new ConditionalText(dataStream, ConditionalType.MESON);
-			foreach(var module in elements) {
-				found = true;
-				printConditions.printCondition(module.condition,module.invertCondition);
-				dataStream.put_string("%s_dep = dependency('%s')\n".printf(module.elementName.replace("-","_").replace("+","").replace(".","_"),module.elementName));
-			}
-			printConditions.printTail();
-			if (found) {
-				dataStream.put_string("\n");
+				// And now add the ones with conditions, so those present with and without conditions will be checked unconditionally
+				foreach(var element in ElementBase.globalData.globalElements) {
+					if ((element.eType!=ConfigType.VALA_BINARY)&&(element.eType!=ConfigType.VALA_LIBRARY)) {
+						continue;
+					}
+					var binElement = element as ElementValaBinary;
+					foreach(var module in binElement.packages) {
+						if (((module.type==packageType.DO_CHECK)||(module.type==packageType.C_DO_CHECK))&&(module.condition!=null)) {
+							if (tocheck.contains(module.elementName)) {
+								continue;
+							}
+							elements.add(module);
+						}
+					}
+				}
+
+				elements.sort(ElementValaBinary.comparePackages);
+				found = false;
+				var printConditions = new ConditionalText(dataStream, ConditionalType.MESON);
+				foreach(var module in elements) {
+					found = true;
+					printConditions.printCondition(module.condition,module.invertCondition);
+					dataStream.put_string("%s_dep = dependency('%s')\n".printf(module.elementName.replace("-","_").replace("+","").replace(".","_"),module.elementName));
+				}
+				printConditions.printTail();
+				if (found) {
+					dataStream.put_string("\n");
+				}
+			} catch (GLib.Error e) {
+				ElementBase.globalData.addError(_("Failed to write to meson.build file."));
+				return true;
 			}
 			return false;
 		}

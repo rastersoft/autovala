@@ -21,6 +21,8 @@ extras_gresource_xml_generator = generator(find_program('glib-compile-resources'
 
 extras_gresource_xml_file_c = extras_gresource_xml_generator.process(['data/extras.gresource.xml'])
 
+find_program('/usr/bin/pandoc')
+find_program('/usr/bin/curl')
 cfg_autovalaLib = configuration_data()
 cfg_autovalaLib.set('DATADIR', join_paths(get_option('prefix'),get_option('datadir')))
 cfg_autovalaLib.set('PKGDATADIR', join_paths(get_option('prefix'),get_option('datadir'),'autovala'))

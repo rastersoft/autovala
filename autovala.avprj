@@ -175,4 +175,3 @@ source_dependency: /usr/include/readline/readline.h
 
 binary_dependency: /usr/bin/pandoc
 binary_dependency: /usr/bin/curl
-
