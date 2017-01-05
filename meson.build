@@ -21,6 +21,7 @@ extras_gresource_xml_generator = generator(find_program('glib-compile-resources'
 
 extras_gresource_xml_file_c = extras_gresource_xml_generator.process(['data/extras.gresource.xml'])
 
+files('/usr/include/readline/readline.h')
 find_program('/usr/bin/pandoc')
 find_program('/usr/bin/curl')
 cfg_autovalaLib = configuration_data()

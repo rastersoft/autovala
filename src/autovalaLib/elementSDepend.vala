@@ -46,5 +46,15 @@ namespace AutoVala {
 			this.comments = comments;
 			return this.configureElement(null,data,data,false,condition,invertCondition);
 		}
+
+		public override bool generateMeson(DataOutputStream dataStream) {
+			try {
+				dataStream.put_string("files('%s')\n".printf(this._name));
+			} catch (GLib.Error e) {
+				ElementBase.globalData.addError(_("Failed to write to meson.build file."));
+				return true;
+			}
+			return false;
+		}
 	}
 }
