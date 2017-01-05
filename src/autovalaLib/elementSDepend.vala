@@ -49,7 +49,18 @@ namespace AutoVala {
 
 		public override bool generateMeson(DataOutputStream dataStream) {
 			try {
-				dataStream.put_string("files('%s')\n".printf(this._name));
+				var elements = this._name.split(" ");
+				if (elements.length > 1) {
+					return false; // at this moment we can't check the existence of one of several files
+				}
+				string data = "";
+				foreach (var element in elements) {
+					if (data != "") {
+						data += ", ";
+					}
+					data += "'%s'".printf(element);
+				}
+				dataStream.put_string("files([%s])\n".printf(data));
 			} catch (GLib.Error e) {
 				ElementBase.globalData.addError(_("Failed to write to meson.build file."));
 				return true;

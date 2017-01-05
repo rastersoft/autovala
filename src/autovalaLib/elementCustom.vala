@@ -97,6 +97,30 @@ namespace AutoVala {
 			return false;
 		}
 
+		public override bool generateMeson(DataOutputStream dataStream) {
+			try {
+				var basepath = Path.build_filename(ElementBase.globalData.projectFolder,this._path,this._name);
+				var tmppath = File.new_for_path(basepath);
+				var counter = Globals.counter;
+				string destination;
+				if (this.destination[0] == '/') {
+					destination = "'%s'".printf(this.destination);
+				} else {
+					destination = "join_paths(get_option('prefix'),'%s')".printf(this.destination);
+				}
+				if (tmppath.query_file_type(GLib.FileQueryInfoFlags.NONE) == GLib.FileType.DIRECTORY) {
+					dataStream.put_string("install_subdir(join_paths(meson.current_source_dir(),'%s'), install_dir: %s)\n".printf(Path.build_filename(this._path,this._name),destination));
+				} else {
+					dataStream.put_string("installfile_%d = files('%s')\n".printf(counter,Path.build_filename(this._path,this._name)));
+					dataStream.put_string("install_data(installfile_%d, install_dir: %s)\n".printf(counter,destination));
+				}
+			} catch (GLib.Error e) {
+				ElementBase.globalData.addError(_("Failed to write to meson.build file."));
+				return true;
+			}
+			return false;
+		}
+
 		public override bool storeConfig(DataOutputStream dataStream,ConditionalText printConditions) {
 
 			try {
