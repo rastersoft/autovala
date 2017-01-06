@@ -17,20 +17,22 @@ pangocairo_dep = dependency('pangocairo')
 vte_2_91_dep = dependency('vte-2.91')
 x11_dep = dependency('x11')
 
-install_subdir(join_paths(meson.current_source_dir(),'data/debian'), install_dir: join_paths(get_option('prefix'),'share/autovala/debian'))
-install_subdir(join_paths(meson.current_source_dir(),'data/cmake'), install_dir: join_paths(get_option('prefix'),'share/autovala/cmake'))
+meson.add_install_script(join_paths(meson.current_source_dir(),'meson_scripts','install_data.sh'),join_paths(get_option('prefix'),'share/autovala/debian'),join_paths(meson.current_source_dir(),'data/debian',''))
+
+meson.add_install_script(join_paths(meson.current_source_dir(),'meson_scripts','install_data.sh'),join_paths(get_option('prefix'),'share/autovala/cmake'),join_paths(meson.current_source_dir(),'data/cmake',''))
+
 extras_gresource_xml_generator = generator(find_program('glib-compile-resources'), arguments: [ '--sourcedir=@SOURCE_DIR@/data' , '--generate-source', '--target=@BUILD_DIR@/extras.gresource.xml.c', '@INPUT@'], output: '@PLAINNAME@.c')
 
 extras_gresource_xml_file_c = extras_gresource_xml_generator.process(['data/extras.gresource.xml'])
 
-installfile_3 = files('data/local/CMakeLists.txt')
-install_data(installfile_3, install_dir: join_paths(get_option('prefix'),'share/autovala'))
-installfile_4 = files('data/com.rastersoft.autovala.metainfo.xml')
-install_data(installfile_4, install_dir: join_paths(get_option('prefix'),'appdata'))
-runoutput_5 = run_command('pkg-config',['--variable=completionsdir','bash-completion'])
-if (runoutput_5.stdout().strip() != '')
-	installfile_5 = files('data/bash_completion/autovala')
-	install_data(installfile_5, install_dir: runoutput_5.stdout().strip())
+meson.add_install_script(join_paths(meson.current_source_dir(),'meson_scripts','install_data.sh'),join_paths(get_option('prefix'),get_option('datadir'),'autovala'),join_paths(meson.current_source_dir(),'data/local','','*'))
+
+installfile_1 = files('data/com.rastersoft.autovala.metainfo.xml')
+install_data(installfile_1, install_dir: join_paths(get_option('prefix'),'appdata'))
+runoutput_2 = run_command('pkg-config',['--variable=completionsdir','bash-completion'])
+if (runoutput_2.stdout().strip() != '')
+	installfile_2 = files('data/bash_completion/autovala')
+	install_data(installfile_2, install_dir: runoutput_2.stdout().strip())
 else
 	message('Bash completion isn\'t installed. Definitions will not be built.')
 endif
@@ -44,7 +46,7 @@ cfg_autovalaLib.set('PREFIX', get_option('prefix'))
 cfg_autovalaLib.set('VERSION', '1.0')
 cfg_autovalaLib.set('TESTSRCDIR', meson.current_source_dir())
 
-cfgfile_6 = configure_file(input: 'src/autovalaLib/Config.vala.base',output: 'Config_6.vala',configuration: cfg_autovalaLib)
+cfgfile_3 = configure_file(input: 'src/autovalaLib/Config.vala.base',output: 'Config_3.vala',configuration: cfg_autovalaLib)
 
 autovalaLib_deps = [cairo_dep]
 autovalaLib_deps += [gdk_3_0_dep]
@@ -56,7 +58,7 @@ autovalaLib_deps += [gobject_2_0_dep]
 autovalaLib_deps += [libxml_2_0_dep]
 autovalaLib_deps += [pango_dep]
 autovalaLib_deps += [pangocairo_dep]
-autovalaLib_sources = [cfgfile_6]
+autovalaLib_sources = [cfgfile_3]
 autovalaLib_sources += ['src/autovalaLib/autovalaLib.vala']
 autovalaLib_sources += ['src/autovalaLib/conditionalText.vala']
 autovalaLib_sources += ['src/autovalaLib/configuration.vala']
@@ -136,7 +138,7 @@ cfg_autovalaPlugin.set('PREFIX', get_option('prefix'))
 cfg_autovalaPlugin.set('VERSION', '0.99')
 cfg_autovalaPlugin.set('TESTSRCDIR', meson.current_source_dir())
 
-cfgfile_7 = configure_file(input: 'src/autovalaPlugin/Config.vala.base',output: 'Config_7.vala',configuration: cfg_autovalaPlugin)
+cfgfile_4 = configure_file(input: 'src/autovalaPlugin/Config.vala.base',output: 'Config_4.vala',configuration: cfg_autovalaPlugin)
 
 autovalaPlugin_deps = [atk_dep]
 autovalaPlugin_deps += [cairo_dep]
@@ -151,7 +153,7 @@ autovalaPlugin_deps += [pango_dep]
 autovalaPlugin_deps += [pangocairo_dep]
 autovalaPlugin_deps += [vte_2_91_dep]
 autovalaPlugin_deps += [x11_dep]
-autovalaPlugin_sources = [cfgfile_7]
+autovalaPlugin_sources = [cfgfile_4]
 autovalaPlugin_sources += ['src/autovalaPlugin/CreateNewProject.vala']
 autovalaPlugin_sources += ['src/autovalaPlugin/PanedPercentage.vala']
 autovalaPlugin_sources += ['src/autovalaPlugin/ProjectProperties.vala']
@@ -204,12 +206,12 @@ cfg_autovala.set('PREFIX', get_option('prefix'))
 cfg_autovala.set('VERSION', '1.0.0')
 cfg_autovala.set('TESTSRCDIR', meson.current_source_dir())
 
-cfgfile_8 = configure_file(input: 'src/Config.vala.base',output: 'Config_8.vala',configuration: cfg_autovala)
+cfgfile_5 = configure_file(input: 'src/Config.vala.base',output: 'Config_5.vala',configuration: cfg_autovala)
 
 autovala_deps = [gio_2_0_dep]
 autovala_deps += [gee_0_8_dep]
 autovala_deps += [glib_2_0_dep]
-autovala_sources = [cfgfile_8]
+autovala_sources = [cfgfile_5]
 autovala_sources += ['src/autovala.vala']
 autovala_sources += [extras_gresource_xml_file_c]
 autovala_vala_args = ['--pkg','posix']

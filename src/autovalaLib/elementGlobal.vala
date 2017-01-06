@@ -336,6 +336,15 @@ namespace AutoVala {
 		public override bool generateMeson(DataOutputStream dataStream) {
 
 			try {
+
+				var scriptPath = File.new_for_path(Path.build_filename(ElementBase.globalData.projectFolder,"meson_scripts","install_data.sh"));
+				if (scriptPath.query_exists()) {
+					scriptPath.delete();
+				}
+				var dataStream2 = new DataOutputStream(scriptPath.create(FileCreateFlags.NONE));
+				dataStream2.put_string("#!/bin/sh\n\nmkdir -p $DESTDIR/$1\n\ncp -a $2 $DESTDIR/$1\n");
+				dataStream2.close();
+
 				dataStream.put_string("project('%s',['c','vala'])\n\n".printf(ElementBase.globalData.projectName));
 
 				// Let's check if there are options
