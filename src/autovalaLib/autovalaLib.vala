@@ -318,15 +318,18 @@ namespace AutoVala {
 				foreach(var element in globalData.globalElements) {
 					error |= element.generateMesonHeader(dataStream);
 				}
-				
+
+				var condition = new ConditionalText(dataStream,ConditionalType.MESON);
 				foreach(var element in globalData.globalElements) {
 					if ((element.eType == ConfigType.VALA_BINARY) || (element.eType == ConfigType.VALA_LIBRARY)) {
 						element.processed = false;
 						continue;
 					}
+					condition.printCondition(element.condition,element.invertCondition);
 					error |= element.generateMeson(dataStream);
 					element.processed = true;
 				}
+				condition.printTail();
 				
 				bool allProcessed=false;
 				Gee.Set<string> packagesFound=new Gee.HashSet<string>();
@@ -354,6 +357,7 @@ namespace AutoVala {
 						}
 						addedOne = true;
 						element.processed = true;
+						condition.printCondition(element.condition,element.invertCondition);
 						error |= element.generateMeson(dataStream);
 						if ((binElement.eType == ConfigType.VALA_LIBRARY) && (binElement.currentNamespace != "")) {
 							packagesFound.add(binElement.currentNamespace);
@@ -381,8 +385,9 @@ namespace AutoVala {
 						return true;
 					}
 				}
+				condition.printTail();
 			} catch (Error e) {
-				ElementBase.globalData.addError(_("Failed while generating the meson.build file"));
+				ElementBase.globalData.addError(_("Failed while generating the meson.build file at autovalaLib: %s").printf(e.message));
 				return true;
 			}
 
@@ -579,6 +584,7 @@ namespace AutoVala {
 			
 			this.check_file(all_files,"CMakeLists");
 			this.check_file(all_files,"meson.build");
+			this.check_file(all_files,"meson_options.txt");
 			foreach(var path in ElementBase.globalData.pathList) {
 				this.check_file(all_files,GLib.Path.build_filename(path,"CMakeLists.txt"));
 			}

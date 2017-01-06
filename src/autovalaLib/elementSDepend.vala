@@ -51,6 +51,7 @@ namespace AutoVala {
 			try {
 				var elements = this._name.split(" ");
 				if (elements.length > 1) {
+					dataStream.put_string("\n");
 					return false; // at this moment we can't check the existence of one of several files
 				}
 				string data = "";
@@ -62,7 +63,7 @@ namespace AutoVala {
 				}
 				dataStream.put_string("files([%s])\n".printf(data));
 			} catch (GLib.Error e) {
-				ElementBase.globalData.addError(_("Failed to write to meson.build file."));
+				ElementBase.globalData.addError(_("Failed to write to meson.build file at elementSDepend: %s").printf(e.message));
 				return true;
 			}
 			return false;

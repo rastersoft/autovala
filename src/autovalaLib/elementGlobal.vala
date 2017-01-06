@@ -337,7 +337,13 @@ namespace AutoVala {
 
 			try {
 
-				var scriptPath = File.new_for_path(Path.build_filename(ElementBase.globalData.projectFolder,"meson_scripts","install_data.sh"));
+				var scriptPath = File.new_for_path(Path.build_filename(ElementBase.globalData.projectFolder,"meson_scripts"));
+				try {
+					scriptPath.make_directory_with_parents();
+				} catch(GLib.Error e) {
+				}
+
+				scriptPath = File.new_for_path(Path.build_filename(ElementBase.globalData.projectFolder,"meson_scripts","install_data.sh"));
 				if (scriptPath.query_exists()) {
 					scriptPath.delete();
 				}
@@ -425,7 +431,7 @@ namespace AutoVala {
 					dataStream.put_string("\n");
 				}
 			} catch (GLib.Error e) {
-				ElementBase.globalData.addError(_("Failed to write to meson.build file."));
+				ElementBase.globalData.addError(_("Failed to write to meson.build file at elementGlobal: %s").printf(e.message));
 				return true;
 			}
 			return false;

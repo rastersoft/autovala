@@ -1724,7 +1724,7 @@ install -m 644 "${MESON_BUILD_ROOT}/%s@sha/%s" "${DESTDIR}${MESON_INSTALL_PREFIX
 				}
 				
 			} catch(GLib.Error e) {
-				ElementBase.globalData.addError(_("Failed to write to meson.build file."));
+				ElementBase.globalData.addError(_("Failed to write to meson.build file at elementValaBinary: %s").printf(e.message));
 				return true;
 			}
 

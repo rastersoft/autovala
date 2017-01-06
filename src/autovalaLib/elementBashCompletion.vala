@@ -78,7 +78,7 @@ namespace AutoVala {
 				dataStream.put_string("\tmessage('%s')\n".printf(_("Bash completion isn't installed. Definitions will not be built.").replace("'","\\'")));
 				dataStream.put_string("endif\n");
 			} catch (GLib.Error e) {
-				ElementBase.globalData.addError(_("Failed to write to meson.build file."));
+				ElementBase.globalData.addError(_("Failed to write to meson.build file at elementBashCompletion: %s").printf(e.message));
 				return true;
 			}
 			return false;
