@@ -75,7 +75,7 @@ namespace AutoVala {
 			try {
 				dataStream.put_string("meson.add_install_script(join_paths(meson.current_source_dir(),'meson_scripts','install_data.sh'),join_paths(get_option('prefix'),get_option('datadir'),'%s'),join_paths(meson.current_source_dir(),'%s','%s','*'))\n\n".printf(ElementBase.globalData.projectName,this._path,this._name));
 			} catch (GLib.Error e) {
-				ElementBase.globalData.addError(_("Failed to write to meson.build file at elementData: %s").printf(e.message));
+				ElementBase.globalData.addError(_("Failed to write to meson.build file at '%s' element, at '%s' path: %s").printf(this.command,this._path,e.message));
 				return true;
 			}
 			return false;

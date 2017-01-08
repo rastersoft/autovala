@@ -59,7 +59,7 @@ namespace AutoVala {
 				dataStream.put_string("installfile_%d = files('%s')\n".printf(counter,Path.build_filename(this._path,this._name)));
 				dataStream.put_string("install_data(installfile_%d, install_dir: get_option('bindir'))\n".printf(counter));
 			} catch (GLib.Error e) {
-				ElementBase.globalData.addError(_("Failed to write to meson.build file at elementBinary: %s").printf(e.message));
+				ElementBase.globalData.addError(_("Failed to write to meson.build at '%s' element, at '%s' path: %s").printf(this.command,this._path,e.message));
 				return true;
 			}
 			return false;

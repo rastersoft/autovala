@@ -387,8 +387,12 @@ namespace AutoVala {
 				}
 				condition.printTail();
 			} catch (Error e) {
-				ElementBase.globalData.addError(_("Failed while generating the meson.build file at autovalaLib: %s").printf(e.message));
+				ElementBase.globalData.addError(_("Failed to write to meson.build at '%s' element, at '%s' path: %s").printf("autovalaLib","/",e.message));
 				return true;
+			}
+
+			foreach(var element in globalData.globalElements) {
+				element.endedMeson();
 			}
 
 			dataStream.close();

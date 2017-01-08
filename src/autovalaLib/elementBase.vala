@@ -330,6 +330,12 @@ namespace AutoVala {
 		}
 
 		/**
+		 * Notifies to all the objects that Autovala ended generating the meson script
+		 */
+		public virtual void endedMeson() {
+		}
+
+		/**
 		 * Removes all the automatic data in the element
 		 */
 		public virtual void clearAutomatic() {

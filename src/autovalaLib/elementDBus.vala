@@ -82,5 +82,42 @@ namespace AutoVala {
 		public override void endedCMakeFile() {
 			ElementDBusService.addedDBusPrefix=false; // set the flag to false to allow to add more DBus services in other CMakeList.txt files
 		}
+
+		public override bool generateMesonHeader(DataOutputStream dataStream) {
+
+			if (ElementDBusService.addedDBusPrefix == false) {
+				try {
+					dataStream.put_string("cfg_dbus_data = configuration_data()\ncfg_dbus_data.set ('DBUS_PREFIX',get_option('prefix'))\n");
+					ElementDBusService.addedDBusPrefix = true;
+				} catch (Error e) {
+					ElementBase.globalData.addError(_("Failed to write to meson.build header at '%s' element, at '%s' path: %s").printf(this.command,this._path,e.message));
+					return true;
+				}
+			}
+			return false;
+		}
+
+		public override bool generateMeson(DataOutputStream dataStream) {
+			try {
+				string final_name;
+				if (this.name.has_suffix(".service.base")) {
+				    final_name = this.name.substring(0,this.name.length-5);
+				} else {
+				    final_name = this.name;
+				}
+				var name = this._name.replace("-","_").replace(".","_").replace("+","");
+				dataStream.put_string("dbus_cfg_%s = configure_file(input: '%s',output: '%s', configuration: cfg_dbus_data)\n".printf(name,Path.build_filename(this._path,this._name),final_name));
+				dataStream.put_string("install_data(dbus_cfg_%s,install_dir: join_paths(get_option('prefix'),get_option('datadir'),'dbus-1','services'))\n".printf(name));
+			} catch (Error e) {
+				ElementBase.globalData.addError(_("Failed to write to meson.build at '%s' element, at '%s' path: %s").printf(this.command,this._path,e.message));
+				return true;
+			}
+			return false;
+		}
+
+		public override void endedMeson() {
+			ElementDBusService.addedDBusPrefix=false; // set the flag to false to allow to create a new meson file if needed
+		}
+
 	}
 }

@@ -151,7 +151,7 @@ namespace AutoVala {
 				dataStream.put_string("%s_file_c = %s_generator.process(['%s'])\n\n".printf(this._name.replace(".","_"),this._name.replace(".","_"),this.fullPath));
 				
 			} catch (Error e) {
-				ElementBase.globalData.addError(_("Failed to install local files at %s").printf(this.fullPath));
+				ElementBase.globalData.addError(_("Failed to write to meson.build at '%s' element, at '%s' path: %s").printf(this.command,this._path,e.message));
 				return true;
 			}
 			return false;
