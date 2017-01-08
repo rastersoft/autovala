@@ -88,18 +88,23 @@ namespace AutoVala {
 
 		private void print_key(DataOutputStream of,Gee.Map<string,string> keylist,string key,string val) {
 
-			if (!keylist.has_key(key)) {
-				if (-1 == val.index_of_char('\n')) {
-					of.put_string("%s=%s\n".printf(key,val));
+			try {
+				if (!keylist.has_key(key)) {
+					if (-1 == val.index_of_char('\n')) {
+						of.put_string("%s=%s\n".printf(key,val));
+					} else {
+						of.put_string("%s=\"%s\"\n".printf(key,val));
+					}
 				} else {
-					of.put_string("%s=\"%s\"\n".printf(key,val));
+					if (-1 == keylist.get(key).index_of_char('\n')) {
+						of.put_string("%s=%s\n".printf(key,keylist.get(key)));
+					} else {
+						of.put_string("%s=\"%s\"\n".printf(key,keylist.get(key)));
+					}
 				}
-			} else {
-				if (-1 == keylist.get(key).index_of_char('\n')) {
-					of.put_string("%s=%s\n".printf(key,keylist.get(key)));
-				} else {
-					of.put_string("%s=\"%s\"\n".printf(key,keylist.get(key)));
-				}
+			} catch (GLib.IOError e) {
+				ElementBase.globalData.addError(_("Failed to write keys to PKGBUILD file (%s)").printf(e.message));
+				return;
 			}
 		}
 
@@ -112,7 +117,12 @@ namespace AutoVala {
 
 			int standard_output;
 
-			if (!Process.spawn_async_with_pipes ("/",spawn_args, spawn_env, SpawnFlags.SEARCH_PATH | SpawnFlags.DO_NOT_REAP_CHILD, null, out child_pid,	null, out standard_output, null)) {
+			try {
+				if (!Process.spawn_async_with_pipes ("/",spawn_args, spawn_env, SpawnFlags.SEARCH_PATH | SpawnFlags.DO_NOT_REAP_CHILD, null, out child_pid,	null, out standard_output, null)) {
+					return null;
+				}
+			} catch (GLib.SpawnError e) {
+				ElementBase.globalData.addWarning(_("Failed to spawn CURL when creating PACMAN package: %s").printf(e.message));
 				return null;
 			}
 
@@ -170,45 +180,49 @@ namespace AutoVala {
 			if (f_control_base.query_exists()) {
 				string ? multiline_key = null;
 				string ? multiline_data = null;
-				var dis = new DataInputStream (f_control_base.read ());
-				string line;
-				string? key = "";
-				string data = "";
-				while ((line = dis.read_line (null)) != null) {
-					if (multiline_key != null) {
-						multiline_data += line.replace("\"","") + "\n";
-						if (line.index_of_char('"') != -1) {
-							if (!this.contains_string(invalid_keys,multiline_key)) {
-								element_keys.set(multiline_key,"\""+multiline_data.strip()+"\"");
+				try {
+					var dis = new DataInputStream (f_control_base.read ());
+					string line;
+					string? key = "";
+					string data = "";
+					while ((line = dis.read_line (null)) != null) {
+						if (multiline_key != null) {
+							multiline_data += line.replace("\"","") + "\n";
+							if (line.index_of_char('"') != -1) {
+								if (!this.contains_string(invalid_keys,multiline_key)) {
+									element_keys.set(multiline_key,"\""+multiline_data.strip()+"\"");
+								}
+								multiline_key = null;
+								multiline_data = null;
 							}
-							multiline_key = null;
-							multiline_data = null;
+							continue;
 						}
-						continue;
-					}
-					if (line.strip() == "") {
-						continue;
-					}
-					if (line[0] == '#') {
-						continue;
-					}
-					var pos = line.index_of_char('=');
-					if (pos != -1) {
-						key = line.substring(0,pos).strip();
-						data = line.substring(pos+1);
-						if (data[0] == '"') {
-							pos = data.index_of_char('"',1);
-							if (pos == -1) { // multiline
-								multiline_key = key;
-								multiline_data = data.substring(1) + "\n";
-								continue;
+						if (line.strip() == "") {
+							continue;
+						}
+						if (line[0] == '#') {
+							continue;
+						}
+						var pos = line.index_of_char('=');
+						if (pos != -1) {
+							key = line.substring(0,pos).strip();
+							data = line.substring(pos+1);
+							if (data[0] == '"') {
+								pos = data.index_of_char('"',1);
+								if (pos == -1) { // multiline
+									multiline_key = key;
+									multiline_data = data.substring(1) + "\n";
+									continue;
+								}
+								data = data.replace("\"","");
 							}
-							data = data.replace("\"","");
-						}
-						if (!this.contains_string(invalid_keys,key)) {
-							element_keys.set(key,data.strip());
+							if (!this.contains_string(invalid_keys,key)) {
+								element_keys.set(key,data.strip());
+							}
 						}
 					}
+				} catch (GLib.Error e) {
+					ElementBase.globalData.addWarning(_("Failed to read old PKGBUILD file (%s)").printf(e.message));
 				}
 			}
 

@@ -133,10 +133,14 @@ namespace AutoVala {
 
 		private void print_key(DataOutputStream of,Gee.Map<string,string> keylist,string key,string val) {
 
-			if (!keylist.has_key(key)) {
-				of.put_string("%s: %s\n".printf(key,val));
-			} else {
-				of.put_string("%s: %s\n".printf(key,keylist.get(key)));
+			try {
+				if (!keylist.has_key(key)) {
+					of.put_string("%s: %s\n".printf(key,val));
+				} else {
+					of.put_string("%s: %s\n".printf(key,keylist.get(key)));
+				}
+			} catch(GLib.IOError e) {
+				ElementBase.globalData.addWarning(_("Failed to print key value: %s").printf(e.message));
 			}
 		}
 
@@ -226,7 +230,11 @@ namespace AutoVala {
 				ElementBase.globalData.addWarning(_("Failed to delete debian/control file (%s)").printf(e.message));
 			}
 			if (f_control.query_exists()) {
-				f_control.delete();
+				try{
+					f_control.delete();
+				} catch(GLib.Error e) {
+					ElementBase.globalData.addWarning(_("Failed to delete debian/control file (%s)").printf(e.message));
+				}
 			}
 			try {
 				var dis = f_control.create_readwrite(GLib.FileCreateFlags.PRIVATE);
@@ -376,7 +384,11 @@ namespace AutoVala {
 					Posix.chmod(fname,493); // 755 permissions)
 				} catch (Error e) {
 					ElementBase.globalData.addError(_("Failed to write data to debian/rules file (%s)").printf(e.message));
-					f_rules.delete();
+					try {
+						f_rules.delete();
+					} catch (GLib.Error e) {
+						ElementBase.globalData.addError(_("Failed to delete invalid debian/rules file (%s)").printf(e.message));
+					}
 					return true;
 				}
 			}
@@ -415,7 +427,11 @@ namespace AutoVala {
 				Posix.chmod(f_rules_path,493); // 755 permissions)
 			} catch (Error e) {
 				ElementBase.globalData.addError(_("Failed to write data to debian/preinst file (%s)").printf(e.message));
-				f_rules.delete();
+				try {
+					f_rules.delete();
+				} catch(GLib.Error e) {
+					ElementBase.globalData.addError(_("Failed to delete invalid debian/preinst file (%s)").printf(e.message));
+				}
 				return true;
 			}
 			return false;
@@ -452,7 +468,11 @@ namespace AutoVala {
 				Posix.chmod(f_rules_path,493); // 755 permissions)
 			} catch (Error e) {
 				ElementBase.globalData.addError(_("Failed to write data to debian/prerm file (%s)").printf(e.message));
-				f_rules.delete();
+				try {
+					f_rules.delete();
+				} catch(GLib.Error e) {
+					ElementBase.globalData.addError(_("Failed to delete invalid debian/prerm file (%s)").printf(e.message));
+				}
 				return true;
 			}
 			return false;
@@ -489,7 +509,11 @@ namespace AutoVala {
 				Posix.chmod(f_rules_path,493); // 755 permissions)
 			} catch (Error e) {
 				ElementBase.globalData.addError(_("Failed to write data to debian/postinst file (%s)").printf(e.message));
-				f_rules.delete();
+				try {
+					f_rules.delete();
+				} catch(GLib.Error e) {
+					ElementBase.globalData.addError(_("Failed to delete invalid debian/postinst file (%s)").printf(e.message));
+				}
 				return true;
 			}
 			return false;
@@ -526,7 +550,11 @@ namespace AutoVala {
 				Posix.chmod(f_rules_path,493); // 755 permissions)
 			} catch (Error e) {
 				ElementBase.globalData.addError(_("Failed to write data to debian/postrm file (%s)").printf(e.message));
-				f_rules.delete();
+				try {
+					f_rules.delete();
+				} catch(GLib.Error e) {
+					ElementBase.globalData.addError(_("Failed to delete invalid debian/postrm file (%s)").printf(e.message));
+				}
 				return true;
 			}
 			return false;
@@ -547,38 +575,43 @@ namespace AutoVala {
 
 			// if the file already exists, check for the current version number
 			if (f_changelog.query_exists()) {
-				var dis = new DataInputStream (f_changelog.read ());
-				string line;
-				while ((line = dis.read_line (null)) != null) {
-					lines += line;
-					if (version_found) {
-						continue;
+				try {
+					var dis = new DataInputStream (f_changelog.read ());
+					string line;
+					while ((line = dis.read_line (null)) != null) {
+						lines += line;
+						if (version_found) {
+							continue;
+						}
+						if (line.length==0) {
+							continue;
+						}
+						if ((line[0] == ' ') || (line[0] == '\t')) {
+							continue;
+						}
+						var pos1 = line.index_of_char('(');
+						if (pos1 == -1) {
+							continue;
+						}
+						var pos2 = line.index_of_char(')',pos1);
+						if (pos2 == -1) {
+							continue;
+						}
+						var version = line.substring(pos1+1,pos2-pos1-1);
+						var pos3 = version.last_index_of_char('-');
+						if (pos3 != -1) { // remove the debian_revision field
+							version = version.substring(0,pos3);
+						}
+						if (version == this.version) {
+							version_found = true;
+						}
 					}
-					if (line.length==0) {
-						continue;
-					}
-					if ((line[0] == ' ') || (line[0] == '\t')) {
-						continue;
-					}
-					var pos1 = line.index_of_char('(');
-					if (pos1 == -1) {
-						continue;
-					}
-					var pos2 = line.index_of_char(')',pos1);
-					if (pos2 == -1) {
-						continue;
-					}
-					var version = line.substring(pos1+1,pos2-pos1-1);
-					var pos3 = version.last_index_of_char('-');
-					if (pos3 != -1) { // remove the debian_revision field
-						version = version.substring(0,pos3);
-					}
-					if (version == this.version) {
-						version_found = true;
-					}
+					dis.close();
+					f_changelog.delete();
+				} catch (Error e) {
+					ElementBase.globalData.addError(_("Failed to delete old debian/changelog file (%s)").printf(e.message));
+					return true;
 				}
-				dis.close();
-				f_changelog.delete();
 			}
 
 			try {
@@ -674,7 +707,12 @@ namespace AutoVala {
 				Posix.chmod(fname,420); // 644 permissions)
 			} catch (Error e) {
 				ElementBase.globalData.addError(_("Failed to write data to debian/changelog file (%s)").printf(e.message));
-				f_changelog.delete();
+				try {
+					f_changelog.delete();
+				} catch (Error e) {
+					ElementBase.globalData.addError(_("Failed to delete invalid debian/changelog file (%s)").printf(e.message));
+					return true;
+				}
 				return true;
 			}
 

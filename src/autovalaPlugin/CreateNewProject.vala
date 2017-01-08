@@ -37,7 +37,7 @@ namespace AutovalaPlugin {
 			this.accept_button = (Gtk.Button) builder.get_object("button_accept");
 			this.error_message = (Gtk.Label) builder.get_object("error_message");
 
-            this.path.file_set.connect(this.folder_changed);
+        	this.path.file_set.connect(this.folder_changed);
             this.path.current_folder_changed.connect(this.folder_changed);
             this.name.changed.connect(this.name_changed);
 

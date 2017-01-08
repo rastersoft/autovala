@@ -71,9 +71,11 @@ namespace AutoVala {
 
 		private Gee.Map<string,string> libraries;
 
+/* Not needed
 		public void show_errors() {
 			this.config.showErrors();
 		}
+*/
 
 		public packages() {
 
@@ -705,12 +707,21 @@ namespace AutoVala {
 
 			var file = File.new_for_path(Path.build_filename(GLib.Environment.get_home_dir(),".config","autovala"));
 			if (!file.query_exists()) {
-				file.make_directory_with_parents();
+				try {
+					file.make_directory_with_parents();
+				} catch(GLib.Error e) {
+					ElementBase.globalData.addWarning(_("Failed to create ~/.config/autovala folder: %s").printf(e.message));
+				}
 			}
 			file = File.new_for_path(Path.build_filename(GLib.Environment.get_home_dir(),".config","autovala","packages.cfg"));
 			if (file.query_exists()) {
-				file.delete();
+				try {
+					file.delete();
+				} catch(GLib.Error e) {
+					ElementBase.globalData.addWarning(_("Failed to delete the old ~/.config/autovala/packages.cfg file: %s").printf(e.message));
+				}
 			}
+
 			try {
 				var dis = file.create_readwrite(GLib.FileCreateFlags.PRIVATE);
 				var of = new DataOutputStream(dis.output_stream as FileOutputStream);

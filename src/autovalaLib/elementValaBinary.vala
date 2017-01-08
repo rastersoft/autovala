@@ -2094,14 +2094,15 @@ namespace AutoVala {
 					dataStream.put_string("h_folder: %s\n".printf(element.elementName));
 				}
 				printConditions.printTail();
+				dataStream.put_string("\n");
 			} catch (GLib.Error e) {
 				ElementBase.globalData.addError(_("Failed to store ': %s' at config").printf(this.fullPath));
 				return true;
 			}
-			dataStream.put_string("\n");
 			return false;
 		}
 
+/* Not needed
 		public string[]? getSubFiles() {
 			string[] subFileList = {};
 			foreach (var element in this._sources) {
@@ -2110,6 +2111,9 @@ namespace AutoVala {
 			return subFileList;
 		}
 
+*/
+
+/* Not needed
 		public string[]? getCSubFiles() {
 			string[] subFileList = {};
 			foreach (var element in this._cSources) {
@@ -2117,5 +2121,6 @@ namespace AutoVala {
 			}
 			return subFileList;
 		}
+*/
 	}
 }

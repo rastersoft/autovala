@@ -145,6 +145,7 @@ namespace AutoVala {
 			this.globalElements.add(element);
 		}
 
+/* Not needed
 		public ElementBase[] findElements(AutoVala.ConfigType eType) {
 
 			AutoVala.ElementBase[] elements = {};
@@ -155,6 +156,7 @@ namespace AutoVala {
 			}
 			return elements;
 		}
+*/
 
 		/**
 		 * Inserts a new file/path in the list of exclude files/paths
