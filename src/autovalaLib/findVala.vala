@@ -40,7 +40,7 @@ namespace AutoVala {
 			get { return this._maxVersion; }
 		}
 		
-		public FindVala() {
+		public FindVala() throws GLib.Error {
 
 			this._versions = new Gee.ArrayList<ValaVersion>();
 			this._defaultVersion = null;
@@ -53,54 +53,51 @@ namespace AutoVala {
 			}
 		}
 
-		private void checkPath(string path) {
+		private void checkPath(string path) throws GLib.Error {
 			
 			var dirPath=File.new_for_path(path);
 			if (dirPath.query_exists()==false) {
 				return;
 			}
-			try {
-				var enumerator = dirPath.enumerate_children (FileAttribute.STANDARD_NAME+","+FileAttribute.STANDARD_TYPE, 0);
-				FileInfo file_info;
-				while ((file_info = enumerator.next_file ()) != null) {
-					var ftype=file_info.get_file_type();
-					if (ftype==GLib.FileType.DIRECTORY) {
-						continue;
+
+			var enumerator = dirPath.enumerate_children (FileAttribute.STANDARD_NAME+","+FileAttribute.STANDARD_TYPE, 0);
+			FileInfo file_info;
+			while ((file_info = enumerator.next_file ()) != null) {
+				var ftype=file_info.get_file_type();
+				if (ftype==GLib.FileType.DIRECTORY) {
+					continue;
+				}
+				var fname=file_info.get_name();
+				if ((this._defaultVersion == null) && (fname == "valac")) {
+					var compiler = new ValaVersion();
+					if (false == compiler.setValaVersion(Path.build_filename(path,"valac"))) {
+						this._defaultVersion = compiler;
 					}
-					var fname=file_info.get_name();
-					if ((this._defaultVersion == null) && (fname == "valac")) {
-						var compiler = new ValaVersion();
-						if (false == compiler.setValaVersion(Path.build_filename(path,"valac"))) {
-							this._defaultVersion = compiler;
+					continue;
+				}
+				if (fname.has_prefix("valac-")) {
+					var compiler = new ValaVersion();
+					if (false == compiler.setValaVersion(Path.build_filename(path,fname))) {
+						bool not_found = true;
+						foreach (ValaVersion element in this._versions) {
+							if ((element.major == compiler.major) && (element.minor == compiler.minor)) {
+								not_found = false;
+							}
 						}
-						continue;
-					}
-					if (fname.has_prefix("valac-")) {
-						var compiler = new ValaVersion();
-						if (false == compiler.setValaVersion(Path.build_filename(path,fname))) {
-							bool not_found = true;
-							foreach (ValaVersion element in this._versions) {
-								if ((element.major == compiler.major) && (element.minor == compiler.minor)) {
-									not_found = false;
-								}
-							}
-							if (not_found) {
-								this._versions.add (compiler);
-							}
-							if (this._maxVersion != null) {
-								if (this._maxVersion.major < compiler.major) {
-									this._maxVersion = compiler;
-								} else if ((this._maxVersion.major == compiler.major) && (this._maxVersion.minor < compiler.minor)) {
-									this._maxVersion = compiler;
-								}
-							} else {
+						if (not_found) {
+							this._versions.add (compiler);
+						}
+						if (this._maxVersion != null) {
+							if (this._maxVersion.major < compiler.major) {
+								this._maxVersion = compiler;
+							} else if ((this._maxVersion.major == compiler.major) && (this._maxVersion.minor < compiler.minor)) {
 								this._maxVersion = compiler;
 							}
+						} else {
+							this._maxVersion = compiler;
 						}
 					}
 				}
-			}  catch (Error e) {
-				return;
 			}
 		}
 	}

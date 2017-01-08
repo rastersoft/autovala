@@ -64,7 +64,7 @@ namespace AutoVala {
 			Globals._counter = 0;
 		}
 
-		public Globals(string projectName, string ?searchPath = null) {
+		public Globals(string projectName, string ?searchPath = null) throws GLib.Error {
 
 			ElementBase.globalData = this;
 			ConditionalText.globalData = this;
@@ -77,6 +77,7 @@ namespace AutoVala {
 			this.globalElements = new Gee.ArrayList<ElementBase>();
 			this.excludeFiles = {};
 			this.getValaVersion();
+			this.clearErrors();
 
 			if (Globals.vapiList == null) {
 				Globals.vapiList = new ReadVapis(this.valaMajor,this.valaMinor);
@@ -274,8 +275,13 @@ namespace AutoVala {
 
 			this.versionAutomatic = true;
 
-			var compilers = new FindVala();
-			if (compilers == null) {
+			FindVala compilers;
+			try {
+				compilers = new FindVala();
+				if (compilers == null) {
+					return true;
+				}
+			} catch (GLib.Error e) {
 				return true;
 			}
 

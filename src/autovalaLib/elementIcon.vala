@@ -71,7 +71,7 @@ namespace AutoVala {
 		string basePath;
 		Gee.List<IconEntry ?> entries;
 
-		public Theme(string basepath, string folder_name) {
+		public Theme(string basepath, string folder_name) throws GLib.FileError, GLib.KeyFileError {
 			this.entries = new Gee.ArrayList<IconEntry ?>();
 			this.basePath = basepath;
 			this.folder_name = folder_name;
@@ -79,66 +79,58 @@ namespace AutoVala {
 			this.fill_theme();
 		}
 
-		private void fill_theme() {
+		private void fill_theme() throws GLib.FileError, GLib.KeyFileError {
 
-			try {
-				var indexFile = GLib.Path.build_filename(this.basePath,"index.theme");
-				var file = File.new_for_path(indexFile);
-				if (!file.query_exists()) {
-					return;
-				}
-				var data = new GLib.KeyFile();
-				try {
-					if (!data.load_from_file(indexFile,KeyFileFlags.NONE)) {
-						return;
-					}
-				} catch (GLib.FileError e) {
-					return;
-				}
-				if ((!data.has_group("Icon Theme")) || (!data.has_key("Icon Theme","Name")) || (!data.has_key("Icon Theme","Directories"))) {
-					return;
-				}
-				this.name = data.get_string("Icon Theme","Name");
-				var dirs = data.get_string("Icon Theme","Directories").split(",");
-				foreach(var group in dirs) {
-					if ((!data.has_group(group)) || (!data.has_key(group,"Size"))) {
-						continue; // just to avoid problems with malformed index.theme files
-					}
-					string context = "Actions";
-					IconTypes type = IconTypes.Thresold;
-					int size = data.get_integer(group,"Size");
-					int minsize = -1;
-					int maxsize = -1;
-					if (data.has_key(group,"Context")) {
-						context = data.get_string(group,"Context");
-					}
-					if (data.has_key(group,"Type")) {
-						var tmptype = data.get_string(group,"Type");
-						switch (tmptype) {
-						case "Fixed":
-							type = IconTypes.Fixed;
-						break;
-						case "Scalable":
-							type = IconTypes.Scalable;
-						break;
-						default:
-							type = IconTypes.Thresold;
-						break;
-						}
-					}
-					if (type == IconTypes.Scalable) {
-						if (data.has_key(group,"MinSize")) {
-							minsize = data.get_integer(group,"MinSize");
-						}
-						if (data.has_key(group,"MaxSize")) {
-							maxsize = data.get_integer(group,"MaxSize");
-						}
-					}
-					var element = new IconEntry(group,context, type, size, minsize, maxsize);
-					this.entries.add(element);
-				}
-			} catch (GLib.KeyFileError e) {
+			var indexFile = GLib.Path.build_filename(this.basePath,"index.theme");
+			var file = File.new_for_path(indexFile);
+			if (!file.query_exists()) {
 				return;
+			}
+			var data = new GLib.KeyFile();
+			if (!data.load_from_file(indexFile,KeyFileFlags.NONE)) {
+				return;
+			}
+			if ((!data.has_group("Icon Theme")) || (!data.has_key("Icon Theme","Name")) || (!data.has_key("Icon Theme","Directories"))) {
+				return;
+			}
+			this.name = data.get_string("Icon Theme","Name");
+			var dirs = data.get_string("Icon Theme","Directories").split(",");
+			foreach(var group in dirs) {
+				if ((!data.has_group(group)) || (!data.has_key(group,"Size"))) {
+					continue; // just to avoid problems with malformed index.theme files
+				}
+				string context = "Actions";
+				IconTypes type = IconTypes.Thresold;
+				int size = data.get_integer(group,"Size");
+				int minsize = -1;
+				int maxsize = -1;
+				if (data.has_key(group,"Context")) {
+					context = data.get_string(group,"Context");
+				}
+				if (data.has_key(group,"Type")) {
+					var tmptype = data.get_string(group,"Type");
+					switch (tmptype) {
+					case "Fixed":
+						type = IconTypes.Fixed;
+					break;
+					case "Scalable":
+						type = IconTypes.Scalable;
+					break;
+					default:
+						type = IconTypes.Thresold;
+					break;
+					}
+				}
+				if (type == IconTypes.Scalable) {
+					if (data.has_key(group,"MinSize")) {
+						minsize = data.get_integer(group,"MinSize");
+					}
+					if (data.has_key(group,"MaxSize")) {
+						maxsize = data.get_integer(group,"MaxSize");
+					}
+				}
+				var element = new IconEntry(group,context, type, size, minsize, maxsize);
+				this.entries.add(element);
 			}
 		}
 

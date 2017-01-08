@@ -86,25 +86,20 @@ namespace AutoVala {
 			}
 		}
 
-		private void print_key(DataOutputStream of,Gee.Map<string,string> keylist,string key,string val) {
+		private void print_key(DataOutputStream of,Gee.Map<string,string> keylist,string key,string val) throws GLib.IOError {
 
-			try {
-				if (!keylist.has_key(key)) {
-					if (-1 == val.index_of_char('\n')) {
-						of.put_string("%s=%s\n".printf(key,val));
-					} else {
-						of.put_string("%s=\"%s\"\n".printf(key,val));
-					}
+			if (!keylist.has_key(key)) {
+				if (-1 == val.index_of_char('\n')) {
+					of.put_string("%s=%s\n".printf(key,val));
 				} else {
-					if (-1 == keylist.get(key).index_of_char('\n')) {
-						of.put_string("%s=%s\n".printf(key,keylist.get(key)));
-					} else {
-						of.put_string("%s=\"%s\"\n".printf(key,keylist.get(key)));
-					}
+					of.put_string("%s=\"%s\"\n".printf(key,val));
 				}
-			} catch (GLib.IOError e) {
-				ElementBase.globalData.addError(_("Failed to write keys to PKGBUILD file (%s)").printf(e.message));
-				return;
+			} else {
+				if (-1 == keylist.get(key).index_of_char('\n')) {
+					of.put_string("%s=%s\n".printf(key,keylist.get(key)));
+				} else {
+					of.put_string("%s=\"%s\"\n".printf(key,keylist.get(key)));
+				}
 			}
 		}
 

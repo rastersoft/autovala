@@ -60,35 +60,32 @@ namespace AutoVala {
 		 * @param condition The condition for the next statement to add to the file
 		 * @param inverted Wether the condition is inverted (this is, the statement is after an 'else')
 		 */
-		public void printCondition(string? condition, bool inverted) {
+		public void printCondition(string? condition, bool inverted) throws Error {
 			if (condition==this.currentCondition) {
-				try {
-					if (condition!=null) {
-						/* if the condition for the next statement is the same than the condition of the
-						 * previous statement, but the 'inverted' flag is different, we have to put an else
-						 * to reverse the condition
-						 */
-						if (inverted!=this.invertedCondition) {
-							switch(this.condType) {
-								case ConditionalType.CMAKE:
-									this.dataStream.put_string("else ()\n");
-									break;
-								case ConditionalType.AUTOVALA:
-								case ConditionalType.MESON:
-									this.dataStream.put_string("else\n");
-									break;
-							}
-							this.invertedCondition=inverted;
-						}
+
+				if (condition!=null) {
+					/* if the condition for the next statement is the same than the condition of the
+					 * previous statement, but the 'inverted' flag is different, we have to put an else
+					 * to reverse the condition
+					 */
+					if (inverted!=this.invertedCondition) {
 						switch(this.condType) {
 							case ConditionalType.CMAKE:
+								this.dataStream.put_string("else ()\n");
+								break;
+							case ConditionalType.AUTOVALA:
 							case ConditionalType.MESON:
-								this.dataStream.put_string("\t");
+								this.dataStream.put_string("else\n");
 								break;
 						}
+						this.invertedCondition=inverted;
 					}
-				} catch (Error e) {
-					ElementBase.globalData.addError(_("Failed to store ELSE condition at config"));
+					switch(this.condType) {
+						case ConditionalType.CMAKE:
+						case ConditionalType.MESON:
+							this.dataStream.put_string("\t");
+							break;
+					}
 				}
 			} else {
 				this.invertedCondition=false;
@@ -96,76 +93,6 @@ namespace AutoVala {
 				 * statement, and the previous statement was conditional, we have to close the previous if
 				 */
 				if(this.currentCondition!=null) {
-					try {
-						switch(this.condType) {
-							case ConditionalType.CMAKE:
-								this.dataStream.put_string("endif ()\n");
-								break;
-							case ConditionalType.MESON:
-								this.dataStream.put_string("endif\n");
-								break;
-							case ConditionalType.AUTOVALA:
-								this.dataStream.put_string("end\n");
-								break;
-						}
-					} catch (Error e) {
-						ElementBase.globalData.addError(_("Failed to store ENDIF condition at config"));
-					}
-				}
-				/* Now, if the next statement is conditional, we must start a new condition
-				 */
-				if(condition!=null) {
-					if (inverted==false) {
-						try {
-							switch(this.condType) {
-								case ConditionalType.CMAKE:
-									this.dataStream.put_string("if (%s)\n\t".printf(condition));
-									break;
-								case ConditionalType.MESON:
-									var condition2 = " " + condition.replace("("," ( ").replace(")"," ) ") + " ";
-									condition2 = condition2.replace(" AND "," and ");
-									condition2 = condition2.replace(" OR "," or ");
-									condition2 = condition2.replace(" NOT "," not ").strip();
-									this.dataStream.put_string("if %s\n\t".printf(condition2));
-									break;
-								case ConditionalType.AUTOVALA:
-									this.dataStream.put_string("if %s\n".printf(condition));
-									break;
-							}
-						} catch (Error e) {
-							ElementBase.globalData.addError(_("Failed to store IF at config"));
-						}
-					} else {
-						try {
-							switch(this.condType) {
-								case ConditionalType.CMAKE:
-									this.dataStream.put_string("if (NOT(%s))\n\t".printf(condition));
-									break;
-								case ConditionalType.MESON:
-									var condition2 = " " + condition.replace("("," ( ").replace(")"," ) ") + " ";
-									condition2 = condition2.replace(" AND "," and ");
-									condition2 = condition2.replace(" OR "," or ");
-									condition2 = condition2.replace(" NOT "," not ").strip();
-									this.dataStream.put_string("if (not %s)\n\t".printf(condition2));
-									break;
-								case ConditionalType.AUTOVALA:
-									this.dataStream.put_string("if %s\nelse\n".printf(condition));
-									break;
-							}
-						} catch (Error e) {
-							ElementBase.globalData.addError(_("Failed to store IF NOT/ELSE at config"));
-						}
-						this.invertedCondition=true;
-					}
-				}
-				this.currentCondition=condition;
-			}
-		}
-
-		/* After printing all statements, we must close any possible condition previously opened */
-		public void printTail() {
-			if (this.currentCondition!=null) {
-				try {
 					switch(this.condType) {
 						case ConditionalType.CMAKE:
 							this.dataStream.put_string("endif ()\n");
@@ -177,8 +104,62 @@ namespace AutoVala {
 							this.dataStream.put_string("end\n");
 							break;
 					}
-				} catch (Error e) {
-					ElementBase.globalData.addError(_("Failed to store TAIL at config"));
+				}
+				/* Now, if the next statement is conditional, we must start a new condition
+				 */
+				if(condition!=null) {
+					if (inverted==false) {
+						switch(this.condType) {
+							case ConditionalType.CMAKE:
+								this.dataStream.put_string("if (%s)\n\t".printf(condition));
+								break;
+							case ConditionalType.MESON:
+								var condition2 = " " + condition.replace("("," ( ").replace(")"," ) ") + " ";
+								condition2 = condition2.replace(" AND "," and ");
+								condition2 = condition2.replace(" OR "," or ");
+								condition2 = condition2.replace(" NOT "," not ").strip();
+								this.dataStream.put_string("if %s\n\t".printf(condition2));
+								break;
+							case ConditionalType.AUTOVALA:
+								this.dataStream.put_string("if %s\n".printf(condition));
+								break;
+						}
+					} else {
+						switch(this.condType) {
+							case ConditionalType.CMAKE:
+								this.dataStream.put_string("if (NOT(%s))\n\t".printf(condition));
+								break;
+							case ConditionalType.MESON:
+								var condition2 = " " + condition.replace("("," ( ").replace(")"," ) ") + " ";
+								condition2 = condition2.replace(" AND "," and ");
+								condition2 = condition2.replace(" OR "," or ");
+								condition2 = condition2.replace(" NOT "," not ").strip();
+								this.dataStream.put_string("if (not %s)\n\t".printf(condition2));
+								break;
+							case ConditionalType.AUTOVALA:
+								this.dataStream.put_string("if %s\nelse\n".printf(condition));
+								break;
+						}
+						this.invertedCondition=true;
+					}
+				}
+				this.currentCondition=condition;
+			}
+		}
+
+		/* After printing all statements, we must close any possible condition previously opened */
+		public void printTail() throws GLib.Error {
+			if (this.currentCondition!=null) {
+				switch(this.condType) {
+					case ConditionalType.CMAKE:
+						this.dataStream.put_string("endif ()\n");
+						break;
+					case ConditionalType.MESON:
+						this.dataStream.put_string("endif\n");
+						break;
+					case ConditionalType.AUTOVALA:
+						this.dataStream.put_string("end\n");
+						break;
 				}
 			}
 			this.reset();

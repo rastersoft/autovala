@@ -131,16 +131,12 @@ namespace AutoVala {
 		}
 
 
-		private void print_key(DataOutputStream of,Gee.Map<string,string> keylist,string key,string val) {
+		private void print_key(DataOutputStream of,Gee.Map<string,string> keylist,string key,string val) throws GLib.IOError {
 
-			try {
-				if (!keylist.has_key(key)) {
-					of.put_string("%s: %s\n".printf(key,val));
-				} else {
-					of.put_string("%s: %s\n".printf(key,keylist.get(key)));
-				}
-			} catch(GLib.IOError e) {
-				ElementBase.globalData.addWarning(_("Failed to print key value: %s").printf(e.message));
+			if (!keylist.has_key(key)) {
+				of.put_string("%s: %s\n".printf(key,val));
+			} else {
+				of.put_string("%s: %s\n".printf(key,keylist.get(key)));
 			}
 		}
 

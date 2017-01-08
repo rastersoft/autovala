@@ -323,7 +323,7 @@ namespace AutoVala {
 				if ((element.eType==ConfigType.VALA_BINARY)||(element.eType==ConfigType.VALA_LIBRARY)) {
 					var elementBinary = element as ElementValaBinary;
 					elementBinary.checkVAPIs();
-					elementBinary.checkDependencies();
+					error |= elementBinary.checkDependencies();
 				}
 			}
 			return error;
@@ -446,7 +446,12 @@ namespace AutoVala {
 			}
 
 			// Check which dependencies are resolved by local VAPIs
-			var spaceVapis = new ReadVapis(0,0,true);
+			ReadVapis spaceVapis;
+			try {
+				spaceVapis = new ReadVapis(0,0,true);
+			} catch (GLib.Error e) {
+				return true;
+			}
 			// Fill the namespaces defined in the VAPIs for this binary
 			foreach(var element in this._vapis) {
 				var fullPath = Path.build_filename(ElementBase.globalData.projectFolder,this._path,element.elementName);
@@ -1372,7 +1377,12 @@ namespace AutoVala {
 
 			var fname = File.new_for_path(Path.build_filename(ElementBase.globalData.projectFolder,this._path,depsFilename));
 			if (fname.query_exists()) {
-				fname.delete();
+				try {
+					fname.delete();
+				} catch (GLib.Error e) {
+					ElementBase.globalData.addError(_("Failed to delete the old .DEPS file"));
+					return true;
+				}
 			}
 			try {
 				var dis = fname.create(FileCreateFlags.NONE);
@@ -1391,13 +1401,13 @@ namespace AutoVala {
 			return false;
 		}
 
-		private void setMesonVar(DataOutputStream dataStream, string variable, string var_value) {
+		private void setMesonVar(DataOutputStream dataStream, string variable, string var_value) throws GLib.IOError {
 			bool exists = this._meson_arrays.contains(variable);
 			dataStream.put_string("%s_%s %s= [%s]\n".printf(this.name,variable,exists ? "+" : "",var_value));
 			this._meson_arrays.add(variable);
 		}
 
-		private void setMesonPrecondition(DataOutputStream datastream,string? condition, string variable) {
+		private void setMesonPrecondition(DataOutputStream datastream,string? condition, string variable) throws GLib.IOError {
 			if ((condition != null) && (false == this._meson_arrays.contains(variable))) {
 				this.setMesonVar(datastream,variable,"");
 			}

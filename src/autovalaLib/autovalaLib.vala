@@ -202,7 +202,11 @@ namespace AutoVala {
 
 			bool error=false;
 
-			this.config=new AutoVala.Configuration(basePath,projectName,false);
+			try {
+				this.config = new AutoVala.Configuration(basePath,projectName,false);
+			} catch (GLib.Error e) {
+				return true;
+			}
 			if(this.config.globalData.error) {
 				return true; // if there was at least one error during initialization, return
 			}
@@ -287,7 +291,11 @@ namespace AutoVala {
 
 			Globals.resetCounter();
 
-			this.config = new AutoVala.Configuration(basePath);
+			try {
+				this.config = new AutoVala.Configuration(basePath);
+			} catch (GLib.Error e) {
+				return true;
+			}
 			if(this.config.globalData.error) {
 				return true; // if there was at least one error during initialization, return
 			}
@@ -297,8 +305,6 @@ namespace AutoVala {
 			if (error) {
 				return true;
 			}
-
-			string configPath = this.config.globalData.projectFolder;
 
 			globalData.generateExtraData();
 
@@ -395,7 +401,12 @@ namespace AutoVala {
 				element.endedMeson();
 			}
 
-			dataStream.close();
+			try {
+				dataStream.close();
+			} catch (GLib.IOError e) {
+				ElementBase.globalData.addError(_("Failed to close meson.build file: %s").printf(e.message));
+				return true;
+			}
 			return error;
 		}
 
@@ -408,13 +419,17 @@ namespace AutoVala {
 
 			bool error;
 
-			this.config = new AutoVala.Configuration(basePath);
+			try {
+				this.config = new AutoVala.Configuration(basePath);
+			} catch (GLib.Error e) {
+				return true;
+			}
 			if(this.config.globalData.error) {
 				return true; // if there was at least one error during initialization, return
 			}
 
 			var globalData = ElementBase.globalData;
-			globalData.resetCounter();
+			AutoVala.Globals.resetCounter();
 
 			error=config.readConfiguration();
 			if (error) {
@@ -516,7 +531,11 @@ namespace AutoVala {
 
 			bool error;
 
-			this.config = new AutoVala.Configuration(basePath);
+			try {
+				this.config = new AutoVala.Configuration(basePath);
+			} catch (GLib.Error e) {
+				return true;
+			}
 			if(this.config.globalData.error) {
 				return true; // if there was at least one error during initialization, return
 			}
@@ -577,7 +596,11 @@ namespace AutoVala {
 
 			Gee.ArrayList<string> all_files = new Gee.ArrayList<string>();;
 
-			this.config = new AutoVala.Configuration(basePath);
+			try {
+				this.config = new AutoVala.Configuration(basePath);
+			} catch (GLib.Error e) {
+				return null;
+			}
 			if(this.config.globalData.error) {
 				return null; // if there was at least one error during initialization, return
 			}
@@ -624,7 +647,11 @@ namespace AutoVala {
 		public bool gettext(string ?basePath = null) {
 			// run xgettext to generate the basic pot file
 
-			this.config = new AutoVala.Configuration(basePath);
+			try {
+				this.config = new AutoVala.Configuration(basePath);
+			} catch (GLib.Error e) {
+				return true;
+			}
 			if(this.config.globalData.error) {
 				return true; // if there was at least one error during initialization, return
 			}
@@ -705,7 +732,11 @@ namespace AutoVala {
 		 */
 		public bool clear(string ?basePath = null) {
 
-			this.config=new AutoVala.Configuration(basePath);
+			try {
+				this.config = new AutoVala.Configuration(basePath);
+			} catch (GLib.Error e) {
+				return true;
+			}
 			if(config.globalData.error) {
 				return true; // if there was at least one error during initialization, return
 			}
@@ -726,7 +757,11 @@ namespace AutoVala {
 		 */
 		public bool remove_binary(string? projectPath, string binary_name) {
 
-			var config=new AutoVala.Configuration(projectPath);
+			try {
+				this.config = new AutoVala.Configuration(projectPath);
+			} catch (GLib.Error e) {
+				return true;
+			}
 			if (config.globalData.error) {
 				return true;
 			}
@@ -768,7 +803,11 @@ namespace AutoVala {
 
 			string retval = "";
 
-			var config=new AutoVala.Configuration(projectPath);
+			try {
+				this.config = new AutoVala.Configuration(projectPath);
+			} catch (GLib.Error e) {
+				return null;
+			}
 			if (config.globalData.error) {
 				return null;
 			}
@@ -894,7 +933,11 @@ namespace AutoVala {
 
 			bool retval;
 
-			this.config=new AutoVala.Configuration(basePath);
+			try {
+				this.config = new AutoVala.Configuration(basePath);
+			} catch (GLib.Error e) {
+				return true;
+			}
 			if (config.globalData.error) {
 				return true;
 			}
@@ -927,7 +970,11 @@ namespace AutoVala {
 
 			bool retval;
 
-			this.config=new AutoVala.Configuration(basePath);
+			try {
+				this.config = new AutoVala.Configuration(basePath);
+			} catch (GLib.Error e) {
+				return true;
+			}
 			if (config.globalData.error) {
 				return true;
 			}
@@ -958,7 +1005,11 @@ namespace AutoVala {
 
 			bool retval;
 
-			this.config=new AutoVala.Configuration(basePath);
+			try {
+				this.config = new AutoVala.Configuration(basePath);
+			} catch (GLib.Error e) {
+				return true;
+			}
 			if (config.globalData.error) {
 				return true;
 			}
@@ -984,7 +1035,11 @@ namespace AutoVala {
 		 */
 		public ValaProject ? get_binaries_list(string ?basePath = null, string? owner = null) {
 
-			this.config = new AutoVala.Configuration(basePath);
+			try {
+				this.config = new AutoVala.Configuration(basePath);
+			} catch (GLib.Error e) {
+				return null;
+			}
 			if (config.globalData.error) {
 				return null;
 			}
@@ -1028,7 +1083,11 @@ namespace AutoVala {
 		 */
 		public bool set_external_data(string owner,Gee.List<string> data, string ?basePath = null) {
 
-			var config=new AutoVala.Configuration(basePath);
+			try {
+				this.config = new AutoVala.Configuration(basePath);
+			} catch (GLib.Error e) {
+				return true;
+			}
 			if (config.globalData.error) {
 				return true;
 			}

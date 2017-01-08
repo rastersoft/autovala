@@ -55,8 +55,13 @@ namespace AutoVala {
 
 		public override bool storeConfig(DataOutputStream dataStream,ConditionalText printConditions) {
 
-			printConditions.printCondition(this.post_condition,this.post_invertCondition);
-			return base.storeConfig(dataStream,printConditions);
+			try {
+				printConditions.printCondition(this.post_condition,this.post_invertCondition);
+				return base.storeConfig(dataStream,printConditions);
+			} catch (GLib.Error e) {
+				ElementBase.globalData.addError(_("Failed to write at '%s' element, at '%s' path: %s").printf(this.command,this._path,e.message));
+				return true;
+			}
 		}
 	}
 }
