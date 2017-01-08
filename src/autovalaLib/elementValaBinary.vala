@@ -2466,14 +2466,15 @@ install -m 644 "${MESON_BUILD_ROOT}/%s@sha/%s" "${DESTDIR}${MESON_INSTALL_PREFIX
 					dataStream.put_string("h_folder: %s\n".printf(element.elementName));
 				}
 				printConditions.printTail();
+				dataStream.put_string("\n");
 			} catch (GLib.Error e) {
 				ElementBase.globalData.addError(_("Failed to store ': %s' at config").printf(this.fullPath));
 				return true;
 			}
-			dataStream.put_string("\n");
 			return false;
 		}
 
+/* Not needed
 		public string[]? getSubFiles() {
 			string[] subFileList = {};
 			foreach (var element in this._sources) {
@@ -2482,6 +2483,9 @@ install -m 644 "${MESON_BUILD_ROOT}/%s@sha/%s" "${DESTDIR}${MESON_INSTALL_PREFIX
 			return subFileList;
 		}
 
+*/
+
+/* Not needed
 		public string[]? getCSubFiles() {
 			string[] subFileList = {};
 			foreach (var element in this._cSources) {
@@ -2489,5 +2493,6 @@ install -m 644 "${MESON_BUILD_ROOT}/%s@sha/%s" "${DESTDIR}${MESON_INSTALL_PREFIX
 			}
 			return subFileList;
 		}
+*/
 	}
 }

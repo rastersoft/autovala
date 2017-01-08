@@ -88,18 +88,23 @@ namespace AutoVala {
 
 		private void print_key(DataOutputStream of,Gee.Map<string,string> keylist,string key,string val) {
 
-			if (!keylist.has_key(key)) {
-				if (-1 == val.index_of_char('\n')) {
-					of.put_string("%s=%s\n".printf(key,val));
+			try {
+				if (!keylist.has_key(key)) {
+					if (-1 == val.index_of_char('\n')) {
+						of.put_string("%s=%s\n".printf(key,val));
+					} else {
+						of.put_string("%s=\"%s\"\n".printf(key,val));
+					}
 				} else {
-					of.put_string("%s=\"%s\"\n".printf(key,val));
+					if (-1 == keylist.get(key).index_of_char('\n')) {
+						of.put_string("%s=%s\n".printf(key,keylist.get(key)));
+					} else {
+						of.put_string("%s=\"%s\"\n".printf(key,keylist.get(key)));
+					}
 				}
-			} else {
-				if (-1 == keylist.get(key).index_of_char('\n')) {
-					of.put_string("%s=%s\n".printf(key,keylist.get(key)));
-				} else {
-					of.put_string("%s=\"%s\"\n".printf(key,keylist.get(key)));
-				}
+			} catch (GLib.IOError e) {
+				ElementBase.globalData.addError(_("Failed to write keys to PKGBUILD file (%s)").printf(e.message));
+				return;
 			}
 		}
 
@@ -116,7 +121,8 @@ namespace AutoVala {
 				if (!Process.spawn_async_with_pipes ("/",spawn_args, spawn_env, SpawnFlags.SEARCH_PATH | SpawnFlags.DO_NOT_REAP_CHILD, null, out child_pid,	null, out standard_output, null)) {
 					return null;
 				}
-			} catch(GLib.SpawnError e) {
+			} catch (GLib.SpawnError e) {
+				ElementBase.globalData.addWarning(_("Failed to spawn CURL when creating PACMAN package: %s").printf(e.message));
 				return null;
 			}
 
@@ -216,7 +222,7 @@ namespace AutoVala {
 						}
 					}
 				} catch (GLib.Error e) {
-					ElementBase.globalData.addError(_("Failed to create PACMAN file."));
+					ElementBase.globalData.addError(_("Failed to create PKGBUILD file: %s").printf(e.message));
 					return true;
 				}
 			}
@@ -226,7 +232,7 @@ namespace AutoVala {
 					f_control.delete();
 				}
 			} catch (Error e) {
-				ElementBase.globalData.addWarning(_("Failed to delete PKGBUILD file (%s)").printf(e.message));
+				ElementBase.globalData.addWarning(_("Failed to delete PKGBUILD file: %s").printf(e.message));
 			}
 
 			try {

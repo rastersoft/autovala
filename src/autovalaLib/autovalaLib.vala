@@ -496,9 +496,13 @@ namespace AutoVala {
 				}
 			} catch (Error e) {
 				ElementBase.globalData.addError(_("Failed while generating the CMakeLists.txt files: %s").printf(e.message));
-				return true;
+				error = true;
 			}
-			dataStreamGlobal.close();
+			try{
+				dataStreamGlobal.close();
+			} catch (GLib.IOError e) {
+				ElementBase.globalData.addError(_("Failed while generating the CMakeLists.txt files: %s").printf(e.message));
+			}
 			return error;
 		}
 

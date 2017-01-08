@@ -458,27 +458,27 @@ namespace AutoVala {
 		}
 		private void storeData(ConfigType type, GLib.DataOutputStream dataStream) {
 
-			bool printed = false;
-			var printConditions = new ConditionalText(dataStream,ConditionalType.AUTOVALA);
-			foreach(var element in this.globalData.globalElements) {
-				if (element.eType == type) {
-					printConditions.printCondition(element.condition,element.invertCondition);
-					if (element.comments != null) {
-						foreach(var comment in element.comments) {
-							dataStream.put_string("%s\n".printf(comment));
+			try {
+				bool printed = false;
+				var printConditions = new ConditionalText(dataStream,false);
+				foreach(var element in this.globalData.globalElements) {
+					if (element.eType == type) {
+						printConditions.printCondition(element.condition,element.invertCondition);
+						if (element.comments != null) {
+							foreach(var comment in element.comments) {
+								dataStream.put_string("%s\n".printf(comment));
+							}
 						}
+						element.storeConfig(dataStream,printConditions);
+						printed = true;
 					}
-					element.storeConfig(dataStream,printConditions);
-					printed = true;
 				}
-			}
-			printConditions.printTail();
-			if (printed) {
-				try {
+				printConditions.printTail();
+				if (printed) {
 					dataStream.put_string("\n");
-				} catch (Error e) {
-					this.globalData.addError(_("Error while storing the data"));
 				}
+			} catch (Error e) {
+				this.globalData.addError(_("Error while storing the data"));
 			}
 		}
 	}

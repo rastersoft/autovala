@@ -104,18 +104,23 @@ namespace AutoVala {
 			} else {
 				final_value = keylist.get(key);
 			}
-			foreach (var line in final_value) {
-				if (line.strip() == "") {
-					continue;
+			try {
+				foreach (var line in final_value) {
+					if (line.strip() == "") {
+						continue;
+					}
+					if (multiline) {
+						of.put_string("%%%s\n%s\n".printf(key,line));
+					} else {
+						of.put_string("%s: %s".printf(key,line));
+					}
+					if (line.get_char(line.length-1) != '\n') {
+						of.put_string("\n");
+					}
 				}
-				if (multiline) {
-					of.put_string("%%%s\n%s\n".printf(key,line));
-				} else {
-					of.put_string("%s: %s".printf(key,line));
-				}
-				if (line.get_char(line.length-1) != '\n') {
-					of.put_string("\n");
-				}
+			} catch (IOError e) {
+				ElementBase.globalData.addError(_("Failed to write keys to rpmbuild/SPECS/control file (%s)").printf(e.message));
+				return;
 			}
 		}
 
@@ -221,7 +226,12 @@ namespace AutoVala {
 				ElementBase.globalData.addWarning(_("Failed to delete rpmbuild/SPECS/SPEC file (%s)").printf(e.message));
 			}
 			if (f_control.query_exists()) {
-				f_control.delete();
+				try {
+					f_control.delete();
+				} catch (Error e) {
+					ElementBase.globalData.addError(_("Failed to delete rpmbuild/SPECS/control file (%s)").printf(e.message));
+					return true;
+				}
 			}
 			try {
 				var dis = f_control.create_readwrite(GLib.FileCreateFlags.PRIVATE);
