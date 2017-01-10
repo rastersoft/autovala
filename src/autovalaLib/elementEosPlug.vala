@@ -56,7 +56,7 @@ namespace AutoVala {
 			return false;
 		}
 
-		public override bool generateMesonHeader(DataOutputStream dataStream) {
+		public override bool generateMesonHeader(DataOutputStream dataStream, MesonCommon mesonCommon) {
 
 			if (ElementEosPlug.addedEosPrefix == false) {
 				try {
@@ -70,7 +70,7 @@ namespace AutoVala {
 			return false;
 		}
 
-		public override bool generateMeson(DataOutputStream dataStream) {
+		public override bool generateMeson(DataOutputStream dataStream, MesonCommon mesonCommon) {
 			try {
 				var name = this._name.replace("-","_").replace(".","_").replace("+","");
 				dataStream.put_string("eos_plug_cfg_%s = configure_file(input: '%s',output: '%s', configuration: cfg_eos_plug_data)\n".printf(name

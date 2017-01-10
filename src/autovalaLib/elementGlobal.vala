@@ -32,6 +32,7 @@ namespace AutoVala {
 		}
 
 		public override void add_files() {
+			this.file_list = ElementBase.getFilesFromFolder("meson_scripts",{".sh"},false);
 		}
 
 		private void addFolderToMainCMakeLists(string element, DataOutputStream dataStream,ConfigType eType) {
@@ -332,24 +333,10 @@ namespace AutoVala {
 			}
 			return false;
 		}
-		
-		public override bool generateMeson(DataOutputStream dataStream) {
+
+		public override bool generateMeson(DataOutputStream dataStream, MesonCommon mesonCommon) {
 
 			try {
-
-				var scriptPath = File.new_for_path(Path.build_filename(ElementBase.globalData.projectFolder,"meson_scripts"));
-				try {
-					scriptPath.make_directory_with_parents();
-				} catch(GLib.Error e) {
-				}
-
-				scriptPath = File.new_for_path(Path.build_filename(ElementBase.globalData.projectFolder,"meson_scripts","install_data.sh"));
-				if (scriptPath.query_exists()) {
-					scriptPath.delete();
-				}
-				var dataStream2 = new DataOutputStream(scriptPath.create(FileCreateFlags.NONE));
-				dataStream2.put_string("#!/bin/sh\n\nmkdir -p $DESTDIR/$1\n\ncp -a $2 $DESTDIR/$1\n");
-				dataStream2.close();
 
 				dataStream.put_string("project('%s',['c','vala'])\n\n".printf(ElementBase.globalData.projectName));
 

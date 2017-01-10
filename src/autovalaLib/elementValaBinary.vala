@@ -121,7 +121,7 @@ namespace AutoVala {
 		public string version;
 		private bool versionSet;
 		private bool versionAutomatic;
-		
+
 		private Gee.HashSet<string>? _meson_arrays;
 
 		private Gee.List<ResourceElement ?> _resources;
@@ -413,7 +413,6 @@ namespace AutoVala {
 			foreach (var element in files) {
 				this.file_list+= element;
 			}
-			this.file_list += Path.build_filename("meson_scripts","install_%s.sh".printf(this.name));
 		}
 
 		private bool checkVAPIs() {
@@ -1228,8 +1227,8 @@ namespace AutoVala {
 			return false;
 		}
 
-		public override bool generateMesonHeader(DataOutputStream dataStream) {
-			
+		public override bool generateMesonHeader(DataOutputStream dataStream, MesonCommon mesonCommon) {
+
 			return this.generateDBus();
 		}
 
@@ -1414,7 +1413,7 @@ namespace AutoVala {
 		}
 
 		private string splitInStrings(string input) {
-			
+
 			var elements = input.split(" ");
 			var output = "";
 			foreach(var e in elements) {
@@ -1426,7 +1425,7 @@ namespace AutoVala {
 			return output;
 		}
 
-		public override bool generateMeson(DataOutputStream dataStream) {
+		public override bool generateMeson(DataOutputStream dataStream, MesonCommon mesonCommon) {
 
 			this._meson_arrays = new Gee.HashSet<string>();
 
@@ -1663,34 +1662,11 @@ namespace AutoVala {
 				if (this._type == ConfigType.VALA_LIBRARY) {
 					dataStream.put_string("install_data(join_paths(meson.current_source_dir(),'%s'),install_dir: join_paths(get_option('prefix'),'share','vala','vapi'))\n".printf(Path.build_filename(this._path,depsFilename)));
 
-					var scriptPath = File.new_for_path(Path.build_filename(ElementBase.globalData.projectFolder,"meson_scripts"));
-					try {
-						scriptPath.make_directory_with_parents();
-					} catch(GLib.Error e) {
-					}
-
-					var script_path = Path.build_filename("meson_scripts","install_%s.sh".printf(this.name));
-					scriptPath = File.new_for_path(Path.build_filename(ElementBase.globalData.projectFolder,script_path));
-					if (scriptPath.query_exists()) {
-						scriptPath.delete();
-					}
-					var dis = scriptPath.create(FileCreateFlags.NONE);
-					var dataStream2 = new DataOutputStream(dis);
-					dataStream2.put_string("""#!/bin/sh
-
-mkdir -p "${DESTDIR}${MESON_INSTALL_PREFIX}/share/vala/vapi"
-mkdir -p "${DESTDIR}${MESON_INSTALL_PREFIX}/share/gir-1.0"
-mkdir -p "${DESTDIR}${MESON_INSTALL_PREFIX}/include"
-
-install -m 644 "${MESON_BUILD_ROOT}/%s.vapi" "${DESTDIR}${MESON_INSTALL_PREFIX}/share/vala/vapi"
-install -m 644 "${MESON_BUILD_ROOT}/%s.h" "${DESTDIR}${MESON_INSTALL_PREFIX}/include"
-install -m 644 "${MESON_BUILD_ROOT}/%s@sha/%s" "${DESTDIR}${MESON_INSTALL_PREFIX}/share/gir-1.0"
-""".printf(libFilename,libFilename,libFilename,girFilename));
-					dataStream2.close();
-					dataStream.put_string("meson.add_install_script(join_paths(meson.current_source_dir(),'%s'))\n\n".printf(script_path));
+					mesonCommon.create_install_library_script();
+					dataStream.put_string("meson.add_install_script(join_paths(meson.current_source_dir(),'meson_scripts','install_library.sh'),'%s','%s')\n\n".printf(libFilename, girFilename));
 				}
-				
-				
+
+
 				// unitary tests
 				if (this._unitests.size != 0) {
 					dataStream.put_string("%s_tests_vala_args = ".printf(this.name));
@@ -1705,7 +1681,7 @@ install -m 644 "${MESON_BUILD_ROOT}/%s@sha/%s" "${DESTDIR}${MESON_INSTALL_PREFIX
 					dataStream.put_string("['-DUNITEST']\n");
 
 					foreach (var unitest in this._unitests) {
-						
+
 						dataStream.put_string("\n%s_test%d_exec = executable".printf(this.name,ElementValaBinary.counter));
 						dataStream.put_string("('%s_test%d',%s_sources + [join_paths(meson.current_source_dir(),'%s')]".printf(this.name,ElementValaBinary.counter,this.name,Path.build_filename(this._path,unitest.elementName)));
 

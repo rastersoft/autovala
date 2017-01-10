@@ -70,8 +70,9 @@ namespace AutoVala {
 			return false;
 		}
 
-		public override bool generateMeson(DataOutputStream dataStream) {
+		public override bool generateMeson(DataOutputStream dataStream, MesonCommon mesonCommon) {
 			try {
+				mesonCommon.create_install_script();
 				dataStream.put_string("meson.add_install_script(join_paths(meson.current_source_dir(),'meson_scripts','install_data.sh'),join_paths(get_option('prefix'),get_option('datadir'),'doc'),join_paths(meson.current_source_dir(),'%s','%s','*'))\n\n".printf(this._path,this._name));
 			} catch (GLib.Error e) {
 				ElementBase.globalData.addError(_("Failed to write to meson.build file at '%s' element, at '%s' path: %s").printf(this.command,this._path,e.message));

@@ -90,7 +90,7 @@ namespace AutoVala {
 			return false;
 		}
 
-		private bool delete_recursive (string fileFolder) {
+		public static bool delete_recursive (string fileFolder) {
 
 			var src=File.new_for_path(fileFolder);
 
@@ -100,7 +100,7 @@ namespace AutoVala {
 				try {
 					GLib.FileEnumerator enumerator = src.enumerate_children (GLib.FileAttribute.STANDARD_NAME, GLib.FileQueryInfoFlags.NONE, null);
 					for ( GLib.FileInfo? info = enumerator.next_file (null) ; info != null ; info = enumerator.next_file (null) ) {
-						if (delete_recursive (GLib.Path.build_filename (srcPath, info.get_name ()))) {
+						if (ManageProject.delete_recursive (GLib.Path.build_filename (srcPath, info.get_name ()))) {
 							return true;
 						}
 					}
@@ -181,7 +181,7 @@ namespace AutoVala {
 			var folder2=File.new_for_path(origin);
 			if (folder2.query_exists()) {
 				if (folder.query_exists()) {
-					this.delete_recursive(destiny);
+					ManageProject.delete_recursive(destiny);
 				}
 				this.copy_recursive(origin,destiny);
 			} else {
@@ -309,7 +309,10 @@ namespace AutoVala {
 			globalData.generateExtraData();
 
 			var globalElement = new ElementGlobal();
-		
+
+			var mesonCommon = new MesonCommon();
+			mesonCommon.init();
+
 			DataOutputStream dataStream;
 			try {
 				var mainPath = GLib.Path.build_filename(globalData.projectFolder,"meson.build");
@@ -319,10 +322,10 @@ namespace AutoVala {
 				}
 				var dis = file.create(FileCreateFlags.NONE);
 				dataStream = new DataOutputStream(dis);
-				error |= globalElement.generateMeson(dataStream);
-				
+				error |= globalElement.generateMeson(dataStream, mesonCommon);
+
 				foreach(var element in globalData.globalElements) {
-					error |= element.generateMesonHeader(dataStream);
+					error |= element.generateMesonHeader(dataStream, mesonCommon);
 				}
 
 				var condition = new ConditionalText(dataStream,ConditionalType.MESON);
@@ -332,11 +335,11 @@ namespace AutoVala {
 						continue;
 					}
 					condition.printCondition(element.condition,element.invertCondition);
-					error |= element.generateMeson(dataStream);
+					error |= element.generateMeson(dataStream, mesonCommon);
 					element.processed = true;
 				}
 				condition.printTail();
-				
+
 				bool allProcessed=false;
 				Gee.Set<string> packagesFound=new Gee.HashSet<string>();
 				while(allProcessed == false) {
@@ -364,7 +367,7 @@ namespace AutoVala {
 						addedOne = true;
 						element.processed = true;
 						condition.printCondition(element.condition,element.invertCondition);
-						error |= element.generateMeson(dataStream);
+						error |= element.generateMeson(dataStream, mesonCommon);
 						if ((binElement.eType == ConfigType.VALA_LIBRARY) && (binElement.currentNamespace != "")) {
 							packagesFound.add(binElement.currentNamespace);
 						}
@@ -398,7 +401,7 @@ namespace AutoVala {
 			}
 
 			foreach(var element in globalData.globalElements) {
-				element.endedMeson();
+				element.endedMeson(mesonCommon);
 			}
 
 			try {
@@ -612,7 +615,7 @@ namespace AutoVala {
 
 			ElementBase.globalData.generateExtraData();
 			this.check_file(all_files,GLib.Path.get_basename(ElementBase.globalData.configFile));
-			
+
 			this.check_file(all_files,"CMakeLists");
 			this.check_file(all_files,"meson.build");
 			this.check_file(all_files,"meson_options.txt");
@@ -624,6 +627,11 @@ namespace AutoVala {
 				this.check_file(all_files,element2);
 			}
 			this.check_file(all_files,Path.build_filename("cmake","CMakeLists.txt"));
+			var globalElement = new ElementGlobal();
+			globalElement.add_files();
+			foreach(var element2 in globalElement.file_list) {
+				this.check_file(all_files,element2);
+			}
 			foreach(var element in ElementBase.globalData.globalElements) {
 				element.add_files();
 				foreach(var element2 in element.file_list) {

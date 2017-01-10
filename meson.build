@@ -29,6 +29,8 @@ meson.add_install_script(join_paths(meson.current_source_dir(),'meson_scripts','
 
 installfile_1 = files('data/com.rastersoft.autovala.metainfo.xml')
 install_data(installfile_1, install_dir: join_paths(get_option('prefix'),'appdata'))
+meson.add_install_script(join_paths(meson.current_source_dir(),'meson_scripts','install_data.sh'),join_paths(get_option('prefix'),get_option('datadir'),'doc'),join_paths(meson.current_source_dir(),'doc','','*'))
+
 runoutput_2 = run_command('pkg-config',['--variable=completionsdir','bash-completion'])
 if (runoutput_2.stdout().strip() != '')
 	installfile_2 = files('data/bash_completion/autovala')
@@ -93,6 +95,7 @@ autovalaLib_sources += ['src/autovalaLib/findVala.vala']
 autovalaLib_sources += ['src/autovalaLib/genVapis.vala']
 autovalaLib_sources += ['src/autovalaLib/globals.vala']
 autovalaLib_sources += ['src/autovalaLib/gresource_xml.vala']
+autovalaLib_sources += ['src/autovalaLib/mesonCommon.vala']
 autovalaLib_sources += ['src/autovalaLib/packages.vala']
 autovalaLib_sources += ['src/autovalaLib/packages_deb.vala']
 autovalaLib_sources += ['src/autovalaLib/packages_pacman.vala']
@@ -127,7 +130,7 @@ pkg_mod.generate(libraries : AutoVala_library,
 	requires : autovalaLib_requires)
 
 install_data(join_paths(meson.current_source_dir(),'src/autovalaLib/AutoVala.deps'),install_dir: join_paths(get_option('prefix'),'share','vala','vapi'))
-meson.add_install_script(join_paths(meson.current_source_dir(),'meson_scripts/install_autovalaLib.sh'))
+meson.add_install_script(join_paths(meson.current_source_dir(),'meson_scripts','install_library.sh'),'AutoVala','AutoVala-1.0.gir')
 
 cfg_autovalaPlugin = configuration_data()
 cfg_autovalaPlugin.set('DATADIR', join_paths(get_option('prefix'),get_option('datadir')))
@@ -195,7 +198,7 @@ pkg_mod.generate(libraries : AutovalaPlugin_library,
 	requires : autovalaPlugin_requires)
 
 install_data(join_paths(meson.current_source_dir(),'src/autovalaPlugin/AutovalaPlugin.deps'),install_dir: join_paths(get_option('prefix'),'share','vala','vapi'))
-meson.add_install_script(join_paths(meson.current_source_dir(),'meson_scripts/install_autovalaPlugin.sh'))
+meson.add_install_script(join_paths(meson.current_source_dir(),'meson_scripts','install_library.sh'),'AutovalaPlugin','AutovalaPlugin-0.0.gir')
 
 cfg_autovala = configuration_data()
 cfg_autovala.set('DATADIR', join_paths(get_option('prefix'),get_option('datadir')))

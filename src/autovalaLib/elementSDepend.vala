@@ -42,16 +42,16 @@ namespace AutoVala {
 				ElementBase.globalData.addError(_("Invalid command %s after command %s (line %d)").printf(badCommand,this.command, lineNumber));
 				return true;
 			}
-			var data = line.substring(2+this.command.length).strip();
+			var data = line.substring(2 + this.command.length).strip();
 			this.comments = comments;
 			return this.configureElement(null,data,data,false,condition,invertCondition);
 		}
 
-		public override bool generateMeson(DataOutputStream dataStream) {
+		public override bool generateMeson(DataOutputStream dataStream, MesonCommon mesonCommon) {
 			try {
 				var elements = this._name.split(" ");
 				if (elements.length > 1) {
-					dataStream.put_string("\n");
+					dataStream.put_string("run_command('/prueba.sh')\n");
 					return false; // at this moment we can't check the existence of one of several files
 				}
 				string data = "";

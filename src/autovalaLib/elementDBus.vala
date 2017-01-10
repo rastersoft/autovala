@@ -83,7 +83,7 @@ namespace AutoVala {
 			ElementDBusService.addedDBusPrefix=false; // set the flag to false to allow to add more DBus services in other CMakeList.txt files
 		}
 
-		public override bool generateMesonHeader(DataOutputStream dataStream) {
+		public override bool generateMesonHeader(DataOutputStream dataStream, MesonCommon mesonCommon) {
 
 			if (ElementDBusService.addedDBusPrefix == false) {
 				try {
@@ -97,7 +97,7 @@ namespace AutoVala {
 			return false;
 		}
 
-		public override bool generateMeson(DataOutputStream dataStream) {
+		public override bool generateMeson(DataOutputStream dataStream, MesonCommon mesonCommon) {
 			try {
 				string final_name;
 				if (this.name.has_suffix(".service.base")) {
@@ -115,9 +115,8 @@ namespace AutoVala {
 			return false;
 		}
 
-		public override void endedMeson() {
+		public override void endedMeson(MesonCommon mesonCommon) {
 			ElementDBusService.addedDBusPrefix=false; // set the flag to false to allow to create a new meson file if needed
 		}
-
 	}
 }
