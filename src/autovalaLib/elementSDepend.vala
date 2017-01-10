@@ -52,17 +52,30 @@ namespace AutoVala {
 				var elements = this._name.split(" ");
 
 				mesonCommon.create_check_paths_script();
-				dataStream.put_string("check_files_var = 1\n");
+				//dataStream.put_string("check_files_var = 1\n");
 				string listfiles = "";
+				bool first = true;
 				foreach(var element in elements) {
 					listfiles += "\t%s\\n".printf(element);
-					dataStream.put_string("if (check_files_var != 0)\n");
-					dataStream.put_string("\tcheck_files_retval = run_command(join_paths(meson.current_source_dir(),'meson_scripts','check_path.sh'),'%s')\n".printf(element));
-					dataStream.put_string("\tcheck_files_var = check_files_retval.returncode()\n");
-					dataStream.put_string("endif\n");
+					if (first == false) {
+						dataStream.put_string("if (check_files_var != 0)\n\t");
+					}
+					dataStream.put_string("check_files_retval = run_command(join_paths(meson.current_source_dir(),'meson_scripts','check_path.sh'),'%s')\n".printf(element));
+					if (first == false) {
+						dataStream.put_string("\t");
+					}
+					dataStream.put_string("check_files_var = check_files_retval.returncode()\n");
+					if (first == false) {
+						dataStream.put_string("endif\n");
+					}
+					first = false;
 				}
 				dataStream.put_string("if (check_files_var != 0)\n");
-				dataStream.put_string("\terror('At least one of these files must exist to compile this project:\\n%s')\n".printf(listfiles));
+				if (elements.length == 1) {
+					dataStream.put_string("\terror('The file %s must exist to compile this project.')\n".printf(elements[0]));
+				} else {
+					dataStream.put_string("\terror('At least one of these files must exist to compile this project:\\n%s')\n".printf(listfiles));
+				}
 				dataStream.put_string("endif\n");
 			} catch (GLib.Error e) {
 				ElementBase.globalData.addError(_("Failed to write to meson.build at '%s' element, at '%s' path: %s").printf(this.command,this._path,e.message));

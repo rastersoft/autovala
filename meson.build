@@ -38,7 +38,11 @@ if (runoutput_2.stdout().strip() != '')
 else
 	message('Bash completion isn\'t installed. Definitions will not be built.')
 endif
-files(['/usr/include/readline/readline.h'])
+check_files_retval = run_command(join_paths(meson.current_source_dir(),'meson_scripts','check_path.sh'),'/usr/include/readline/readline.h')
+check_files_var = check_files_retval.returncode()
+if (check_files_var != 0)
+	error('The file /usr/include/readline/readline.h must exist to compile this project.')
+endif
 cfg_autovalaLib = configuration_data()
 cfg_autovalaLib.set('DATADIR', join_paths(get_option('prefix'),get_option('datadir')))
 cfg_autovalaLib.set('PKGDATADIR', join_paths(get_option('prefix'),get_option('datadir'),'autovala'))
