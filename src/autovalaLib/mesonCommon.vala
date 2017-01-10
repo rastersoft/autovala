@@ -26,10 +26,12 @@ namespace AutoVala {
 		private bool install_script_created;
 		private bool install_library_script_created;
 		private string scriptPathS;
+		private bool added_dbus_prefix;
 
 		public void init() {
 			this.install_script_created = false;
 			this.install_library_script_created = false;
+			this.added_dbus_prefix = false;
 			this.scriptPathS = Path.build_filename(ElementBase.globalData.projectFolder,"meson_scripts");
 			ManageProject.delete_recursive(this.scriptPathS);
 		}
@@ -95,6 +97,16 @@ install -m 644 "${MESON_BUILD_ROOT}/$1@sha/$2" "${DESTDIR}${MESON_INSTALL_PREFIX
 """);
 			dataStream2.close();
 			this.install_library_script_created = true;
+		}
+
+		public void add_dbus_config(DataOutputStream dataStream) throws Error {
+
+			if (this.added_dbus_prefix) {
+				return;
+			}
+
+			dataStream.put_string("cfg_dbus_data = configuration_data()\ncfg_dbus_data.set ('DBUS_PREFIX',get_option('prefix'))\n");
+			this.added_dbus_prefix = true;
 		}
 	}
 

@@ -25,9 +25,9 @@ namespace AutoVala {
 		private static bool addedDBusPrefix;
 
 		public ElementDBusService() {
-			addedDBusPrefix=false;
 			this._type = ConfigType.DBUS_SERVICE;
 			this.command = "dbus_service";
+			ElementDBusService.addedDBusPrefix = false;
 		}
 
 		public static bool autoGenerate() {
@@ -85,14 +85,11 @@ namespace AutoVala {
 
 		public override bool generateMesonHeader(DataOutputStream dataStream, MesonCommon mesonCommon) {
 
-			if (ElementDBusService.addedDBusPrefix == false) {
-				try {
-					dataStream.put_string("cfg_dbus_data = configuration_data()\ncfg_dbus_data.set ('DBUS_PREFIX',get_option('prefix'))\n");
-					ElementDBusService.addedDBusPrefix = true;
-				} catch (Error e) {
-					ElementBase.globalData.addError(_("Failed to write to meson.build header at '%s' element, at '%s' path: %s").printf(this.command,this._path,e.message));
-					return true;
-				}
+			try {
+				mesonCommon.add_dbus_config(dataStream);
+			} catch (Error e) {
+				ElementBase.globalData.addError(_("Failed to write to meson.build header at '%s' element, at '%s' path: %s").printf(this.command,this._path,e.message));
+				return true;
 			}
 			return false;
 		}
@@ -113,10 +110,6 @@ namespace AutoVala {
 				return true;
 			}
 			return false;
-		}
-
-		public override void endedMeson(MesonCommon mesonCommon) {
-			ElementDBusService.addedDBusPrefix=false; // set the flag to false to allow to create a new meson file if needed
 		}
 	}
 }
