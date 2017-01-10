@@ -50,18 +50,20 @@ namespace AutoVala {
 		public override bool generateMeson(DataOutputStream dataStream, MesonCommon mesonCommon) {
 			try {
 				var elements = this._name.split(" ");
-				if (elements.length > 1) {
-					dataStream.put_string("run_command('/prueba.sh')\n");
-					return false; // at this moment we can't check the existence of one of several files
+
+				mesonCommon.create_check_paths_script();
+				dataStream.put_string("check_files_var = 1\n");
+				string listfiles = "";
+				foreach(var element in elements) {
+					listfiles += "\t%s\\n".printf(element);
+					dataStream.put_string("if (check_files_var != 0)\n");
+					dataStream.put_string("\tcheck_files_retval = run_command(join_paths(meson.current_source_dir(),'meson_scripts','check_path.sh'),'%s')\n".printf(element));
+					dataStream.put_string("\tcheck_files_var = check_files_retval.returncode()\n");
+					dataStream.put_string("endif\n");
 				}
-				string data = "";
-				foreach (var element in elements) {
-					if (data != "") {
-						data += ", ";
-					}
-					data += "'%s'".printf(element);
-				}
-				dataStream.put_string("files([%s])\n".printf(data));
+				dataStream.put_string("if (check_files_var != 0)\n");
+				dataStream.put_string("\terror('At least one of these files must exist to compile this project:\\n%s')\n".printf(listfiles));
+				dataStream.put_string("endif\n");
 			} catch (GLib.Error e) {
 				ElementBase.globalData.addError(_("Failed to write to meson.build at '%s' element, at '%s' path: %s").printf(this.command,this._path,e.message));
 				return true;

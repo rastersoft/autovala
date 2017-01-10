@@ -17,7 +17,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 
 using GLib;
-
+using Posix;
 
 namespace AutoVala {
 
@@ -25,13 +25,16 @@ namespace AutoVala {
 
 		private bool install_script_created;
 		private bool install_library_script_created;
-		private string scriptPathS;
 		private bool added_dbus_prefix;
+		private bool check_path_script_created;
+
+		private string scriptPathS;
 
 		public void init() {
 			this.install_script_created = false;
 			this.install_library_script_created = false;
 			this.added_dbus_prefix = false;
+			this.check_path_script_created = false;
 			this.scriptPathS = Path.build_filename(ElementBase.globalData.projectFolder,"meson_scripts");
 			ManageProject.delete_recursive(this.scriptPathS);
 		}
@@ -43,6 +46,10 @@ namespace AutoVala {
 				scriptPath.make_directory_with_parents();
 			} catch(GLib.Error e) {
 			}
+		}
+
+		private void set_permissions(string script) {
+			Posix.chmod(Path.build_filename(this.scriptPathS,script),0x1ED);
 		}
 
 		/**
@@ -65,6 +72,7 @@ namespace AutoVala {
 			var dataStream2 = new DataOutputStream(scriptPath.create(FileCreateFlags.NONE));
 			dataStream2.put_string("#!/bin/sh\n\nmkdir -p $DESTDIR/$1\n\ncp -a $2 $DESTDIR/$1\n");
 			dataStream2.close();
+			this.set_permissions("install_data.sh");
 			this.install_script_created = true;
 		}
 
@@ -96,7 +104,35 @@ install -m 644 "${MESON_BUILD_ROOT}/$1.h" "${DESTDIR}${MESON_INSTALL_PREFIX}/inc
 install -m 644 "${MESON_BUILD_ROOT}/$1@sha/$2" "${DESTDIR}${MESON_INSTALL_PREFIX}/share/gir-1.0"
 """);
 			dataStream2.close();
+			this.set_permissions("install_library.sh");
 			this.install_library_script_created = true;
+		}
+
+		public void create_check_paths_script() throws GLib.Error {
+
+			if (this.check_path_script_created) {
+				return;
+			}
+
+			this.create_folder();
+			var scriptPath = File.new_for_path(Path.build_filename(this.scriptPathS,"check_path.sh"));
+			if (scriptPath.query_exists()) {
+				scriptPath.delete();
+			}
+			var dis = scriptPath.create(FileCreateFlags.NONE);
+			var dataStream2 = new DataOutputStream(dis);
+			dataStream2.put_string("""#!/bin/sh
+
+if [ -e $1 ]
+then
+	exit 0
+else
+	exit 1
+fi
+""");
+			dataStream2.close();
+			this.set_permissions("check_path.sh");
+			this.check_path_script_created = true;
 		}
 
 		public void add_dbus_config(DataOutputStream dataStream) throws Error {
