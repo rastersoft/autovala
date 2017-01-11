@@ -53,6 +53,13 @@ namespace AutoVala {
 			return false;
 		}
 
+		public override bool generateMeson(ConditionalText dataStream, MesonCommon mesonCommon) {
+
+			ElementBase.globalData.addWarning(_("This project has an INCLUDE statement, which is valid only for CMAKE. Maybe it will fail to build."));
+			return false;
+
+		}
+
 		public override bool storeConfig(DataOutputStream dataStream,ConditionalText printConditions) {
 
 			try {

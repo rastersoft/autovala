@@ -49,7 +49,7 @@ namespace AutoVala {
 		public static ReadVapis? vapiList = null;
 
 		private static int _counter = 0;
-		
+
 		/**
 		 * This counter is used for cases where different filenames are needed
 		 */
@@ -119,7 +119,7 @@ namespace AutoVala {
 			this.pathList=new Gee.HashSet<string>();
 			foreach(var element in this.globalElements) {
 				if ((element.eType!=ConfigType.IGNORE) && (element.eType!=ConfigType.DEFINE) && (element.eType!=ConfigType.SOURCE_DEPENDENCY)
-						&& (element.eType!=ConfigType.BINARY_DEPENDENCY) && (!this.pathList.contains(element.path))) {
+						&& (element.eType!=ConfigType.BINARY_DEPENDENCY) && (element.eType!=ConfigType.INCLUDE) && (!this.pathList.contains(element.path))) {
 					this.pathList.add(element.path);
 				}
 				if (element.eType==ConfigType.VALA_LIBRARY) {

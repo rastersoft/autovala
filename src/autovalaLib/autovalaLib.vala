@@ -430,20 +430,16 @@ namespace AutoVala {
 			if(this.config.globalData.error) {
 				return true; // if there was at least one error during initialization, return
 			}
-
 			var globalData = ElementBase.globalData;
 			AutoVala.Globals.resetCounter();
-
 			error=config.readConfiguration();
 			if (error) {
 				return true;
 			}
-
 			string configPath=this.config.globalData.projectFolder;
 			if (this.copy_cmake(configPath)) {
 				return true;
 			}
-
 			globalData.generateExtraData();
 
 			var globalElement = new ElementGlobal();
@@ -461,7 +457,6 @@ namespace AutoVala {
 				ElementBase.globalData.addError(_("Failed while generating the main CMakeLists.txt file"));
 				return true;
 			}
-
 			try {
 				// and now, generate each one of the CMakeLists.txt files in each folder
 				foreach(var path in globalData.pathList) {
@@ -478,12 +473,11 @@ namespace AutoVala {
 
 					error |= globalElement.generateCMakeHeader(dataStream);
 					foreach(var element in globalData.globalElements) {
-						if (element.path!=path) {
+						if (element.path != path) {
 							continue;
 						}
 						error |= element.generateCMakeHeader(dataStream);
 					}
-
 					var condition = new ConditionalText(dataStream,ConditionalType.CMAKE);
 					error |= globalElement.generateCMake(dataStream);
 					foreach(var element in globalData.globalElements) {
@@ -494,7 +488,6 @@ namespace AutoVala {
 						error |= element.generateCMake(dataStream);
 					}
 					condition.printTail();
-
 					error |= globalElement.generateCMakePostData(dataStream,dataStream);
 					foreach(var element in globalData.globalElements) {
 						if (element.path!=path) {
@@ -502,7 +495,6 @@ namespace AutoVala {
 						}
 						error |= element.generateCMakePostData(dataStream,dataStreamGlobal);
 					}
-
 					globalElement.endedCMakeFile();
 					foreach(var element in globalData.globalElements) {
 						if (element.path!=path) {

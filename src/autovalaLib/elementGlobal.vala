@@ -35,7 +35,7 @@ namespace AutoVala {
 			this.file_list = ElementBase.getFilesFromFolder("meson_scripts",{".sh"},false);
 		}
 
-		private void addFolderToMainCMakeLists(string element, DataOutputStream dataStream,ConfigType eType) {
+		private void addFolderToMainCMakeLists(string element, DataOutputStream dataStream, ConfigType eType) {
 
 			string path;
 			if (element[0] == GLib.Path.DIR_SEPARATOR) {
@@ -98,7 +98,7 @@ namespace AutoVala {
 				dataStream.put_string("option(BUILD_VALADOC \"Build API documentation if Valadoc is available\" OFF)\n");
 
 				foreach(var element in ElementBase.globalData.globalElements) {
-					if (element.eType!=ConfigType.DEFINE) {
+					if (element.eType != ConfigType.DEFINE) {
 						continue;
 					}
 					dataStream.put_string("option(%s \"%s\" OFF)\n".printf(element.name,element.name));
