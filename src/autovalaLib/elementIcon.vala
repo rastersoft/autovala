@@ -352,19 +352,11 @@ namespace AutoVala {
 			return this.configureElement(path,null,null,true,null,false);
 		}
 
-		public override bool generateCMake(DataOutputStream dataStream) {
+		private bool get_entry_path(Theme theme, out IconEntry? entry) {
 
-			// Count how many CMake files for icons we are building,
-			// to ensure that we put the regeneration code in the last one
-
-			var fullPath=Path.build_filename(ElementBase.globalData.projectFolder,this._fullPath);
-			int size=0;
-
-			var theme = ElementIcon.themes.find_theme(this.iconTheme);
-			if (theme == null) {
-				ElementBase.globalData.addWarning(_("The icon theme %s isn't installed in the system; can't get its data").printf(this.iconTheme));
-				return true;
-			}
+			entry = null;
+			var fullPath = Path.build_filename(ElementBase.globalData.projectFolder,this._fullPath);
+			int size = 0;
 
 			// For each PNG file, find the icon size to which it belongs
 			if (this.name.has_suffix(".png")) {
@@ -375,19 +367,14 @@ namespace AutoVala {
 					ElementBase.globalData.addError(_("Can't get the size for icon %s").printf(fullPath));
 					return true;
 				}
-				var entry = theme.check_size(this.iconCathegory,size,false);
+
+				entry = theme.check_size(this.iconCathegory,size,false);
 				if (entry == null) {
 					ElementBase.globalData.addWarning(_("Can't find a suitable entry size in theme %s for the icon %s with size %d in context %s").printf(this.iconTheme,this.name,size,this.iconCathegory));
 					return false;
 				}
-				try {
-					dataStream.put_string("install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/%s DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/%s/)\n".printf(this.name,GLib.Path.build_filename(theme.folder_name,entry.path)));
-				} catch (Error e) {
-					ElementBase.globalData.addError(_("Failed to write the CMakeLists file for icon %s").printf(fullPath));
-					return true;
-				}
+				return false;
 			} else if (this.name.has_suffix(".svg")) {
-				IconEntry? entry = null;
 				if (!this.fixed_size) {
 					entry = theme.check_size(this.iconCathegory,0,true);
 				}
@@ -410,17 +397,73 @@ namespace AutoVala {
 					ElementBase.globalData.addWarning(_("Can't find a valid entry in context %s to install the icon %s in theme %s").printf(this.iconCathegory, this.name,this.iconTheme));
 					return false;
 				}
-				try {
-					dataStream.put_string("install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/%s DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/%s/)\n".printf(this.name,GLib.Path.build_filename(theme.folder_name,entry.path)));
-				} catch (Error e) {
-					ElementBase.globalData.addError(_("Failed to write the CMakeLists file for icon %s").printf(fullPath));
-					return true;
-				}
 			} else {
 				ElementBase.globalData.addError(_("Unknown icon type %s. Must be .png or .svg (in lowercase)").printf(this.name));
 				return true;
 			}
+			return false;
 
+		}
+
+		public override bool generateCMake(DataOutputStream dataStream) {
+
+			// Count how many CMake files for icons we are building,
+			// to ensure that we put the regeneration code in the last one
+
+			IconEntry? entry = null;
+
+			var theme = ElementIcon.themes.find_theme(this.iconTheme);
+			if (theme == null) {
+				ElementBase.globalData.addWarning(_("The icon theme %s isn't installed in the system; can't get its data").printf(this.iconTheme));
+				return true;
+			}
+
+			var retval = this.get_entry_path(theme, out entry);
+			if (retval) {
+				return true;
+			}
+			if (entry == null) {
+				return false;
+			}
+
+			try {
+				dataStream.put_string("install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/%s DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/%s/)\n".printf(this.name,GLib.Path.build_filename(theme.folder_name,entry.path)));
+			} catch (Error e) {
+				ElementBase.globalData.addError(_("Failed to write the CMakeLists file for icon %s").printf(fullPath));
+				return true;
+			}
+			return false;
+		}
+
+		public override bool generateMeson(ConditionalText dataStream, MesonCommon mesonCommon) {
+
+			// Count how many CMake files for icons we are building,
+			// to ensure that we put the regeneration code in the last one
+
+			IconEntry? entry = null;
+
+			var theme = ElementIcon.themes.find_theme(this.iconTheme);
+			if (theme == null) {
+				ElementBase.globalData.addWarning(_("The icon theme %s isn't installed in the system; can't get its data").printf(this.iconTheme));
+				return true;
+			}
+
+			var retval = this.get_entry_path(theme, out entry);
+			if (retval) {
+				return true;
+			}
+			if (entry == null) {
+				return false;
+			}
+
+			try {
+				var origin = GLib.Path.build_filename(this._path,this._name);
+				var destination = GLib.Path.build_filename(theme.folder_name,entry.path);
+				dataStream.put_string("install_data('%s',install_dir: join_paths(get_option('prefix'),get_option('datadir'),'icons','%s'))\n".printf(origin,destination));
+			} catch (Error e) {
+				ElementBase.globalData.addError(_("Failed to write the CMakeLists file for icon %s").printf(fullPath));
+				return true;
+			}
 			return false;
 		}
 
