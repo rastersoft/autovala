@@ -137,9 +137,8 @@ namespace AutoVala {
 			return this.configureElement(path,null,null,true,null,false);
 		}
 
-		public override bool generateCMake(DataOutputStream dataStream) {
-
-			string finalFile="";
+		private string? get_format(out string finalFile) {
+			finalFile="";
 			string? inputFormat=null;
 			if (this.name.has_suffix(".md")) {
 				finalFile=this.name.substring(0,this.name.length-3);
@@ -171,9 +170,16 @@ namespace AutoVala {
 			} else {
 				finalFile=this.name;
 			}
+			return inputFormat;
+		}
+
+		public override bool generateCMake(DataOutputStream dataStream) {
+
+			string finalFile;
+			string? inputFormat = this.get_format(out finalFile);
 
 			try {
-				if (inputFormat==null) {
+				if (inputFormat == null) {
 					dataStream.put_string("configure_file ( ${CMAKE_CURRENT_SOURCE_DIR}/" + this.name + " ${CMAKE_CURRENT_BINARY_DIR}/" + finalFile + " COPYONLY )\n");
 				} else {
 					dataStream.put_string("execute_process ( COMMAND pandoc ${CMAKE_CURRENT_SOURCE_DIR}/" + this.name + " -o ${CMAKE_CURRENT_BINARY_DIR}/" + finalFile + " -f " + inputFormat + " -t man -s )\n");
@@ -191,6 +197,31 @@ namespace AutoVala {
 				return true;
 			}
 
+			return false;
+		}
+
+		public override bool generateMeson(ConditionalText dataStream, MesonCommon mesonCommon) {
+			string finalFile;
+			string? inputFormat = this.get_format(out finalFile);
+
+			try {
+				mesonCommon.create_manpages_script();
+				dataStream.put_string("""meson.add_install_script(join_paths(meson.current_source_dir(),'meson_scripts','install_manpage.sh'),
+	'%d', join_paths(get_option('mandir'),'%sman%d'),
+	'%s',
+	'%s',
+	'%s'
+)
+""".printf((inputFormat == null ? 1 : 2),
+	(this.language == null ? "" : this.language + "', '"),
+	this.pageSection,
+	Path.build_filename(this._path,this._name),
+	inputFormat == null ? "" : inputFormat,
+	finalFile));
+			} catch (GLib.Error e) {
+				ElementBase.globalData.addError(_("Failed to write to meson.build file at '%s' element, at '%s' path: %s").printf(this.command,this._path,e.message));
+				return true;
+			}
 			return false;
 		}
 

@@ -24,9 +24,10 @@ namespace AutoVala {
 	class MesonCommon : GLib.Object {
 
 		private bool install_script_created;
+		private bool manpage_script_created;
 		private bool install_library_script_created;
-		private bool added_dbus_prefix;
 		private bool check_path_script_created;
+		private bool added_dbus_prefix;
 
 		private string scriptPathS;
 
@@ -35,6 +36,7 @@ namespace AutoVala {
 			this.install_library_script_created = false;
 			this.added_dbus_prefix = false;
 			this.check_path_script_created = false;
+			manpage_script_created = false;
 			this.scriptPathS = Path.build_filename(ElementBase.globalData.projectFolder,"meson_scripts");
 			ManageProject.delete_recursive(this.scriptPathS);
 		}
@@ -74,6 +76,39 @@ namespace AutoVala {
 			dataStream2.close();
 			this.set_permissions("install_data.sh");
 			this.install_script_created = true;
+		}
+
+		/**
+		 * Creates the install_manpage_data.sh script, that allows to convert, compress and install manpage files
+		 * The first argument is the destination folder
+		 * The second argument is the source file expresion (can have wildcards)
+		 */
+		public void create_manpages_script() throws GLib.Error {
+
+			if (this.manpage_script_created) {
+				return;
+			}
+
+			this.create_folder();
+			var scriptPath = File.new_for_path(Path.build_filename(this.scriptPathS,"install_manpage.sh"));
+			if (scriptPath.query_exists()) {
+				scriptPath.delete();
+			}
+
+			var dataStream2 = new DataOutputStream(scriptPath.create(FileCreateFlags.NONE));
+			dataStream2.put_string("""#!/bin/sh
+
+mkdir -p $DESTDIR/$MESON_INSTALL_PREFIX/$2
+if [ $1 -eq '2' ]; then
+pandoc ${MESON_SOURCE_ROOT}/$3 -o - -f $4 -t man -s | gzip - > $MESON_INSTALL_DESTDIR_PREFIX/$2/$5.gz
+else
+cat ${MESON_SOURCE_ROOT}/$3 | gzip - > $MESON_INSTALL_DESTDIR_PREFIX/$2/$5.gz
+fi
+""");
+
+			dataStream2.close();
+			this.set_permissions("install_data.sh");
+			this.manpage_script_created = true;
 		}
 
 		/**
