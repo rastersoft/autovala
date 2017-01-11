@@ -67,7 +67,7 @@ namespace AutoVala {
 			return false;
 		}
 
-		public override bool generateMeson(DataOutputStream dataStream, MesonCommon mesonCommon) {
+		public override bool generateMeson(ConditionalText dataStream, MesonCommon mesonCommon) {
 			try {
 				var counter = Globals.counter;
 				dataStream.put_string("runoutput_%d = run_command('pkg-config',['--variable=completionsdir','bash-completion'])\n".printf(counter));

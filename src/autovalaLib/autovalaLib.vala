@@ -322,20 +322,20 @@ namespace AutoVala {
 				}
 				var dis = file.create(FileCreateFlags.NONE);
 				dataStream = new DataOutputStream(dis);
-				error |= globalElement.generateMeson(dataStream, mesonCommon);
+				var condition = new ConditionalText(dataStream,ConditionalType.MESON);
+				error |= globalElement.generateMeson(condition, mesonCommon);
 
 				foreach(var element in globalData.globalElements) {
-					error |= element.generateMesonHeader(dataStream, mesonCommon);
+					error |= element.generateMesonHeader(condition, mesonCommon);
 				}
 
-				var condition = new ConditionalText(dataStream,ConditionalType.MESON);
 				foreach(var element in globalData.globalElements) {
 					if ((element.eType == ConfigType.VALA_BINARY) || (element.eType == ConfigType.VALA_LIBRARY)) {
 						element.processed = false;
 						continue;
 					}
 					condition.printCondition(element.condition,element.invertCondition);
-					error |= element.generateMeson(dataStream, mesonCommon);
+					error |= element.generateMeson(condition, mesonCommon);
 					element.processed = true;
 				}
 				condition.printTail();
@@ -367,7 +367,7 @@ namespace AutoVala {
 						addedOne = true;
 						element.processed = true;
 						condition.printCondition(element.condition,element.invertCondition);
-						error |= element.generateMeson(dataStream, mesonCommon);
+						error |= element.generateMeson(condition, mesonCommon);
 						if ((binElement.eType == ConfigType.VALA_LIBRARY) && (binElement.currentNamespace != "")) {
 							packagesFound.add(binElement.currentNamespace);
 						}

@@ -19,17 +19,17 @@
 using GLib;
 
 namespace AutoVala {
-	
+
 	/**
 	 * Searchs for all versions of Vala
 	 */
-	
+
 	private class FindVala : GLib.Object {
-		
+
 		private Gee.List<ValaVersion> _versions;
 		private ValaVersion? _defaultVersion;
 		private weak ValaVersion? _maxVersion;
-		
+
 		public Gee.List<ValaVersion> versions {
 			get { return this._versions; }
 		}
@@ -39,7 +39,7 @@ namespace AutoVala {
 		public ValaVersion? maxVersion {
 			get { return this._maxVersion; }
 		}
-		
+
 		public FindVala() throws GLib.Error {
 
 			this._versions = new Gee.ArrayList<ValaVersion>();
@@ -54,7 +54,7 @@ namespace AutoVala {
 		}
 
 		private void checkPath(string path) throws GLib.Error {
-			
+
 			var dirPath=File.new_for_path(path);
 			if (dirPath.query_exists()==false) {
 				return;
@@ -103,11 +103,11 @@ namespace AutoVala {
 	}
 
 	private class ValaVersion : GLib.Object {
-		
+
 		public int major;
 		public int minor;
 		public string path;
-		
+
 		public ValaVersion() {
 			this.major=0;
 			this.minor=16;
@@ -125,7 +125,7 @@ namespace AutoVala {
 			/*
 			 * Maybe a not very elegant way of doing it. I accept patches
 			 */
-			 
+
 			string[] spawn_args = {lPath, "--version"};
 			string ls_stdout;
 			int ls_status;

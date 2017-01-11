@@ -111,7 +111,7 @@ namespace AutoVala {
 			return false;
 		}
 
-		public override bool generateMeson(DataOutputStream dataStream, MesonCommon mesonCommon) {
+		public override bool generateMeson(ConditionalText dataStream, MesonCommon mesonCommon) {
 
 			try {
 				var filename = Path.build_filename(this._path,this._name);

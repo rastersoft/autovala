@@ -71,7 +71,7 @@ namespace AutoVala {
 			return false;
 		}
 
-		public override bool generateMeson(DataOutputStream dataStream, MesonCommon mesonCommon) {
+		public override bool generateMeson(ConditionalText dataStream, MesonCommon mesonCommon) {
 			try {
 				mesonCommon.create_install_script();
 				dataStream.put_string("meson.add_install_script(join_paths(meson.current_source_dir(),'meson_scripts','install_data.sh'),join_paths(get_option('prefix'),get_option('datadir'),'%s'),join_paths(meson.current_source_dir(),'%s','%s','*'))\n\n".printf(ElementBase.globalData.projectName,this._path,this._name));

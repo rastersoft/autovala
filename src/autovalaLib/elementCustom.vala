@@ -97,7 +97,7 @@ namespace AutoVala {
 			return false;
 		}
 
-		public override bool generateMeson(DataOutputStream dataStream, MesonCommon mesonCommon) {
+		public override bool generateMeson(ConditionalText dataStream, MesonCommon mesonCommon) {
 
 			try {
 				string destination;

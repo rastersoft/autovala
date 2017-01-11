@@ -32,18 +32,23 @@ namespace AutoVala {
 
 		string? currentCondition;
 		bool invertedCondition;
-		DataOutputStream dataStream;
 		ConditionalType condType;
 
+		public DataOutputStream dataStream;
+
 		public static Globals globalData = null;
+		public int tabs;
+		private string tabs_string;
+		private int basetabs;
 
 		/**
 		 * @param stream The file stream to which write the statements
 		 * @param cmake //true// if we are writting to a CMakeLists.txt file; //false// if it is a .avprj file
 		 */
-		public ConditionalText(DataOutputStream stream,ConditionalType condType) {
+		public ConditionalText(DataOutputStream stream,ConditionalType condType, int basetabs = 0) {
 			this.dataStream=stream;
 			this.condType = condType;
+			this.basetabs = basetabs;
 			this.reset();
 		}
 
@@ -53,6 +58,33 @@ namespace AutoVala {
 		public void reset() {
 			this.currentCondition=null;
 			invertedCondition=false;
+			if (this.basetabs == 0) {
+				this.tabs = 0;
+				this.tabs_string = "";
+			} else {
+				this.tabs = this.basetabs + 1;
+				this.decrement_tab();
+			}
+		}
+
+		public void increment_tab() {
+			this.tabs++;
+			this.tabs_string += "\t";
+		}
+
+		public void decrement_tab() {
+			if (this.tabs > 0) {
+				this.tabs--;
+				this.tabs_string = "";
+				for(int i = 0; i < this.tabs; i++) {
+					this.tabs_string += "\t";
+				}
+			}
+		}
+
+		public void put_string(string text) throws GLib.IOError {
+			this.dataStream.put_string(this.tabs_string);
+			this.dataStream.put_string(text);
 		}
 
 		/**
@@ -63,7 +95,7 @@ namespace AutoVala {
 		public void printCondition(string? condition, bool inverted) throws Error {
 			if (condition==this.currentCondition) {
 
-				if (condition!=null) {
+				if (condition != null) {
 					/* if the condition for the next statement is the same than the condition of the
 					 * previous statement, but the 'inverted' flag is different, we have to put an else
 					 * to reverse the condition
@@ -71,20 +103,18 @@ namespace AutoVala {
 					if (inverted!=this.invertedCondition) {
 						switch(this.condType) {
 							case ConditionalType.CMAKE:
-								this.dataStream.put_string("else ()\n");
+								this.put_string("else ()\n");
 								break;
 							case ConditionalType.AUTOVALA:
-							case ConditionalType.MESON:
 								this.dataStream.put_string("else\n");
+								break;
+							case ConditionalType.MESON:
+								this.decrement_tab();
+								this.dataStream.put_string("else\n");
+								this.increment_tab();
 								break;
 						}
 						this.invertedCondition=inverted;
-					}
-					switch(this.condType) {
-						case ConditionalType.CMAKE:
-						case ConditionalType.MESON:
-							this.dataStream.put_string("\t");
-							break;
 					}
 				}
 			} else {
@@ -98,6 +128,7 @@ namespace AutoVala {
 							this.dataStream.put_string("endif ()\n");
 							break;
 						case ConditionalType.MESON:
+							this.decrement_tab();
 							this.dataStream.put_string("endif\n");
 							break;
 						case ConditionalType.AUTOVALA:
@@ -118,7 +149,8 @@ namespace AutoVala {
 								condition2 = condition2.replace(" AND "," and ");
 								condition2 = condition2.replace(" OR "," or ");
 								condition2 = condition2.replace(" NOT "," not ").strip();
-								this.dataStream.put_string("if %s\n\t".printf(condition2));
+								this.put_string("if %s\n".printf(condition2));
+								this.increment_tab();
 								break;
 							case ConditionalType.AUTOVALA:
 								this.dataStream.put_string("if %s\n".printf(condition));
@@ -134,7 +166,8 @@ namespace AutoVala {
 								condition2 = condition2.replace(" AND "," and ");
 								condition2 = condition2.replace(" OR "," or ");
 								condition2 = condition2.replace(" NOT "," not ").strip();
-								this.dataStream.put_string("if (not %s)\n\t".printf(condition2));
+								this.dataStream.put_string("if (not %s)\n".printf(condition2));
+								this.increment_tab();
 								break;
 							case ConditionalType.AUTOVALA:
 								this.dataStream.put_string("if %s\nelse\n".printf(condition));
@@ -156,6 +189,7 @@ namespace AutoVala {
 						break;
 					case ConditionalType.MESON:
 						this.dataStream.put_string("endif\n");
+						this.decrement_tab();
 						break;
 					case ConditionalType.AUTOVALA:
 						this.dataStream.put_string("end\n");

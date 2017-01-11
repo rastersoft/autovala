@@ -66,7 +66,7 @@ namespace AutoVala {
 			return false;
 		}
 
-		public override bool generateMeson(DataOutputStream dataStream, MesonCommon mesonCommon) {
+		public override bool generateMeson(ConditionalText dataStream, MesonCommon mesonCommon) {
 			try {
 				dataStream.put_string("\tinstall_data('%s', install_dir: join_paths(get_option('prefix'),get_option('datadir'),'%s'))\n".printf(Path.build_filename(this._path,this._name),ElementBase.globalData.projectName));
 			} catch (GLib.Error e) {

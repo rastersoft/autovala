@@ -139,7 +139,7 @@ namespace AutoVala {
 
 		}
 
-		public override bool generateMeson(DataOutputStream dataStream, MesonCommon mesonCommon) {
+		public override bool generateMeson(ConditionalText dataStream, MesonCommon mesonCommon) {
 
 			this.add_inner_files();
 

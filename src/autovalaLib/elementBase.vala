@@ -316,7 +316,7 @@ namespace AutoVala {
 		 * @param dataStream The data stream for the meson.build file being processed
 		 * @return //true// if there was an error; //false// if not. The error texts can be obtained by calling to returnErrors()
 		 */
-		public virtual bool generateMesonHeader(DataOutputStream dataStream, MesonCommon mesonCommon) {
+		public virtual bool generateMesonHeader(ConditionalText dataStream, MesonCommon mesonCommon) {
 			return false;
 		}
 
@@ -325,7 +325,7 @@ namespace AutoVala {
 		 * @param dataStream The data stream for the meson.build file being processed
 		 * @return //true// if there was an error; //false// if not. The error texts can be obtained by calling to returnErrors()
 		 */
-		public virtual bool generateMeson(DataOutputStream dataStream, MesonCommon mesonCommon) {
+		public virtual bool generateMeson(ConditionalText dataStream, MesonCommon mesonCommon) {
 			return false;
 		}
 

@@ -1227,7 +1227,7 @@ namespace AutoVala {
 			return false;
 		}
 
-		public override bool generateMesonHeader(DataOutputStream dataStream, MesonCommon mesonCommon) {
+		public override bool generateMesonHeader(ConditionalText dataStream, MesonCommon mesonCommon) {
 
 			return this.generateDBus();
 		}
@@ -1400,13 +1400,13 @@ namespace AutoVala {
 			return false;
 		}
 
-		private void setMesonVar(DataOutputStream dataStream, string variable, string var_value) throws GLib.IOError {
+		private void setMesonVar(ConditionalText dataStream, string variable, string var_value) throws GLib.IOError {
 			bool exists = this._meson_arrays.contains(variable);
 			dataStream.put_string("%s_%s %s= [%s]\n".printf(this.name,variable,exists ? "+" : "",var_value));
 			this._meson_arrays.add(variable);
 		}
 
-		private void setMesonPrecondition(DataOutputStream datastream,string? condition, string variable) throws GLib.IOError {
+		private void setMesonPrecondition(ConditionalText datastream,string? condition, string variable) throws GLib.IOError {
 			if ((condition != null) && (false == this._meson_arrays.contains(variable))) {
 				this.setMesonVar(datastream,variable,"");
 			}
@@ -1425,7 +1425,7 @@ namespace AutoVala {
 			return output;
 		}
 
-		public override bool generateMeson(DataOutputStream dataStream, MesonCommon mesonCommon) {
+		public override bool generateMeson(ConditionalText dataStream, MesonCommon mesonCommon) {
 
 			this._meson_arrays = new Gee.HashSet<string>();
 
@@ -1455,14 +1455,14 @@ namespace AutoVala {
 				dataStream.put_string("cfg_%s.set('PREFIX', get_option('prefix'))\n".printf(this.name));
 				dataStream.put_string("cfg_%s.set('VERSION', '%s')\n".printf(this.name,this.version));
 				dataStream.put_string("cfg_%s.set('TESTSRCDIR', meson.current_source_dir())\n\n".printf(this.name));
-				
+
 				var counter = Globals.counter;
 				var input_file = Path.build_filename(this._path,"Config.vala.base");
 				var output_file = Path.build_filename("Config_%d.vala".printf(counter));
 				dataStream.put_string("cfgfile_%d = configure_file(input: '%s',output: '%s',configuration: cfg_%s)\n\n".printf(counter,input_file,output_file,this.name));
 
 
-				var printConditions = new ConditionalText(dataStream, ConditionalType.MESON);
+				var printConditions = new ConditionalText(dataStream.dataStream, ConditionalType.MESON, dataStream.tabs);
 				foreach(var module in this.packages) {
 					if ((module.type==packageType.DO_CHECK)||(module.type==packageType.C_DO_CHECK)) {
 						this.setMesonPrecondition(dataStream,module.condition,"deps");
@@ -1471,14 +1471,14 @@ namespace AutoVala {
 					}
 				}
 				printConditions.printTail();
-				
+
 				this.setMesonVar(dataStream,"sources","cfgfile_%d".printf(counter));
 				foreach(var source in this._sources) {
 					printConditions.printCondition(source.condition,source.invertCondition);
 					this.setMesonVar(dataStream,"sources","'%s'".printf(Path.build_filename(this._path,source.elementName)));
 				}
 				printConditions.printTail();
-				
+
 				foreach(var source in this._cSources) {
 					printConditions.printCondition(source.condition,source.invertCondition);
 					this.setMesonVar(dataStream,"sources","'%s'".printf(Path.build_filename(this._path,source.elementName)));
@@ -1508,7 +1508,7 @@ namespace AutoVala {
 					this.setMesonVar(dataStream,"vala_args","'--pkg','%s'".printf(module.elementName));
 				}
 				printConditions.printTail();
-				
+
 				foreach(var element in ElementBase.globalData.globalElements) {
 					if (element.eType==ConfigType.VAPIDIR) {
 						this.setMesonPrecondition(dataStream,element.condition,"vala_args");
@@ -1574,7 +1574,7 @@ namespace AutoVala {
 				}
 
 				foreach(var llibrary in this._link_libraries) {
-					
+
 					if ((llibrary.elementName == "threads") || (llibrary.elementName == "pthreads")) {
 						this.setMesonPrecondition(dataStream,llibrary.condition,"dependencies");
 						printConditions.printCondition(llibrary.condition,llibrary.invertCondition);
@@ -1595,7 +1595,7 @@ namespace AutoVala {
 					this.setMesonVar(dataStream,"link_args","'-l%s'".printf(llibrary.elementName));
 				}
 				printConditions.printTail();
-				
+
 				foreach(var element in this._hFolders) {
 					this.setMesonPrecondition(dataStream,element.condition,"hfolders");
 					printConditions.printCondition(element.condition,element.invertCondition);
@@ -1708,7 +1708,7 @@ namespace AutoVala {
 						ElementValaBinary.counter++;
 					}
 				}
-				
+
 			} catch(GLib.Error e) {
 				ElementBase.globalData.addError(_("Failed to write to meson.build at '%s' element, at '%s' path: %s").printf(this.command,this._path,e.message));
 				return true;

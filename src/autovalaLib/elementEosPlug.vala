@@ -53,7 +53,7 @@ namespace AutoVala {
 			return false;
 		}
 
-		public override bool generateMesonHeader(DataOutputStream dataStream, MesonCommon mesonCommon) {
+		public override bool generateMesonHeader(ConditionalText dataStream, MesonCommon mesonCommon) {
 
 			try {
 				mesonCommon.add_dbus_config(dataStream);
@@ -65,7 +65,7 @@ namespace AutoVala {
 
 		}
 
-		public override bool generateMeson(DataOutputStream dataStream, MesonCommon mesonCommon) {
+		public override bool generateMeson(ConditionalText dataStream, MesonCommon mesonCommon) {
 			try {
 				var name = this._name.replace("-","_").replace(".","_").replace("+","");
 				dataStream.put_string("eos_plug_cfg_%s = configure_file(input: '%s',output: '%s', configuration: cfg_dbus_data)\n".printf(name

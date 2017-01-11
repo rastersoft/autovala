@@ -135,7 +135,7 @@ fi
 			this.check_path_script_created = true;
 		}
 
-		public void add_dbus_config(DataOutputStream dataStream) throws Error {
+		public void add_dbus_config(ConditionalText dataStream) throws Error {
 
 			if (this.added_dbus_prefix) {
 				return;

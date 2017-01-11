@@ -53,7 +53,7 @@ namespace AutoVala {
 			return false;
 		}
 
-		public override bool generateMeson(DataOutputStream dataStream, MesonCommon mesonCommon) {
+		public override bool generateMeson(ConditionalText dataStream, MesonCommon mesonCommon) {
 			try {
 				var counter = Globals.counter;
 				dataStream.put_string("installfile_%d = files('%s')\n".printf(counter,Path.build_filename(this._path,this._name)));

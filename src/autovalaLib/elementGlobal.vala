@@ -334,7 +334,7 @@ namespace AutoVala {
 			return false;
 		}
 
-		public override bool generateMeson(DataOutputStream dataStream, MesonCommon mesonCommon) {
+		public override bool generateMeson(ConditionalText dataStream, MesonCommon mesonCommon) {
 
 			try {
 
@@ -407,7 +407,7 @@ namespace AutoVala {
 
 				elements.sort(ElementValaBinary.comparePackages);
 				found = false;
-				var printConditions = new ConditionalText(dataStream, ConditionalType.MESON);
+				var printConditions = new ConditionalText(dataStream.dataStream, ConditionalType.MESON, dataStream.tabs);
 				foreach(var module in elements) {
 					found = true;
 					printConditions.printCondition(module.condition,module.invertCondition);
