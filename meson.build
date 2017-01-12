@@ -17,6 +17,7 @@ pangocairo_dep = dependency('pangocairo')
 vte_2_91_dep = dependency('vte-2.91')
 x11_dep = dependency('x11')
 
+subdir('po')
 meson.add_install_script(join_paths(meson.current_source_dir(),'meson_scripts','install_data.sh'),join_paths(get_option('prefix'),'share/autovala/debian'),join_paths(meson.current_source_dir(),'data/debian',''))
 
 meson.add_install_script(join_paths(meson.current_source_dir(),'meson_scripts','install_data.sh'),join_paths(get_option('prefix'),'share/autovala/cmake'),join_paths(meson.current_source_dir(),'data/cmake',''))
