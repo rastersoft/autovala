@@ -461,7 +461,7 @@ namespace AutoVala {
 				var destination = GLib.Path.build_filename(theme.folder_name,entry.path);
 				dataStream.put_string("install_data('%s',install_dir: join_paths(get_option('prefix'),get_option('datadir'),'icons','%s'))\n".printf(origin,destination));
 			} catch (Error e) {
-				ElementBase.globalData.addError(_("Failed to write the CMakeLists file for icon %s").printf(fullPath));
+				ElementBase.globalData.addError(_("Failed to write to meson.build at '%s' element, at '%s' path: %s").printf(this.command,this._path,e.message));
 				return true;
 			}
 			return false;
