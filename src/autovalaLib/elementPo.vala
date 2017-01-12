@@ -128,19 +128,10 @@ namespace AutoVala {
 
 			try {
 				this.generatePotfiles();
-				string[] po_files = {};
 
-				var poDirectory = File.new_for_path(Path.build_filename(ElementBase.globalData.projectFolder,this._path));
-				var enumerator = poDirectory.enumerate_children (FileAttribute.STANDARD_NAME, 0);
-
-				FileInfo file_info;
-				while ((file_info = enumerator.next_file ()) != null) {
-					var poname = file_info.get_name();
-				    if(poname.has_suffix(".po")) {
-						po_files += poname.substring(0,poname.length - 3);
-					}
-				}
-
+				string[] extensions = {};
+				extensions += "po";
+				var po_files = ElementBase.getFilesFromFolder(this._path,extensions,false,true);
 				if (po_files.length <= 0) {
 					return false;
 				}
@@ -165,7 +156,7 @@ namespace AutoVala {
 						dataStream2.put_string(", ");
 					}
 					first = false;
-					dataStream2.put_string("'%s'".printf(poname));
+					dataStream2.put_string("'%s'".printf(poname.substring(0,poname.length - 3)));
 				}
 				dataStream2.put_string("])\n");
 				dataStream2.close();
@@ -187,7 +178,7 @@ namespace AutoVala {
 						dataStream3.put_string(" ");
 					}
 					first = false;
-					dataStream3.put_string("'%s'".printf(poname));
+					dataStream3.put_string("%s".printf(poname.substring(0,poname.length - 3)));
 				}
 				dataStream3.put_string("\n");
 				dataStream3.close();
