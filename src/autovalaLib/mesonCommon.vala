@@ -24,6 +24,7 @@ namespace AutoVala {
 	class MesonCommon : GLib.Object {
 
 		private bool install_script_created;
+		private bool install_schemas_created;
 		private bool manpage_script_created;
 		private bool install_library_script_created;
 		private bool check_path_script_created;
@@ -36,9 +37,13 @@ namespace AutoVala {
 			this.install_library_script_created = false;
 			this.added_dbus_prefix = false;
 			this.check_path_script_created = false;
-			manpage_script_created = false;
+			this.manpage_script_created = false;
+			this.install_schemas_created = false;
 			this.scriptPathS = Path.build_filename(ElementBase.globalData.projectFolder,"meson_scripts");
-			ManageProject.delete_recursive(this.scriptPathS);
+			var tmpPath = File.new_for_path(this.scriptPathS);
+			if (tmpPath.query_exists()) {
+				ManageProject.delete_recursive(this.scriptPathS);
+			}
 		}
 
 		private void create_folder() {
@@ -76,6 +81,38 @@ namespace AutoVala {
 			dataStream2.close();
 			this.set_permissions("install_data.sh");
 			this.install_script_created = true;
+		}
+
+		/**
+		 * Creates the install_data.sh script, that allows to install data files in specific folders, with wildcards
+		 * The first argument is the destination folder
+		 * The second argument is the source file expresion (can have wildcards)
+		 */
+		public void create_schemas_script() throws GLib.Error {
+
+			if (this.install_schemas_created) {
+				return;
+			}
+			this.create_folder();
+			var scriptPath = File.new_for_path(Path.build_filename(this.scriptPathS,"install_schemas.py"));
+			if (scriptPath.query_exists()) {
+				scriptPath.delete();
+			}
+
+			var dataStream2 = new DataOutputStream(scriptPath.create(FileCreateFlags.NONE));
+			dataStream2.put_string("""#!/usr/bin/env python3
+
+import os
+import subprocess
+
+schemadir = os.path.join(os.environ['MESON_INSTALL_PREFIX'], 'share', 'glib-2.0', 'schemas')
+
+if not os.environ.get('DESTDIR'):
+    print('Compiling gsettings schemas...')
+    subprocess.call(['glib-compile-schemas', schemadir])""");
+			dataStream2.close();
+			this.set_permissions("install_schemas.py");
+			this.install_schemas_created = true;
 		}
 
 		/**
