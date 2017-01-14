@@ -32,7 +32,7 @@ void help() {
 	autovala refresh: tries to guess the type for each file in the folders and adds them to the project file.
 	autovala cmake: creates the CMake files from the project file.
 	autovala meson: creates the meson.build files from the project file.
-	autovala update: the same than 'refresh'+'cmake'.
+	autovala update: the same than 'refresh' + 'cmake' + 'meson'.
 	autovala po: updates translatable strings.
 	autovala clear: removes the automatic parts in the project file, leaving only the manual ones.
 	autovala project_files: lists all the files belonging to the project (with paths relative to the project's root).
@@ -105,7 +105,7 @@ int main(string[] argv) {
 			return -1;
 		}
 		var gen = new AutoVala.ManageProject();
-		retval=gen.meson();
+		retval = gen.meson();
 		gen.showErrors();
 		if (retval) {
 			GLib.stderr.printf(_("Aborting\n"));
@@ -169,25 +169,27 @@ int main(string[] argv) {
 		GLib.stderr.printf(_("Done\n"));
 		break;
 	case "update":
-		if (argv.length!=2) {
+		if (argv.length != 2) {
 			help();
 			return -1;
 		}
 		var gen = new AutoVala.ManageProject();
 		GLib.stdout.printf(_("Updating project file\n"));
-		retval=gen.refresh();
+		retval = gen.refresh();
 		gen.showErrors();
 		if (retval) {
 			GLib.stderr.printf(_("Aborting\n"));
 			return -1;
-		} else {
-			GLib.stdout.printf(_("Updating CMake files\n"));
-			retval=gen.cmake();
-			gen.showErrors();
-			if (retval) {
-				GLib.stderr.printf(_("Aborting\n"));
-				return -1;
-			}
+		}
+		GLib.stdout.printf(_("Updating CMake files\n"));
+		retval = gen.cmake();
+		gen.showErrors();
+		GLib.stdout.printf(_("Updating Meson files\n"));
+		retval |= gen.meson();
+		gen.showErrors();
+		if (retval) {
+			GLib.stderr.printf(_("Aborting\n"));
+			return -1;
 		}
 		GLib.stderr.printf(_("Done\n"));
 		break;

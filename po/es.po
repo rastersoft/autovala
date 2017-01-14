@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-01-13 23:08+0100\n"
-"PO-Revision-Date: 2017-01-13 23:19+0100\n"
+"POT-Creation-Date: 2017-01-15 00:21+0100\n"
+"PO-Revision-Date: 2017-01-15 00:21+0100\n"
 "Last-Translator: Sergio Costas <rastersoft@gmail.com>\n"
 "Language-Team: Español; Castellano <rastersoft@gmail.com>\n"
 "Language: en_US\n"
@@ -22,67 +22,69 @@ msgstr ""
 #: src/autovala.vala:27
 msgid ""
 "Autovala. Usage:\n"
-"\tautovala help: shows this help\n"
-"\tautovala version: shows the current version\n"
+"\tautovala help: shows this help.\n"
+"\tautovala version: shows the current version.\n"
 "\tautovala init project_name: initializates a new Vala CMake project and "
-"creates an initial project file\n"
+"creates an initial project file.\n"
 "\tautovala ginit project_name: initializates a new Genie CMake project and "
-"creates an initial project file\n"
+"creates an initial project file.\n"
 "\tautovala refresh: tries to guess the type for each file in the folders and "
-"adds them to the project file\n"
-"\tautovala cmake: creates the CMake files from the project file\n"
-"\tautovala meson: creates the meson.build files from the project file\n"
-"\tautovala update: the same than 'refresh'+'cmake'\n"
-"\tautovala po: updates translatable strings\n"
+"adds them to the project file.\n"
+"\tautovala cmake: creates the CMake files from the project file.\n"
+"\tautovala meson: creates the meson.build files from the project file.\n"
+"\tautovala update: the same than 'refresh' + 'cmake' + 'meson'.\n"
+"\tautovala po: updates translatable strings.\n"
 "\tautovala clear: removes the automatic parts in the project file, leaving "
 "only the manual ones.\n"
 "\tautovala project_files: lists all the files belonging to the project (with "
 "paths relative to the project's root).\n"
+"\tautovala git: adds to git all the project files.\n"
 "\tautovala deb: creates the 'debian' folder for packaging the project as a ."
-"deb package\n"
+"deb package.\n"
 "\tautovala rpm: creates the 'rpmbuild' folder for packaging the project as "
-"a .rpm package\n"
-"\tautovala pacman: creates a package for PACMAN package manager\n"
-"\tautovala valama: exports the project to a VALAMA project file\n"
+"a .rpm package.\n"
+"\tautovala pacman: creates a package for PACMAN package manager.\n"
+"\tautovala valama: exports the project to a VALAMA project file.\n"
 "\tautovala external owner_id: shows the external data of the specified "
-"owner\n"
+"owner.\n"
 "\n"
 msgstr ""
 "Autovala: uso:\n"
-"\tautovala help: muestra esta ayuda\n"
-"\tautovala version: muestra la versión actual\n"
+"\tautovala help: muestra esta ayuda.\n"
+"\tautovala version: muestra la versión actual.\n"
 "\tautovala init nombre_proyecto: inicializa Vala y CMake, y crea un fichero "
-"de proyecto inicial\n"
+"de proyecto inicial.\n"
 "\tautovala ginit nombre_proyecto: inicializa un proyecto de Genie, y crea un "
-"fichero de proyecto inicial\n"
+"fichero de proyecto inicial.\n"
 "\tautovala refresh: intenta adivinar el tipo de cada fichero en las carpetas "
-"y los añade al fichero de proyecto\n"
+"y los añade al fichero de proyecto.\n"
 "\tautovala cmake: crea los ficheros para CMake a partir del fichero de "
-"proyecto\n"
+"proyecto.\n"
 "\tautovala meson: crea los ficheros para Meson a partir del fichero de "
-"proyecto\n"
-"\tautovala update: mismo resultado que 'refresh'+'cmake'\n"
-"\tautovala po: actualiza las cadenas traducibles\n"
+"proyecto.\n"
+"\tautovala update: mismo resultado que 'refresh' + 'cmake' + 'meson'.\n"
+"\tautovala po: actualiza las cadenas traducibles.\n"
 "\tautovala clear: elimina las partes automáticas en el fichero de proyecto, "
 "dejando sólo las añadidas manualmente.\n"
 "\tautovala project_files: lista todos los ficheros pertenecientes al "
 "proyecto (con sus rutas relativas a la raíz del proyecto).\n"
+"\tautovala git: añade a git todos los ficheros pertenecientes al proyecto.\n"
 "\tautovala deb: crea la carpeta 'debian' para empaquetar el proyecto como un "
-"paquete .deb\n"
+"paquete .deb.\n"
 "\tautovala rpm: crea la carpeta 'rpmbuild' para empaquetar el proyecto como "
-"un paquete .rpm\n"
-"\tautovala pacman: crea un paquete para el gestor de paquetes PACMAN\n"
+"un paquete .rpm.\n"
+"\tautovala pacman: crea un paquete para el gestor de paquetes PACMAN.\n"
 "\tautovala valama: exporta el proyecto a un fichero de proyecto apto para "
-"VALAMA\n"
+"VALAMA.\n"
 "\tautovala external id_usuario: muestra los datos externos del usuario "
-"indicado\n"
+"indicado.\n"
 "\n"
 
-#: src/autovala.vala:82 src/autovala.vala:96 src/autovala.vala:110
-#: src/autovala.vala:124 src/autovala.vala:141 src/autovala.vala:148
-#: src/autovala.vala:164 src/autovala.vala:178 src/autovala.vala:192
-#: src/autovala.vala:206 src/autovala.vala:220 src/autovala.vala:234
-#: src/autovala.vala:248 src/autovala.vala:265
+#: src/autovala.vala:83 src/autovala.vala:97 src/autovala.vala:111
+#: src/autovala.vala:125 src/autovala.vala:141 src/autovala.vala:181
+#: src/autovala.vala:191 src/autovala.vala:206 src/autovala.vala:220
+#: src/autovala.vala:234 src/autovala.vala:248 src/autovala.vala:262
+#: src/autovala.vala:276 src/autovala.vala:290 src/autovala.vala:307
 #: src/autovalaPlugin/projectview.vala:579
 #: src/autovalaPlugin/projectview.vala:588
 #: src/autovalaPlugin/projectview.vala:701
@@ -91,127 +93,136 @@ msgstr ""
 msgid "Aborting\n"
 msgstr "Abortando\n"
 
-#: src/autovala.vala:85 src/autovala.vala:99 src/autovala.vala:113
-#: src/autovala.vala:152 src/autovala.vala:167 src/autovala.vala:181
-#: src/autovala.vala:195 src/autovala.vala:209 src/autovala.vala:223
-#: src/autovala.vala:237 src/autovala.vala:254 src/autovala.vala:269
-#: src/autovalaPlugin/projectview.vala:581
+#: src/autovala.vala:86 src/autovala.vala:100 src/autovala.vala:114
+#: src/autovala.vala:169 src/autovala.vala:194 src/autovala.vala:209
+#: src/autovala.vala:223 src/autovala.vala:237 src/autovala.vala:251
+#: src/autovala.vala:265 src/autovala.vala:279 src/autovala.vala:296
+#: src/autovala.vala:311 src/autovalaPlugin/projectview.vala:581
 #: src/autovalaPlugin/projectview.vala:590
 #: src/autovalaPlugin/projectview.vala:801
 msgid "Done\n"
 msgstr "Hecho\n"
 
-#: src/autovala.vala:137 src/autovala.vala:160
+#: src/autovala.vala:157
+#, c-format
+msgid "Failed to launch GIT: %s"
+msgstr "No se ha podido ejecutar GIT: %s"
+
+#: src/autovala.vala:177 src/autovala.vala:202
 msgid "Updating project file\n"
 msgstr "Actualizando el fichero de proyecto\n"
 
-#: src/autovala.vala:144 src/autovalaPlugin/projectview.vala:662
+#: src/autovala.vala:184 src/autovalaPlugin/projectview.vala:662
 msgid "Updating CMake files\n"
 msgstr "Actualizando los ficheros de CMake\n"
 
-#: src/autovala.vala:302
+#: src/autovala.vala:187
+msgid "Updating Meson files\n"
+msgstr "Actualizando los ficheros de Meson\n"
+
+#: src/autovala.vala:344
 #, c-format
 msgid "Failed to create the folder %s"
 msgstr "Falló la creación del directorio %s"
 
-#: src/autovala.vala:311
+#: src/autovala.vala:353
 #, c-format
 msgid "Failed to delete the old valama Config.vala file at %s"
 msgstr "No se ha podido borrar el viejo fichero Config.vala de valama en %s"
 
-#: src/autovala.vala:325
+#: src/autovala.vala:367
 #, c-format
 msgid "Failed to write to valama Config.vala file at %s"
 msgstr "Falló la creación del fichero Config.vala para valama en %s"
 
-#: src/autovala.vala:348
+#: src/autovala.vala:390
 #, c-format
 msgid "Failed to delete the old valama project file %s"
 msgstr "No se ha podido borrar el viejo fichero de configuración de valama %s"
 
-#: src/autovala.vala:384
+#: src/autovala.vala:426
 #, c-format
 msgid "Failed to write to valama project file %s"
 msgstr "Incapaz de escribir datos en el fichero de proyecto de valama %s"
 
-#: src/autovalaLib/autovalaLib.vala:55
+#: src/autovalaLib/autovalaLib.vala:59
 #, c-format
 msgid "Can't copy folder %s to %s; it doesn't exist."
 msgstr "No es posible copiar la carpeta %s a %s; no existe."
 
-#: src/autovalaLib/autovalaLib.vala:65
+#: src/autovalaLib/autovalaLib.vala:69
 #, c-format
 msgid "Failed when creating folder %s"
 msgstr "Incapaz de crear el fichero %s"
 
-#: src/autovalaLib/autovalaLib.vala:79
+#: src/autovalaLib/autovalaLib.vala:83
 #, c-format
 msgid "Failed when copying recursively the folder %s to %s"
 msgstr "Ha fallado la copia recursiva del directorio %s a %s"
 
-#: src/autovalaLib/autovalaLib.vala:86
+#: src/autovalaLib/autovalaLib.vala:90
 #, c-format
 msgid "Failed when copying the file %s to %s"
 msgstr "Incapaz de copiar el fichero %s a %s"
 
-#: src/autovalaLib/autovalaLib.vala:108 src/autovalaPlugin/projectview.vala:741
+#: src/autovalaLib/autovalaLib.vala:112 src/autovalaPlugin/projectview.vala:741
 #, c-format
 msgid "Failed when deleting recursively the folder %s"
 msgstr "Ha fallado el borrado recursivo del directorio %s"
 
-#: src/autovalaLib/autovalaLib.vala:116 src/autovalaPlugin/projectview.vala:750
+#: src/autovalaLib/autovalaLib.vala:120 src/autovalaPlugin/projectview.vala:750
 #, c-format
 msgid "Failed when deleting the file %s"
 msgstr "Incapaz de borrar el fichero %s"
 
-#: src/autovalaLib/autovalaLib.vala:128
+#: src/autovalaLib/autovalaLib.vala:132
 #, c-format
 msgid "The folder '%s' already exists"
 msgstr "El directorio %s ya existe"
 
-#: src/autovalaLib/autovalaLib.vala:133
+#: src/autovalaLib/autovalaLib.vala:137
 #, c-format
 msgid "Can't create the folder '%s'"
 msgstr "No se ha podido crear el directorio %s"
 
-#: src/autovalaLib/autovalaLib.vala:156
+#: src/autovalaLib/autovalaLib.vala:160
 #, c-format
 msgid "Can't create the file '%s'"
 msgstr "No se ha podido crear el fichero '%s'"
 
-#: src/autovalaLib/autovalaLib.vala:175
+#: src/autovalaLib/autovalaLib.vala:179
 #, c-format
 msgid "Copying CMAKE scripts from %s"
 msgstr "Copiando los scripts de CMAKE desde %s"
 
-#: src/autovalaLib/autovalaLib.vala:188
+#: src/autovalaLib/autovalaLib.vala:192
 #, c-format
 msgid "Folder %s doesn't exist. Autovala is incorrectly installed"
 msgstr "La carpeta %s no existe. Autovala está instalado incorrectamente"
 
-#: src/autovalaLib/autovalaLib.vala:226
+#: src/autovalaLib/autovalaLib.vala:230
 #, c-format
 msgid "There's already a project in folder %s"
 msgstr "Ya existe un proyecto en el directorio %s"
 
-#: src/autovalaLib/autovalaLib.vala:231
+#: src/autovalaLib/autovalaLib.vala:235
 #, c-format
 msgid "Failed to list path %s"
 msgstr "Incapaz de listar el directorio %s"
 
-#: src/autovalaLib/autovalaLib.vala:238
+#: src/autovalaLib/autovalaLib.vala:242
 msgid "The 'cmake' folder already exists"
 msgstr "El directorio 'cmake' ya existe"
 
-#: src/autovalaLib/autovalaLib.vala:266
+#: src/autovalaLib/autovalaLib.vala:270
 msgid "Can't create the initial source file"
 msgstr "No se ha podido crear el fichero fuente inicial"
 
-#: src/autovalaLib/autovalaLib.vala:376 src/autovalaLib/elementGlobal.vala:297
+#: src/autovalaLib/autovalaLib.vala:380 src/autovalaLib/elementGlobal.vala:297
 msgid "The following local dependencies cannot be satisfied:"
 msgstr "No se han podido satisfacer las siguientes dependencias locales:"
 
-#: src/autovalaLib/autovalaLib.vala:382 src/autovalaLib/elementGlobal.vala:304
+#: src/autovalaLib/autovalaLib.vala:386 src/autovalaLib/elementGlobal.vala:304
 #, c-format
 msgid ""
 "\n"
@@ -220,7 +231,7 @@ msgstr ""
 "\n"
 "\tBiblioteca %s, paquetes:"
 
-#: src/autovalaLib/autovalaLib.vala:384 src/autovalaLib/elementGlobal.vala:306
+#: src/autovalaLib/autovalaLib.vala:388 src/autovalaLib/elementGlobal.vala:306
 #, c-format
 msgid ""
 "\n"
@@ -229,7 +240,7 @@ msgstr ""
 "\n"
 "\tBinario %s, paquetes:"
 
-#: src/autovalaLib/autovalaLib.vala:399 src/autovalaLib/elementAppData.vala:94
+#: src/autovalaLib/autovalaLib.vala:403 src/autovalaLib/elementAppData.vala:94
 #: src/autovalaLib/elementBashCompletion.vala:81
 #: src/autovalaLib/elementBinary.vala:62 src/autovalaLib/elementCustom.vala:112
 #: src/autovalaLib/elementDBus.vala:109 src/autovalaLib/elementDesktop.vala:128
@@ -245,44 +256,44 @@ msgid "Failed to write to meson.build at '%s' element, at '%s' path: %s"
 msgstr ""
 "Fallo la escritura a meson.build en el elemento '%s', en la ruta '%s': %s"
 
-#: src/autovalaLib/autovalaLib.vala:410
+#: src/autovalaLib/autovalaLib.vala:414
 #, c-format
 msgid "Failed to close meson.build file: %s"
 msgstr "No se ha podido cerrar el fichero meson.build: %s"
 
-#: src/autovalaLib/autovalaLib.vala:457
+#: src/autovalaLib/autovalaLib.vala:461
 msgid "Failed while generating the main CMakeLists.txt file"
 msgstr "Falló la creación del fichero CMakeLists.txt principal"
 
-#: src/autovalaLib/autovalaLib.vala:508 src/autovalaLib/autovalaLib.vala:514
+#: src/autovalaLib/autovalaLib.vala:512 src/autovalaLib/autovalaLib.vala:518
 #, c-format
 msgid "Failed while generating the CMakeLists.txt files: %s"
 msgstr "Falló la creación de los ficheros CMakeLists.txt: %s"
 
-#: src/autovalaLib/autovalaLib.vala:676 src/autovalaLib/autovalaLib.vala:705
+#: src/autovalaLib/autovalaLib.vala:680 src/autovalaLib/autovalaLib.vala:709
 #, c-format
 msgid "Launching command %s"
 msgstr "Lanzando el comando %s"
 
-#: src/autovalaLib/autovalaLib.vala:683
+#: src/autovalaLib/autovalaLib.vala:687
 msgid "Failed to run 'xgettext' to generate the base POT file"
 msgstr "No se ha podido ejecutar 'xgettext' para crear el fichero POT base"
 
-#: src/autovalaLib/autovalaLib.vala:687
+#: src/autovalaLib/autovalaLib.vala:691
 #, c-format
 msgid "Command output: %s\n"
 msgstr "Salida del comando: %s\n"
 
-#: src/autovalaLib/autovalaLib.vala:691
+#: src/autovalaLib/autovalaLib.vala:695
 #, c-format
 msgid "Error output: %s\n"
 msgstr "Salida de error: %s\n"
 
-#: src/autovalaLib/autovalaLib.vala:712
+#: src/autovalaLib/autovalaLib.vala:716
 msgid "Failed to run msgmerge"
 msgstr "Incapaz de ejecutar msgmerge"
 
-#: src/autovalaLib/autovalaLib.vala:714
+#: src/autovalaLib/autovalaLib.vala:718
 #, c-format
 msgid ""
 "\n"
@@ -293,28 +304,28 @@ msgstr ""
 "Salida del comando: %s\n"
 "Salida de error: %s\n"
 
-#: src/autovalaLib/autovalaLib.vala:718
+#: src/autovalaLib/autovalaLib.vala:722
 #, c-format
 msgid "Failed to get the files inside %s"
 msgstr "Falló la obtención de los ficheros de dentro de %s"
 
-#: src/autovalaLib/autovalaLib.vala:836
+#: src/autovalaLib/autovalaLib.vala:840
 msgid "The path can't be the project's root path"
 msgstr "La ruta no puede estar en la raíz del proyecto"
 
-#: src/autovalaLib/autovalaLib.vala:838
+#: src/autovalaLib/autovalaLib.vala:842
 msgid "The selected path is outside the project folder"
 msgstr "La ruta escogida está fuera de la carpeta del proyecto"
 
-#: src/autovalaLib/autovalaLib.vala:870
+#: src/autovalaLib/autovalaLib.vala:874
 msgid "Path already in use in other element"
 msgstr "La ruta ya está asignada a otro elemento"
 
-#: src/autovalaLib/autovalaLib.vala:877
+#: src/autovalaLib/autovalaLib.vala:881
 msgid "Name already in use in other executable or library"
 msgstr "Otro ejecutable o biblioteca tiene asignado ese nombre"
 
-#: src/autovalaLib/autovalaLib.vala:884
+#: src/autovalaLib/autovalaLib.vala:888
 msgid "The element doesn't exist"
 msgstr "El elemento no existe"
 
