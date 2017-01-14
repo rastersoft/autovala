@@ -29,6 +29,10 @@ namespace AutoVala {
 
 		private Configuration config;
 
+		public string getProjectPath() {
+			return this.config.globalData.projectFolder;
+		}
+
 		public void showErrors() {
 			this.config.showErrors();
 		}

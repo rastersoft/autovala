@@ -25,22 +25,23 @@ using Posix;
 void help() {
 
 	GLib.stdout.printf(_("""Autovala. Usage:
-	autovala help: shows this help
-	autovala version: shows the current version
-	autovala init project_name: initializates a new Vala CMake project and creates an initial project file
-	autovala ginit project_name: initializates a new Genie CMake project and creates an initial project file
-	autovala refresh: tries to guess the type for each file in the folders and adds them to the project file
-	autovala cmake: creates the CMake files from the project file
-	autovala meson: creates the meson.build files from the project file
-	autovala update: the same than 'refresh'+'cmake'
-	autovala po: updates translatable strings
+	autovala help: shows this help.
+	autovala version: shows the current version.
+	autovala init project_name: initializates a new Vala CMake project and creates an initial project file.
+	autovala ginit project_name: initializates a new Genie CMake project and creates an initial project file.
+	autovala refresh: tries to guess the type for each file in the folders and adds them to the project file.
+	autovala cmake: creates the CMake files from the project file.
+	autovala meson: creates the meson.build files from the project file.
+	autovala update: the same than 'refresh'+'cmake'.
+	autovala po: updates translatable strings.
 	autovala clear: removes the automatic parts in the project file, leaving only the manual ones.
 	autovala project_files: lists all the files belonging to the project (with paths relative to the project's root).
-	autovala deb: creates the 'debian' folder for packaging the project as a .deb package
-	autovala rpm: creates the 'rpmbuild' folder for packaging the project as a .rpm package
-	autovala pacman: creates a package for PACMAN package manager
-	autovala valama: exports the project to a VALAMA project file
-	autovala external owner_id: shows the external data of the specified owner
+	autovala git: adds to git all the project files.
+	autovala deb: creates the 'debian' folder for packaging the project as a .deb package.
+	autovala rpm: creates the 'rpmbuild' folder for packaging the project as a .rpm package.
+	autovala pacman: creates a package for PACMAN package manager.
+	autovala valama: exports the project to a VALAMA project file.
+	autovala external owner_id: shows the external data of the specified owner.
 
 """));
 }
@@ -127,6 +128,45 @@ int main(string[] argv) {
 		foreach(var element in retval2) {
 			GLib.stdout.printf("%s\n",element);
 		}
+		break;
+	case "git":
+		if (argv.length != 2) {
+			help();
+			return -1;
+		}
+		var gen = new AutoVala.ManageProject();
+		var retval2 = gen.get_files();
+		if (retval2 == null) {
+			gen.showErrors();
+			GLib.stderr.printf(_("Aborting\n"));
+			return -1;
+		}
+		string[] spawn_env = Environ.get();
+		string[] spawn_args = {};
+		spawn_args += "git";
+		spawn_args += "add";
+		foreach(var element in retval2) {
+			spawn_args += element;
+		}
+		string output;
+		string errput;
+		int errval;
+		try {
+			GLib.Process.spawn_sync(gen.getProjectPath(),spawn_args,spawn_env,GLib.SpawnFlags.SEARCH_PATH,null, out output, out errput,out errval);
+		} catch(Error e) {
+			print(_("Failed to launch GIT: %s").printf(e.message));
+			return -1;
+		}
+		if (output != "") {
+			print(output+"\n");
+		}
+		if (errput != "") {
+			print(errput+"\n");
+		}
+		if (errval != 0) {
+			return errval;
+		}
+		GLib.stderr.printf(_("Done\n"));
 		break;
 	case "update":
 		if (argv.length!=2) {

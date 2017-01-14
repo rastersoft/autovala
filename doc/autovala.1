@@ -96,9 +96,9 @@ capabilities.</li>
 <p>Everytime you run <strong>autovala cmake</strong> or <strong>autovala update</strong>, the CMAKE scripts contained in the <strong>cmake</strong> folder will be refreshed; this allows to get advantage of new capabilities available in more recent versions of autovala. The scripts are copied, by default, from the autovala's system-wide installation folder, unless the environment variable <strong>AUTOVALA_CMAKE_SCRIPT</strong> is defined with the path to a folder containing an alternative script.</p>
 <h1 id="options">OPTIONS</h1>
 <p><strong>autovala help</strong><br />
-Shows the available options</p>
+Shows the available commands</p>
 <p><strong>autovala version</strong><br />
-Shows the installed version</p>
+Shows the installed version of Autovala</p>
 <p><strong>autovala init PROJECT_NAME</strong><br />
 Creates a new project called PROJECT_NAME, and initializates the basic directory tree and an empty source file.</p>
 <p><strong>autovala ginit PROJECT_NAME</strong><br />
@@ -121,6 +121,10 @@ Lists all the files needed to build and install the project (after being generat
 <pre><code>    git add `autovala project_files`</code></pre>
 <p>The same can be done with <strong>bazaar</strong>, <strong>subversion</strong>, or nearly all versioning systems.</p>
 <p>Keep in mind that this command only lists the files that are refered in the <strong>.avprj</strong> file. This means that files like <strong>README.md</strong> at the root, won't be listed. This means that other files that you want to be available in the repository but not in the final installation must be added manually.</p>
+<p><strong>autovala git</strong><br />
+Adds all the project files to a git repository located in the project's root folder. It is equivalent to executing:</p>
+<pre><code> git add `autovala project_files`</code></pre>
+<p>from the project's root directory. The advantages are two: it is shorter, and it can be run from any folder, not only from the project's root directory.</p>
 <p><strong>autovala deb</strong><br />
 Generates the metadata needed for building a <strong>DEB</strong> package. The most important part that generates are the dependencies, both for source and binary packages.</p>
 <p><strong>autovala rpm</strong><br />

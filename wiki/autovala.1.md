@@ -138,10 +138,10 @@ Everytime you run **autovala cmake** or **autovala update**, the CMAKE scripts c
 # OPTIONS
 
 **autovala help**
-  Shows the available options
+  Shows the available commands
 
 **autovala version**
-  Shows the installed version
+  Shows the installed version of Autovala
 
 **autovala init PROJECT_NAME**
   Creates a new project called PROJECT_NAME, and initializates the basic directory tree and an empty source file.
@@ -177,6 +177,13 @@ Everytime you run **autovala cmake** or **autovala update**, the CMAKE scripts c
   The same can be done with **bazaar**, **subversion**, or nearly all versioning systems.
 
   Keep in mind that this command only lists the files that are refered in the **.avprj** file. This means that files like **README.md** at the root, won't be listed. This means that other files that you want to be available in the repository but not in the final installation must be added manually.
+
+**autovala git**
+  Adds all the project files to a git repository located in the project's root folder. It is equivalent to executing:
+
+     git add `autovala project_files`
+
+  from the project's root directory. The advantages are two: it is shorter, and it can be run from any folder, not only from the project's root directory.
 
 **autovala deb**
   Generates the metadata needed for building a **DEB** package. The most important part that generates are the dependencies, both for source and binary packages.
