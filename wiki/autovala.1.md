@@ -141,7 +141,7 @@ Everytime you run **autovala cmake** or **autovala update**, the CMAKE scripts c
 
 **autovala update**
   The same than refresh+cmake
-  
+
 **autovala po**
   Updates the .po files with the new strings (requires gettext 0.18.3 or later)
 

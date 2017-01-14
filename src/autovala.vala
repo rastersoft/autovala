@@ -92,6 +92,45 @@ int main(string[] argv) {
 			GLib.stdout.printf("%s\n",element);
 		}
 		break;
+	case "git":
+		if (argv.length != 2) {
+			help();
+			return -1;
+		}
+		var gen = new AutoVala.ManageProject();
+		var retval2 = gen.get_files();
+		if (retval2 == null) {
+			gen.showErrors();
+			GLib.stderr.printf(_("Aborting\n"));
+			return -1;
+		}
+		string[] spawn_env = Environ.get();
+		string[] spawn_args = {};
+		spawn_args += "git";
+		spawn_args += "add";
+		foreach(var element in retval2) {
+			spawn_args += element;
+		}
+		string output;
+		string errput;
+		int errval;
+		try {
+			GLib.Process.spawn_sync(gen.getProjectPath(),spawn_args,spawn_env,GLib.SpawnFlags.SEARCH_PATH,null, out output, out errput,out errval);
+		} catch(Error e) {
+			print(_("Failed to launch GIT: %s").printf(e.message));
+			return -1;
+		}
+		if (output != "") {
+			print(output+"\n");
+		}
+		if (errput != "") {
+			print(errput+"\n");
+		}
+		if (errval != 0) {
+			return errval;
+		}
+		GLib.stderr.printf(_("Done\n"));
+		break;
 	case "update":
 		if (argv.length!=2) {
 			help();
