@@ -4,6 +4,18 @@ Autovala-tricks(1)
 
 Autovala tricks - Several tricks for Autovala
 
+## Adding the project files to a versioning system like git, mercurial or bazaar
+
+Autovala simplifies this taks by listing for you all the files it knows belong to the project. This is what the *autovala project_files* command is for. You can add all these files to, let's say, a bazaar repository, just running from the project root folder:
+
+    bzr add `autovala project_files`
+
+For git there is some syntactic sugar in the form:
+
+	autovala git
+
+This has the advantage that can be run from any folder, not only from the root.
+
 ## Working with GENIE
 
 Genie is another syntax for the Vala compiler. It can be used with Autovala since version 0.99.48.
@@ -348,7 +360,7 @@ Let's supose that the executable is **myExecutable**, and the library is **myLib
 
         vala_library: src/mylibrary_src/myLibrary
         [several commands specific of this library]
-        
+
         *vala_binary: src/myExecutable
         [several commands specific of this binary]
 
@@ -361,7 +373,7 @@ To allow **myexecutable** to use **mylibrary**, just add to **myexecutable** a *
 
         vala_library: src/mylibrary_src/myLibrary
         [several commands specific of this library]
-        
+
         *vala_binary: src/myExecutable
         vala_local_package: myLibrarynamespace
         [several commands specific of this binary]

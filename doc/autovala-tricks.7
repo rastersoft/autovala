@@ -8,6 +8,12 @@
 <p>Autovala-tricks(1)</p>
 <h1 id="name">NAME</h1>
 <p>Autovala tricks - Several tricks for Autovala</p>
+<h2 id="adding-the-project-files-to-a-versioning-system-like-git-mercurial-or-bazaar">Adding the project files to a versioning system like git, mercurial or bazaar</h2>
+<p>Autovala simplifies this taks by listing for you all the files it knows belong to the project. This is what the <em>autovala project_files</em> command is for. You can add all these files to, let's say, a bazaar repository, just running from the project root folder:</p>
+<pre><code>bzr add `autovala project_files`</code></pre>
+<p>For git there is some syntactic sugar in the form:</p>
+<pre><code>autovala git</code></pre>
+<p>This has the advantage that can be run from any folder, not only from the root.</p>
 <h2 id="working-with-genie">Working with GENIE</h2>
 <p>Genie is another syntax for the Vala compiler. It can be used with Autovala since version 0.99.48.</p>
 <p>To create a Genie project just use</p>
@@ -203,7 +209,7 @@ use_resource: datas_gresource_xml
 
     vala_library: src/mylibrary_src/myLibrary
     [several commands specific of this library]
-    
+
     *vala_binary: src/myExecutable
     [several commands specific of this binary]</code></pre>
 <p>To allow <strong>myexecutable</strong> to use <strong>mylibrary</strong>, just add to <strong>myexecutable</strong> a <strong>vala_local_package</strong> statement with the namespace of the library it needs. In this example, the <strong>.avprj</strong> will become:</p>
@@ -214,7 +220,7 @@ use_resource: datas_gresource_xml
 
     vala_library: src/mylibrary_src/myLibrary
     [several commands specific of this library]
-    
+
     *vala_binary: src/myExecutable
     vala_local_package: myLibrarynamespace
     [several commands specific of this binary]</code></pre>
