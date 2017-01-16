@@ -8,6 +8,8 @@
 <p>Autovala-tricks(1)</p>
 <h1 id="name">NAME</h1>
 <p>Autovala tricks - Several tricks for Autovala</p>
+<h2 id="i-migrated-to-meson-from-cmake-but-my-libraries-seems-to-not-being-installed...">I migrated to Meson from CMake, but my libraries seems to not being installed...</h2>
+<p>Meson installs libraries at <em>/usr/lib/x86_64-linux-gnu</em>, while CMake installs them at <em>/usr/lib</em>. Ensure that you remove any old library from <em>/usr/lib</em> and <em>/usr/local/lib</em>.</p>
 <h2 id="adding-the-project-files-to-a-versioning-system-like-git-mercurial-or-bazaar">Adding the project files to a versioning system like git, mercurial or bazaar</h2>
 <p>Autovala simplifies this taks by listing for you all the files it knows belong to the project. This is what the <em>autovala project_files</em> command is for. You can add all these files to, let's say, a bazaar repository, just running from the project root folder:</p>
 <pre><code>bzr add `autovala project_files`</code></pre>
