@@ -4,6 +4,10 @@ Autovala-tricks(1)
 
 Autovala tricks - Several tricks for Autovala
 
+## I migrated to Meson from CMake, but my libraries seems to not being installed...
+
+Meson installs libraries at */usr/lib/x86_64-linux-gnu*, while CMake installs them at */usr/lib*. Ensure that you remove any old library from */usr/lib* and */usr/local/lib*.
+
 ## Adding the project files to a versioning system like git, mercurial or bazaar
 
 Autovala simplifies this taks by listing for you all the files it knows belong to the project. This is what the *autovala project_files* command is for. You can add all these files to, let's say, a bazaar repository, just running from the project root folder:
