@@ -612,7 +612,7 @@ namespace AutoVala {
 			ElementBase.globalData.generateExtraData();
 			this.check_file(all_files,GLib.Path.get_basename(ElementBase.globalData.configFile));
 
-			this.check_file(all_files,"CMakeLists");
+			this.check_file(all_files,"CMakeLists.txt");
 			this.check_file(all_files,"meson.build");
 			this.check_file(all_files,"meson_options.txt");
 			foreach(var path in ElementBase.globalData.pathList) {
