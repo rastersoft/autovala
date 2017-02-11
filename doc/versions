@@ -7,6 +7,14 @@
 <p><a href="index.html">Home</a></p>
 <h2 id="history-of-versions">History of versions</h2>
 <ul>
+<li>version 1.1.0 (2017-02-11)
+<ul>
+<li>Added meson support</li>
+</ul></li>
+<li>version 1.0.1 (2017-02-09)
+<ul>
+<li>Now includes the main CMakeLists.txt and the Config.vala.base files in the project's file list</li>
+</ul></li>
 <li>version 1.0.0 (2016-12-30)
 <ul>
 <li>Updated version to 1.0.0</li>
