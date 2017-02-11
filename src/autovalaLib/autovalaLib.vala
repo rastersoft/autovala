@@ -615,6 +615,7 @@ namespace AutoVala {
 			this.check_file(all_files,"CMakeLists.txt");
 			this.check_file(all_files,"meson.build");
 			this.check_file(all_files,"meson_options.txt");
+
 			foreach(var path in ElementBase.globalData.pathList) {
 				this.check_file(all_files,GLib.Path.build_filename(path,"CMakeLists.txt"));
 			}
