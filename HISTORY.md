@@ -1,4 +1,6 @@
 ## History of versions ##
+* version 1.1.0 (2017-02-11)
+    * Added meson support
 * version 1.0.1 (2017-02-09)
     * Now includes the main CMakeLists.txt and the Config.vala.base files in the project's file list
 * version 1.0.0 (2016-12-30)

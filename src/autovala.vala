@@ -1,5 +1,5 @@
 /*
- Copyright 2013-2015 (C) Raster Software Vigo (Sergio Costas)
+ Copyright 2013-2017 (C) Raster Software Vigo (Sergio Costas)
 
  This file is part of AutoVala
 
@@ -20,7 +20,7 @@ using GLib;
 using Gee;
 using Posix;
 
-//project version = 1.0.1
+//project version = 1.1.0
 
 void help() {
 

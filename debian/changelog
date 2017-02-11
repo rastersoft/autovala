@@ -1,3 +1,15 @@
+autovala (1.1.0-Debian1) sid; urgency=low
+
+  * Added meson support
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Sat, 11 Feb 2017 23:55:00 +0200
+
+autovala (1.0.1-Debian1) sid; urgency=low
+
+  * Now includes the main CMakeLists.txt and the Config.vala.base files in the project's file list
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Thu, 09 Feb 2017 23:55:00 +0200
+
 autovala (1.0.0-Debian1) sid; urgency=low
 
   * Updated version to 1.0.0
