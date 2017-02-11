@@ -48,7 +48,23 @@ namespace AutoVala {
 
 		public static ReadVapis? vapiList = null;
 
-		public Globals(string projectName, string ?searchPath = null) {
+		private static int _counter = 0;
+
+		/**
+		 * This counter is used for cases where different filenames are needed
+		 */
+		public static int counter {
+				get {
+					Globals._counter++;
+					return _counter;
+				}
+		}
+
+		public static void resetCounter() {
+			Globals._counter = 0;
+		}
+
+		public Globals(string projectName, string ?searchPath = null) throws GLib.Error {
 
 			ElementBase.globalData = this;
 			ConditionalText.globalData = this;
@@ -61,6 +77,7 @@ namespace AutoVala {
 			this.globalElements = new Gee.ArrayList<ElementBase>();
 			this.excludeFiles = {};
 			this.getValaVersion();
+			this.clearErrors();
 
 			if (Globals.vapiList == null) {
 				Globals.vapiList = new ReadVapis(this.valaMajor,this.valaMinor);
@@ -102,7 +119,7 @@ namespace AutoVala {
 			this.pathList=new Gee.HashSet<string>();
 			foreach(var element in this.globalElements) {
 				if ((element.eType!=ConfigType.IGNORE) && (element.eType!=ConfigType.DEFINE) && (element.eType!=ConfigType.SOURCE_DEPENDENCY)
-						&& (element.eType!=ConfigType.BINARY_DEPENDENCY) && (!this.pathList.contains(element.path))) {
+						&& (element.eType!=ConfigType.BINARY_DEPENDENCY) && (element.eType!=ConfigType.INCLUDE) && (!this.pathList.contains(element.path))) {
 					this.pathList.add(element.path);
 				}
 				if (element.eType==ConfigType.VALA_LIBRARY) {
@@ -258,8 +275,13 @@ namespace AutoVala {
 
 			this.versionAutomatic = true;
 
-			var compilers = new FindVala();
-			if (compilers == null) {
+			FindVala compilers;
+			try {
+				compilers = new FindVala();
+				if (compilers == null) {
+					return true;
+				}
+			} catch (GLib.Error e) {
 				return true;
 			}
 

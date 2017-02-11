@@ -12,6 +12,7 @@
 <p>autovala {init PROJECT_NAME | clear | refresh | cmake | update | project_files | po | deb | rpm | valama | help | version}</p>
 <h1 id="description">DESCRIPTION</h1>
 <p>Autovala is a program and a library designed to help in the creation of projects with Vala and CMake. The idea is quite simple: CMake is very powerful, but writting CMakeLists files is boring and repetitive. Why not let the computer create them, by guessing what to do with each file? And if, at the end, there are mistakes, let the user fix them in an easy way, and generate the final CMakeLists files.</p>
+<p>New versions of Autovala have also experimental support for Meson Build system.</p>
 <p>This is what Autovala does. This process is done in three steps:</p>
 <ul>
 <li>First, Autovala checks all the folders and files, and creates a project with the type of each file</li>
@@ -83,6 +84,8 @@ capabilities.</li>
 <pre><code>    autovala refresh</code></pre>
 <p>When using this command, Autovala will guess all the info about your project and put it in the <strong>.avprj</strong> file, so you can check and modify it if you want (more on that later). If everything is OK, just create the CMakeLists files from that data using:</p>
 <pre><code>    autovala cmake</code></pre>
+<p>But if you prefer to try Meson, just use instead</p>
+<pre><code>    autovala meson</code></pre>
 <p>Now you can go to the <strong>install/</strong> folder and type ' <strong>cmake ..</strong> ' to generate the makefiles for compile your project. You can also use <strong>cmake .. -DBUILD_VALADOC=ON</strong> to add Valadoc support; but if you are using Ubuntu 12.10, maybe you should try to compile Valadoc from scratch, because it seems to be a bug in the version shipped from Canonical (more on this in the <a href="autovala-tricks.7">tricks section</a>).</p>
 <p>Since it's very common to call those two commands, one after the other, you can just use:</p>
 <pre><code>    autovala update</code></pre>
@@ -106,6 +109,8 @@ Deletes the <strong>.avprj</strong> file.</p>
 Refreshes the contents of the <strong>.avprj</strong> file, by cheking the files available in the directory tree and guessing what to do which each one.</p>
 <p><strong>autovala cmake</strong><br />
 Regenerates the <strong>CMakeList.txt</strong> files using the data from the <strong>.avprj</strong> file.</p>
+<p><strong>autovala meson</strong><br />
+Regenerates the <strong>meson.build</strong> files using the data from the <strong>.avprj</strong> file.</p>
 <p><strong>autovala update</strong><br />
 The same than refresh+cmake</p>
 <p><strong>autovala po</strong><br />

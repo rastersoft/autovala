@@ -11,7 +11,7 @@ set (VERSION "1.0.0")
 set (TESTSRCDIR "${CMAKE_SOURCE_DIR}")
 set (DOLLAR "$")
 
-configure_file (${CMAKE_SOURCE_DIR}/src/Config.vala.cmake ${CMAKE_BINARY_DIR}/src/Config.vala)
+configure_file (${CMAKE_SOURCE_DIR}/src/Config.vala.base ${CMAKE_BINARY_DIR}/src/Config.vala)
 add_definitions(-DGETTEXT_PACKAGE=\"${GETTEXT_PACKAGE}\")
 configure_file (${CMAKE_CURRENT_SOURCE_DIR}/autovalagedit.pc ${CMAKE_CURRENT_BINARY_DIR}/autovalagedit.pc)
 configure_file (${CMAKE_CURRENT_SOURCE_DIR}/autovalagedit.deps ${CMAKE_CURRENT_BINARY_DIR}/autovalagedit.deps)
@@ -53,7 +53,6 @@ set (APP_SOURCES ${APP_SOURCES} gedit_plugin.vala)
 if (NOT(OLD_GEDIT))
 	set (CUSTOM_VAPIS_LIST ${CUSTOM_VAPIS_LIST} ${CMAKE_SOURCE_DIR}/src/vapis/gedit.vapi)
 endif ()
-
 
 if (ATHOME)
 	set (COMPILE_OPTIONS ${COMPILE_OPTIONS} -D ATHOME)
@@ -107,7 +106,6 @@ set (INSTALL_VAPI_autovalagedit "lib/gedit/plugins/autovala" )
 set (INSTALL_GIR_autovalagedit "lib/gedit/plugins/autovala" )
 set (INSTALL_PKGCONFIG_autovalagedit "lib/gedit/plugins/autovala" )
 endif ()
-
 
 install(TARGETS
 	autovalagedit

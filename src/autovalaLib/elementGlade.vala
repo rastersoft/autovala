@@ -65,5 +65,16 @@ namespace AutoVala {
 			}
 			return false;
 		}
+
+		public override bool generateMeson(ConditionalText dataStream, MesonCommon mesonCommon) {
+			try {
+				dataStream.put_string("\tinstall_data('%s', install_dir: join_paths(get_option('prefix'),get_option('datadir'),'%s'))\n".printf(Path.build_filename(this._path,this._name),ElementBase.globalData.projectName));
+			} catch (GLib.Error e) {
+				ElementBase.globalData.addError(_("Failed to write to meson.build at '%s' element, at '%s' path: %s").printf(this.command,this._path,e.message));
+				return true;
+			}
+			return false;
+		}
+
 	}
 }

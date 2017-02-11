@@ -42,7 +42,7 @@ namespace AutoVala {
 				ElementBase.globalData.addError(_("Invalid command %s after command %s (line %d)").printf(badCommand,this.command, lineNumber));
 				return true;
 			}
-			var data = line.substring(2+this.command.length).strip();
+			var data = line.substring(2 + this.command.length).strip();
 			this.comments = comments;
 			return this.configureElement(null,data,data,false,condition,invertCondition);
 		}

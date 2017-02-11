@@ -68,6 +68,7 @@ c_library: readline
 *vala_source: genVapis.vala
 *vala_source: globals.vala
 *vala_source: gresource_xml.vala
+*vala_source: mesonCommon.vala
 *vala_source: packages.vala
 *vala_source: packages_deb.vala
 *vala_source: packages_pacman.vala
@@ -142,6 +143,7 @@ vala_check_package: atk
 *translate: vala src/autovalaLib/genVapis.vala
 *translate: vala src/autovalaLib/globals.vala
 *translate: vala src/autovalaLib/gresource_xml.vala
+*translate: vala src/autovalaLib/mesonCommon.vala
 *translate: vala src/autovalaLib/packages.vala
 *translate: vala src/autovalaLib/packages_deb.vala
 *translate: vala src/autovalaLib/packages_pacman.vala

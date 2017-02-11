@@ -101,16 +101,31 @@ namespace AutoVala {
 					dataStream.put_string("if( NOT ( ${CMAKE_INSTALL_PREFIX} MATCHES \"^/home/\" ) )\n");
 					dataStream.put_string("\tinstall(FILES ${CMAKE_CURRENT_SOURCE_DIR}/"+this.name+" DESTINATION /etc/xdg/autostart/ )\n");
 					dataStream.put_string("else()\n");
-					dataStream.put_string("\tset ( CONFIG_HOME $ENV{XDG_CONFIG_HOME})\n");
-					dataStream.put_string("\tif ( NOT (CONFIG_HOME))\n");
-					dataStream.put_string("\t\tset ( CONFIG_HOME $ENV{HOME}/.config )\n");
-					dataStream.put_string("\tendif()\n");
-					dataStream.put_string("\tinstall(FILES ${CMAKE_CURRENT_SOURCE_DIR}/"+this.name+" DESTINATION ${CONFIG_HOME}/autostart )\n");
+					dataStream.put_string("\tMESSAGE(STATUS \"\033[33mAutostart file %s will not be installed. You must create your own .desktop file and put it at ~/.config/autostart\033[39m\")\n".printf(Path.build_filename(this._path,this._name)));
 					dataStream.put_string("endif()\n");
 				}
 			} catch (Error e) {
 				ElementBase.globalData.addError(_("Failed to add file %s").printf(this.name));
 				return true;
+			}
+			return false;
+		}
+
+		public override bool generateMeson(ConditionalText dataStream, MesonCommon mesonCommon) {
+
+			try {
+				var filename = Path.build_filename(this._path,this._name);
+				if (this._type == ConfigType.DESKTOP) {
+					dataStream.put_string("install_data('%s',install_dir:join_paths(get_option('prefix'),get_option('datadir'),'applications'))\n".printf(filename));
+				} else {
+					dataStream.put_string("if (get_option('prefix').startswith('/home/'))\n");
+					dataStream.put_string("\tmessage('\033[33mAutostart file %s will not be installed. You must create your own .desktop file and put it at ~/.config/autostart\033[39m')\n".printf(Path.build_filename(this._path,this._name)));
+					dataStream.put_string("else\n");
+					dataStream.put_string("\tinstall_data('%s',install_dir: '/etc/xdg/autostart')\n".printf(filename));
+					dataStream.put_string("endif\n");
+				}
+			} catch (Error e) {
+				ElementBase.globalData.addError(_("Failed to write to meson.build at '%s' element, at '%s' path: %s").printf(this.command,this._path,e.message));
 			}
 			return false;
 		}

@@ -49,3 +49,14 @@ Autovala project folder, overwriting the files inside.
 Don't forget to keep the files FindValadoc.cmake and
 Valadoc.cmake, needed to work with Valadoc.
 
+If you want to try the Meson builder, just do this:
+
+    mkdir meson
+	cd meson
+	meson ..
+	ninja
+	sudo ninja install
+	sudo ldconfig
+
+And, of course, report all the bugs you find and sugestions
+to make the Meson scripts better.

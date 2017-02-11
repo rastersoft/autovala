@@ -139,6 +139,22 @@ namespace AutoVala {
 
 		}
 
+		public override bool generateMeson(ConditionalText dataStream, MesonCommon mesonCommon) {
+
+			this.add_inner_files();
+
+			try {
+				dataStream.put_string("%s_generator = generator(find_program('glib-compile-resources'), arguments: [ '--sourcedir=@SOURCE_DIR@/%s' , '--generate-source', '--target=@BUILD_DIR@/%s.c', '@INPUT@'], output: '@PLAINNAME@.c')\n\n".printf(this._name.replace(".","_"),this.path,this._name));
+				dataStream.put_string("%s_file_c = %s_generator.process(['%s'])\n\n".printf(this._name.replace(".","_"),this._name.replace(".","_"),this.fullPath));
+
+			} catch (Error e) {
+				ElementBase.globalData.addError(_("Failed to write to meson.build at '%s' element, at '%s' path: %s").printf(this.command,this._path,e.message));
+				return true;
+			}
+			return false;
+		}
+
+
 		public override bool generateCMake(DataOutputStream dataStream) {
 
 			this.add_inner_files();

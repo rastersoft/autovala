@@ -183,12 +183,12 @@ namespace AutoVala {
 		 */
 		public virtual bool configureElement(string? fullPathP, string? path, string? name, bool automatic, string? condition, bool invertCondition, bool accept_nonexisting_paths = false) {
 
-			if (fullPathP=="") {
+			if (fullPathP == "") {
 				ElementBase.globalData.addError(_("Trying to add an empty path: %s").printf(fullPath));
 				return true;
 			}
 
-			string? fullPath=fullPathP;
+			string? fullPath = fullPathP;
 			if (fullPath != null) {
 
 				if (fullPath.has_suffix(Path.DIR_SEPARATOR_S)) {
@@ -202,7 +202,7 @@ namespace AutoVala {
 			}
 
 			this._fullPath = fullPath;
-			if ((path==null)||(name==null)) {
+			if ((path == null) || (name == null)) {
 				GLib.File file;
 				if ((fullPath != null) && (fullPath[0] == GLib.Path.DIR_SEPARATOR)) {
 					file = File.new_for_path(fullPath);
@@ -311,6 +311,29 @@ namespace AutoVala {
 		public virtual void endedCMakeFile() {
 		}
 
+		/**
+		 * Adds the specific data for this element to a Meson build file that must be added before anything
+		 * @param dataStream The data stream for the meson.build file being processed
+		 * @return //true// if there was an error; //false// if not. The error texts can be obtained by calling to returnErrors()
+		 */
+		public virtual bool generateMesonHeader(ConditionalText dataStream, MesonCommon mesonCommon) {
+			return false;
+		}
+
+		/**
+		 * Adds the specific data for this element to a Meson build file
+		 * @param dataStream The data stream for the meson.build file being processed
+		 * @return //true// if there was an error; //false// if not. The error texts can be obtained by calling to returnErrors()
+		 */
+		public virtual bool generateMeson(ConditionalText dataStream, MesonCommon mesonCommon) {
+			return false;
+		}
+
+		/**
+		 * Notifies to all the objects that Autovala ended generating the meson script
+		 */
+		public virtual void endedMeson(MesonCommon mesonCommon) {
+		}
 
 		/**
 		 * Removes all the automatic data in the element

@@ -94,7 +94,7 @@ namespace AutoVala {
 			return false;
 		}
 
-		private bool delete_recursive (string fileFolder) {
+		public static bool delete_recursive (string fileFolder) {
 
 			var src=File.new_for_path(fileFolder);
 
@@ -104,7 +104,7 @@ namespace AutoVala {
 				try {
 					GLib.FileEnumerator enumerator = src.enumerate_children (GLib.FileAttribute.STANDARD_NAME, GLib.FileQueryInfoFlags.NONE, null);
 					for ( GLib.FileInfo? info = enumerator.next_file (null) ; info != null ; info = enumerator.next_file (null) ) {
-						if (delete_recursive (GLib.Path.build_filename (srcPath, info.get_name ()))) {
+						if (ManageProject.delete_recursive (GLib.Path.build_filename (srcPath, info.get_name ()))) {
 							return true;
 						}
 					}
@@ -185,7 +185,7 @@ namespace AutoVala {
 			var folder2=File.new_for_path(origin);
 			if (folder2.query_exists()) {
 				if (folder.query_exists()) {
-					this.delete_recursive(destiny);
+					ManageProject.delete_recursive(destiny);
 				}
 				this.copy_recursive(origin,destiny);
 			} else {
@@ -206,7 +206,11 @@ namespace AutoVala {
 
 			bool error=false;
 
-			this.config=new AutoVala.Configuration(basePath,projectName,false);
+			try {
+				this.config = new AutoVala.Configuration(basePath,projectName,false);
+			} catch (GLib.Error e) {
+				return true;
+			}
 			if(this.config.globalData.error) {
 				return true; // if there was at least one error during initialization, return
 			}
@@ -281,6 +285,139 @@ namespace AutoVala {
 		}
 
 		/**
+		 * Generates the MESON.BUILD file for a project
+		 * @param basePath A base file or folder; the code will check if that file is a valid .avprj file; if not (or if it is a folder) will search in the folder containing it if there is a valid .avprj file. If not, will search upwards until a valid .avprj file is found, or the root is reached. NULL means to start searching in the current working directory
+		 * @return TRUE if there was an error; FALSE if everything went fine
+		 */
+		public bool meson(string ?basePath = null) {
+
+			bool error;
+
+			Globals.resetCounter();
+
+			try {
+				this.config = new AutoVala.Configuration(basePath);
+			} catch (GLib.Error e) {
+				return true;
+			}
+			if(this.config.globalData.error) {
+				return true; // if there was at least one error during initialization, return
+			}
+			var globalData = ElementBase.globalData;
+
+			error = config.readConfiguration();
+			if (error) {
+				return true;
+			}
+
+			globalData.generateExtraData();
+
+			var globalElement = new ElementGlobal();
+
+			var mesonCommon = new MesonCommon();
+			mesonCommon.init();
+
+			DataOutputStream dataStream;
+			try {
+				var mainPath = GLib.Path.build_filename(globalData.projectFolder,"meson.build");
+				var file = File.new_for_path(mainPath);
+				if (file.query_exists()) {
+					file.delete();
+				}
+				var dis = file.create(FileCreateFlags.NONE);
+				dataStream = new DataOutputStream(dis);
+				var condition = new ConditionalText(dataStream,ConditionalType.MESON);
+				error |= globalElement.generateMeson(condition, mesonCommon);
+
+				foreach(var element in globalData.globalElements) {
+					error |= element.generateMesonHeader(condition, mesonCommon);
+				}
+
+				foreach(var element in globalData.globalElements) {
+					if ((element.eType == ConfigType.VALA_BINARY) || (element.eType == ConfigType.VALA_LIBRARY)) {
+						element.processed = false;
+						continue;
+					}
+					condition.printCondition(element.condition,element.invertCondition);
+					error |= element.generateMeson(condition, mesonCommon);
+					element.processed = true;
+				}
+				condition.printTail();
+
+				bool allProcessed=false;
+				Gee.Set<string> packagesFound=new Gee.HashSet<string>();
+				while(allProcessed == false) {
+					bool addedOne = false;
+					allProcessed = true;
+					foreach(var element in globalData.globalElements) {
+						if ((element.eType != ConfigType.VALA_BINARY) && (element.eType != ConfigType.VALA_LIBRARY)) {
+							continue;
+						}
+						if (element.processed) {
+							continue;
+						}
+						var binElement = element as ElementValaBinary;
+						var valid = true;
+						allProcessed = false;
+						foreach(var package in binElement.packages) {
+							if((package.type == packageType.LOCAL) && (false == packagesFound.contains(package.elementName))) {
+								valid=false;
+								break;
+							}
+						}
+						if (valid == false) { // has dependencies still not satisfied
+							continue;
+						}
+						addedOne = true;
+						element.processed = true;
+						condition.printCondition(element.condition,element.invertCondition);
+						error |= element.generateMeson(condition, mesonCommon);
+						if ((binElement.eType == ConfigType.VALA_LIBRARY) && (binElement.currentNamespace != "")) {
+							packagesFound.add(binElement.currentNamespace);
+						}
+					}
+					if ((allProcessed == false) && (addedOne == false)) {
+						string text_error = _("The following local dependencies cannot be satisfied:");
+						foreach(var element in globalData.globalElements) {
+							if ((element.processed) || ((element.eType != ConfigType.VALA_LIBRARY) && (element.eType != ConfigType.VALA_BINARY))) {
+								continue;
+							}
+							if (element.eType == ConfigType.VALA_LIBRARY) {
+								text_error += _("\n\tLibrary %s, packages:").printf(Path.build_filename(element.path,element.name));
+							} else {
+								text_error += _("\n\tBinary %s, packages:").printf(Path.build_filename(element.path,element.name));
+							}
+							var binElement = element as ElementValaBinary;
+							foreach(var package in binElement.packages) {
+								if((package.type == packageType.LOCAL) && (false == packagesFound.contains(package.elementName))) {
+									text_error += " "+package.elementName;
+								}
+							}
+						}
+						ElementBase.globalData.addError(text_error);
+						return true;
+					}
+				}
+				condition.printTail();
+			} catch (Error e) {
+				ElementBase.globalData.addError(_("Failed to write to meson.build at '%s' element, at '%s' path: %s").printf("autovalaLib","/",e.message));
+				return true;
+			}
+
+			foreach(var element in globalData.globalElements) {
+				element.endedMeson(mesonCommon);
+			}
+
+			try {
+				dataStream.close();
+			} catch (GLib.IOError e) {
+				ElementBase.globalData.addError(_("Failed to close meson.build file: %s").printf(e.message));
+				return true;
+			}
+			return error;
+		}
+
+		/**
 		 * Generates the CMAKE files for a project
 		 * @param basePath A base file or folder; the code will check if that file is a valid .avprj file; if not (or if it is a folder) will search in the folder containing it if there is a valid .avprj file. If not, will search upwards until a valid .avprj file is found, or the root is reached. NULL means to start searching in the current working directory
 		 * @return TRUE if there was an error; FALSE if everything went fine
@@ -289,22 +426,24 @@ namespace AutoVala {
 
 			bool error;
 
-			this.config = new AutoVala.Configuration(basePath);
+			try {
+				this.config = new AutoVala.Configuration(basePath);
+			} catch (GLib.Error e) {
+				return true;
+			}
 			if(this.config.globalData.error) {
 				return true; // if there was at least one error during initialization, return
 			}
 			var globalData = ElementBase.globalData;
-
+			AutoVala.Globals.resetCounter();
 			error=config.readConfiguration();
 			if (error) {
 				return true;
 			}
-
 			string configPath=this.config.globalData.projectFolder;
 			if (this.copy_cmake(configPath)) {
 				return true;
 			}
-
 			globalData.generateExtraData();
 
 			var globalElement = new ElementGlobal();
@@ -322,7 +461,6 @@ namespace AutoVala {
 				ElementBase.globalData.addError(_("Failed while generating the main CMakeLists.txt file"));
 				return true;
 			}
-
 			try {
 				// and now, generate each one of the CMakeLists.txt files in each folder
 				foreach(var path in globalData.pathList) {
@@ -339,13 +477,12 @@ namespace AutoVala {
 
 					error |= globalElement.generateCMakeHeader(dataStream);
 					foreach(var element in globalData.globalElements) {
-						if (element.path!=path) {
+						if (element.path != path) {
 							continue;
 						}
 						error |= element.generateCMakeHeader(dataStream);
 					}
-
-					var condition = new ConditionalText(dataStream,true);
+					var condition = new ConditionalText(dataStream,ConditionalType.CMAKE);
 					error |= globalElement.generateCMake(dataStream);
 					foreach(var element in globalData.globalElements) {
 						if (element.path != path) {
@@ -355,7 +492,6 @@ namespace AutoVala {
 						error |= element.generateCMake(dataStream);
 					}
 					condition.printTail();
-
 					error |= globalElement.generateCMakePostData(dataStream,dataStream);
 					foreach(var element in globalData.globalElements) {
 						if (element.path!=path) {
@@ -363,7 +499,6 @@ namespace AutoVala {
 						}
 						error |= element.generateCMakePostData(dataStream,dataStreamGlobal);
 					}
-
 					globalElement.endedCMakeFile();
 					foreach(var element in globalData.globalElements) {
 						if (element.path!=path) {
@@ -395,7 +530,11 @@ namespace AutoVala {
 
 			bool error;
 
-			this.config = new AutoVala.Configuration(basePath);
+			try {
+				this.config = new AutoVala.Configuration(basePath);
+			} catch (GLib.Error e) {
+				return true;
+			}
 			if(this.config.globalData.error) {
 				return true; // if there was at least one error during initialization, return
 			}
@@ -438,6 +577,15 @@ namespace AutoVala {
 			return error;
 		}
 
+		private bool check_file(Gee.ArrayList<string> list,string file) {
+			var f = File.new_for_path(Path.build_filename(ElementBase.globalData.projectFolder,file));
+			if (f.query_exists()) {
+				list.add(file);
+				return true;
+			}
+			return false;
+		}
+
 		/**
 		 * Returns all the files belonging to a project. Useful for version control systems.
 		 * @param basePath A base file or folder; the code will check if that file is a valid .avprj file; if not (or if it is a folder) will search in the folder containing it if there is a valid .avprj file. If not, will search upwards until a valid .avprj file is found, or the root is reached. NULL means to start searching in the current working directory
@@ -445,9 +593,13 @@ namespace AutoVala {
 		 */
 		public string[]? get_files(string ?basePath = null) {
 
-			string[] all_files = {};
+			Gee.ArrayList<string> all_files = new Gee.ArrayList<string>();;
 
-			this.config = new AutoVala.Configuration(basePath);
+			try {
+				this.config = new AutoVala.Configuration(basePath);
+			} catch (GLib.Error e) {
+				return null;
+			}
 			if(this.config.globalData.error) {
 				return null; // if there was at least one error during initialization, return
 			}
@@ -458,26 +610,37 @@ namespace AutoVala {
 			}
 
 			ElementBase.globalData.generateExtraData();
-			all_files += GLib.Path.get_basename(ElementBase.globalData.configFile);
-			all_files += "CMakeLists.txt";
+			this.check_file(all_files,GLib.Path.get_basename(ElementBase.globalData.configFile));
+
+			this.check_file(all_files,"CMakeLists.txt");
+			this.check_file(all_files,"meson.build");
+			this.check_file(all_files,"meson_options.txt");
 			foreach(var path in ElementBase.globalData.pathList) {
-				all_files+= GLib.Path.build_filename(path,"CMakeLists.txt");
+				this.check_file(all_files,GLib.Path.build_filename(path,"CMakeLists.txt"));
 			}
 			var cmake_files = ElementBase.getFilesFromFolder("cmake",null,true);
 			foreach(var element2 in cmake_files) {
-				all_files+=element2;
+				this.check_file(all_files,element2);
 			}
-			var file = File.new_for_path(Path.build_filename(ElementBase.globalData.projectFolder,"cmake","CMakeLists.txt"));
-			if (file.query_exists()) {
-				all_files+=Path.build_filename("cmake","CMakeLists.txt");
+			this.check_file(all_files,Path.build_filename("cmake","CMakeLists.txt"));
+			var globalElement = new ElementGlobal();
+			globalElement.add_files();
+			foreach(var element2 in globalElement.file_list) {
+				this.check_file(all_files,element2);
 			}
 			foreach(var element in ElementBase.globalData.globalElements) {
 				element.add_files();
 				foreach(var element2 in element.file_list) {
-					all_files+=element2;
+					this.check_file(all_files,element2);
 				}
 			}
-			return all_files;
+
+			all_files.sort();
+			string[] all_files2 = {};
+			foreach (var element in all_files) {
+				all_files2 += element;
+			}
+			return all_files2;
 		}
 
 		/**
@@ -488,7 +651,11 @@ namespace AutoVala {
 		public bool gettext(string ?basePath = null) {
 			// run xgettext to generate the basic pot file
 
-			this.config = new AutoVala.Configuration(basePath);
+			try {
+				this.config = new AutoVala.Configuration(basePath);
+			} catch (GLib.Error e) {
+				return true;
+			}
 			if(this.config.globalData.error) {
 				return true; // if there was at least one error during initialization, return
 			}
@@ -569,7 +736,11 @@ namespace AutoVala {
 		 */
 		public bool clear(string ?basePath = null) {
 
-			this.config=new AutoVala.Configuration(basePath);
+			try {
+				this.config = new AutoVala.Configuration(basePath);
+			} catch (GLib.Error e) {
+				return true;
+			}
 			if(config.globalData.error) {
 				return true; // if there was at least one error during initialization, return
 			}
@@ -590,7 +761,11 @@ namespace AutoVala {
 		 */
 		public bool remove_binary(string? projectPath, string binary_name) {
 
-			var config=new AutoVala.Configuration(projectPath);
+			try {
+				this.config = new AutoVala.Configuration(projectPath);
+			} catch (GLib.Error e) {
+				return true;
+			}
 			if (config.globalData.error) {
 				return true;
 			}
@@ -632,7 +807,11 @@ namespace AutoVala {
 
 			string retval = "";
 
-			var config=new AutoVala.Configuration(projectPath);
+			try {
+				this.config = new AutoVala.Configuration(projectPath);
+			} catch (GLib.Error e) {
+				return null;
+			}
 			if (config.globalData.error) {
 				return null;
 			}
@@ -758,7 +937,11 @@ namespace AutoVala {
 
 			bool retval;
 
-			this.config=new AutoVala.Configuration(basePath);
+			try {
+				this.config = new AutoVala.Configuration(basePath);
+			} catch (GLib.Error e) {
+				return true;
+			}
 			if (config.globalData.error) {
 				return true;
 			}
@@ -791,7 +974,11 @@ namespace AutoVala {
 
 			bool retval;
 
-			this.config=new AutoVala.Configuration(basePath);
+			try {
+				this.config = new AutoVala.Configuration(basePath);
+			} catch (GLib.Error e) {
+				return true;
+			}
 			if (config.globalData.error) {
 				return true;
 			}
@@ -822,7 +1009,11 @@ namespace AutoVala {
 
 			bool retval;
 
-			this.config=new AutoVala.Configuration(basePath);
+			try {
+				this.config = new AutoVala.Configuration(basePath);
+			} catch (GLib.Error e) {
+				return true;
+			}
 			if (config.globalData.error) {
 				return true;
 			}
@@ -848,7 +1039,11 @@ namespace AutoVala {
 		 */
 		public ValaProject ? get_binaries_list(string ?basePath = null, string? owner = null) {
 
-			this.config = new AutoVala.Configuration(basePath);
+			try {
+				this.config = new AutoVala.Configuration(basePath);
+			} catch (GLib.Error e) {
+				return null;
+			}
 			if (config.globalData.error) {
 				return null;
 			}
@@ -892,7 +1087,11 @@ namespace AutoVala {
 		 */
 		public bool set_external_data(string owner,Gee.List<string> data, string ?basePath = null) {
 
-			var config=new AutoVala.Configuration(basePath);
+			try {
+				this.config = new AutoVala.Configuration(basePath);
+			} catch (GLib.Error e) {
+				return true;
+			}
 			if (config.globalData.error) {
 				return true;
 			}

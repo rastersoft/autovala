@@ -95,7 +95,7 @@ namespace AutoVala {
 			}
 		}
 
-		private void print_key(DataOutputStream of,Gee.HashMultiMap<string,string> keylist,bool multiline,string key,string val) {
+		private void print_key(DataOutputStream of,Gee.HashMultiMap<string,string> keylist,bool multiline,string key,string val) throws IOError {
 
 			Gee.Collection<string> final_value;
 			if (!keylist.contains(key)) {
@@ -104,23 +104,18 @@ namespace AutoVala {
 			} else {
 				final_value = keylist.get(key);
 			}
-			try {
-				foreach (var line in final_value) {
-					if (line.strip() == "") {
-						continue;
-					}
-					if (multiline) {
-						of.put_string("%%%s\n%s\n".printf(key,line));
-					} else {
-						of.put_string("%s: %s".printf(key,line));
-					}
-					if (line.get_char(line.length-1) != '\n') {
-						of.put_string("\n");
-					}
+			foreach (var line in final_value) {
+				if (line.strip() == "") {
+					continue;
 				}
-			} catch (IOError e) {
-				ElementBase.globalData.addError(_("Failed to write keys to rpmbuild/SPECS/control file (%s)").printf(e.message));
-				return;
+				if (multiline) {
+					of.put_string("%%%s\n%s\n".printf(key,line));
+				} else {
+					of.put_string("%s: %s".printf(key,line));
+				}
+				if (line.get_char(line.length-1) != '\n') {
+					of.put_string("\n");
+				}
 			}
 		}
 

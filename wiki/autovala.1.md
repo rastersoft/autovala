@@ -12,6 +12,8 @@ autovala {init PROJECT_NAME | clear | refresh | cmake | update | project_files |
 
 Autovala is a program and a library designed to help in the creation of projects with Vala and CMake. The idea is quite simple: CMake is very powerful, but writting CMakeLists files is boring and repetitive. Why not let the computer create them, by guessing what to do with each file? And if, at the end, there are mistakes, let the user fix them in an easy way, and generate the final CMakeLists files.
 
+New versions of Autovala have also experimental support for Meson Build system.
+
 This is what Autovala does. This process is done in three steps:
 
   * First, Autovala checks all the folders and files, and creates a project with the type of each file
@@ -113,6 +115,10 @@ When using this command, Autovala will guess all the info about your project and
 
         autovala cmake
 
+But if you prefer to try Meson, just use instead
+
+		autovala meson
+
 Now you can go to the **install/** folder and type ' **cmake ..** ' to generate the makefiles for compile your project. You can also use **cmake .. -DBUILD_VALADOC=ON** to add Valadoc support; but if you are using Ubuntu 12.10, maybe you should try to compile Valadoc from scratch, because it seems to be a bug in the version shipped from Canonical (more on this in the [tricks section](autovala-tricks.7)).
 
 Since it's very common to call those two commands, one after the other, you can just use:
@@ -151,6 +157,9 @@ Everytime you run **autovala cmake** or **autovala update**, the CMAKE scripts c
 
 **autovala cmake**
   Regenerates the **CMakeList.txt** files using the data from the **.avprj** file.
+
+**autovala meson**
+  Regenerates the **meson.build** files using the data from the **.avprj** file.
 
 **autovala update**
   The same than refresh+cmake

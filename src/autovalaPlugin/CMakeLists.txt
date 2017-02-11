@@ -11,7 +11,7 @@ set (VERSION "0.99")
 set (TESTSRCDIR "${CMAKE_SOURCE_DIR}")
 set (DOLLAR "$")
 
-configure_file (${CMAKE_SOURCE_DIR}/src/autovalaPlugin/Config.vala.cmake ${CMAKE_BINARY_DIR}/src/autovalaPlugin/Config.vala)
+configure_file (${CMAKE_SOURCE_DIR}/src/autovalaPlugin/Config.vala.base ${CMAKE_BINARY_DIR}/src/autovalaPlugin/Config.vala)
 add_definitions(-DGETTEXT_PACKAGE=\"${GETTEXT_PACKAGE}\")
 configure_file (${CMAKE_CURRENT_SOURCE_DIR}/AutovalaPlugin.pc ${CMAKE_CURRENT_BINARY_DIR}/AutovalaPlugin.pc)
 configure_file (${CMAKE_CURRENT_SOURCE_DIR}/AutovalaPlugin.deps ${CMAKE_CURRENT_BINARY_DIR}/AutovalaPlugin.deps)
