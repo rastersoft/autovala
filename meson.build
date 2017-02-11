@@ -241,7 +241,7 @@ cfg_autovala.set('PKGDATADIR', join_paths(get_option('prefix'),get_option('datad
 cfg_autovala.set('GETTEXT_PACKAGE', 'autovala')
 cfg_autovala.set('RELEASE_NAME', 'autovala')
 cfg_autovala.set('PREFIX', get_option('prefix'))
-cfg_autovala.set('VERSION', '1.0.0')
+cfg_autovala.set('VERSION', '1.0.1')
 cfg_autovala.set('TESTSRCDIR', meson.current_source_dir())
 
 cfgfile_5 = configure_file(input: 'src/Config.vala.base',output: 'Config_5.vala',configuration: cfg_autovala)
