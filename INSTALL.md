@@ -33,6 +33,18 @@ The Gedit and Scratch plugins are compiled and installed
 separately. Just follow the instructions available in each
 folder.
 
+The main dependencies list is:
+
+    * atk
+    * glib-2.0
+    * gee
+    * gtk-3
+    * libxml2
+    * vte-2.91
+    * readline
+    * pandoc
+    * curl
+
 Remember that you need CMake, Vala 0.20 or later, libgee
 and gtk+. The repository includes a version of CMake for
 Vala that includes some changes (not mine) to support
