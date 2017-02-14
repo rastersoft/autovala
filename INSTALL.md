@@ -44,6 +44,11 @@ The main dependencies list is:
     * readline
     * pandoc
     * curl
+    * cmake
+    * vala
+    * gettext
+    * pkgconfig
+    * intltool
 
 Remember that you need CMake, Vala 0.20 or later, libgee
 and gtk+. The repository includes a version of CMake for
