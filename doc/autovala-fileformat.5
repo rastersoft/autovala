@@ -67,7 +67,7 @@
 <li><p><strong>c_library</strong>: this command specifies one or more C libraries which must be linked against this binary (separated by blank spaces), useful for libraries not supported with <strong>pkg_config</strong> like the math C library. The libraries must be specified without the 'l' preffix; this is, the math library is 'm'; the posix threads library is 'pthread', and so on.</p></li>
 <li><p><strong>unitest</strong>: this command specifies one VALA source file that contains an unitary test. Each one of these files will be compiled with all the source files of this executable/library as a stand-alone executable. The path must be relative to the binary/library path. For details, read the FAQ.</p></li>
 <li><p><strong>use_resource</strong>: this command instructs AutoVala to include in this binary the resources specified by an identifier. Example:</p>
-<pre><code>use_resource: data_gresource_xml</code></pre>
+<pre><code>use_gresource: data_gresource_xml</code></pre>
 <p>Here, data_gresource_xml is the identifier used in a <em>gresource</em> command.</p>
 <p>The last fourteen subcommands (compile_options, compile_c_options, vala_package, vala_check_package, c_check_package, vala_local_package, vala_source, c_source, vala_vapi, dbus_interface, c_library, unitest and use_resource) can be repeated as many times as needed to specify all the sources and packages needed.</p></li>
 </ul></li>
