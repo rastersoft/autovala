@@ -136,7 +136,7 @@ Finally, the author's name and email will be asked the first time a package is c
 
 ## Adding more package types
 
-As commented, Autovala can generate the metadata por .deb and .rpm source packages. To add more package types, only a new class, derived from **packages** class, must be created. After initializing it and calling **init_all** method, the class should generate the files needed by the packaging system. To help into it, there are several properties that contains useful data, like a list of files needed to build the project (.vapi and .pc files), and for running it (like libraries). The class must use the package utilities to discover which packages contains those files, and use them for generating the dependencies.
+As commented, Autovala can generate the metadata for .deb and .rpm source packages. To add more package types, only a new class, derived from **packages** class, must be created. After initializing it and calling **init_all** method, the class should generate the files needed by the packaging system. To help into it, there are several properties that contains useful data, like a list of files needed to build the project (.vapi and .pc files), and for running it (like libraries). The class must use the package utilities to discover which packages contains those files, and use them for generating the dependencies.
 
 
 ## Using Valama
