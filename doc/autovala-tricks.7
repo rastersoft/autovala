@@ -51,12 +51,12 @@ project_name: example
 *gresource: datas_gresource_xml data/datas.gresource.xml
 
 vala_binary: src/example
-use_resource: datas_gresource_xml
+use_gresource: datas_gresource_xml
 *vala_check_package: gio-2.0
 *vala_check_package: glib-2.0
 *vala_source: example.vala</code></pre>
 <p>Here we have a project called <em>example</em>, with a GResource XML file located at <em>data/</em> and called <em>datas.gresource.xml</em>. This means that AutoVala is able to autodetect and include it automatically. Also, the identifier is the file name with the dots replaced by underscores.</p>
-<p>In the <em>vala_binary</em> section we added the <em>use_resource</em> sub-command, which instructs AutoVala to use that resources in this binary.</p>
+<p>In the <em>vala_binary</em> section we added the <em>use_gresource</em> sub-command, which instructs AutoVala to use that resources in this binary.</p>
 <p>It is mandatory to include GIO in the binaries that use GResource. It is as easy as including the line</p>
 <pre><code>//using GIO</code></pre>
 <p>at the begining of any of the source files (be carefull: you must put it as a comment, because GIO has not its own VAPI file, but uses a different library).</p>
