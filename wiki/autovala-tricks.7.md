@@ -82,14 +82,14 @@ An example:
     *gresource: datas_gresource_xml data/datas.gresource.xml
 
     vala_binary: src/example
-    use_resource: datas_gresource_xml
+    use_gresource: datas_gresource_xml
     *vala_check_package: gio-2.0
     *vala_check_package: glib-2.0
     *vala_source: example.vala
 
 Here we have a project called *example*, with a GResource XML file located at *data/* and called *datas.gresource.xml*. This means that AutoVala is able to autodetect and include it automatically. Also, the identifier is the file name with the dots replaced by underscores.
 
-In the *vala_binary* section we added the *use_resource* sub-command, which instructs AutoVala to use that resources in this binary.
+In the *vala_binary* section we added the *use_gresource* sub-command, which instructs AutoVala to use that resources in this binary.
 
 It is mandatory to include GIO in the binaries that use GResource. It is as easy as including the line
 
@@ -136,7 +136,7 @@ Finally, the author's name and email will be asked the first time a package is c
 
 ## Adding more package types
 
-As commented, Autovala can generate the metadata por .deb and .rpm source packages. To add more package types, only a new class, derived from **packages** class, must be created. After initializing it and calling **init_all** method, the class should generate the files needed by the packaging system. To help into it, there are several properties that contains useful data, like a list of files needed to build the project (.vapi and .pc files), and for running it (like libraries). The class must use the package utilities to discover which packages contains those files, and use them for generating the dependencies.
+As commented, Autovala can generate the metadata for .deb and .rpm source packages. To add more package types, only a new class, derived from **packages** class, must be created. After initializing it and calling **init_all** method, the class should generate the files needed by the packaging system. To help into it, there are several properties that contains useful data, like a list of files needed to build the project (.vapi and .pc files), and for running it (like libraries). The class must use the package utilities to discover which packages contains those files, and use them for generating the dependencies.
 
 
 ## Using Valama
