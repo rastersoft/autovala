@@ -19,6 +19,7 @@ arch=('i686' 'x86_64')
 depends=( 'gtksourceview3' 'libpeas' 'gtk3' 'pango' 'atk' 'cairo' 'gdk-pixbuf2' 'glib2' 'gobject-introspection-runtime' 'libgee' 'libx11' 'autovala' )
 makedepends=( 'vala' 'gedit' 'autovala' 'atk' 'cairo' 'gtk3' 'gdk-pixbuf2' 'libgee' 'glib2' 'gobject-introspection' 'gtksourceview3' 'libpeas' 'pango' 'libx11' 'cmake' 'gettext' 'pkg-config' 'gcc' 'make' 'intltool' )
 build() {
+	sed -i 's/share/lib/g' ${startdir}/{data,src}/CMakeLists.txt
 	rm -rf ${startdir}/install
 	mkdir ${startdir}/install
 	cd ${startdir}/install
