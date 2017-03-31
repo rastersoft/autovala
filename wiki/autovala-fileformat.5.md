@@ -116,9 +116,9 @@ After that, it comes several commands, some of them repeated several times, to s
 
     * **unitest**: this command specifies one VALA source file that contains an unitary test. Each one of these files will be compiled with all the source files of this executable/library as a stand-alone executable. The path must be relative to the binary/library path. For details, read the FAQ.
 
-    * **use_gresource**: this command instructs AutoVala to include in this binary the resources specified by an identifier. Example:
+    * **use_resource**: this command instructs AutoVala to include in this binary the resources specified by an identifier. Example:
 
-            use_gresource: data_gresource_xml
+            use_resource: data_gresource_xml
 
         Here, data_gresource_xml is the identifier used in a *gresource* command.
 
