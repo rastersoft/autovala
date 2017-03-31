@@ -162,7 +162,7 @@ Everytime you run **autovala cmake** or **autovala update**, the CMAKE scripts c
   Regenerates the **meson.build** files using the data from the **.avprj** file.
 
 **autovala update**
-  The same than refresh+cmake+meson
+  The same than refresh+cmake
 
 **autovala po**
   Updates the .po files with the new strings (requires gettext 0.18.3 or later)

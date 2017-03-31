@@ -51,12 +51,12 @@ project_name: example
 *gresource: datas_gresource_xml data/datas.gresource.xml
 
 vala_binary: src/example
-use_gresource: datas_gresource_xml
+use_resource: datas_gresource_xml
 *vala_check_package: gio-2.0
 *vala_check_package: glib-2.0
 *vala_source: example.vala</code></pre>
 <p>Here we have a project called <em>example</em>, with a GResource XML file located at <em>data/</em> and called <em>datas.gresource.xml</em>. This means that AutoVala is able to autodetect and include it automatically. Also, the identifier is the file name with the dots replaced by underscores.</p>
-<p>In the <em>vala_binary</em> section we added the <em>use_gresource</em> sub-command, which instructs AutoVala to use that resources in this binary.</p>
+<p>In the <em>vala_binary</em> section we added the <em>use_resource</em> sub-command, which instructs AutoVala to use that resources in this binary.</p>
 <p>It is mandatory to include GIO in the binaries that use GResource. It is as easy as including the line</p>
 <pre><code>//using GIO</code></pre>
 <p>at the begining of any of the source files (be carefull: you must put it as a comment, because GIO has not its own VAPI file, but uses a different library).</p>
@@ -80,7 +80,7 @@ use_gresource: datas_gresource_xml
 <p>The package name will be set to the project name. The same for the version number. Also, the version number can't be overriden with the template file (but the package name can be).</p>
 <p>Finally, the author's name and email will be asked the first time a package is created, but it will be stored at <strong>$HOME/.config/autovala</strong> to be used when creating new packages.</p>
 <h2 id="adding-more-package-types">Adding more package types</h2>
-<p>As commented, Autovala can generate the metadata for .deb and .rpm source packages. To add more package types, only a new class, derived from <strong>packages</strong> class, must be created. After initializing it and calling <strong>init_all</strong> method, the class should generate the files needed by the packaging system. To help into it, there are several properties that contains useful data, like a list of files needed to build the project (.vapi and .pc files), and for running it (like libraries). The class must use the package utilities to discover which packages contains those files, and use them for generating the dependencies.</p>
+<p>As commented, Autovala can generate the metadata por .deb and .rpm source packages. To add more package types, only a new class, derived from <strong>packages</strong> class, must be created. After initializing it and calling <strong>init_all</strong> method, the class should generate the files needed by the packaging system. To help into it, there are several properties that contains useful data, like a list of files needed to build the project (.vapi and .pc files), and for running it (like libraries). The class must use the package utilities to discover which packages contains those files, and use them for generating the dependencies.</p>
 <h2 id="using-valama">Using Valama</h2>
 <p>Autovala can export a project to a Valama project, allowing to use this great editor.</p>
 <p>It is a good idea to refresh the data in the Autovala project using <em>autovala refresh</em> before exporting it with <em>autovala valama</em>.</p>
