@@ -52,5 +52,30 @@ namespace AutoVala {
 			}
 			return false;
 		}
+
+		public override bool generateMesonHeader(ConditionalText dataStream, MesonCommon mesonCommon) {
+
+			try {
+				mesonCommon.add_dbus_config(dataStream);
+			} catch (Error e) {
+				ElementBase.globalData.addError(_("Failed to write to meson.build header at '%s' element, at '%s' path: %s").printf(this.command,this._path,e.message));
+				return true;
+			}
+			return false;
+
+		}
+
+		public override bool generateMeson(ConditionalText dataStream, MesonCommon mesonCommon) {
+			try {
+				var name = this._name.replace("-","_").replace(".","_").replace("+","");
+				dataStream.put_string("eos_plug_cfg_%s = configure_file(input: '%s',output: '%s', configuration: cfg_dbus_data)\n".printf(name
+					,Path.build_filename(this._path,this._name),this._name));
+				dataStream.put_string("install_data(eos_plug_cfg_%s,install_dir: join_paths(get_option('prefix'),'lib','plugs','%s'))\n".printf(name,ElementBase.globalData.projectName));
+			} catch (Error e) {
+				ElementBase.globalData.addError(_("Failed to write to meson.build at '%s' element, at '%s' path: %s").printf(this.command,this._path,e.message));
+				return true;
+			}
+			return false;
+		}
 	}
 }

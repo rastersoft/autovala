@@ -31,7 +31,7 @@ namespace AutoVala {
 			this.file_list = {};
 		}
 
-		public override bool configureLine(string line, bool automatic, string? condition, bool invertCondition, int lineNumber) {
+		public override bool configureLine(string line, bool automatic, string? condition, bool invertCondition, int lineNumber, string[]? comments) {
 
 			if (false == line.has_prefix("define: ")) {
 				var badCommand = line.split(": ")[0];
@@ -40,6 +40,7 @@ namespace AutoVala {
 			}
 			// The line starts with 'define: '
 			var data=line.substring(8).strip();
+			this.comments = comments;
 			return this.addNewDefine(data,automatic);
 		}
 
@@ -50,6 +51,11 @@ namespace AutoVala {
 					return false; // this DEFINE already exists
 				}
 			}
+			// A define with a value "true", "false", "0" or "1" must not be counted as a configuration parameter
+			if ((data == "0") || (data == "1") || (data.ascii_casecmp("true") == 0) || (data.ascii_casecmp("false") == 0)) {
+				return false;
+			}
+
 			return this.configureElement(null,data,data,automatic,null,false);
 		}
 

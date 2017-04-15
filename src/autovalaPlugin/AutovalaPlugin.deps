@@ -10,4 +10,5 @@ gobject-2.0
 gtk+-3.0
 pango
 pangocairo
+vte-2.91
 x11

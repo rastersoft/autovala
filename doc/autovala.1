@@ -9,39 +9,61 @@
 <h1 id="name">NAME</h1>
 <p>Autovala - simplify the creation of projects with Vala and CMake</p>
 <h1 id="synopsis">SYNOPSIS</h1>
-<p>autovala {init PROJECT_NAME | clear | refresh | cmake | update | project_files |help | version}</p>
+<p>autovala {init PROJECT_NAME | clear | refresh | cmake | update | project_files | po | deb | rpm | valama | help | version}</p>
 <h1 id="description">DESCRIPTION</h1>
 <p>Autovala is a program and a library designed to help in the creation of projects with Vala and CMake. The idea is quite simple: CMake is very powerful, but writting CMakeLists files is boring and repetitive. Why not let the computer create them, by guessing what to do with each file? And if, at the end, there are mistakes, let the user fix them in an easy way, and generate the final CMakeLists files.</p>
+<p>New versions of Autovala have also experimental support for Meson Build system.</p>
 <p>This is what Autovala does. This process is done in three steps:</p>
 <ul>
-<li>First, Autovala checks all the folders and files, and creates a project with the type of each file<br /></li>
-<li>It also peeks the source files to determine which Vala packages they need, and generate automagically that list<br /></li>
+<li>First, Autovala checks all the folders and files, and creates a project with the type of each file</li>
+<li>It also peeks the source files to determine which Vala packages they need, and generate automagically that list</li>
 <li>After that (and after allowing the user to check, if (s)he wishes, the project file), it uses that project file to generate the needed CMakeLists files</li>
 </ul>
-<p>Autovala uses simple rules, like: &quot;png files go to usr/share/pixmaps&quot;, and so on. It even takes into account things like the size and type of picture. For a detailed explanation of the rules followed by Autovala, check the <a href="autovala-rules.7">rules page</a>.</p>
+<p>Autovala greatly simplifies the process of working with Vala because:</p>
+<ul>
+<li>Automatically determines the vala packages and libraries needed to compile<br />
+and run the project, by inspecting the source code</li>
+<li>Automatically generates the .vapi and pkg-config files for libraries</li>
+<li>Automatically determinates the final destination for an icon, by checking<br />
+its type (svg or png) and, in the later case, its size.</li>
+<li>Automatically generates manpages from text files in several possible input<br />
+format (markdown, html, latex...).</li>
+<li>Greatly simplifies creating libraries in Vala, or a project with a binary<br />
+that uses a library defined in the same project.</li>
+<li>Automatically generates the metadata files to create .DEB and .RPM packages.</li>
+<li>Easily integrates unitary tests for each binary in the project.</li>
+<li>Can generate automatically DBUS bindings by using the DBUS introspection<br />
+capabilities.</li>
+<li>Automatically generates the list of source files for GETTEXT.</li>
+<li>Simplifies mixing C and Vala source files.</li>
+</ul>
 <p>It also includes several Gtk widgets that simplifies writing plugins for text editors. Currently plugins for GEdit 3.x and another for Scratch Text Editor 2.x are included.</p>
+<p>For a detailed explanation of the rules followed by Autovala, check the <a href="autovala-rules.7">rules page</a>.</p>
 <h1 id="using-autovala">USING AUTOVALA</h1>
 <p>Autovala is designed as several Vala classes, so it can be embedded easily in other projects.</p>
 <p>The first thing to do is to initializate the project. This is done by calling autovala in your desired project's folder with:</p>
 <pre><code>    autovala init PROJECT_NAME</code></pre>
+<p>For Genie, you can use instead</p>
+<pre><code>    autovala ginit PROJECT_NAME</code></pre>
 <p>This will create a file called <strong>PROJECT_NAME.avprj</strong>, with the most basic info about your project (the format for this file will be explained later). It will also try to create the basic folders for a vala project, and will show a warning if they already exist. It will never delete a file, except the <strong>CMakeLists</strong> files, of course. The folder hierarchy is:</p>
 <pre><code>    .
-    +cmake
-    +src
-       +vapis
-    +install
-    +doc
-    +po
-    +data
-       +icons
-       +pixmaps
-       +interface
-       +local
-       +man</code></pre>
+    +cmake/
+    +src/
+       +vapis/
+       +unitests/
+    +install/
+    +doc/
+    +po/
+    +data/
+       +icons/
+       +pixmaps/
+       +interface/
+       +local/
+       +man/</code></pre>
 <p>Autovala installs its own version of the CMake modules for Vala inside the <strong>cmake/</strong> folder, which contains a modified version that allows to work with Valadoc; but if you want to use a newer version you can always download the last oficial version from launchpad using bazaar:</p>
 <pre><code>    bzr checkout lp:~elementary-apps/+junk/cmake-modules</code></pre>
 <p>This will create a folder called <strong>cmake-modules</strong>. Inside it will be a folder called <strong>cmake</strong>. Copy the later to your project folder, overwriting the existing files (this will keep the files needed for Valadoc).</p>
-<p>By default, Autovala will compile all the <strong>.vala</strong> source files located inside <strong>src/</strong> and its subfolders into a single binary called like the project's name. How to generate libraries or several binaries is explained in the <a href="autovala-tricks.7">tricks section</a>. Also, an autogenerated namespace called <strong>Constants</strong> will be added, with the following build constants inside:</p>
+<p>By default, Autovala will compile all the <strong>.vala</strong> and <strong>.gs</strong> source files located inside <strong>src/</strong> and its subfolders into a single binary called like the project's name. How to generate libraries or several binaries is explained in the <a href="autovala-tricks.7">tricks section</a>. Also, an autogenerated namespace called <strong>Constants</strong> will be added, with the following build constants inside:</p>
 <pre><code>    public const string DATADIR         Base folder where the binary has been installed (usually /usr/share or /usr/local/share)
     public const string PKGDATADIR      Folder with data needed by the program
     public const string GETTEXT_PACKAGE GetText Domain Name
@@ -49,18 +71,21 @@
     public const string VERSION         Binary version</code></pre>
 <p>Each entry is a global variable, that can be accessed from anywhere in the code. For some examples, see the <a href="autovala-tricks.7">tricks section</a>.</p>
 <p><strong>VAPIS</strong> is where you can put your custom VAPI files, when you need some for compiling your project.</p>
+<p><strong>UNITESTS</strong> is where you can put unitary tests for this binary. For more details about the unitary tests, see the <a href="autovala-tricks.7">tricks section</a>.</p>
 <p><strong>INSTALL</strong> is the folder where to build everything. More about it later.</p>
-<p>As can be supposed, <strong>DOC</strong> has to contain the documentation, and <strong>PO</strong> will contain the files with translatable strings. These strings are extracted from the <strong>.vala</strong> and <strong>.ui</strong> files (the later from glade).</p>
+<p>As can be supposed, <strong>DOC</strong> has to contain the documentation, and <strong>PO</strong> will contain the files with translatable strings. These strings are extracted automatically from the <strong>.vala</strong> and <strong>.ui</strong> files (the later from glade) using intltool.</p>
 <p><strong>DATA</strong> is where you must put things like D-Bus activation files, <strong>.desktop</strong> files, scripts, and so on. <strong>ICONS</strong> folder and subfolders should contain the icons (in png or svg format), and Autovala will automagically take into account its size to put them in the right place.</p>
 <p><strong>INTERFACE</strong> should contain the <strong>.ui</strong> files from Glade.</p>
 <p><strong>MAN</strong> should contain the manpage files. These can be created in the original MANPAGE format (files ended in <strong>.X</strong>, being <strong>X</strong> a number between 0 and 9),Markdown (<strong>.X.md</strong>), HTML (<strong>.X.html</strong>), ReStructured Text (<strong>.X.rst</strong>), LaTeX (<strong>.X.tex</strong>), JSON version of native AST format (<strong>.X.json</strong>), TexTile/RedCloth (<strong>.X.rdoc</strong>), DocBook format (<strong>.X.xml</strong>) or MediaWiki (<strong>.X.txt</strong>).</p>
 <p>Finally, <strong>LOCAL</strong> is a place where to put everything you want to get copied &quot;as-is&quot; into</p>
 <pre><code>    usr/share/PROJECT_NAME/</code></pre>
-<p>To know the precise rules used by AutoVala, check the <a href="autovala-rules.7">rules page</a>.</p>
+<p>To know the precise rules used by AutoVala to decide what to do with each kind of file, check the <a href="autovala-rules.7">rules page</a>.</p>
 <p>When you are OK for the first compilation, just use Autovala to check the folders and automatically update the <strong>.avprj</strong> file with:</p>
 <pre><code>    autovala refresh</code></pre>
 <p>When using this command, Autovala will guess all the info about your project and put it in the <strong>.avprj</strong> file, so you can check and modify it if you want (more on that later). If everything is OK, just create the CMakeLists files from that data using:</p>
 <pre><code>    autovala cmake</code></pre>
+<p>But if you prefer to try Meson, just use instead</p>
+<pre><code>    autovala meson</code></pre>
 <p>Now you can go to the <strong>install/</strong> folder and type ' <strong>cmake ..</strong> ' to generate the makefiles for compile your project. You can also use <strong>cmake .. -DBUILD_VALADOC=ON</strong> to add Valadoc support; but if you are using Ubuntu 12.10, maybe you should try to compile Valadoc from scratch, because it seems to be a bug in the version shipped from Canonical (more on this in the <a href="autovala-tricks.7">tricks section</a>).</p>
 <p>Since it's very common to call those two commands, one after the other, you can just use:</p>
 <pre><code>    autovala update</code></pre>
@@ -68,29 +93,55 @@
 <p>If you want to remove all the automatically added lines in the project file, leaving only the manually added ones, you can use:</p>
 <pre><code>    autovala clear</code></pre>
 <p>These commands can be called from any of the folders or subfolders of the project, because it will search for the first <strong>.avprj</strong> file located in the current folder or upstream.</p>
+<p>Everytime you run <strong>autovala cmake</strong> or <strong>autovala update</strong>, the CMAKE scripts contained in the <strong>cmake</strong> folder will be refreshed; this allows to get advantage of new capabilities available in more recent versions of autovala. The scripts are copied, by default, from the autovala's system-wide installation folder, unless the environment variable <strong>AUTOVALA_CMAKE_SCRIPT</strong> is defined with the path to a folder containing an alternative script.</p>
 <h1 id="options">OPTIONS</h1>
-<p><strong>autovala init PROJECT_NAME</strong><br /> Creates a new project called PROJECT_NAME, and initializates the basic directory tree.</p>
-<p><strong>autovala clear</strong><br /> Deletes the <strong>.avprj</strong> file.</p>
-<p><strong>autovala refresh</strong><br /> Refreshes the contents of the <strong>.avprj</strong> file, by cheking the files available in the directory tree and guessing what to do which each one.</p>
-<p><strong>autovala cmake</strong><br /> Regenerates the <strong>CMakeList.txt</strong> files using the data from the <strong>.avprj</strong> file.</p>
-<p><strong>autovala update</strong><br /> The same than refresh+cmake</p>
-<p><strong>autovala po</strong><br /> Updates the .po files with the new strings (requires gettext 0.18.3 or later)</p>
-<p><strong>autovala project_files</strong><br /> Lists all the files needed to build and install the project (after being generated by <strong>autovala cmake</strong> or <strong>autovala update</strong>), relative to the project's main folder. This is very useful when working with a versioning system like <strong>git</strong>, <strong>bazaar</strong>, <strong>subversion</strong>...</p>
+<p><strong>autovala help</strong><br />
+Shows the available commands</p>
+<p><strong>autovala version</strong><br />
+Shows the installed version of Autovala</p>
+<p><strong>autovala init PROJECT_NAME</strong><br />
+Creates a new project called PROJECT_NAME, and initializates the basic directory tree and an empty source file.</p>
+<p><strong>autovala ginit PROJECT_NAME</strong><br />
+The same than init, but creates a <em>.gs</em> file for Genie, instead of an <em>.vala</em> file.</p>
+<p><strong>autovala clear</strong><br />
+Deletes the <strong>.avprj</strong> file.</p>
+<p><strong>autovala refresh</strong><br />
+Refreshes the contents of the <strong>.avprj</strong> file, by cheking the files available in the directory tree and guessing what to do which each one.</p>
+<p><strong>autovala cmake</strong><br />
+Regenerates the <strong>CMakeList.txt</strong> files using the data from the <strong>.avprj</strong> file.</p>
+<p><strong>autovala meson</strong><br />
+Regenerates the <strong>meson.build</strong> files using the data from the <strong>.avprj</strong> file.</p>
+<p><strong>autovala update</strong><br />
+The same than refresh+cmake</p>
+<p><strong>autovala po</strong><br />
+Updates the .po files with the new strings (requires gettext 0.18.3 or later)</p>
+<p><strong>autovala project_files</strong><br />
+Lists all the files needed to build and install the project (after being generated by <strong>autovala cmake</strong> or <strong>autovala update</strong>), relative to the project's main folder. This is very useful when working with a versioning system like <strong>git</strong>, <strong>bazaar</strong>, <strong>subversion</strong>...</p>
 <p>To add all the needed project files to a <strong>git</strong> repository, just use:</p>
 <pre><code>    git add `autovala project_files`</code></pre>
 <p>The same can be done with <strong>bazaar</strong>, <strong>subversion</strong>, or nearly all versioning systems.</p>
 <p>Keep in mind that this command only lists the files that are refered in the <strong>.avprj</strong> file. This means that files like <strong>README.md</strong> at the root, won't be listed. This means that other files that you want to be available in the repository but not in the final installation must be added manually.</p>
-<p><strong>autovala help</strong><br /> Shows the basic commands available</p>
-<p><strong>autovala version</strong><br /> Shows the version of Autovala</p>
+<p><strong>autovala git</strong><br />
+Adds all the project files to a git repository located in the project's root folder. It is equivalent to executing:</p>
+<pre><code> git add `autovala project_files`</code></pre>
+<p>from the project's root directory. The advantages are two: it is shorter, and it can be run from any folder, not only from the project's root directory.</p>
+<p><strong>autovala deb</strong><br />
+Generates the metadata needed for building a <strong>DEB</strong> package. The most important part that generates are the dependencies, both for source and binary packages.</p>
+<p><strong>autovala rpm</strong><br />
+Generates the metadata needed for building an <strong>RPM</strong> package. The most important part that generates are the dependencies, both for source and binary packages.</p>
+<p><strong>autovala pacman</strong><br />
+Generates the metadata needed for building a <strong>PACMAN</strong> package (for Arch based distros). The most important part that generates are the dependencies.</p>
+<p><strong>autovala valama</strong><br />
+Generates a Valama project for each binary in the current project. This allows to use Valama to edit Autovala projects. <strong>THIS SUPPORT IS STILL EXPERIMENTAL</strong>. Don't forget to do a <em>refresh</em> before to update the Autovala project file.</p>
+<p><strong>autovala external USER_ID</strong><br />
+Shows the external info stored in the <strong>.avprj</strong> file for the user USER_ID.</p>
 <h1 id="see-also">SEE ALSO</h1>
 <p><a href="autovala-rules.7">autovala-rules(7)</a> <a href="autovala-fileformat.5">autovala-fileformat(5)</a> <a href="autovala-keep-changes.7">autovala-keep-changes(7)</a> <a href="autovala-tricks.7">autovala-tricks(7)</a></p>
 <h1 id="author">AUTHOR</h1>
-<p>Sergio Costas Rodriguez<br /><script type="text/javascript">
-<!--
-h='&#114;&#x61;&#x73;&#116;&#x65;&#114;&#x73;&#x6f;&#102;&#116;&#46;&#x63;&#x6f;&#x6d;';a='&#64;';n='&#114;&#x61;&#x73;&#116;&#x65;&#114;';e=n+a+h;
-document.write('<a h'+'ref'+'="ma'+'ilto'+':'+e+'">'+e+'<\/'+'a'+'>');
-// -->
-</script><noscript>&#114;&#x61;&#x73;&#116;&#x65;&#114;&#32;&#x61;&#116;&#32;&#114;&#x61;&#x73;&#116;&#x65;&#114;&#x73;&#x6f;&#102;&#116;&#32;&#100;&#x6f;&#116;&#32;&#x63;&#x6f;&#x6d;</noscript><br /><a href="http://www.rastersoft.com">http://www.rastersoft.com</a><br /><a href="http://github.com/rastersoft">http://github.com/rastersoft</a></p>
+<p>Sergio Costas Rodriguez<br />
+<a href="mailto:raster@rastersoft.com">raster@rastersoft.com</a><br />
+<a href="http://www.rastersoft.com" class="uri">http://www.rastersoft.com</a><br />
+<a href="http://github.com/rastersoft" class="uri">http://github.com/rastersoft</a></p>
 <p><a href="index.html">Home</a></p>
 </div>
 </body>

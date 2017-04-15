@@ -19,17 +19,17 @@
 using GLib;
 
 namespace AutoVala {
-	
+
 	/**
 	 * Searchs for all versions of Vala
 	 */
-	
+
 	private class FindVala : GLib.Object {
-		
+
 		private Gee.List<ValaVersion> _versions;
 		private ValaVersion? _defaultVersion;
 		private weak ValaVersion? _maxVersion;
-		
+
 		public Gee.List<ValaVersion> versions {
 			get { return this._versions; }
 		}
@@ -39,8 +39,8 @@ namespace AutoVala {
 		public ValaVersion? maxVersion {
 			get { return this._maxVersion; }
 		}
-		
-		public FindVala() {
+
+		public FindVala() throws GLib.Error {
 
 			this._versions = new Gee.ArrayList<ValaVersion>();
 			this._defaultVersion = null;
@@ -53,64 +53,61 @@ namespace AutoVala {
 			}
 		}
 
-		private void checkPath(string path) {
-			
+		private void checkPath(string path) throws GLib.Error {
+
 			var dirPath=File.new_for_path(path);
 			if (dirPath.query_exists()==false) {
 				return;
 			}
-			try {
-				var enumerator = dirPath.enumerate_children (FileAttribute.STANDARD_NAME+","+FileAttribute.STANDARD_TYPE, 0);
-				FileInfo file_info;
-				while ((file_info = enumerator.next_file ()) != null) {
-					var ftype=file_info.get_file_type();
-					if (ftype==GLib.FileType.DIRECTORY) {
-						continue;
+
+			var enumerator = dirPath.enumerate_children (FileAttribute.STANDARD_NAME+","+FileAttribute.STANDARD_TYPE, 0);
+			FileInfo file_info;
+			while ((file_info = enumerator.next_file ()) != null) {
+				var ftype=file_info.get_file_type();
+				if (ftype==GLib.FileType.DIRECTORY) {
+					continue;
+				}
+				var fname=file_info.get_name();
+				if ((this._defaultVersion == null) && (fname == "valac")) {
+					var compiler = new ValaVersion();
+					if (false == compiler.setValaVersion(Path.build_filename(path,"valac"))) {
+						this._defaultVersion = compiler;
 					}
-					var fname=file_info.get_name();
-					if ((this._defaultVersion == null) && (fname == "valac")) {
-						var compiler = new ValaVersion();
-						if (false == compiler.setValaVersion(Path.build_filename(path,"valac"))) {
-							this._defaultVersion = compiler;
+					continue;
+				}
+				if (fname.has_prefix("valac-")) {
+					var compiler = new ValaVersion();
+					if (false == compiler.setValaVersion(Path.build_filename(path,fname))) {
+						bool not_found = true;
+						foreach (ValaVersion element in this._versions) {
+							if ((element.major == compiler.major) && (element.minor == compiler.minor)) {
+								not_found = false;
+							}
 						}
-						continue;
-					}
-					if (fname.has_prefix("valac-")) {
-						var compiler = new ValaVersion();
-						if (false == compiler.setValaVersion(Path.build_filename(path,fname))) {
-							bool not_found = true;
-							foreach (ValaVersion element in this._versions) {
-								if ((element.major == compiler.major) && (element.minor == compiler.minor)) {
-									not_found = false;
-								}
-							}
-							if (not_found) {
-								this._versions.add (compiler);
-							}
-							if (this._maxVersion != null) {
-								if (this._maxVersion.major < compiler.major) {
-									this._maxVersion = compiler;
-								} else if ((this._maxVersion.major == compiler.major) && (this._maxVersion.minor < compiler.minor)) {
-									this._maxVersion = compiler;
-								}
-							} else {
+						if (not_found) {
+							this._versions.add (compiler);
+						}
+						if (this._maxVersion != null) {
+							if (this._maxVersion.major < compiler.major) {
+								this._maxVersion = compiler;
+							} else if ((this._maxVersion.major == compiler.major) && (this._maxVersion.minor < compiler.minor)) {
 								this._maxVersion = compiler;
 							}
+						} else {
+							this._maxVersion = compiler;
 						}
 					}
 				}
-			}  catch (Error e) {
-				return;
 			}
 		}
 	}
 
 	private class ValaVersion : GLib.Object {
-		
+
 		public int major;
 		public int minor;
 		public string path;
-		
+
 		public ValaVersion() {
 			this.major=0;
 			this.minor=16;
@@ -128,7 +125,7 @@ namespace AutoVala {
 			/*
 			 * Maybe a not very elegant way of doing it. I accept patches
 			 */
-			 
+
 			string[] spawn_args = {lPath, "--version"};
 			string ls_stdout;
 			int ls_status;
@@ -152,11 +149,6 @@ namespace AutoVala {
 						var numbers=element.split(".");
 						this.major=int.parse(numbers[0]);
 						this.minor=int.parse(numbers[1]);
-						if ((this.minor % 2) != 0) {
-							this.minor++; // odd minor numbers are development versions, so bump to next version
-						} else if (numbers.length > 3) {
-							this.minor+=2; // even minor numbers and more than three version numbers are also development versions
-						}
 						return false;
 					}
 				}

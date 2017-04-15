@@ -48,7 +48,23 @@ namespace AutoVala {
 
 		public static ReadVapis? vapiList = null;
 
-		public Globals(string projectName, string ?searchPath = null) {
+		private static int _counter = 0;
+
+		/**
+		 * This counter is used for cases where different filenames are needed
+		 */
+		public static int counter {
+				get {
+					Globals._counter++;
+					return _counter;
+				}
+		}
+
+		public static void resetCounter() {
+			Globals._counter = 0;
+		}
+
+		public Globals(string projectName, string ?searchPath = null) throws GLib.Error {
 
 			ElementBase.globalData = this;
 			ConditionalText.globalData = this;
@@ -61,6 +77,8 @@ namespace AutoVala {
 			this.globalElements = new Gee.ArrayList<ElementBase>();
 			this.excludeFiles = {};
 			this.getValaVersion();
+			this.clearErrors();
+
 			if (Globals.vapiList == null) {
 				Globals.vapiList = new ReadVapis(this.valaMajor,this.valaMinor);
 			}
@@ -101,7 +119,7 @@ namespace AutoVala {
 			this.pathList=new Gee.HashSet<string>();
 			foreach(var element in this.globalElements) {
 				if ((element.eType!=ConfigType.IGNORE) && (element.eType!=ConfigType.DEFINE) && (element.eType!=ConfigType.SOURCE_DEPENDENCY)
-						&& (element.eType!=ConfigType.BINARY_DEPENDENCY) && (!this.pathList.contains(element.path))) {
+						&& (element.eType!=ConfigType.BINARY_DEPENDENCY) && (element.eType!=ConfigType.INCLUDE) && (!this.pathList.contains(element.path))) {
 					this.pathList.add(element.path);
 				}
 				if (element.eType==ConfigType.VALA_LIBRARY) {
@@ -109,6 +127,10 @@ namespace AutoVala {
 					if ((elementLibrary.currentNamespace!=null)&&(!this.localModules.has_key(elementLibrary.currentNamespace))) {
 						this.localModules.set(elementLibrary.currentNamespace,elementLibrary.path);
 					}
+				}
+				if (element.eType == ConfigType.VAPIDIR) {
+					var fullpath = Path.build_filename(ElementBase.globalData.projectFolder,element.fullPath);
+					AutoVala.Globals.vapiList.fillNamespaces(fullpath);
 				}
 			}
 		}
@@ -139,6 +161,19 @@ namespace AutoVala {
 		public void addElement(ElementBase element) {
 			this.globalElements.add(element);
 		}
+
+/* Not needed
+		public ElementBase[] findElements(AutoVala.ConfigType eType) {
+
+			AutoVala.ElementBase[] elements = {};
+			foreach(var element in this.globalElements) {
+				if (element.eType == eType) {
+					elements += element;
+				}
+			}
+			return elements;
+		}
+*/
 
 		/**
 		 * Inserts a new file/path in the list of exclude files/paths
@@ -240,8 +275,13 @@ namespace AutoVala {
 
 			this.versionAutomatic = true;
 
-			var compilers = new FindVala();
-			if (compilers == null) {
+			FindVala compilers;
+			try {
+				compilers = new FindVala();
+				if (compilers == null) {
+					return true;
+				}
+			} catch (GLib.Error e) {
 				return true;
 			}
 
@@ -330,17 +370,21 @@ namespace AutoVala {
 		 * Comparation function to sort the elements
 		 */
 		public static int compareElements (ElementBase? a, ElementBase? b) {
-			if ((a.condition==null)&&(b.condition==null)) {
-				if ((a.fullPath == null) && (b.fullPath == null)) {
+
+			var a_data = a.getSortId();
+			var b_data = b.getSortId();
+
+			if ((a.condition==null) && (b.condition==null)) {
+				if ((a_data == null) && (b_data == null)) {
 					return 0;
 				}
-				if (a.fullPath == null) {
+				if (a_data == null) {
 					return -1;
 				}
-				if (b.fullPath == null) {
+				if (b_data == null) {
 					return 1;
 				}
-				return Posix.strcmp(a.fullPath,b.fullPath);
+				return Posix.strcmp(a_data,b_data);
 			}
 			if (a.condition==null) {
 				return -1;
@@ -349,17 +393,17 @@ namespace AutoVala {
 				return 1;
 			}
 			if (a.condition==b.condition) {
-				if (a.invertCondition==b.invertCondition) {
-					if ((a.fullPath == null) && (b.fullPath == null)) {
+				if (a.invertCondition == b.invertCondition) {
+					if ((a_data == null) && (b_data == null)) {
 						return 0;
 					}
-					if (a.fullPath == null) {
+					if (a_data == null) {
 						return -1;
 					}
-					if (b.fullPath == null) {
+					if (b_data == null) {
 						return 1;
 					}
-					return Posix.strcmp(a.fullPath,b.fullPath); // both are equal; sort alphabetically
+					return Posix.strcmp(a_data,b_data); // both are equal; sort alphabetically
 				} else {
 					return a.invertCondition ? 1 : -1; // the one with the condition not inverted goes first
 				}

@@ -73,21 +73,48 @@ namespace AutoVala {
 				try {
 					if (!Process.spawn_sync (null,spawn_args,Environ.get(),SpawnFlags.SEARCH_PATH,null,out ls_stdout,null,out ls_status)) {
 						ElementBase.globalData.addWarning(_("Failed to launch rpm for the file %s").printf(element));
-						return;
+						ElementBase.globalData.addWarning(_("Can't find a package for the file %s").printf(element));
+						continue;
 					}
 					if (ls_status != 0) {
 						ElementBase.globalData.addWarning(_("Error %d when launching rpm for the file %s").printf(ls_status,element));
-						return;
+						ElementBase.globalData.addWarning(_("Can't find a package for the file %s").printf(element));
+						continue;
 					}
 				} catch (SpawnError e) {
 					ElementBase.globalData.addWarning(_("Exception '%s' when launching rpm for the file %s").printf(e.message,element));
-					return;
+					ElementBase.globalData.addWarning(_("Can't find a package for the file %s").printf(element));
+					continue;
 				}
 				var elements = ls_stdout.split("\n");
 				if (elements.length == 0) {
 					ElementBase.globalData.addWarning(_("Can't find a package for the file %s").printf(element));
 				} else 	if (!destination.contains(elements[0])) {
 					destination.add(elements[0]);
+				}
+			}
+		}
+
+		private void print_key(DataOutputStream of,Gee.HashMultiMap<string,string> keylist,bool multiline,string key,string val) throws IOError {
+
+			Gee.Collection<string> final_value;
+			if (!keylist.contains(key)) {
+				final_value = new Gee.ArrayList<string>();
+				final_value.add(val);
+			} else {
+				final_value = keylist.get(key);
+			}
+			foreach (var line in final_value) {
+				if (line.strip() == "") {
+					continue;
+				}
+				if (multiline) {
+					of.put_string("%%%s\n%s\n".printf(key,line));
+				} else {
+					of.put_string("%s: %s".printf(key,line));
+				}
+				if (line.get_char(line.length-1) != '\n') {
+					of.put_string("\n");
 				}
 			}
 		}
@@ -100,15 +127,17 @@ namespace AutoVala {
 		private bool create_spec(string path) {
 
 			string[] definitions = {};
-			Gee.Map<string,string> single_keys = new Gee.HashMap<string,string>();
-			Gee.Map<string,string> multi_keys = new Gee.HashMap<string,string>();
+			Gee.HashMultiMap<string,string> single_keys = new Gee.HashMultiMap<string,string>();
+			Gee.HashMultiMap<string,string> multi_keys = new Gee.HashMultiMap<string,string>();
 
-			var f_control = File.new_for_path(Path.build_filename(path,"%s.spec".printf(this.config.globalData.projectName)));
+            var f_control_path = Path.build_filename(path,"%s.spec".printf(this.config.globalData.projectName));
+            var f_control_base_path = Path.build_filename(this.config.globalData.projectFolder,"packages","rpm.spec.base");
+			var f_control = File.new_for_path(f_control_path);
+			var f_control_base = File.new_for_path(f_control_base_path);
 			try {
-				if (f_control.query_exists()) {
+				if (f_control_base.query_exists()) {
 					// store the original file to keep manually-added fields
-					bool source = true;
-					var dis = new DataInputStream (f_control.read ());
+					var dis = new DataInputStream (f_control_base.read ());
 					string line;
 					string? key = null;
 					string data = "";
@@ -129,6 +158,7 @@ namespace AutoVala {
 							if (line == "") {
 								multiline = false;
 								multi_keys.set(key,data);
+								print("multi: "+key+"\n");
 								data = "";
 							} else {
 								data += line+"\n";
@@ -153,17 +183,54 @@ namespace AutoVala {
 						}
 						key = line.substring(0,pos).strip();
 						data = line.substring(pos+1).strip();
+						if ((key == "Requires") || (key == "BuildRequires")){
+							var package = data;
+							var min = data.length;
+							var pos1 = data.index_of_char('=');
+							var pos2 = data.index_of_char('<');
+							var pos3 = data.index_of_char('>');
+							if ((pos1 != -1) && (pos1 < min)) {
+								min = pos1;
+							}
+							if ((pos2 != -1) && (pos2 < min)) {
+								min = pos2;
+							}
+							if ((pos3 != -1) && (pos3 < min)) {
+								min = pos3;
+							}
+							if (min != data.length) {
+								package = data.substring(0,min).strip();
+							}
+							if (key == "Requires") {
+								if (this.binary_packages.index_of(package) == -1) {
+									this.binary_packages.add(package);
+								}
+							} else {
+								if (this.source_packages.index_of(package) == -1) {
+									this.source_packages.add(package);
+								}
+							}
+						}
 						single_keys.set(key,data);
 					}
-					f_control.delete();
+					if (multiline) {
+						multi_keys.set(key,data);
+					}
 				}
 			} catch (Error e) {
 				ElementBase.globalData.addWarning(_("Failed to delete rpmbuild/SPECS/SPEC file (%s)").printf(e.message));
 			}
+			if (f_control.query_exists()) {
+				try {
+					f_control.delete();
+				} catch (Error e) {
+					ElementBase.globalData.addError(_("Failed to delete rpmbuild/SPECS/control file (%s)").printf(e.message));
+					return true;
+				}
+			}
 			try {
 				var dis = f_control.create_readwrite(GLib.FileCreateFlags.PRIVATE);
 				var of = new DataOutputStream(dis.output_stream as FileOutputStream);
-				bool not_first;
 
 				foreach (var def in definitions) {
 					of.put_string(def+"\n");
@@ -172,38 +239,19 @@ namespace AutoVala {
 					of.put_string("\n");
 				}
 
-				if (!single_keys.has_key("Name")) {
-					of.put_string("Name: %s\n".printf(this.config.globalData.projectName));
-				} else {
-					of.put_string("Name: %s\n".printf(single_keys.get("Name")));
-				}
-				if (!single_keys.has_key("Version")) {
-					of.put_string("Version: %s\n".printf(this.version));
-				} else {
-					of.put_string("Version: %s\n".printf(single_keys.get("Version")));
-				}
-				if (!single_keys.has_key("Release")) {
-					of.put_string("Release: 1\n");
-				} else {
-					of.put_string("Release: %s\n".printf(single_keys.get("Release")));
-				}
-				if (!single_keys.has_key("License")) {
-					of.put_string("License: Unknown/not set\n");
-				} else {
-					of.put_string("License: %s\n".printf(single_keys.get("License")));
-				}
+				this.print_key(of,single_keys,false,"Name",this.config.globalData.projectName);
+    			of.put_string("Version: %s\n".printf(this.version));
+    			this.print_key(of,single_keys,false,"Release","1");
+				this.print_key(of,single_keys,false,"License","Unknown/not set");
+				this.print_key(of,single_keys,false,"Summary",this.summary);
 
-				if (!single_keys.has_key("Summary")) {
-					of.put_string("Summary: %s\n".printf(this.summary));
-				} else {
-					of.put_string("Summary: %s\n".printf(single_keys.get("Summary")));
-				}
-
-				foreach (var key in single_keys.keys) {
+				foreach (var key in single_keys.get_keys()) {
 					if ((key == "Requires") || (key == "BuildRequires") || (key == "Name") || (key == "Version") || (key == "Release") || (key == "License") || (key == "Summary")) {
 						continue;
 					}
-					of.put_string("%s: %s\n".printf(key,single_keys.get(key)));
+					foreach (var line in single_keys.get(key)) {
+						of.put_string("%s: %s\n".printf(key,line));
+					}
 				}
 				of.put_string("\n");
 
@@ -216,8 +264,10 @@ namespace AutoVala {
 				}
 				of.put_string("\n");
 
-				if (multi_keys.has_key("description")) {
-					of.put_string("%%description\n%s\n".printf(multi_keys.get("description")));
+				if (multi_keys.contains("description")) {
+					foreach (var line in single_keys.get("description")) {
+						of.put_string("%%description\n%s\n".printf(line));
+					}
 				} else {
 					of.put_string("%description\n");
 					foreach(var line in this.description.split("\n")) {
@@ -229,62 +279,42 @@ namespace AutoVala {
 					of.put_string("\n");
 				}
 
-				if (!multi_keys.has_key("files")) {
-					of.put_string("%files\n/*\n\n");
+				this.print_key(of,multi_keys,true,"files","*\n");
+				this.print_key(of,multi_keys,true,"build","mkdir -p ${RPM_BUILD_DIR}\ncd ${RPM_BUILD_DIR}; cmake -DCMAKE_INSTALL_PREFIX=/usr -DGSETTINGS_COMPILE=OFF -DICON_UPDATE=OFF ../..\nmake -C ${RPM_BUILD_DIR}");
+				this.print_key(of,multi_keys,true,"install","make install -C ${RPM_BUILD_DIR} DESTDIR=%{buildroot}");
+				var multiline = "";
+				foreach(var line in this.pre_inst) {
+					multiline += line+"\n";
 				}
-
-				if (!multi_keys.has_key("build")) {
-					of.put_string("%build\nmkdir -p ${RPM_BUILD_DIR}\ncd ${RPM_BUILD_DIR}; cmake -DCMAKE_INSTALL_PREFIX=/usr -DGSETTINGS_COMPILE=OFF -DICON_UPDATE=OFF ../..\nmake -C ${RPM_BUILD_DIR}\n\n");
+				this.print_key(of,multi_keys,true,"pre",multiline);
+				multiline = "";
+				foreach(var line in this.post_inst) {
+					multiline += line+"\n";
 				}
-
-				if (!multi_keys.has_key("install")) {
-					of.put_string("%install\nmake install -C ${RPM_BUILD_DIR} DESTDIR=%{buildroot}\n\n");
+				this.print_key(of,multi_keys,true,"post",multiline);
+				multiline = "";
+				foreach(var line in this.pre_rm) {
+					multiline += line+"\n";
 				}
-
-				if ((!multi_keys.has_key("pre")) && (this.pre_inst.length != 0)) {
-					of.put_string("%pre\n");
-					foreach(var line in this.pre_inst) {
-						of.put_string(line+"\n");
-					}
-					of.put_string("\n");
+				this.print_key(of,multi_keys,true,"preun",multiline);
+				multiline = "";
+				foreach(var line in this.post_rm) {
+					multiline += line+"\n";
 				}
+				this.print_key(of,multi_keys,true,"postun",multiline);
+				this.print_key(of,multi_keys,true,"clean","rm -rf %{buildroot}");
 
-				if ((!multi_keys.has_key("post")) && (this.post_inst.length != 0)) {
-					of.put_string("%post\n");
-					foreach(var line in this.post_inst) {
-						of.put_string(line+"\n");
-					}
-					of.put_string("\n");
-				}
-
-				if ((!multi_keys.has_key("preun")) && (this.pre_rm.length != 0)) {
-					of.put_string("%preun\n");
-					foreach(var line in this.pre_rm) {
-						of.put_string(line+"\n");
-					}
-					of.put_string("\n");
-				}
-
-				if ((!multi_keys.has_key("postun")) && (this.post_rm.length != 0)) {
-					of.put_string("%postun\n");
-					foreach(var line in this.post_rm) {
-						of.put_string(line+"\n");
-					}
-					of.put_string("\n");
-				}
-
-				if (!multi_keys.has_key("clean")) {
-					of.put_string("%clean\nrm -rf %{buildroot}\n\n");
-				}
-
-				foreach (var key in multi_keys.keys) {
-					if (key == "description") {
+				foreach (var key in multi_keys.get_keys()) {
+					if ((key == "description") || (key == "files") || (key == "build") || (key == "install") || (key == "pre") || (key == "post") || (key == "preun") || (key == "postun") || (key == "clean")) {
 						continue;
 					}
-					of.put_string("%%%s\n%s\n".printf(key,multi_keys.get(key)));
+					foreach (var line in multi_keys.get(key)) {
+						of.put_string("%%%s\n%s\n".printf(key,line));
+					}
 				}
 
 				dis.close();
+				Posix.chmod(f_control_path,420); // 644 permissions
 			} catch (Error e) {
 				ElementBase.globalData.addError(_("Failed to write data to rpmbuild/SPECS/SPEC file (%s)").printf(e.message));
 				return true;

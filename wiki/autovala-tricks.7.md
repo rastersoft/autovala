@@ -4,10 +4,102 @@ Autovala-tricks(1)
 
 Autovala tricks - Several tricks for Autovala
 
+## I migrated to Meson from CMake, but my libraries seems to not being installed...
+
+Meson installs libraries at */usr/lib/x86_64-linux-gnu*, while CMake installs them at */usr/lib*. Ensure that you remove any old library from */usr/lib* and */usr/local/lib*.
+
+## Adding the project files to a versioning system like git, mercurial or bazaar
+
+Autovala simplifies this taks by listing for you all the files it knows belong to the project. This is what the *autovala project_files* command is for. You can add all these files to, let's say, a bazaar repository, just running from the project root folder:
+
+    bzr add `autovala project_files`
+
+For git there is some syntactic sugar in the form:
+
+	autovala git
+
+This has the advantage that can be run from any folder, not only from the root.
+
+## Working with GENIE
+
+Genie is another syntax for the Vala compiler. It can be used with Autovala since version 0.99.48.
+
+To create a Genie project just use
+
+    autovala ginit PROJECT_NAME
+
+This will create all the folders for a standard project and an empty **.gs** file to begin writting source code. Autovala will do the same tricks with Genie, like peeking the source files to discover which packages they need to be compiled, or simplify building libraries, or mixing C, Vala and Genie code in the same project.
+
+## Enabling debug symbols
+
+Version 0.99.45 of Autovala added support for the CMake standard way for enabling debug symbols. This is achieved just by using:
+
+    cmake -DCMAKE_BUILD_TYPE=Debug
+
+or
+
+    cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo
+
+The other two default options, *Release* and *MinSizeRel*, won't add debug symbols.
+
+Of course, it is possible to define new build types. Just read the section about **compile_options** and **compile_c_options** in the [file format](autovala-fileformat.5) page.
+
+When cmake is called without specifying a build type, the *Release* one will be used by default.
+
+Thanks to this change, it is possible now to remove the old lines with the conditional DEBUG statements from the .avprj files.
+
+## Using vapidir and vapi_file commands
+
+The *vapidir* command will add a folder to the list of places where to search for .vapi files, passing them to the *valac* compiler with the *--vapidir=...* command line parameter. This is useful for programs (like Gnome-Builder 3.20) that put their vapi files in a non-standard location, or for libraries (like libkeybinder) that have .vapi files but they aren't included in Debian packages (at least at august 21, 2016). All the autovala's bells and whistles (like automatic search of pkg-config based on *Using* statements inside the source code, checking for existence during cmake execution and so on) are available for the .vapi files inside these folders. These folders are added for all the binaries and libraries in a project.
+
+On the other hand, the *vapi_file* command adds an specific .vapi file (and only that .vapi file), and does it only for an specific binary or library. It is added to the sources list, like another source file, and the only thing checked is if it fulfills any of the *Using* statements in the sources. Everything else (checking for existence, adding *-l...* to the C options and so on) is left to the user, who must configure them to ensure that the compilation works. This is useful mainly when a project generates a library used by another library or binary in the same project.
+
+## Using GResource
+
+GResource is a system available in GLib to include files (text, images, sound...) inside an executable, avoiding the problem of locating them in the hard disk. To do so, an utility called **glib-compile-resources** is used, which takes an XML file with the list of files to include, and generates a **.c** file with them, which can then be compiled with the source code. More information about it is available in the [GResource API documentation page](https://developer.gnome.org/gio/stable/GResource.html).
+
+AutoVala simplifies this process by checking the filenames inside the XML and adding them as dependencies for our binary, thus ensuring that any changes to these files will force a recompilation.
+
+To use GResource, start by writting an XML file with the files that you want to include inside your binary, and place it in your AutoVala project. Now edit your *.avprj* file and add a line like this:
+
+    gresource: identifier_name path/to/the/file.gresource.xml
+
+This command instructs AutoVala to process the file located in the project at *path/to/the/file.gresource.xml*, and assigns to it *identifier_name* as an identifier. If you put your file inside of *data/* and its file name ends in *.gresource.xml*, AutoVala will add it automagically in your project, using as identifier the file name, with the dots replaced with underscores.
+
+This only pre-processes the GResource file; now we must specify in which binary we want to put it. To do so, just add this sub-command in the *vala_binary* or *vala_library* commands:
+
+    use_gresource: identifier_name
+
+This will include in that binary all the resources specified.
+
+An example:
+
+    ### AutoVala Project ###
+    autovala_version: 19
+    project_name: example
+    *vala_version: 0.32
+
+    *gresource: datas_gresource_xml data/datas.gresource.xml
+
+    vala_binary: src/example
+    use_resource: datas_gresource_xml
+    *vala_check_package: gio-2.0
+    *vala_check_package: glib-2.0
+    *vala_source: example.vala
+
+Here we have a project called *example*, with a GResource XML file located at *data/* and called *datas.gresource.xml*. This means that AutoVala is able to autodetect and include it automatically. Also, the identifier is the file name with the dots replaced by underscores.
+
+In the *vala_binary* section we added the *use_resource* sub-command, which instructs AutoVala to use that resources in this binary.
+
+It is mandatory to include GIO in the binaries that use GResource. It is as easy as including the line
+
+    //using GIO
+
+at the begining of any of the source files (be carefull: you must put it as a comment, because GIO has not its own VAPI file, but uses a different library).
 
 ## Creating packages for linux distributions
 
-AutoVala can create the metadata files for creating .deb and .rpm source packages. It should be easy to add support for other package systems.
+AutoVala can create the metadata files for creating .deb, .rpm and pacman source packages. It should be easy to add support for other package systems.
 
 To generate .deb files, just run **autovala deb**. It will create a folder called **debian** and inside will be the **control**, **changelog** and **rules** files, and, if needed, **preinst**, **prerm**, **postinst** and **postrm**. The **control** file will have only the bare minimum, but autovala will include inside the dependencies needed both for building the package, and for running the project. These dependencies are generated automatically from the information extracted from the project. The **changelog** will add a boilerplate line only if there is no line for the current version, so it is strongly recommended to edit and complete this file after doing the automatic generation.
 
@@ -17,26 +109,54 @@ The **rules** file is designed to be compatible with **launchpad**. Also it is p
     ./debian/rules build
     ./debian/rules binary-arch
 
-To generate .rpm files, just run **autovala rpm**. It will create the folders **rpmbuild/SPECS/**, and inside will be the **.spec** file with the metadata. Then, edit that file to set some of the fields that can't be automatically filled (like the LICENSE one), go to **rpmbuild** folder and run:
+It is possible to create a template control file at **packages/control.base**. In this file you can manually add entries that you want to be included in the final **control** file for Debian packages. Its syntax is exactly the same than the final **control** file. Autovala will honor these entries and will use them instead the ones generated automatically, with one exception: the dependencies defined in this file will not overrule the automatic ones, but will be added to them. That way, if autovala is unable to detect that your program needs, let's say, *pandoc* to be run, you can put it in this file and it will be added to the dependency list.
+
+You can manually edit the files **preinst**, **prerm**, **postinst** and **postrm** in the **debian** folder, and the changes will be kept if you run again the package generation.
+
+To generate .rpm files, just run **autovala rpm**. It will create the folders **rpmbuild/SPECS/**, and inside will be the **.spec** file with the metadata. Then, go to **rpmbuild** folder and run:
 
     rpmbuild --define "_topdir `pwd`" -ba SPECS/PROJECT_NAME.spec
 
 This will create the RPM package in **rpmbuild/RPMS**. At this moment, the source RPM package at **rpmbuild/SRPMS** is empty, so don't use it.
 
+It is possible to create a template file called **packages/rpm.spec.base** to set values that autovala can't automatically get. Its syntax is the same than a regular **.specs** file. This works the same than the template file for debian packages.
+
+To generate .PKGBUILD files for pacman file manager, just run **autovala pacman**. It will create the file. It also will use a template file, if available, that must be called **packages/PKGBUILD.base**. Its syntax is the same than the PKGBUILD file.
+
+A nice detail is that, by default, autovala will create a PKGBUILD file that allows to use *makepkg* directly in the project's folder to make a binary package; but if you define in the **PKGBUILD.base** file a **source** entry with one or more URIs, autovala will automagically calculate their MD5SUMs (even if it has to download using http or https), and will modify the build code to ensure that it works with the downloaded file. This allows to easily generate **PKGBUILD** files for AUR, pointing, let's say, to a GITHUB repository. Even more: it will search for the right folder, so the ZIP file can have the project inside a folder, or even can have several Autovala projects (like *autovala* and *gedit-plugin for autovala*, which are both available in the same GitHub repository).
+
 If the project needs an extra package that can't be determined automatically by autovala, it is possible to mark it in a distro-agnostic way, by using the commands **source_dependency** and **binary_dependency** in the **.avprj** file. The first one points to a file in the system that is needed for building the project; when generating the package metadata, autovala will add as a Build-Dependency the package that contains that file. The second one points to a file in the system that is needed for using the project; when generating the package metadata, autovala will add as a Dependency the package that contains that file.
 
-There are several fields extracted from the source itself. The **Description** is extracted from the **README** or **README.md** file. If the file is a pure text one, all it will be used; if it is a markdown one, only the first section will be used.
+There are several fields extracted from the source itself. The **Description** is extracted from the AppData file in the project (ussually available in the *data* folder). If there is no such file, Autovala will use the **README** or **README.md** files. If the file is a pure text one, all it will be used; if it is a markdown one, only the first section will be used.
 
-The package name will be set to the project name.
+The package name will be set to the project name. The same for the version number. Also, the version number can't be overriden with the template file (but the package name can be).
 
 Finally, the author's name and email will be asked the first time a package is created, but it will be stored at **$HOME/.config/autovala** to be used when creating new packages.
-
-When the metadata files are edited, the changes will be kept except the dependencies build-dependencies fields, that will be overwritten each time the package metadata is recreated. The other files (if they exist) are created only if they didn't exists; if they are already in the folder, they won't be modified, so it is possible to edit them without loosing the changes.
 
 
 ## Adding more package types
 
 As commented, Autovala can generate the metadata por .deb and .rpm source packages. To add more package types, only a new class, derived from **packages** class, must be created. After initializing it and calling **init_all** method, the class should generate the files needed by the packaging system. To help into it, there are several properties that contains useful data, like a list of files needed to build the project (.vapi and .pc files), and for running it (like libraries). The class must use the package utilities to discover which packages contains those files, and use them for generating the dependencies.
+
+
+## Using Valama
+
+Autovala can export a project to a Valama project, allowing to use this great editor.
+
+It is a good idea to refresh the data in the Autovala project using *autovala refresh* before exporting it with *autovala valama*.
+
+When the Autovala project contains several binaries, it will generate one Valama project for each one. Also, if one binary depends of another one, both will be added in the same Valama project. This allows to better edit both. An example is Autovala itself: it is a main library, *autovalaLib*, used by the main executable, *autovala*, and another library, *autovalaPlugin*.
+
+Remember that, currently, this support is extremely limited. This means that you must update your Autovala project with *autovala update* manually from command line, and sometimes you will have to use again *autovala valama* and open again the Valama project to reflect some changes in the editor. I hope to add, in a near future, more support.
+
+## Using SVG icons for several sizes of the same icon
+
+Sometimes it is a good idea to have diferent pictures for the same icon, using one or another for diferent sizes. When the icons are in **png** format, there are no problems, but with **svg** icons, if the final theme has scalable entries, all of them will go there. To avoid this, just open the **.avprj** file and replace the command **full_icon** with **fixed_size_icon**. This command will always use the canvas size of the **svg** file to determine the fixed size entry where to put it, and will never place an **svg** icon in an scalable entry. For **png** files it works exactly the same that **full_icon**.
+
+
+## Using alternative CMAKE files
+
+When updating the CMAKE files for Vala, Autovala will check if the **AUTOVALA_CMAKE_SCRIPT** environment variable is defined with a path. If that is the case, it will copy from that path the CMAKE scripts for the project, instead of using the default ones.
 
 
 ## Writing unitary tests
@@ -244,7 +364,7 @@ Let's supose that the executable is **myExecutable**, and the library is **myLib
 
         vala_library: src/mylibrary_src/myLibrary
         [several commands specific of this library]
-        
+
         *vala_binary: src/myExecutable
         [several commands specific of this binary]
 
@@ -257,7 +377,7 @@ To allow **myexecutable** to use **mylibrary**, just add to **myexecutable** a *
 
         vala_library: src/mylibrary_src/myLibrary
         [several commands specific of this library]
-        
+
         *vala_binary: src/myExecutable
         vala_local_package: myLibrarynamespace
         [several commands specific of this binary]

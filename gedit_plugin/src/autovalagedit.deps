@@ -13,6 +13,8 @@ gobject-introspection-1.0
 gtk+-3.0
 gtksourceview-3.0
 libpeas-1.0
+libxml-2.0
 pango
 pangocairo
+vte-2.91
 x11

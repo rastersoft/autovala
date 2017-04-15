@@ -19,6 +19,7 @@
 using GLib;
 using Gee;
 using Posix;
+using Xml;
 
 namespace AutoVala {
 
@@ -32,6 +33,8 @@ namespace AutoVala {
 		public string? description;
 		// Contains the summary to add to the package. Usually the first line of the description.
 		public string? summary;
+		// The homepage
+		public string? homepage;
 		// A list of the files needed for running the project, extracted automatically by autovala
 		public Gee.List<string> dependencies;
 		// A list of the files needed for building the project, extracted automatically by autovala
@@ -64,18 +67,22 @@ namespace AutoVala {
 		private bool has_icons;
 		private bool has_schemes;
 		private bool has_manpages;
+		private bool has_bash_completion;
 
 		private Gee.Map<string,string> libraries;
 
+/* Not needed
 		public void show_errors() {
 			this.config.showErrors();
 		}
+*/
 
 		public packages() {
 
 			this.author_package = null;
 			this.email_package = null;
 			this.description = null;
+			this.homepage = null;
 			this.dependencies = new ArrayList<string>();
 			this.source_dependencies = new ArrayList<string>();
 			this.extra_dependencies = new ArrayList<string>();
@@ -92,6 +99,7 @@ namespace AutoVala {
 			this.has_icons = false;
 			this.has_schemes = false;
 			this.has_manpages = false;
+			this.has_bash_completion = false;
 		}
 
 		public string read_lines_from_exec(string[] spawn_args) {
@@ -108,6 +116,64 @@ namespace AutoVala {
 			} catch (SpawnError e) {
 			}
 			return "";
+		}
+
+		private string? adjust_text(Xml.Node *item) {
+			var paragraph = item->get_content().dup().strip().replace("\n"," ");
+			while (paragraph.index_of("  ") != -1) {
+				paragraph = paragraph.replace("  "," ");
+			}
+			return paragraph;
+		}
+
+		private string? read_xml_description(Xml.Node *item) {
+			string data = "";
+			bool next_element = false;
+			for (var iter = item->children; iter != null; iter = iter->next) {
+				var lang = iter->get_prop("lang");
+				if ((lang != null) && (lang != "en")) {
+					continue;
+				}
+				var name = iter->name;
+				switch (name) {
+				case "p":
+					if (next_element) {
+						data += "\n";
+					}
+					next_element = true;
+					data += this.adjust_text(iter)+"\n";
+				break;
+				case "ul":
+					if (next_element) {
+						data += "\n";
+					}
+					next_element = true;
+					bool put_line = false;
+					for (var iter2 = iter->children; iter2 != null; iter2 = iter2->next) {
+						if (iter2->name == "li") {
+							data += "* "+this.adjust_text(iter2)+"\n";
+							put_line = true;
+						}
+					}
+				break;
+				case "ol":
+					if (next_element) {
+						data += "\n";
+					}
+					next_element = true;
+					int counter = 1;
+					bool put_line = false;
+					for (var iter2 = iter->children; iter2 != null; iter2 = iter2->next) {
+						if (iter2->name == "li") {
+							data += "%d. %s\n".printf(counter,this.adjust_text(iter2));
+							put_line = true;
+							counter++;
+						}
+					}
+				break;
+				}
+			}
+			return data;
 		}
 
 		/**
@@ -133,50 +199,143 @@ namespace AutoVala {
 				this.distro_version_name = ls_stdout.substring(pos+1).strip();
 			}
 
-			var compilers = new FindVala();
-			if (compilers == null) {
+			FindVala compilers;
+			try {
+				compilers = new FindVala();
+				if (compilers == null) {
+					ElementBase.globalData.addError(_("Failed to get installed vala compilers"));
+					return true;
+				} else {
+					// if the desired VALA version is installed in the system, go ahead with it
+					major = this.config.globalData.valaVersionMajor;
+					minor = this.config.globalData.valaVersionMinor;
+					if (false == this.set_vala_version(compilers,this.config.globalData.valaVersionMajor,this.config.globalData.valaVersionMinor)) {
+						// if not, go ahead with the default version (it's supposed that the maintainer has checked the code against this version)
+						this.set_vala_version(compilers,compilers.defaultVersion.major,compilers.defaultVersion.minor);
+						major = compilers.defaultVersion.major;
+						minor = compilers.defaultVersion.minor;
+					}
+				}
+			} catch (GLib.Error e) {
 				ElementBase.globalData.addError(_("Failed to get installed vala compilers"));
 				return true;
-			} else {
-				// if the desired VALA version is installed in the system, go ahead with it
-				major = this.config.globalData.valaVersionMajor;
-				minor = this.config.globalData.valaVersionMinor;
-				if (false == this.set_vala_version(compilers,this.config.globalData.valaVersionMajor,this.config.globalData.valaVersionMinor)) {
-					// if not, go ahead with the default version (it's supposed that the maintainer has checked the code against this version)
-					this.set_vala_version(compilers,compilers.defaultVersion.major,compilers.defaultVersion.minor);
-					major = compilers.defaultVersion.major;
-					minor = compilers.defaultVersion.minor;
-				}
 			}
 
 			this.summary = null;
-			// Try to read the description from the README or README.md file
-			if (!this.read_description(Path.build_filename(this.config.globalData.projectFolder,"README"))) {
-				if (!this.read_description(Path.build_filename(this.config.globalData.projectFolder,"README.md"))) {
-					this.description = "Not available";
+
+			// If there is an AppData file, use it to get the data for the package
+			foreach (var element in config.globalData.globalElements) {
+				if (element.eType != ConfigType.APPDATA) {
+					continue;
+				}
+				var e_appdata = element as ElementAppData;
+				var filepath = Path.build_filename(this.config.globalData.projectFolder,e_appdata.fullPath);
+				var appdata = Xml.Parser.parse_file(filepath);
+				
+				var root = appdata->get_root_element();
+				if ((root != null) && ((root->name == "component") || (root->name == "application"))) {
+					for (var iter = root->children; iter != null; iter = iter->next) {
+						if (iter->type == Xml.ElementType.ELEMENT_NODE) {
+							switch(iter->name) {
+							case "summary":
+								var lang = iter->get_prop("lang");
+								if ((lang == null) || (lang == "en")) {
+									this.summary = iter->get_content().dup();
+								}
+							break;
+							case "description":
+								this.description = this.read_xml_description(iter);
+							break;
+							case "url":
+								var attr = iter->has_prop("type");
+								if (attr != null) {
+									var type = iter->get_prop("type").dup();
+									if (type == "homepage") {
+										this.homepage = iter->get_content().dup();
+									}
+								}
+							break;
+							}
+						}
+					}
+				}
+				delete (appdata);
+			}
+
+			if (this.description == null) {
+				// Try to read the description from the README or README.md file
+				if (!this.read_description(Path.build_filename(this.config.globalData.projectFolder,"README"))) {
+					if (!this.read_description(Path.build_filename(this.config.globalData.projectFolder,"README.md"))) {
+						this.description = "Not available";
+					}
 				}
 			}
 			if (this.summary == null) {
 				this.summary = this.description.split("\n")[0];
 			}
+
 			this.description = this.cut_lines(this.description,70);
-			this.read_defaults();
+			try {
+				this.read_defaults();
+			} catch (GLib.Error e) {
+				ElementBase.globalData.addError(_("Failed to read the defaults file at ~/.config/autovala/packages.cfg: %s").printf(e.message));
+				return true;
+			}
 			this.fill_libraries("/lib");
 			this.fill_libraries("/usr/lib");
 			this.fill_libraries("/usr/lib64");
-			this.read_library_paths("/etc/ld.so.conf");
+			try {
+				this.read_library_paths("/etc/ld.so.conf");
+			} catch (GLib.Error e) {
+				ElementBase.globalData.addWarning(_("Failed to read /etc/ld.so.conf: %s").printf(e.message));
+			}
 
 			// Fill the dependencies
+			bool found_error = false;
 			foreach (var element in config.globalData.globalElements) {
 				if (element.eType == ConfigType.SOURCE_DEPENDENCY) {
-					if (!this.extra_source_dependencies.contains(element.name)) {
-						this.extra_source_dependencies.add(element.name);
+					var paths = element.name.split(" ");
+					bool found = false;
+					foreach (var path in paths) {
+						if (path == "") {
+							continue;
+						}
+						var f = GLib.File.new_for_path(path);
+						if (f.query_exists()) {
+							if (!this.extra_source_dependencies.contains(path)) {
+								this.extra_source_dependencies.add(path);
+								found = true;
+								break;
+							}
+						}
 					}
+					if (!found) {
+						ElementBase.globalData.addError(_("Failed to find any of the files: %s").printf(element.name));
+						found_error = true;
+					}
+					continue;
 				}
 				if (element.eType == ConfigType.BINARY_DEPENDENCY) {
-					if (!this.extra_dependencies.contains(element.name)) {
-						this.extra_dependencies.add(element.name);
+					var paths = element.name.split(" ");
+					bool found = false;
+					foreach (var path in paths) {
+						if (path == "") {
+							continue;
+						}
+						var f = GLib.File.new_for_path(path);
+						if (f.query_exists()) {
+							if (!this.extra_dependencies.contains(path)) {
+								this.extra_dependencies.add(path);
+								found = true;
+								break;
+							}
+						}
 					}
+					if (!found) {
+						ElementBase.globalData.addError(_("Failed to find any of the files: %s").printf(element.name));
+						found_error = true;
+					}
+					continue;
 				}
 				if ((element.eType == ConfigType.VALA_BINARY) || (element.eType == ConfigType.VALA_LIBRARY)) {
 					if (element.path == "src") {
@@ -198,6 +357,12 @@ namespace AutoVala {
 				if (element.eType == ConfigType.MANPAGE) {
 					this.has_manpages = true;
 				}
+				if (element.eType == ConfigType.BASH_COMPLETION) {
+					this.has_bash_completion = true;
+				}
+			}
+			if (found_error) {
+				return true;
 			}
 			foreach (var element in config.globalData.globalElements) {
 				if ((element.eType == ConfigType.VALA_LIBRARY) || (element.eType == ConfigType.VALA_BINARY)) {
@@ -269,9 +434,18 @@ namespace AutoVala {
 			this.source_dependencies.add("/usr/bin/cmake");
 			this.source_dependencies.add("/usr/bin/xgettext");
 			this.source_dependencies.add("/usr/bin/pkg-config");
+			this.source_dependencies.add("/usr/bin/gcc");
+			this.source_dependencies.add("/usr/bin/g++");
+			this.source_dependencies.add("/usr/bin/make");
+			this.source_dependencies.add("/usr/bin/intltool-update");
+			this.source_dependencies.add("/usr/bin/msgfmt");
 
 			if (this.has_manpages) {
 				this.source_dependencies.add("/usr/bin/pandoc");
+			}
+
+			if (this.has_bash_completion) {
+				this.source_dependencies.add("/usr/share/pkgconfig/bash-completion.pc");
 			}
 
 			return false;
@@ -368,8 +542,6 @@ namespace AutoVala {
 
 		private bool check_module(string path,string module) {
 
-			Gee.List<string> not_found = new Gee.ArrayList<string>();
-
 			var file = File.new_for_path(Path.build_filename(path,"vapi",module+".vapi"));
 			if (!file.query_exists()) {
 				return true;
@@ -399,7 +571,7 @@ namespace AutoVala {
 						}
 					}
 				}
-			} catch (Error e) {
+			} catch (GLib.Error e) {
 				ElementBase.globalData.addWarning(_("Failed to process %s.vapi to find dependencies").printf(module));
 			}
 			return false;
@@ -458,31 +630,33 @@ namespace AutoVala {
 		 * Reads all the paths where libraries are stored, starting with the ones at /etc/ld.so.conf
 		 * @param path The path of the config file to parse and extract paths. It processes recursively INCLUDE paths
 		 */
-		private void read_library_paths(string path) {
+		private void read_library_paths(string path) throws GLib.Error {
 			var file = File.new_for_path(path);
 			if (!file.query_exists()) {
 				return;
 			}
-			try {
-				var dis = new DataInputStream(file.read());
-				string line;
-				while ((line = dis.read_line (null)) != null) {
-					var line2 = line.strip();
-					if ((line2 == "") || (line2[0]=='#')) {
-						continue;
-					}
-					if (line2.has_prefix("include ")) {
-						var incpath = line2.substring(8).strip();
-						var paths = Posix.Glob();
-						paths.glob(incpath,0);
-						foreach (var newpath in paths.pathv) {
-							this.read_library_paths(newpath);
-						}
-						continue;
-					}
-					this.fill_libraries(line2);
+
+			var dis = new DataInputStream(file.read());
+			string line;
+			while ((line = dis.read_line (null)) != null) {
+				var line2 = line.strip();
+				if ((line2 == "") || (line2[0]=='#')) {
+					continue;
 				}
-			} catch (Error e) {
+				if (line2.has_prefix("include ")) {
+					var incpath = line2.substring(8).strip();
+					var paths = Posix.Glob();
+					paths.glob(incpath,0);
+					foreach (var newpath in paths.pathv) {
+						try {
+							this.read_library_paths(newpath);
+						} catch (GLib.Error e) {
+							ElementBase.globalData.addWarning(_("Failed to read %s from an include originating at /etc/ld.so.conf: %s").printf(newpath,e.message));
+						}
+					}
+					continue;
+				}
+				this.fill_libraries(line2);
 			}
 		}
 
@@ -516,46 +690,54 @@ namespace AutoVala {
 						}
 					}
 				}
-			} catch (Error e) {
+			} catch (GLib.Error e) {
+				ElementBase.globalData.addWarning(_("Failed to read libraries from %s: %s").printf(path,e.message));
 			}
 		}
 
-		public void read_defaults() {
+		public void read_defaults() throws GLib.Error {
 
 			var file = File.new_for_path(Path.build_filename(GLib.Environment.get_home_dir(),".config","autovala","packages.cfg"));
 			if (!file.query_exists()) {
 				return;
 			}
-			try {
-				var dis = new DataInputStream (file.read ());
-				string line;
-				this.author_package = null;
-				this.email_package = null;
-				while ((line = dis.read_line (null)) != null) {
-					if (line.has_prefix("author_package: ")) {
-						this.author_package = line.substring(16).strip();
-						continue;
-					}
-					if (line.has_prefix("email_package: ")) {
-						this.email_package = line.substring(15).strip();
-						continue;
-					}
+
+			var dis = new DataInputStream (file.read ());
+			string line;
+			this.author_package = null;
+			this.email_package = null;
+			while ((line = dis.read_line (null)) != null) {
+				if (line.has_prefix("author_package: ")) {
+					this.author_package = line.substring(16).strip();
+					continue;
 				}
-				dis.close();
-			} catch (Error e) {
+				if (line.has_prefix("email_package: ")) {
+					this.email_package = line.substring(15).strip();
+					continue;
+				}
 			}
+			dis.close();
 		}
 
 		public void write_defaults() {
 
 			var file = File.new_for_path(Path.build_filename(GLib.Environment.get_home_dir(),".config","autovala"));
 			if (!file.query_exists()) {
-				file.make_directory_with_parents();
+				try {
+					file.make_directory_with_parents();
+				} catch(GLib.Error e) {
+					ElementBase.globalData.addWarning(_("Failed to create ~/.config/autovala folder: %s").printf(e.message));
+				}
 			}
 			file = File.new_for_path(Path.build_filename(GLib.Environment.get_home_dir(),".config","autovala","packages.cfg"));
 			if (file.query_exists()) {
-				file.delete();
+				try {
+					file.delete();
+				} catch(GLib.Error e) {
+					ElementBase.globalData.addWarning(_("Failed to delete the old ~/.config/autovala/packages.cfg file: %s").printf(e.message));
+				}
 			}
+
 			try {
 				var dis = file.create_readwrite(GLib.FileCreateFlags.PRIVATE);
 				var of = new DataOutputStream(dis.output_stream as FileOutputStream);
@@ -566,7 +748,7 @@ namespace AutoVala {
 					of.put_string("email_package: %s\n".printf(this.email_package));
 				}
 				dis.close();
-			} catch (Error e) {
+			} catch (GLib.Error e) {
 			}
 		}
 
@@ -587,7 +769,6 @@ namespace AutoVala {
 			string tmp2 = "";
 
 			int pos1;
-			int pos2;
 			int size = 0;
 			int size2;
 			int current_offset = 0;
@@ -635,7 +816,7 @@ namespace AutoVala {
 				while ((line = dis.read_line (null)) != null) {
 					content+=line;
 				}
-			} catch (Error e) {
+			} catch (GLib.Error e) {
 				return false;
 			}
 
@@ -684,7 +865,6 @@ namespace AutoVala {
 
 			if (descr.length != 0) {
 				string text = "";
-				bool with_spaces = false;
 				bool after_cr = true;
 				foreach(var line in descr) {
 					if (line != "") {

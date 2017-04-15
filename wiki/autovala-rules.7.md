@@ -8,21 +8,29 @@ Autovala rules - Rules followed by autovala to guess what kind of file is each o
 
 The rules followed by Autovala are the following:
 
-* All **.vala** and **.c** files in the **src/** folder belong to a binary called like the project name. Vala files will be scanned to determine the packages needed to compile them. The **.vala** and **.c** files in the subfolders are also added, unless there is another binary or library that already posesses that folder
+* All **.vala**, **.c** and **.gs** (genie) files in the **src/** folder belong to a binary called like the project name. Vala files will be scanned to determine the packages needed to compile them. The **.vala**, **.c** and **.gs** files in the subfolders are also added, unless there is another binary or library that already posesses that folder
 
-* All **.vala** and **.c** files in a folder posessed by a binary or library belong to it. Vala files will be scanned to determine the packages needed to compile them. The **.vala** and **.c** files in the subfolders are also added, unless there is another binary or library that already posesses that folder
+* All folders that contains a **.h** file inside the **src/** folder will be added to the list of folders where to search for include files in that project.
 
-* All **.vala** files in a folder called **unitests**, in the root of each binary or library path, will be considered unitary tests for that binary or library.
+* All **.vala**, **.c** and **.gs** files in a folder posessed by a binary or library belong to it. Vala files will be scanned to determine the packages needed to compile them. The **.vala**, **.c** and **.gs** files in the subfolders are also added, unless there is another binary or library that already posesses that folder
 
-* The VALA sources will be scanned to find the version number in a specific format, allowing to keep it inside the sources and avoiding the need of editing the project file manually
+* All folders that contains a **.h** file inside a folder posessed by a binary or library will be added to the list of folders where to search for include files in that project.
 
-* All **.vapi** files inside a **vapis** folder, located in a binary/library top folder will be added to that binary/library
+* All **.vala** and **.gs** files in a folder called **unitests**, in the root of each binary or library path, will be considered unitary tests for that binary or library.
 
-* All **.png** or **.svg** files in the folder **data/icons/** (and subfolders) are considered icons, so Autovala will determine automatically the best-fitting standard icon size (in the case of **.png**; for **.svg** it will put them always in **scalable**) and install them in the corresponding folder: **apps** by default, unless it is a **.svg** file with a filename ended in **-symbolic.svg**; in that case it will go to **status**. The user can modify the final folder manually for the icons (s)he wishes.
+* The VALA and GENIE sources will be scanned to find the version number in a specific format, allowing to keep it inside the sources and avoiding the need of editing the project file manually
+
+* All **.vapi** files inside a **vapis** folder, located in a binary/library top folder will be added to that binary/library using the *vapi_file* command.
+
+* If it exists a **vapidir** folder inside the **src** folder, it will be added to the project with the *vapidir* command.
+
+* All **.gresource.xml** files inside **data** folder will be considered a GResource XML file, so it will be added to the .avprj's root, and the files inside it won't be added automatically. The .ui files defined inside will be added to the translation list.
+
+* All **.png** or **.svg** files in the folder **data/icons/** (and subfolders) are considered icons, so Autovala will determine automatically the best-fitting standard icon size in the case of **.png**; for **.svg** it will try to put them in an scalable group with **scalable** in the name; if it doesn't exists, it will try to put them in an scalable group (no matter the name); if neither exist, it will try to get the canvas size of the icon, and store it in the nearest fixed size folder; in case it can't determine it, the icon will be installed in the biggest size group available in the desired cathegory. By default, the cathegory will be **Applications**, unless it is a **.svg** file with a filename ended in **-symbolic.svg**; in that case it will go to **Status**. The user can modify the final cathegory and icon theme manually for the icons (s)he wishes.
 
 * All **.png**, **.jpg** or **.svg** files in the folder **data/pixmaps/** (and subfolders) are considered pixmaps, and will be installed in **share/pixmaps/**.
 
-* All **.po** files in **po/** folder will be considered as po files, and will be installed in the right locale. Also, will find the **.vala** and **.ui** files and add them as sources for internationalization process.
+* All **.po** files in **po/** folder will be considered as po files, and will be installed in the right locale. Also, will find the **.vala**, **.gs** and **.ui** files and add them as sources for internationalization process.
 
 * Each **.desktop** file in **data/** will be copied to **share/desktop/**, unless it contains the line **X-GNOME-Autostart-enabled=**, in which case it will be copied to **/etc/xdg/autostart**.
 
@@ -59,6 +67,8 @@ The rules followed by Autovala are the following:
 * All files ended in **.X.txt** (being X a number between 1 and 9) in the folder **data/man** will be considered man pages in **MediaWiki** format, and will be converted to groff using pandoc, compressed with gzip and installed in **share/man/manX** (being X the same number).
 
 * All files ended in **.X**, **.X.md**, **.X.rst**, **.X.htm**, **.X.html**, **.X.tex**, **.X.json**, **.X.rdoc**, **.X.xml** or **.X.txt** (being X a number between 1 and 9) in the folder **data/man/YYYY** will be considered man pages in groff or markdown format respectively, and will be converted to groff using pandoc, compressed with gzip and installed in **share/man/YYYY/manX** (being X the same number). This means that **YYYY** will be considered a language (examples for YYYY: **es**, **en_US**, **es_AR.UTF-8**).
+
+* All **.appdata.xml** and **.metainfo.xml** files in the folder **data** will be installed in **share/appdata**, and its content will be used to get the summary and description when creating packages.
 
 * All files in **data/bash_completion/** will be copied to where the command *pkg-config --variable=completionsdir bash-completion* specifies (usually **/usr/share/bash-completion/completions**), except when *CMAKE_INSTALL_PREFIX* starts with */home* (this allows to do installations in the HOME directory).
 

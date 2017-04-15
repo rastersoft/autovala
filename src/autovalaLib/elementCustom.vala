@@ -22,6 +22,7 @@ namespace AutoVala {
 
 	private class ElementCustom : ElementBase {
 
+        private string source;
 		private string destination;
 
 		public ElementCustom() {
@@ -31,16 +32,16 @@ namespace AutoVala {
 
 		public override void add_files() {
 
-			var file = File.new_for_path(Path.build_filename(ElementBase.globalData.projectFolder,this._fullPath));
+			var file = File.new_for_path(Path.build_filename(ElementBase.globalData.projectFolder,this.source));
 			if (file.query_file_type(FileQueryInfoFlags.NONE) == GLib.FileType.DIRECTORY) {
 				this.file_list = ElementBase.getFilesFromFolder(this._path,null,true);
 			} else {
 				this.file_list = {};
-				this.file_list+=this._fullPath;
+				this.file_list+=this.source;
 			}
 		}
 
-		public override bool configureLine(string line, bool automatic, string? condition, bool invertCondition, int lineNumber) {
+		public override bool configureLine(string line, bool automatic, string? condition, bool invertCondition, int lineNumber, string[]? comments) {
 
 			if (false == line.has_prefix("custom: ")) {
 				var badCommand = line.split(": ")[0];
@@ -53,10 +54,24 @@ namespace AutoVala {
 				ElementBase.globalData.addError(_("Custom command needs two parameters (line %d)").printf(lineNumber));
 				return true;
 			}
-			var file = data[0];
+			this.source = data[0];
+			if (this.source.has_suffix(Path.DIR_SEPARATOR_S)) {
+			    this.source=this.source.substring(0,this.source.length-1);
+			}
 			this.destination = data[1];
 
-			return this.configureElement(file,null,null,automatic,condition,invertCondition);
+            bool retval = this.configureElement(null,null,null,automatic,condition,invertCondition);
+
+            var file = File.new_for_path(Path.build_filename(ElementBase.globalData.projectFolder,this.source));
+            if (file.query_file_type(FileQueryInfoFlags.NONE) != FileType.DIRECTORY) {
+				this._path = GLib.Path.get_dirname(this.source);
+				this._name = GLib.Path.get_basename(this.source);
+			} else {
+				this._path = this.source;
+				this._name = "";
+			}
+			this.comments = comments;
+			return retval;
 		}
 
 		public override bool generateCMake(DataOutputStream dataStream) {
@@ -76,7 +91,25 @@ namespace AutoVala {
 				dataStream.put_string("\t)\n");
 				dataStream.put_string("ENDIF()\n\n");
 			} catch (Error e) {
-				ElementBase.globalData.addError(_("Failed to write the CMakeLists file for custom file %s").printf(this.name));
+				ElementBase.globalData.addError(_("Failed to write the CMakeLists file for custom file %s").printf(this.source));
+				return true;
+			}
+			return false;
+		}
+
+		public override bool generateMeson(ConditionalText dataStream, MesonCommon mesonCommon) {
+
+			try {
+				string destination;
+				if (this.destination[0] == '/') {
+					destination = "'%s'".printf(this.destination);
+				} else {
+					destination = "join_paths(get_option('prefix'),'%s')".printf(this.destination);
+				}
+				mesonCommon.create_install_script();
+				dataStream.put_string("meson.add_install_script(join_paths(meson.current_source_dir(),'meson_scripts','install_data.sh'),%s,join_paths(meson.current_source_dir(),'%s','%s'))\n\n".printf(destination,this._path,this._name));
+			} catch (GLib.Error e) {
+				ElementBase.globalData.addError(_("Failed to write to meson.build at '%s' element, at '%s' path: %s").printf(this.command,this._path,e.message));
 				return true;
 			}
 			return false;
@@ -88,9 +121,9 @@ namespace AutoVala {
 				if (this._automatic) {
 					dataStream.put_string("*");
 				}
-				dataStream.put_string("custom: %s %s\n".printf(this.fullPath, this.destination));
+				dataStream.put_string("custom: %s %s\n".printf(this.source, this.destination));
 			} catch (Error e) {
-				ElementBase.globalData.addError(_("Failed to store 'custom: %s %s' at config").printf(this.fullPath, this.destination));
+				ElementBase.globalData.addError(_("Failed to store 'custom: %s %s' at config").printf(this.source, this.destination));
 				return true;
 			}
 			return false;

@@ -26,8 +26,27 @@ namespace AutoVala {
 
 		private Gee.List<string> source_packages;
 		private Gee.List<string> binary_packages;
+		private string projectName;
 
 		public bool create_deb_package() {
+
+			// adjust project name to Debian conventions (only letters, numbers, '+', '-' and '.'
+			this.projectName = "";
+			for(int i=0; i <this.config.globalData.projectName.length; i++) {
+				var c = this.config.globalData.projectName.get_char(i);
+				if (c.isspace()) {
+					continue;
+				}
+				if ((c.isalnum()) || (c == '.') || (c == '+') || (c == '-')) {
+					this.projectName += c.to_string();
+					continue;
+				}
+				if ((c == ',') || (c == ':') || (c == ';')) {
+					this.projectName += ".";
+					continue;
+				}
+				this.projectName += "-";
+			}
 
 			this.write_defaults();
 
@@ -89,24 +108,38 @@ namespace AutoVala {
 				try {
 					if (!Process.spawn_sync (null,spawn_args,Environ.get(),SpawnFlags.SEARCH_PATH,null,out ls_stdout,null,out ls_status)) {
 						ElementBase.globalData.addWarning(_("Failed to launch dpkg for the file %s").printf(element));
-						return;
+						ElementBase.globalData.addWarning(_("Can't find a package for the file %s").printf(element));
+						continue;
 					}
 					if (ls_status != 0) {
 						ElementBase.globalData.addWarning(_("Error %d when launching dpkg for the file %s").printf(ls_status,element));
-						return;
+						ElementBase.globalData.addWarning(_("Can't find a package for the file %s").printf(element));
+						continue;
 					}
 				} catch (SpawnError e) {
 					ElementBase.globalData.addWarning(_("Exception '%s' when launching dpkg for the file %s").printf(e.message,element));
-					return;
+					ElementBase.globalData.addWarning(_("Can't find a package for the file %s").printf(element));
+					continue;
 				}
 				var elements = ls_stdout.split(":");
 				if (elements.length == 0) {
 					ElementBase.globalData.addWarning(_("Can't find a package for the file %s").printf(element));
-				} else 	if (!destination.contains(elements[0])) {
+				} else if (!destination.contains(elements[0])) {
 					destination.add(elements[0]);
 				}
 			}
 		}
+
+
+		private void print_key(DataOutputStream of,Gee.Map<string,string> keylist,string key,string val) throws GLib.IOError {
+
+			if (!keylist.has_key(key)) {
+				of.put_string("%s: %s\n".printf(key,val));
+			} else {
+				of.put_string("%s: %s\n".printf(key,keylist.get(key)));
+			}
+		}
+
 
 		/**
 		 * Creates de debian/control file
@@ -118,13 +151,17 @@ namespace AutoVala {
 			Gee.Map<string,string> source_keys = new Gee.HashMap<string,string>();
 			Gee.Map<string,string> binary_keys = new Gee.HashMap<string,string>();
 
-			var f_control = File.new_for_path(Path.build_filename(path,"control"));
+            var f_control_path = Path.build_filename(path,"control");
+            var f_control = File.new_for_path(f_control_path);
+            var f_control_base_path = Path.build_filename(this.config.globalData.projectFolder,"packages","control.base");
+			var f_control_base = File.new_for_path(f_control_base_path);
+
 			try {
-				if (f_control.query_exists()) {
+				if (f_control_base.query_exists()) {
+					string[] not_valid_keys = {"Version"};
 					bool source = true;
-					var dis = new DataInputStream (f_control.read ());
+					var dis = new DataInputStream (f_control_base.read ());
 					string line;
-					string last_key = "";
 					string? key = "";
 					string data = "";
 					while ((line = dis.read_line (null)) != null) {
@@ -140,16 +177,25 @@ namespace AutoVala {
 							if (key == null) {
 								continue;
 							}
-							if (source) {
-								data = source_keys.get(key);
-							} else {
-								data = binary_keys.get(key);
+							bool found = false;
+							foreach (var l in not_valid_keys) {
+								if (l == key) {
+									found = true;
+									break;
+								}
 							}
-							data += "\n"+line;
-							if (source) {
-								source_keys.set(key,data);
-							} else {
-								binary_keys.set(key,data);
+							if (!found) {
+								if (source) {
+									data = source_keys.get(key);
+								} else {
+									data = binary_keys.get(key);
+								}
+								data += "\n"+line;
+								if (source) {
+									source_keys.set(key,data);
+								} else {
+									binary_keys.set(key,data);
+								}
 							}
 							continue;
 						}
@@ -159,37 +205,72 @@ namespace AutoVala {
 						}
 						key = line.substring(0,pos).strip();
 						data = line.substring(pos+1).strip();
-						if (source) {
-							source_keys.set(key,data);
-						} else {
-							binary_keys.set(key,data);
+						bool found = false;
+						foreach (var l in not_valid_keys) {
+							if (l == key) {
+								found = true;
+								break;
+							}
 						}
+						if (!found) {
+							if (source) {
+								source_keys.set(key,data);
+							} else {
+								binary_keys.set(key,data);
+							}
+						}
+						continue;
 					}
-					f_control.delete();
 				}
 			} catch (Error e) {
 				ElementBase.globalData.addWarning(_("Failed to delete debian/control file (%s)").printf(e.message));
+			}
+			if (f_control.query_exists()) {
+				try{
+					f_control.delete();
+				} catch(GLib.Error e) {
+					ElementBase.globalData.addWarning(_("Failed to delete debian/control file (%s)").printf(e.message));
+				}
 			}
 			try {
 				var dis = f_control.create_readwrite(GLib.FileCreateFlags.PRIVATE);
 				var of = new DataOutputStream(dis.output_stream as FileOutputStream);
 				bool not_first;
 
-				if (!source_keys.has_key("Source")) {
-					of.put_string("Source: %s\n".printf(this.config.globalData.projectName));
-				} else {
-					of.put_string("Source: %s\n".printf(source_keys.get("Source")));
-				}
-				of.put_string("Maintainer: %s <%s>\n".printf(this.author_package,this.email_package));
-				if (!source_keys.has_key("Priority")) {
-					of.put_string("Priority: optional\n");
-				}
+				this.print_key(of,source_keys,"Source",this.projectName);
+				this.print_key(of,source_keys,"Maintainer","%s <%s>".printf(this.author_package,this.email_package));
+				this.print_key(of,source_keys,"Priority","optional");
+				this.print_key(of,source_keys,"Section","misc");
 
 				foreach (var key in source_keys.keys) {
-					if ((key == "Build-Depends") || (key == "Maintainer") || (key == "Source")) {
+					if ((key == "Source") || (key == "Maintainer") || (key == "Priority") || (key == "Section") || (key == "Build-Depends")) {
 						continue;
 					}
 					of.put_string("%s: %s\n".printf(key,source_keys.get(key)));
+				}
+
+				if (source_keys.has_key("Build-Depends")) {
+					var elements = source_keys.get("Build-Depends").split(",");
+					foreach (var dep in elements) {
+						var fulldep = dep.strip();
+						if (fulldep == "") {
+							continue;
+						}
+						if (fulldep.index_of_char('|') != -1) {
+							this.source_packages.add(fulldep);
+							continue;
+						}
+						var pos = fulldep.index_of_char('(');
+						var dep2 = "";
+						if (pos != -1) {
+							dep2 = fulldep.substring(0,pos).strip();
+						} else {
+							dep2 = fulldep;
+						}
+						if (this.source_packages.index_of(dep2) == -1) {
+							this.source_packages.add(fulldep);
+						}
+					}
 				}
 
 				of.put_string("Build-Depends: ");
@@ -204,19 +285,41 @@ namespace AutoVala {
 
 				of.put_string("\n\n");
 
+				this.print_key(of,binary_keys,"Package",this.projectName);
+				this.print_key(of,binary_keys,"Architecture","any");
+				of.put_string("Version: %s\n".printf(this.version));
+
 				foreach (var key in binary_keys.keys) {
-					if ((key == "Depends") || (key == "Description")) {
+					if ((key == "Package") || (key == "Architecture") || (key == "Version") || (key == "Depends") || (key == "Description")) {
 						continue;
 					}
 					of.put_string("%s: %s\n".printf(key,binary_keys.get(key)));
 				}
 
-				if (!binary_keys.has_key("Package")) {
-					of.put_string("Package: %s\n".printf(this.config.globalData.projectName));
+				if (binary_keys.has_key("Depends")) {
+					var elements = binary_keys.get("Depends").split(",");
+					foreach (var dep in elements) {
+						var fulldep = dep.strip();
+						if (fulldep == "") {
+							continue;
+						}
+						if (fulldep.index_of_char('|') != -1) {
+							this.binary_packages.add(fulldep);
+							continue;
+						}
+						var pos = fulldep.index_of_char('(');
+						var dep2 = "";
+						if (pos != -1) {
+							dep2 = fulldep.substring(0,pos).strip();
+						} else {
+							dep2 = fulldep;
+						}
+						if (this.binary_packages.index_of(dep2) == -1) {
+							this.binary_packages.add(fulldep);
+						}
+					}
 				}
-				if (!binary_keys.has_key("Architecture")) {
-					of.put_string("Architecture: any\n");
-				}
+
 				of.put_string("Depends: ");
 				not_first = false;
 
@@ -241,6 +344,7 @@ namespace AutoVala {
 					of.put_string("Description: %s\n".printf(binary_keys.get("Description")));
 				}
 				dis.close();
+				Posix.chmod(f_control_path,420); // 644 permissions)
 			} catch (Error e) {
 				ElementBase.globalData.addError(_("Failed to write data to debian/control file (%s)").printf(e.message));
 				return true;
@@ -273,9 +377,14 @@ namespace AutoVala {
 					}
 					dis.close();
 					dis2.close();
+					Posix.chmod(fname,493); // 755 permissions)
 				} catch (Error e) {
 					ElementBase.globalData.addError(_("Failed to write data to debian/rules file (%s)").printf(e.message));
-					f_rules.delete();
+					try {
+						f_rules.delete();
+					} catch (GLib.Error e) {
+						ElementBase.globalData.addError(_("Failed to delete invalid debian/rules file (%s)").printf(e.message));
+					}
 					return true;
 				}
 			}
@@ -294,7 +403,8 @@ namespace AutoVala {
 				return false;
 			}
 
-			var f_rules = File.new_for_path(Path.build_filename(path,"preinst"));
+            var f_rules_path = Path.build_filename(path,"preinst");
+			var f_rules = File.new_for_path(f_rules_path);
 			if (f_rules.query_exists()) {
 				// if the file already exists, don't touch it
 				return false;
@@ -310,9 +420,14 @@ namespace AutoVala {
 					of.put_string(line+"\n");
 				}
 				dis.close();
+				Posix.chmod(f_rules_path,493); // 755 permissions)
 			} catch (Error e) {
 				ElementBase.globalData.addError(_("Failed to write data to debian/preinst file (%s)").printf(e.message));
-				f_rules.delete();
+				try {
+					f_rules.delete();
+				} catch(GLib.Error e) {
+					ElementBase.globalData.addError(_("Failed to delete invalid debian/preinst file (%s)").printf(e.message));
+				}
 				return true;
 			}
 			return false;
@@ -329,7 +444,8 @@ namespace AutoVala {
 				return false;
 			}
 
-			var f_rules = File.new_for_path(Path.build_filename(path,"prerm"));
+            var f_rules_path = Path.build_filename(path,"prerm");
+			var f_rules = File.new_for_path(f_rules_path);
 			if (f_rules.query_exists()) {
 				// if the file already exists, don't touch it
 				return false;
@@ -345,9 +461,14 @@ namespace AutoVala {
 					of.put_string(line+"\n");
 				}
 				dis.close();
+				Posix.chmod(f_rules_path,493); // 755 permissions)
 			} catch (Error e) {
 				ElementBase.globalData.addError(_("Failed to write data to debian/prerm file (%s)").printf(e.message));
-				f_rules.delete();
+				try {
+					f_rules.delete();
+				} catch(GLib.Error e) {
+					ElementBase.globalData.addError(_("Failed to delete invalid debian/prerm file (%s)").printf(e.message));
+				}
 				return true;
 			}
 			return false;
@@ -364,7 +485,8 @@ namespace AutoVala {
 				return false;
 			}
 
-			var f_rules = File.new_for_path(Path.build_filename(path,"postinst"));
+            var f_rules_path = Path.build_filename(path,"postinst");
+			var f_rules = File.new_for_path(f_rules_path);
 			if (f_rules.query_exists()) {
 				// if the file already exists, don't touch it
 				return false;
@@ -380,9 +502,14 @@ namespace AutoVala {
 					of.put_string(line+"\n");
 				}
 				dis.close();
+				Posix.chmod(f_rules_path,493); // 755 permissions)
 			} catch (Error e) {
 				ElementBase.globalData.addError(_("Failed to write data to debian/postinst file (%s)").printf(e.message));
-				f_rules.delete();
+				try {
+					f_rules.delete();
+				} catch(GLib.Error e) {
+					ElementBase.globalData.addError(_("Failed to delete invalid debian/postinst file (%s)").printf(e.message));
+				}
 				return true;
 			}
 			return false;
@@ -399,7 +526,8 @@ namespace AutoVala {
 				return false;
 			}
 
-			var f_rules = File.new_for_path(Path.build_filename(path,"postrm"));
+            var f_rules_path = Path.build_filename(path,"postrm");
+			var f_rules = File.new_for_path(f_rules_path);
 			if (f_rules.query_exists()) {
 				// if the file already exists, don't touch it
 				return false;
@@ -415,9 +543,14 @@ namespace AutoVala {
 					of.put_string(line+"\n");
 				}
 				dis.close();
+				Posix.chmod(f_rules_path,493); // 755 permissions)
 			} catch (Error e) {
 				ElementBase.globalData.addError(_("Failed to write data to debian/postrm file (%s)").printf(e.message));
-				f_rules.delete();
+				try {
+					f_rules.delete();
+				} catch(GLib.Error e) {
+					ElementBase.globalData.addError(_("Failed to delete invalid debian/postrm file (%s)").printf(e.message));
+				}
 				return true;
 			}
 			return false;
@@ -438,38 +571,43 @@ namespace AutoVala {
 
 			// if the file already exists, check for the current version number
 			if (f_changelog.query_exists()) {
-				var dis = new DataInputStream (f_changelog.read ());
-				string line;
-				while ((line = dis.read_line (null)) != null) {
-					lines += line;
-					if (version_found) {
-						continue;
+				try {
+					var dis = new DataInputStream (f_changelog.read ());
+					string line;
+					while ((line = dis.read_line (null)) != null) {
+						lines += line;
+						if (version_found) {
+							continue;
+						}
+						if (line.length==0) {
+							continue;
+						}
+						if ((line[0] == ' ') || (line[0] == '\t')) {
+							continue;
+						}
+						var pos1 = line.index_of_char('(');
+						if (pos1 == -1) {
+							continue;
+						}
+						var pos2 = line.index_of_char(')',pos1);
+						if (pos2 == -1) {
+							continue;
+						}
+						var version = line.substring(pos1+1,pos2-pos1-1);
+						var pos3 = version.last_index_of_char('-');
+						if (pos3 != -1) { // remove the debian_revision field
+							version = version.substring(0,pos3);
+						}
+						if (version == this.version) {
+							version_found = true;
+						}
 					}
-					if (line.length==0) {
-						continue;
-					}
-					if ((line[0] == ' ') || (line[0] == '\t')) {
-						continue;
-					}
-					var pos1 = line.index_of_char('(');
-					if (pos1 == -1) {
-						continue;
-					}
-					var pos2 = line.index_of_char(')',pos1);
-					if (pos2 == -1) {
-						continue;
-					}
-					var version = line.substring(pos1+1,pos2-pos1-1);
-					var pos3 = version.last_index_of_char('-');
-					if (pos3 != -1) { // remove the debian_revision field
-						version = version.substring(0,pos3);
-					}
-					if (version == this.version) {
-						version_found = true;
-					}
+					dis.close();
+					f_changelog.delete();
+				} catch (Error e) {
+					ElementBase.globalData.addError(_("Failed to delete old debian/changelog file (%s)").printf(e.message));
+					return true;
 				}
-				dis.close();
-				f_changelog.delete();
 			}
 
 			try {
@@ -562,15 +700,19 @@ namespace AutoVala {
 					of.put_string(line+"\n");
 				}
 				dis.close();
+				Posix.chmod(fname,420); // 644 permissions)
 			} catch (Error e) {
 				ElementBase.globalData.addError(_("Failed to write data to debian/changelog file (%s)").printf(e.message));
-				f_changelog.delete();
+				try {
+					f_changelog.delete();
+				} catch (Error e) {
+					ElementBase.globalData.addError(_("Failed to delete invalid debian/changelog file (%s)").printf(e.message));
+					return true;
+				}
 				return true;
 			}
 
 			return false;
 		}
-
-
 	}
 }

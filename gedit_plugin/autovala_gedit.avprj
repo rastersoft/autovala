@@ -1,16 +1,23 @@
 ### AutoVala Project ###
-autovala_version: 13
-project_name: gedit_plugin
-vala_version: 0.24
+autovala_version: 24
+project_name: autovala_gedit
+vala_version: 0.30
 
+if ATHOME
 custom: data/autovala.plugin share/gedit/plugins/autovala
+else
+custom: data/autovala.plugin lib/gedit/plugins/autovala
+end
 
 *define: OLD_GEDIT
 
-
 vala_library: src/gedit_plugin
 *namespace: autovalagedit
+if ATHOME
 vala_destination: share/gedit/plugins/autovala
+else
+vala_destination: lib/gedit/plugins/autovala
+end
 if OLD_GEDIT
 else
 vala_vapi: vapis/gedit.vapi
@@ -36,12 +43,17 @@ end
 *vala_check_package: gtk+-3.0
 *vala_check_package: gtksourceview-3.0
 *vala_check_package: libpeas-1.0
+*vala_check_package: libxml-2.0
 *vala_check_package: pango
 *vala_check_package: pangocairo
+*vala_check_package: vte-2.91
 *vala_check_package: x11
 *vala_source: gedit_plugin.vala
 
+
 *po: po
+
+*translate: vala src/gedit_plugin.vala
 
 *data: data/local
 
