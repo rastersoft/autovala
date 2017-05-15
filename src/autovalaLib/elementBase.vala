@@ -22,7 +22,8 @@ using Gee;
 namespace AutoVala {
 
 	public enum ConfigType {GLOBAL, VALA_BINARY, VALA_LIBRARY, BINARY, ICON, PIXMAP, PO, GLADE, DBUS_SERVICE, DESKTOP, AUTOSTART,
-							 EOS_PLUG, SCHEME, DATA, DOC, INCLUDE, IGNORE, CUSTOM, DEFINE, MANPAGE, BASH_COMPLETION}
+							 EOS_PLUG, SCHEME, DATA, DOC, INCLUDE, IGNORE, CUSTOM, DEFINE, MANPAGE, BASH_COMPLETION, SOURCE_DEPENDENCY,
+							 BINARY_DEPENDENCY }
 
 	/**
 	 * Represents a generic file of the project, with its path, filename, compilation condition...
@@ -98,7 +99,7 @@ namespace AutoVala {
 		 */
 
 		public static string[] getFilesFromFolder(string folder, string[]? extensions, bool recursive,bool removeFolder=false, string ? masterFolder=null) {
-			
+
 			string[] files = {};
 
 			var dirPath=File.new_for_path(Path.build_filename(ElementBase.globalData.projectFolder,folder));
@@ -184,9 +185,9 @@ namespace AutoVala {
 				return true;
 			}
 
-			string fullPath=fullPathP;
+			string? fullPath=fullPathP;
 			if (fullPath != null) {
-				
+
 				if (fullPath.has_suffix(Path.DIR_SEPARATOR_S)) {
 					fullPath=fullPathP.substring(0,fullPathP.length-1);
 				}
@@ -321,7 +322,7 @@ namespace AutoVala {
 				}
 				dataStream.put_string("%s: %s\n".printf(this.command,data));
 			} catch (Error e) {
-				ElementBase.globalData.addError(_("Failed to store '%s: %s' at config").printf(this.command.data));
+				ElementBase.globalData.addError(_("Failed to store '%s: %s' at config").printf(this.command,data));
 				return true;
 			}
 			return false;

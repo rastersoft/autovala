@@ -28,6 +28,7 @@ vala_destination: lib/scratch/plugins/autovala
 *vala_check_package: scratchcore
 *vala_check_package: x11
 *vala_source: scratch_plugin.vala
+c_library: readline
 
 *po: po
 

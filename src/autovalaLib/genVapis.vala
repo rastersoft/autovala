@@ -96,6 +96,11 @@ namespace AutoVala {
 			}
 		}
 
+		public string? get_pc_path(string module) {
+
+			return this.pkgConfigs.find_path(module);
+		}
+
 		/**
 		 * Returns all the namespaces found in the system
 		 * @return a set with all the namespaces found

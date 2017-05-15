@@ -1,15 +1,16 @@
 ### AutoVala Project ###
-autovala_version: 13
+autovala_version: 14
 project_name: autovala
-vala_version: 0.24
+vala_version: 0.20
 
 custom: data/cmake share/autovala/cmake
+custom: data/debian share/autovala/debian
 
 *define: GTK_OLD
 
 
 vala_binary: src/autovala
-*version: 0.99.10
+*version: 0.99.11
 if DEBUG
 compile_options: -g --fatal-warnings
 end
@@ -30,6 +31,7 @@ compile_options: -g --fatal-warnings
 end
 compile_c_options: -O2
 *vala_package: posix
+*vala_package: readline
 *vala_check_package: cairo
 *vala_check_package: gdk-3.0
 *vala_check_package: gdk-pixbuf-2.0
@@ -39,9 +41,11 @@ compile_c_options: -O2
 *vala_check_package: gobject-2.0
 *vala_check_package: pango
 *vala_check_package: pangocairo
+c_library: readline
 *vala_source: autovalaLib.vala
 *vala_source: conditionalText.vala
 *vala_source: configuration.vala
+*vala_source: elementBDepend.vala
 *vala_source: elementBase.vala
 *vala_source: elementBashCompletion.vala
 *vala_source: elementBinary.vala
@@ -60,11 +64,15 @@ compile_c_options: -O2
 *vala_source: elementManpage.vala
 *vala_source: elementPixmap.vala
 *vala_source: elementPo.vala
+*vala_source: elementSDepend.vala
 *vala_source: elementScheme.vala
 *vala_source: elementValaBinary.vala
 *vala_source: findVala.vala
 *vala_source: genVapis.vala
 *vala_source: globals.vala
+*vala_source: packages.vala
+*vala_source: packages_deb.vala
+*vala_source: packages_rpm.vala
 *vala_source: readPkgconfig.vala
 
 vala_library: src/autovalaPlugin/autovalaPlugin
