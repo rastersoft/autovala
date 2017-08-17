@@ -1,4 +1,6 @@
 ## History of versions ##
+* version 1.1.1 (2017-08-17)
+    * Updated bash completion options
 * version 1.1.0 (2017-02-11)
     * Added meson support
 * version 1.0.1 (2017-02-09)

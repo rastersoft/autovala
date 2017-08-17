@@ -7,7 +7,7 @@ _autovala()
 	cur="${COMP_WORDS[COMP_CWORD]}"
 	prev="${COMP_WORDS[COMP_CWORD-1]}"
 	if [[ ${COMP_CWORD} = 1 ]] ; then
-		COMPREPLY=( $(compgen -W "help version init ginit refresh cmake update po clear project_files deb rpm pacman valama external" -- ${cur}) )
+		COMPREPLY=( $(compgen -W "help version init ginit refresh cmake meson update po clear project_files git deb rpm pacman valama external" -- ${cur}) )
 		return 0
 	fi
 }

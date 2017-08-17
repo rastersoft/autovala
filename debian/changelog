@@ -1,3 +1,9 @@
+autovala (1.1.1-Debian1) sid; urgency=low
+
+  * Updated bash completion options
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Thu, 17 Aug 2017 23:55:00 +0200
+
 autovala (1.1.0-Debian1) sid; urgency=low
 
   * Added meson support
