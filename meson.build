@@ -4,18 +4,18 @@ add_global_arguments('-DGETTEXT_PACKAGE="autovala"',language: 'c')
 
 atk_dep = dependency('atk')
 gio_2_0_dep = dependency('gio-2.0')
+gtk_3_0_dep = dependency('gtk+-3.0')
+x11_dep = dependency('x11')
 cairo_dep = dependency('cairo')
 gdk_3_0_dep = dependency('gdk-3.0')
 gdk_pixbuf_2_0_dep = dependency('gdk-pixbuf-2.0')
 gee_0_8_dep = dependency('gee-0.8')
 glib_2_0_dep = dependency('glib-2.0')
 gobject_2_0_dep = dependency('gobject-2.0')
-gtk_3_0_dep = dependency('gtk+-3.0')
 libxml_2_0_dep = dependency('libxml-2.0')
 pango_dep = dependency('pango')
 pangocairo_dep = dependency('pangocairo')
 vte_2_91_dep = dependency('vte-2.91')
-x11_dep = dependency('x11')
 
 subdir('po')
 meson.add_install_script(join_paths(meson.current_source_dir(),'meson_scripts','install_data.sh'),join_paths(get_option('prefix'),'share/autovala/debian'),join_paths(meson.current_source_dir(),'data/debian',''))
@@ -179,6 +179,8 @@ cfg_autovalaPlugin.set('TESTSRCDIR', meson.current_source_dir())
 cfgfile_4 = configure_file(input: 'src/autovalaPlugin/Config.vala.base',output: 'Config_4.vala',configuration: cfg_autovalaPlugin)
 
 autovalaPlugin_deps = [atk_dep]
+autovalaPlugin_deps += [gtk_3_0_dep]
+autovalaPlugin_deps += [x11_dep]
 autovalaPlugin_deps += [cairo_dep]
 autovalaPlugin_deps += [gdk_3_0_dep]
 autovalaPlugin_deps += [gdk_pixbuf_2_0_dep]
@@ -186,11 +188,9 @@ autovalaPlugin_deps += [gee_0_8_dep]
 autovalaPlugin_deps += [gio_2_0_dep]
 autovalaPlugin_deps += [glib_2_0_dep]
 autovalaPlugin_deps += [gobject_2_0_dep]
-autovalaPlugin_deps += [gtk_3_0_dep]
 autovalaPlugin_deps += [pango_dep]
 autovalaPlugin_deps += [pangocairo_dep]
 autovalaPlugin_deps += [vte_2_91_dep]
-autovalaPlugin_deps += [x11_dep]
 autovalaPlugin_sources = [cfgfile_4]
 autovalaPlugin_sources += ['src/autovalaPlugin/CreateNewProject.vala']
 autovalaPlugin_sources += ['src/autovalaPlugin/PanedPercentage.vala']
@@ -212,6 +212,8 @@ AutovalaPlugin_library = shared_library('AutovalaPlugin',autovalaPlugin_sources,
 autovalaPlugin_requires = []
 autovalaPlugin_requires += ['AutoVala']
 autovalaPlugin_requires += ['atk']
+autovalaPlugin_requires += ['gtk+-3.0']
+autovalaPlugin_requires += ['x11']
 autovalaPlugin_requires += ['cairo']
 autovalaPlugin_requires += ['gdk-3.0']
 autovalaPlugin_requires += ['gdk-pixbuf-2.0']
@@ -219,11 +221,9 @@ autovalaPlugin_requires += ['gee-0.8']
 autovalaPlugin_requires += ['gio-2.0']
 autovalaPlugin_requires += ['glib-2.0']
 autovalaPlugin_requires += ['gobject-2.0']
-autovalaPlugin_requires += ['gtk+-3.0']
 autovalaPlugin_requires += ['pango']
 autovalaPlugin_requires += ['pangocairo']
 autovalaPlugin_requires += ['vte-2.91']
-autovalaPlugin_requires += ['x11']
 pkg_mod = import('pkgconfig')
 pkg_mod.generate(libraries : AutovalaPlugin_library,
 	version : '0.99',

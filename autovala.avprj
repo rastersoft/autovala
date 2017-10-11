@@ -81,6 +81,8 @@ vala_library: src/autovalaPlugin/autovalaPlugin
 use_gresource: extras_gresource_xml
 vala_local_package: AutoVala
 vala_check_package: atk
+vala_check_package: gtk+-3.0
+vala_check_package: x11
 *vala_check_package: cairo
 *vala_check_package: gdk-3.0
 *vala_check_package: gdk-pixbuf-2.0
@@ -88,11 +90,9 @@ vala_check_package: atk
 *vala_check_package: gio-2.0
 *vala_check_package: glib-2.0
 *vala_check_package: gobject-2.0
-*vala_check_package: gtk+-3.0
 *vala_check_package: pango
 *vala_check_package: pangocairo
 *vala_check_package: vte-2.91
-*vala_check_package: x11
 *vala_source: CreateNewProject.vala
 *vala_source: PanedPercentage.vala
 *vala_source: ProjectProperties.vala

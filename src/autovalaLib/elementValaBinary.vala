@@ -1402,7 +1402,7 @@ namespace AutoVala {
 
 		private void setMesonVar(ConditionalText dataStream, string variable, string var_value) throws GLib.IOError {
 			bool exists = this._meson_arrays.contains(variable);
-			dataStream.put_string("%s_%s %s= [%s]\n".printf(this.name,variable,exists ? "+" : "",var_value));
+			dataStream.put_string("%s_%s %s= [%s]\n".printf(this.name.replace("-","_"),variable,exists ? "+" : "",var_value));
 			this._meson_arrays.add(variable);
 		}
 
@@ -1430,7 +1430,7 @@ namespace AutoVala {
 			this._meson_arrays = new Gee.HashSet<string>();
 
 			string girFilename = "";
-			string libFilename = this.name;
+			string libFilename = this.name.replace("-","_");
 			if (this._currentNamespace != null) {
 				// Build the GIR filename
 				girFilename = this._currentNamespace + "-" + this.version.split(".")[0] + ".0.gir";
@@ -1447,19 +1447,19 @@ namespace AutoVala {
 					return true;
 				}
 
-				dataStream.put_string("cfg_%s = configuration_data()\n".printf(this.name));
-				dataStream.put_string("cfg_%s.set('DATADIR', join_paths(get_option('prefix'),get_option('datadir')))\n".printf(this.name));
-				dataStream.put_string("cfg_%s.set('PKGDATADIR', join_paths(get_option('prefix'),get_option('datadir'),'%s'))\n".printf(this.name,ElementBase.globalData.projectName));
-				dataStream.put_string("cfg_%s.set('GETTEXT_PACKAGE', '%s')\n".printf(this.name,ElementBase.globalData.projectName));
-				dataStream.put_string("cfg_%s.set('RELEASE_NAME', '%s')\n".printf(this.name,ElementBase.globalData.projectName));
-				dataStream.put_string("cfg_%s.set('PREFIX', get_option('prefix'))\n".printf(this.name));
-				dataStream.put_string("cfg_%s.set('VERSION', '%s')\n".printf(this.name,this.version));
-				dataStream.put_string("cfg_%s.set('TESTSRCDIR', meson.current_source_dir())\n\n".printf(this.name));
+				dataStream.put_string("cfg_%s = configuration_data()\n".printf(this.name.replace("-","_")));
+				dataStream.put_string("cfg_%s.set('DATADIR', join_paths(get_option('prefix'),get_option('datadir')))\n".printf(this.name.replace("-","_")));
+				dataStream.put_string("cfg_%s.set('PKGDATADIR', join_paths(get_option('prefix'),get_option('datadir'),'%s'))\n".printf(this.name.replace("-","_"),ElementBase.globalData.projectName));
+				dataStream.put_string("cfg_%s.set('GETTEXT_PACKAGE', '%s')\n".printf(this.name.replace("-","_"),ElementBase.globalData.projectName));
+				dataStream.put_string("cfg_%s.set('RELEASE_NAME', '%s')\n".printf(this.name.replace("-","_"),ElementBase.globalData.projectName));
+				dataStream.put_string("cfg_%s.set('PREFIX', get_option('prefix'))\n".printf(this.name.replace("-","_")));
+				dataStream.put_string("cfg_%s.set('VERSION', '%s')\n".printf(this.name.replace("-","_"),this.version));
+				dataStream.put_string("cfg_%s.set('TESTSRCDIR', meson.current_source_dir())\n\n".printf(this.name.replace("-","_")));
 
 				var counter = Globals.counter;
 				var input_file = Path.build_filename(this._path,"Config.vala.base");
 				var output_file = Path.build_filename("Config_%d.vala".printf(counter));
-				dataStream.put_string("cfgfile_%d = configure_file(input: '%s',output: '%s',configuration: cfg_%s)\n\n".printf(counter,input_file,output_file,this.name));
+				dataStream.put_string("cfgfile_%d = configure_file(input: '%s',output: '%s',configuration: cfg_%s)\n\n".printf(counter,input_file,output_file,this.name.replace("-","_")));
 
 
 				var printConditions = new ConditionalText(dataStream.dataStream, ConditionalType.MESON, dataStream.tabs);
@@ -1578,8 +1578,8 @@ namespace AutoVala {
 					if ((llibrary.elementName == "threads") || (llibrary.elementName == "pthreads")) {
 						this.setMesonPrecondition(dataStream,llibrary.condition,"dependencies");
 						printConditions.printCondition(llibrary.condition,llibrary.invertCondition);
-						dataStream.put_string("%s_thread_dep = dependency('threads')\n".printf(this.name));
-						this.setMesonVar(dataStream,"dependencies","'%s_thread_dep'".printf(this.name));
+						dataStream.put_string("%s_thread_dep = dependency('threads')\n".printf(this.name.replace("-","_")));
+						this.setMesonVar(dataStream,"dependencies","'%s_thread_dep'".printf(this.name.replace("-","_")));
 						continue;
 					}
 					if (llibrary.elementName == "m") {
@@ -1605,7 +1605,7 @@ namespace AutoVala {
 
 				if (this._type == ConfigType.VALA_BINARY) {
 					dataStream.put_string("\nexecutable");
-					dataStream.put_string("('%s',%s_sources".printf(this.name,this.name));
+					dataStream.put_string("('%s',%s_sources".printf(this.name,this.name.replace("-","_")));
 				} else {
 					if (girFilename != "") {
 						this.setMesonVar(dataStream,"vala_args","'--gir=%s'".printf(girFilename));
@@ -1616,29 +1616,29 @@ namespace AutoVala {
 					} else {
 						dataStream.put_string("\n%s_library = shared_library".printf(this._currentNamespace));
 					}
-					dataStream.put_string("('%s',%s_sources".printf(libFilename,this.name));
+					dataStream.put_string("('%s',%s_sources".printf(libFilename,this.name.replace("-","_")));
 					if (this.createDepsFile(depsFilename)) {
 						return true;
 					}
 				}
 
 				if (this._meson_arrays.contains("deps")) {
-					dataStream.put_string(",dependencies: %s_deps".printf(this.name));
+					dataStream.put_string(",dependencies: %s_deps".printf(this.name.replace("-","_")));
 				}
 				if (this._meson_arrays.contains("vala_args")) {
-					dataStream.put_string(",vala_args: %s_vala_args".printf(this.name));
+					dataStream.put_string(",vala_args: %s_vala_args".printf(this.name.replace("-","_")));
 				}
 				if (this._meson_arrays.contains("c_args")) {
-					dataStream.put_string(",c_args: %s_c_args".printf(this.name));
+					dataStream.put_string(",c_args: %s_c_args".printf(this.name.replace("-","_")));
 				}
 				if (this._meson_arrays.contains("link_args")) {
-					dataStream.put_string(",link_args: %s_link_args".printf(this.name));
+					dataStream.put_string(",link_args: %s_link_args".printf(this.name.replace("-","_")));
 				}
 				if (this._meson_arrays.contains("dependencies")) {
-					dataStream.put_string(",link_with: %s_dependencies".printf(this.name));
+					dataStream.put_string(",link_with: %s_dependencies".printf(this.name.replace("-","_")));
 				}
 				if (this._meson_arrays.contains("hfolders")) {
-					dataStream.put_string(",include_directories: %s_hfolders".printf(this.name));
+					dataStream.put_string(",include_directories: %s_hfolders".printf(this.name.replace("-","_")));
 				}
 				if (this._type == ConfigType.VALA_LIBRARY) {
 					dataStream.put_string(",version: '%s'".printf(this.version));
@@ -1648,15 +1648,15 @@ namespace AutoVala {
 				dataStream.put_string(")\n\n");
 
 				if ((this._type == ConfigType.VALA_LIBRARY) && (this._currentNamespace != null)) {
-					dataStream.put_string("%s_requires = []\n".printf(this.name));
+					dataStream.put_string("%s_requires = []\n".printf(this.name.replace("-","_")));
 					foreach(var module in this._packages) {
 						if ((module.type != packageType.DO_CHECK) && (module.type != packageType.LOCAL)){
 							continue;
 						}
-						dataStream.put_string("%s_requires += ['%s']\n".printf(this.name,module.elementName));
+						dataStream.put_string("%s_requires += ['%s']\n".printf(this.name.replace("-","_"),module.elementName));
 					}
 					dataStream.put_string("pkg_mod = import('pkgconfig')\n");
-					dataStream.put_string("pkg_mod.generate(libraries : %s_library,\n\tversion : '%s',\n\tname : '%s',\n\tfilebase : '%s',\n\tdescription : '%s',\n\trequires : %s_requires)\n\n".printf(this._currentNamespace,this.version,libFilename,libFilename,libFilename,this.name));
+					dataStream.put_string("pkg_mod.generate(libraries : %s_library,\n\tversion : '%s',\n\tname : '%s',\n\tfilebase : '%s',\n\tdescription : '%s',\n\trequires : %s_requires)\n\n".printf(this._currentNamespace,this.version,libFilename,libFilename,libFilename,this.name.replace("-","_")));
 				}
 
 				if (this._type == ConfigType.VALA_LIBRARY) {
@@ -1669,40 +1669,40 @@ namespace AutoVala {
 
 				// unitary tests
 				if (this._unitests.size != 0) {
-					dataStream.put_string("%s_tests_vala_args = ".printf(this.name));
+					dataStream.put_string("%s_tests_vala_args = ".printf(this.name.replace("-","_")));
 					if (this._meson_arrays.contains("vala_args")) {
-						dataStream.put_string("%s_vala_args + ".printf(this.name));
+						dataStream.put_string("%s_vala_args + ".printf(this.name.replace("-","_")));
 					}
 					dataStream.put_string("['-D','UNITEST']\n");
-					dataStream.put_string("%s_tests_c_args = ".printf(this.name));
+					dataStream.put_string("%s_tests_c_args = ".printf(this.name.replace("-","_")));
 					if (this._meson_arrays.contains("c_args")) {
-						dataStream.put_string("%s_c_args + ".printf(this.name));
+						dataStream.put_string("%s_c_args + ".printf(this.name.replace("-","_")));
 					}
 					dataStream.put_string("['-DUNITEST']\n");
 
 					foreach (var unitest in this._unitests) {
 
-						dataStream.put_string("\n%s_test%d_exec = executable".printf(this.name,ElementValaBinary.counter));
-						dataStream.put_string("('%s_test%d',%s_sources + [join_paths(meson.current_source_dir(),'%s')]".printf(this.name,ElementValaBinary.counter,this.name,Path.build_filename(this._path,unitest.elementName)));
+						dataStream.put_string("\n%s_test%d_exec = executable".printf(this.name.replace("-","_"),ElementValaBinary.counter));
+						dataStream.put_string("('%s_test%d',%s_sources + [join_paths(meson.current_source_dir(),'%s')]".printf(this.name,ElementValaBinary.counter,this.name.replace("-","_"),Path.build_filename(this._path,unitest.elementName)));
 
 						if (this._meson_arrays.contains("deps")) {
-							dataStream.put_string(",dependencies: %s_deps".printf(this.name));
+							dataStream.put_string(",dependencies: %s_deps".printf(this.name.replace("-","_")));
 						}
-						dataStream.put_string(",vala_args: %s_tests_vala_args".printf(this.name));
-						dataStream.put_string(",c_args: %s_tests_c_args".printf(this.name));
+						dataStream.put_string(",vala_args: %s_tests_vala_args".printf(this.name.replace("-","_")));
+						dataStream.put_string(",c_args: %s_tests_c_args".printf(this.name.replace("-","_")));
 						if (this._meson_arrays.contains("link_args")) {
-							dataStream.put_string(",link_args: %s_link_args".printf(this.name));
+							dataStream.put_string(",link_args: %s_link_args".printf(this.name.replace("-","_")));
 						}
 						if (this._meson_arrays.contains("dependencies")) {
-							dataStream.put_string(",link_with: %s_dependencies".printf(this.name));
+							dataStream.put_string(",link_with: %s_dependencies".printf(this.name.replace("-","_")));
 						}
 						if (this._meson_arrays.contains("hfolders")) {
-							dataStream.put_string(",include_directories: %s_hfolders".printf(this.name));
+							dataStream.put_string(",include_directories: %s_hfolders".printf(this.name.replace("-","_")));
 						}
 						dataStream.put_string(",install: false");
 						dataStream.put_string(")\n");
 
-						dataStream.put_string("test('%s_test%d', %s_test%d_exec)\n\n".printf(this.name,ElementValaBinary.counter,this.name,ElementValaBinary.counter));
+						dataStream.put_string("test('%s_test%d', %s_test%d_exec)\n\n".printf(this.name.replace("-","_"),ElementValaBinary.counter,this.name.replace("-","_"),ElementValaBinary.counter));
 
 						dataStream.put_string("\n");
 						ElementValaBinary.counter++;
