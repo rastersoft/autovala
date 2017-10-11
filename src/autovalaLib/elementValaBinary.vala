@@ -1490,8 +1490,10 @@ namespace AutoVala {
 						continue;
 					}
 					var e = element as ElementGResource;
+					printConditions.printCondition(element.condition,element.invertCondition);
 					this.setMesonVar(dataStream,"sources","%s_file_c".printf(e.name.replace(".","_")));
 				}
+				printConditions.printTail();
 
 				foreach (var filename in this._vapis) {
 					printConditions.printCondition(filename.condition,filename.invertCondition);
