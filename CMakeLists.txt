@@ -81,3 +81,5 @@ add_subdirectory(src/autovalaLib)
 add_subdirectory(src/autovalaPlugin)
 add_subdirectory(src)
 
+add_dependencies( autovala AutoVala )
+add_dependencies( AutovalaPlugin AutoVala )

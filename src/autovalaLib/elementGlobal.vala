@@ -317,6 +317,56 @@ namespace AutoVala {
 					}
 				}
 				dataStream.put_string("\n");
+
+				// add dependencies
+				var namespaces = new Gee.HashMap<string,ElementValaBinary>();
+				foreach(var element in ElementBase.globalData.globalElements) {
+					if (element.eType != ConfigType.VALA_LIBRARY) {
+						continue;
+					}
+					var binElement = element as ElementValaBinary;
+					namespaces.set(binElement.currentNamespace, binElement);
+				}
+
+				foreach(var element in ElementBase.globalData.globalElements) {
+					if ((element.eType != ConfigType.VALA_LIBRARY) && (element.eType != ConfigType.VALA_BINARY)) {
+						continue;
+					}
+					var binaryElement = element as ElementValaBinary;
+					string elementName;
+					if (binaryElement.currentNamespace == null) {
+						 elementName = binaryElement.name;
+					} else {
+						elementName = binaryElement.currentNamespace;
+					}
+					bool printed = false;
+
+					foreach(var package in binaryElement.packages) {
+						if (package.type != packageType.LOCAL) {
+							continue;
+						}
+						if (!namespaces.has_key(package.elementName)) {
+							continue;
+						}
+						printConditions.printCondition(package.condition, package.invertCondition);
+						var library = namespaces.get(package.elementName);
+						string libFilename;
+						if (library.currentNamespace == null) {
+							libFilename = library.name;
+						} else {
+							libFilename = library.currentNamespace;
+						}
+						if (!printed) {
+							dataStream.put_string("add_dependencies( %s ".printf(elementName));
+							printed = true;
+						}
+						dataStream.put_string("%s ".printf(libFilename));
+					}
+					if (printed) {
+						dataStream.put_string(")\n");
+					}
+				}
+				printConditions.printTail();
 			} catch (Error e) {
 				ElementBase.globalData.addError(_("Failed to generate the main CMakeLists.txt file"));
 			}

@@ -1784,7 +1784,7 @@ namespace AutoVala {
 					if (this.createDepsFile(depsFilename)) {
 						return true;
 					}
-					
+
 					dataStream.put_string("configure_file (${CMAKE_CURRENT_SOURCE_DIR}/"+depsFilename+" ${CMAKE_CURRENT_BINARY_DIR}/"+depsFilename+")\n");
 				}
 
@@ -2209,7 +2209,7 @@ namespace AutoVala {
 			return false;
 		}
 
-		public override bool storeConfig(DataOutputStream dataStream,ConditionalText printConditions) {
+		public override bool storeConfig(DataOutputStream dataStream, ConditionalText printConditions) {
 
 			if (this._type == ConfigType.VALA_LIBRARY) {
 				this.remove_self_package();
