@@ -328,7 +328,7 @@ namespace AutoVala {
 					namespaces.set(binElement.currentNamespace, binElement);
 				}
 
-				foreach(var element in ElementBase.globalData.globalElements) {
+				/*foreach(var element in ElementBase.globalData.globalElements) {
 					if ((element.eType != ConfigType.VALA_LIBRARY) && (element.eType != ConfigType.VALA_BINARY)) {
 						continue;
 					}
@@ -366,7 +366,7 @@ namespace AutoVala {
 						dataStream.put_string(")\n");
 					}
 				}
-				printConditions.printTail();
+				printConditions.printTail(); */
 			} catch (Error e) {
 				ElementBase.globalData.addError(_("Failed to generate the main CMakeLists.txt file"));
 			}

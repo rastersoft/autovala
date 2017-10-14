@@ -47,6 +47,8 @@ CUSTOM_VAPIS
 )
 
 add_executable(autovala ${VALA_C})
+set ( autovala_DEPENDENCIES ${autovala_DEPENDENCIES} AutoVala )
+add_dependencies( autovala ${autovala_DEPENDENCIES} )
 
 
 install(TARGETS
