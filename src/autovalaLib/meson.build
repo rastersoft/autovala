@@ -5,7 +5,7 @@ cfg_autovalaLib.set('GETTEXT_PACKAGE', 'autovala')
 cfg_autovalaLib.set('RELEASE_NAME', 'autovala')
 cfg_autovalaLib.set('PREFIX', get_option('prefix'))
 cfg_autovalaLib.set('VERSION', '1.0')
-cfg_autovalaLib.set('TESTSRCDIR', meson.current_source_dir())
+cfg_autovalaLib.set('TESTSRCDIR', meson.source_root())
 
 cfgfile_4 = configure_file(input: 'Config.vala.base',output: 'Config.vala',configuration: cfg_autovalaLib)
 
@@ -60,7 +60,6 @@ autovalaLib_sources += ['packages_deb.vala']
 autovalaLib_sources += ['packages_pacman.vala']
 autovalaLib_sources += ['packages_rpm.vala']
 autovalaLib_sources += ['readPkgconfig.vala']
-autovalaLib_sources += [extras_gresource_xml_file_c]
 autovalaLib_vala_args = ['--pkg','posix']
 autovalaLib_vala_args += ['--pkg','readline']
 autovalaLib_link_args = ['-lreadline']

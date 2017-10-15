@@ -380,5 +380,21 @@ namespace AutoVala {
 		public virtual string? getSortId() {
 			return this.fullPath;
 		}
+
+		protected string? getRelativePath(string origin, string destination) {
+
+			if (origin == destination) {
+				return null;
+			}
+
+			string output = "";
+			foreach(var element in origin.split("/")) {
+				if (element != "") {
+					output += "../";
+				}
+			}
+			output += destination;
+			return output;
+		}
 	}
 }

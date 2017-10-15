@@ -1490,13 +1490,16 @@ namespace AutoVala {
 				}
 				printConditions.printTail();
 
-				foreach (var element in globalData.globalElements) {
-					if (element.eType != ConfigType.GRESOURCE) {
-						continue;
+				foreach (var resource in this._resources) {
+					foreach(var element in ElementBase.globalData.globalElements) {
+						if (element.eType==ConfigType.GRESOURCE) {
+							var gresource = element as ElementGResource;
+							if (gresource.identifier == resource.elementName) {
+								printConditions.printCondition(element.condition,element.invertCondition);
+								this.setMesonVar(dataStream,"sources","%s_file_c".printf(gresource.name.replace(".","_")));
+							}
+						}
 					}
-					var e = element as ElementGResource;
-					printConditions.printCondition(element.condition,element.invertCondition);
-					this.setMesonVar(dataStream,"sources","%s_file_c".printf(e.name.replace(".","_")));
 				}
 				printConditions.printTail();
 
@@ -1606,9 +1609,43 @@ namespace AutoVala {
 				foreach(var element in this._hFolders) {
 					this.setMesonPrecondition(dataStream,element.condition,"hfolders");
 					printConditions.printCondition(element.condition,element.invertCondition);
-					this.setMesonVar(dataStream,"hfolders","include_directories('%s')".printf(element.elementName));
+					this.setMesonVar(dataStream,"hfolders","'%s'".printf(element.elementName));
 				}
 				printConditions.printTail();
+
+				var names = new Gee.HashMap<string, ElementValaBinary>();
+				foreach(var tbinary in ElementBase.globalData.globalElements) {
+					if ((tbinary.eType != ConfigType.VALA_BINARY) && (tbinary.eType != ConfigType.VALA_LIBRARY)) {
+						continue;
+					}
+					var binary = tbinary as ElementValaBinary;
+					string name;
+					if (binary.currentNamespace == null) {
+						name = binary.name;
+					} else {
+						name = binary.currentNamespace;
+					}
+					if (!names.has_key(name)) {
+						names.set(name, binary);
+					}
+				}
+
+				bool found_hfolders = false;
+				foreach(var element in this._packages) {
+					if (element.type != packageType.LOCAL) {
+						continue;
+					}
+					if (!names.has_key(element.elementName)) {
+						ElementBase.globalData.addError(_("Failed to find the local dependency '%s' for '%s'").printf(element.elementName,this.name));
+						continue;
+					}
+					var dependency = names.get(element.elementName);
+					var relpath = this.getRelativePath(this._path, dependency.path);
+					if (relpath != null) {
+						this.setMesonVar(dataStream,"hfolders","'%s'".printf(relpath));
+						found_hfolders = true;
+					}
+				}
 
 				if (this._type == ConfigType.VALA_BINARY) {
 					dataStream.put_string("\nexecutable");
@@ -1644,8 +1681,8 @@ namespace AutoVala {
 				if (this._meson_arrays.contains("dependencies")) {
 					dataStream.put_string(",link_with: %s_dependencies".printf(this.name.replace("-","_")));
 				}
-				if (this._meson_arrays.contains("hfolders")) {
-					dataStream.put_string(",include_directories: %s_hfolders".printf(this.name.replace("-","_")));
+				if ((this._meson_arrays.contains("hfolders")) || found_hfolders) {
+					dataStream.put_string(",include_directories: include_directories(%s_hfolders)".printf(this.name.replace("-","_")));
 				}
 				if (this._type == ConfigType.VALA_LIBRARY) {
 					dataStream.put_string(",version: '%s'".printf(this.version));
