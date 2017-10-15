@@ -77,7 +77,7 @@ GENERATE_HEADER
 SET (VALA_C ${VALA_C} ${extras_gresource_xml_C_FILE})
 add_library(AutovalaPlugin SHARED ${VALA_C})
 
-add_dependencies (AutovalaPlugin extras_gresource_xml)
+set ( AutovalaPlugin_DEPENDENCIES ${AutovalaPlugin_DEPENDENCIES} extras_gresource_xml )
 set ( AutovalaPlugin_DEPENDENCIES ${AutovalaPlugin_DEPENDENCIES} AutoVala )
 add_dependencies( AutovalaPlugin ${AutovalaPlugin_DEPENDENCIES} )
 set_target_properties( AutovalaPlugin PROPERTIES

@@ -122,6 +122,8 @@ namespace AutoVala {
 		private bool versionSet;
 		private bool versionAutomatic;
 
+		private bool has_dependencies;
+
 		private Gee.HashSet<string>? _meson_arrays;
 
 		private Gee.List<ResourceElement ?> _resources;
@@ -315,10 +317,11 @@ namespace AutoVala {
 				var filePath = File.new_for_path(Path.build_filename(ElementBase.globalData.projectFolder,"src"));
 
 				if (filePath.query_exists()) {
-					var element = new ElementValaBinary();
-					error|=element.autoConfigure("src/"+ElementBase.globalData.projectName);
+					var generatedElement = new ElementValaBinary();
+					error|=generatedElement.autoConfigure("src/"+ElementBase.globalData.projectName);
 				}
 			}
+
 			foreach(var element in ElementBase.globalData.globalElements) {
 				if ((element.eType==ConfigType.VALA_BINARY)||(element.eType==ConfigType.VALA_LIBRARY)) {
 					var elementBinary = element as ElementValaBinary;
@@ -326,6 +329,7 @@ namespace AutoVala {
 					error |= elementBinary.checkDependencies();
 				}
 			}
+
 			return error;
 		}
 
@@ -987,6 +991,7 @@ namespace AutoVala {
 			this._resources.add(element);
 			return false;
 		}
+
 
 		private bool addUnitest(string unitestFile, bool automatic, string? condition, bool invertCondition, int lineNumber, string[]? comments) {
 
@@ -1721,6 +1726,7 @@ namespace AutoVala {
 
 		public override bool generateCMake(DataOutputStream dataStream) {
 
+			this.has_dependencies = false;
 			string girFilename="";
 			string libFilename=this.name;
 			if (this._currentNamespace!=null) {
@@ -2027,7 +2033,8 @@ namespace AutoVala {
 				if (this._type == ConfigType.VALA_LIBRARY) {
 					dataStream.put_string("add_library("+libFilename+" SHARED ${VALA_C})\n\n");
 					foreach (var resource in this._resources) {
-						dataStream.put_string("add_dependencies (%s %s)\n".printf(libFilename,resource.elementName));
+						this.has_dependencies = true;
+						dataStream.put_string("set ( %s_DEPENDENCIES ${%s_DEPENDENCIES} %s )\n".printf(libFilename, libFilename, resource.elementName));
 						//dataStream.put_string("SET (VALA_C ${VALA_C} ${%s_C_FILE})\n".printf(resource.elementName));
 					}
 
@@ -2127,7 +2134,8 @@ namespace AutoVala {
 					// Install executable
 					dataStream.put_string("add_executable("+libFilename+" ${VALA_C})\n");
 					foreach (var resource in this._resources) {
-						dataStream.put_string("add_dependencies (%s %s)\n".printf(libFilename,resource.elementName));
+						this.has_dependencies = true;
+						dataStream.put_string("set ( %s_DEPENDENCIES ${%s_DEPENDENCIES} %s )\n".printf(libFilename, libFilename, resource.elementName));
 					}
 
 					this.add_other_dependencies(dataStream, printConditions, libFilename);
@@ -2215,34 +2223,15 @@ namespace AutoVala {
 
 		private void add_other_dependencies(DataOutputStream dataStream, ConditionalText printConditions, string libFilename) {
 
-			var namespaces = new Gee.HashMap<string,ElementValaBinary>();
-			foreach(var element in ElementBase.globalData.globalElements) {
-				if (element.eType != ConfigType.VALA_LIBRARY) {
+			foreach(var dependency in this._packages) {
+				if (dependency.type != packageType.LOCAL) {
 					continue;
 				}
-				var binElement = element as ElementValaBinary;
-				namespaces.set(binElement.currentNamespace, binElement);
+				this.has_dependencies = true;
+				printConditions.printCondition(dependency.condition, dependency.invertCondition);
+				dataStream.put_string("set ( %s_DEPENDENCIES ${%s_DEPENDENCIES} %s )\n".printf(libFilename, libFilename, dependency.elementName));
 			}
-
-			bool are_dependencies = false;
-			foreach(var package in this.packages) {
-				if (package.type != packageType.LOCAL) {
-					continue;
-				}
-				if (!namespaces.has_key(package.elementName)) {
-					continue;
-				}
-				var library = namespaces.get(package.elementName);
-				string libFilename1 = library.name;
-				if (library.currentNamespace != null) {
-					libFilename1 = library.currentNamespace;
-				}
-				printConditions.printCondition(package.condition, package.invertCondition);
-				dataStream.put_string("set ( %s_DEPENDENCIES ${%s_DEPENDENCIES} %s )\n".printf(libFilename, libFilename, libFilename1));
-				are_dependencies = true;
-			}
-			printConditions.printTail();
-			if (are_dependencies) {
+			if (this.has_dependencies) {
 				dataStream.put_string("add_dependencies( %s ${%s_DEPENDENCIES} )\n".printf(libFilename, libFilename));
 			}
 		}
