@@ -1459,7 +1459,7 @@ namespace AutoVala {
 				dataStream.put_string("cfg_%s.set('RELEASE_NAME', '%s')\n".printf(this.name.replace("-","_"),ElementBase.globalData.projectName));
 				dataStream.put_string("cfg_%s.set('PREFIX', get_option('prefix'))\n".printf(this.name.replace("-","_")));
 				dataStream.put_string("cfg_%s.set('VERSION', '%s')\n".printf(this.name.replace("-","_"),this.version));
-				dataStream.put_string("cfg_%s.set('TESTSRCDIR', meson.current_source_dir())\n\n".printf(this.name.replace("-","_")));
+				dataStream.put_string("cfg_%s.set('TESTSRCDIR', meson.source_root())\n\n".printf(this.name.replace("-","_")));
 
 				var counter = Globals.counter;
 				var input_file = "Config.vala.base";
