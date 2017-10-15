@@ -77,7 +77,14 @@ namespace AutoVala {
 			}
 
 			var dataStream2 = new DataOutputStream(scriptPath.create(FileCreateFlags.NONE));
-			dataStream2.put_string("#!/bin/sh\n\nmkdir -p $DESTDIR/$1\n\ncp -a $2 $DESTDIR/$1\n");
+			dataStream2.put_string("""#!/bin/sh
+mkdir -p $DESTDIR/$1
+if [[ -d $2 ]]; then
+	cp -a $2/* $DESTDIR/$1
+else
+	cp -a $2 $DESTDIR/$1
+fi
+""");
 			dataStream2.close();
 			this.set_permissions("install_data.sh");
 			this.install_script_created = true;
