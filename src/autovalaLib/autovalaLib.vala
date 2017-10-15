@@ -328,14 +328,16 @@ namespace AutoVala {
 				dataStream = new DataOutputStream(dis);
 				var condition = new ConditionalText(dataStream,ConditionalType.MESON);
 				error |= globalElement.generateMeson(condition, mesonCommon);
-
 				foreach(var element in globalData.globalElements) {
+					element.processed = false;
+					if ((element.eType == ConfigType.VALA_BINARY) || (element.eType == ConfigType.VALA_LIBRARY)) {
+						continue;
+					}
 					error |= element.generateMesonHeader(condition, mesonCommon);
 				}
 
 				foreach(var element in globalData.globalElements) {
 					if ((element.eType == ConfigType.VALA_BINARY) || (element.eType == ConfigType.VALA_LIBRARY)) {
-						element.processed = false;
 						continue;
 					}
 					condition.printCondition(element.condition,element.invertCondition);
@@ -343,6 +345,102 @@ namespace AutoVala {
 					element.processed = true;
 				}
 				condition.printTail();
+				var paths = new Gee.HashMap<string, ElementValaBinary>();
+				foreach(var element in ElementBase.globalData.globalElements) {
+					element.processed = false;
+					if ((element.eType != ConfigType.VALA_BINARY) && (element.eType != ConfigType.VALA_LIBRARY)) {
+						continue;
+					}
+					if (!paths.has_key(element.path)) {
+						paths.set(element.path, element as ElementValaBinary);
+					}
+				}
+				var created = new Gee.HashSet<string>();
+				bool added_one = true;
+				while(added_one) {
+					added_one = false;
+					foreach(var path in paths.keys) {
+						var element = paths.get(path);
+						if (element.processed) {
+							continue;
+						}
+						bool ready = true;
+						foreach(var dependency in element.packages) {
+							if (dependency.type != packageType.LOCAL) {
+								continue;
+							}
+							if (!created.contains(dependency.elementName)) {
+								// this binary or library has an unmet dependency
+								ready = false;
+								break;
+							}
+						}
+						if (ready) {
+							dataStream.put_string("subdir('%s')\n".printf(path));
+							added_one = true;
+							element.processed = true;
+							string name;
+							if(element.currentNamespace != null) {
+								name = element.currentNamespace;
+							} else {
+								name = element.name.replace("-","_");
+							}
+							created.add(name);
+						}
+					}
+				}
+				dataStream.close();
+				foreach(var path in paths.keys) {
+					var element = paths.get(path);
+					if (element.processed) {
+						continue;
+					}
+					string errorText = _("Failed to find the following dependencies for '%s' in meson: ").printf(element.name);
+					foreach(var dependency in element.packages) {
+						if (dependency.type != packageType.LOCAL) {
+							continue;
+						}
+						if (!created.contains(dependency.elementName)) {
+							errorText += dependency.elementName;
+						}
+					}
+					ElementBase.globalData.addError(errorText);
+				}
+			} catch (Error e) {
+				ElementBase.globalData.addError(_("Failed to write to meson.build at '%s' element, at '%s' path: %s").printf("autovalaLib","/",e.message));
+				return true;
+			}
+
+			Gee.Set<string> paths = new Gee.HashSet<string>();
+			foreach(var element in ElementBase.globalData.globalElements) {
+				if ((element.eType != ConfigType.VALA_BINARY) && (element.eType != ConfigType.VALA_LIBRARY)) {
+					continue;
+				}
+				if (!paths.contains(element.path)) {
+					paths.add(element.path);
+				}
+			}
+
+			foreach(var path in paths) {
+				var mainPath = GLib.Path.build_filename(globalData.projectFolder, path, "meson.build");
+				var file = File.new_for_path(mainPath);
+				if (file.query_exists()) {
+					file.delete();
+				}
+				var dis = file.create(FileCreateFlags.NONE);
+				dataStream = new DataOutputStream(dis);
+				var condition = new ConditionalText(dataStream,ConditionalType.MESON);
+
+				foreach(var element in globalData.globalElements) {
+					if ((element.eType != ConfigType.VALA_BINARY) && (element.eType != ConfigType.VALA_LIBRARY)) {
+						continue;
+					}
+					element.processed = false;
+					if (path != element.path) {
+						continue;
+					}
+					error |= element.generateMesonHeader(condition, mesonCommon);
+				}
 
 				bool allProcessed=false;
 				Gee.Set<string> packagesFound=new Gee.HashSet<string>();
@@ -370,8 +468,10 @@ namespace AutoVala {
 						}
 						addedOne = true;
 						element.processed = true;
-						condition.printCondition(element.condition,element.invertCondition);
-						error |= element.generateMeson(condition, mesonCommon);
+						if (path == element.path) {
+							condition.printCondition(element.condition,element.invertCondition);
+							error |= element.generateMeson(condition, mesonCommon);
+						}
 						if ((binElement.eType == ConfigType.VALA_LIBRARY) && (binElement.currentNamespace != "")) {
 							packagesFound.add(binElement.currentNamespace);
 						}
@@ -399,20 +499,13 @@ namespace AutoVala {
 					}
 				}
 				condition.printTail();
-			} catch (Error e) {
-				ElementBase.globalData.addError(_("Failed to write to meson.build at '%s' element, at '%s' path: %s").printf("autovalaLib","/",e.message));
-				return true;
-			}
 
-			foreach(var element in globalData.globalElements) {
-				element.endedMeson(mesonCommon);
-			}
-
-			try {
-				dataStream.close();
-			} catch (GLib.IOError e) {
-				ElementBase.globalData.addError(_("Failed to close meson.build file: %s").printf(e.message));
-				return true;
+				foreach(var element in globalData.globalElements) {
+					if (element.path != path) {
+						continue;
+					}
+					element.endedMeson(mesonCommon);
+				}
 			}
 			return error;
 		}
@@ -618,9 +711,14 @@ namespace AutoVala {
 
 			foreach(var path in ElementBase.globalData.pathList) {
 				this.check_file(all_files,GLib.Path.build_filename(path,"CMakeLists.txt"));
+				this.check_file(all_files,GLib.Path.build_filename(path,"meson.build"));
 			}
 			var cmake_files = ElementBase.getFilesFromFolder("cmake",null,true);
 			foreach(var element2 in cmake_files) {
+				this.check_file(all_files,element2);
+			}
+			var meson_files = ElementBase.getFilesFromFolder("meson_scripts",null,true);
+			foreach(var element2 in meson_files) {
 				this.check_file(all_files,element2);
 			}
 			this.check_file(all_files,Path.build_filename("cmake","CMakeLists.txt"));

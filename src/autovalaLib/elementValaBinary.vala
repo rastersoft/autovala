@@ -1462,8 +1462,8 @@ namespace AutoVala {
 				dataStream.put_string("cfg_%s.set('TESTSRCDIR', meson.current_source_dir())\n\n".printf(this.name.replace("-","_")));
 
 				var counter = Globals.counter;
-				var input_file = Path.build_filename(this._path,"Config.vala.base");
-				var output_file = Path.build_filename("Config_%d.vala".printf(counter));
+				var input_file = "Config.vala.base";
+				var output_file = Path.build_filename("Config.vala");
 				dataStream.put_string("cfgfile_%d = configure_file(input: '%s',output: '%s',configuration: cfg_%s)\n\n".printf(counter,input_file,output_file,this.name.replace("-","_")));
 
 
@@ -1480,13 +1480,13 @@ namespace AutoVala {
 				this.setMesonVar(dataStream,"sources","cfgfile_%d".printf(counter));
 				foreach(var source in this._sources) {
 					printConditions.printCondition(source.condition,source.invertCondition);
-					this.setMesonVar(dataStream,"sources","'%s'".printf(Path.build_filename(this._path,source.elementName)));
+					this.setMesonVar(dataStream,"sources","'%s'".printf(source.elementName));
 				}
 				printConditions.printTail();
 
 				foreach(var source in this._cSources) {
 					printConditions.printCondition(source.condition,source.invertCondition);
-					this.setMesonVar(dataStream,"sources","'%s'".printf(Path.build_filename(this._path,source.elementName)));
+					this.setMesonVar(dataStream,"sources","'%s'".printf(source.elementName));
 				}
 				printConditions.printTail();
 
@@ -1502,7 +1502,7 @@ namespace AutoVala {
 
 				foreach (var filename in this._vapis) {
 					printConditions.printCondition(filename.condition,filename.invertCondition);
-					this.setMesonVar(dataStream,"sources","join_paths(meson.current_source_dir(),'%s')".printf(Path.build_filename(this._path,filename.elementName)));
+					this.setMesonVar(dataStream,"sources","join_paths(meson.source_root(),'%s')".printf(filename.elementName));
 				}
 				printConditions.printTail();
 
@@ -1522,9 +1522,9 @@ namespace AutoVala {
 						printConditions.printCondition(element.condition,element.invertCondition);
 						if (element.fullPath[0] == GLib.Path.DIR_SEPARATOR) {
 							// should check if it exists...
-							this.setMesonVar(dataStream,"vala_args","'--vapidir='+join_paths(meson.current_source_dir(),'%s')".printf(element.fullPath));
+							this.setMesonVar(dataStream,"vala_args","'--vapidir='+join_paths(meson.source_root(),'%s')".printf(element.fullPath));
 						} else {
-							this.setMesonVar(dataStream,"vala_args","'--vapidir='+join_paths(meson.current_source_dir(),'%s')".printf(element.fullPath));
+							this.setMesonVar(dataStream,"vala_args","'--vapidir='+join_paths(meson.source_root(),'%s')".printf(element.fullPath));
 						}
 					}
 				}
@@ -1537,7 +1537,7 @@ namespace AutoVala {
 							if (gresource.identifier == resource.elementName) {
 								this.setMesonPrecondition(dataStream,element.condition,"vala_args");
 								printConditions.printCondition(element.condition,element.invertCondition);
-								this.setMesonVar(dataStream,"vala_args","'--gresources='+join_paths(meson.current_source_dir(),'%s')".printf(element.fullPath));
+								this.setMesonVar(dataStream,"vala_args","'--gresources='+join_paths(meson.source_root(),'%s')".printf(element.fullPath));
 							}
 						}
 					}
@@ -1667,10 +1667,10 @@ namespace AutoVala {
 				}
 
 				if (this._type == ConfigType.VALA_LIBRARY) {
-					dataStream.put_string("install_data(join_paths(meson.current_source_dir(),'%s'),install_dir: join_paths(get_option('prefix'),'share','vala','vapi'))\n".printf(Path.build_filename(this._path,depsFilename)));
+					dataStream.put_string("install_data(join_paths(meson.current_source_dir(),'%s'),install_dir: join_paths(get_option('prefix'),'share','vala','vapi'))\n".printf(depsFilename));
 
 					mesonCommon.create_install_library_script();
-					dataStream.put_string("meson.add_install_script(join_paths(meson.current_source_dir(),'meson_scripts','install_library.sh'),'%s','%s')\n\n".printf(libFilename, girFilename));
+					dataStream.put_string("meson.add_install_script(join_paths(meson.source_root(),'meson_scripts','install_library.sh'),'%s','%s','%s')\n\n".printf(this.path, libFilename, girFilename));
 				}
 
 
@@ -1690,7 +1690,7 @@ namespace AutoVala {
 					foreach (var unitest in this._unitests) {
 
 						dataStream.put_string("\n%s_test%d_exec = executable".printf(this.name.replace("-","_"),ElementValaBinary.counter));
-						dataStream.put_string("('%s_test%d',%s_sources + [join_paths(meson.current_source_dir(),'%s')]".printf(this.name,ElementValaBinary.counter,this.name.replace("-","_"),Path.build_filename(this._path,unitest.elementName)));
+						dataStream.put_string("('%s_test%d',%s_sources + [join_paths(meson.source_root(),'%s')]".printf(this.name,ElementValaBinary.counter,this.name.replace("-","_"),unitest.elementName));
 
 						if (this._meson_arrays.contains("deps")) {
 							dataStream.put_string(",dependencies: %s_deps".printf(this.name.replace("-","_")));
@@ -2231,6 +2231,7 @@ namespace AutoVala {
 				printConditions.printCondition(dependency.condition, dependency.invertCondition);
 				dataStream.put_string("set ( %s_DEPENDENCIES ${%s_DEPENDENCIES} %s )\n".printf(libFilename, libFilename, dependency.elementName));
 			}
+			printConditions.printTail();
 			if (this.has_dependencies) {
 				dataStream.put_string("add_dependencies( %s ${%s_DEPENDENCIES} )\n".printf(libFilename, libFilename));
 			}
