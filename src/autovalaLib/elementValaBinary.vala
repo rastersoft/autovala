@@ -1338,6 +1338,7 @@ namespace AutoVala {
 					if (element.eType==ConfigType.VALA_LIBRARY) {
 						try {
 							dataStream.put_string("\ninstall(CODE \"MESSAGE (\\\"\n************************************************\n* Run 'sudo ldconfig' to complete installation *\n************************************************\n\n\\\") \" )");
+							dataStream.put_string("\n\n");
 						} catch(GLib.Error e) {
 							ElementBase.globalData.addError(_("Failed to append the 'run sudo ldconfig' message"));
 							return true;
