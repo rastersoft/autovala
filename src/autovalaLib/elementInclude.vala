@@ -44,7 +44,7 @@ namespace AutoVala {
 			try {
 				var condition = new ConditionalText(dataStream,ConditionalType.CMAKE);
 				condition.printCondition(this.post_condition,this.post_invertCondition);
-				dataStream.put_string("include(${CMAKE_CURRENT_SOURCE_DIR}/"+this.name+")\n");
+				dataStream.put_string("\ninclude(${CMAKE_CURRENT_SOURCE_DIR}/"+this.name+")\n");
 				condition.printTail();
 			} catch (Error e) {
 				ElementBase.globalData.addError(_("Failed to write the CMakeLists file for %s").printf(this.name));
