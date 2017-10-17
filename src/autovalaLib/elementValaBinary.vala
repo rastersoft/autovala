@@ -30,72 +30,73 @@ namespace AutoVala {
 		public string[]? comments = null;
 	}
 
+
 	public class PackageElement:GenericElement {
 
 		public packageType type;
 
 		public PackageElement(string package, packageType type, bool automatic, string? condition, bool inverted) {
-			this.elementName=package;
-			this.type=type;
-			this.automatic=automatic;
-			this.condition=condition;
-			this.invertCondition=inverted;
+			this.elementName = package;
+			this.type = type;
+			this.automatic = automatic;
+			this.condition = condition;
+			this.invertCondition = inverted;
 		}
 	}
 
 	public class SourceElement:GenericElement {
 
 		public SourceElement(string source, bool automatic, string? condition, bool inverted) {
-			this.elementName=source;
-			this.automatic=automatic;
-			this.condition=condition;
-			this.invertCondition=inverted;
+			this.elementName = source;
+			this.automatic = automatic;
+			this.condition = condition;
+			this.invertCondition = inverted;
 		}
 	}
 
 	public class VapiElement:GenericElement {
 
 		public VapiElement(string vapi, bool automatic, string? condition, bool inverted) {
-			this.elementName=vapi;
-			this.automatic=automatic;
-			this.condition=condition;
-			this.invertCondition=inverted;
+			this.elementName = vapi;
+			this.automatic = automatic;
+			this.condition = condition;
+			this.invertCondition = inverted;
 		}
 	}
 
 	public class CompileElement:GenericElement {
 		public CompileElement(string options, bool automatic, string? condition, bool inverted) {
-			this.elementName=options;
-			this.automatic=automatic;
-			this.condition=condition;
-			this.invertCondition=inverted;
+			this.elementName = options;
+			this.automatic = automatic;
+			this.condition = condition;
+			this.invertCondition = inverted;
 		}
 	}
 
 	public class LibraryElement:GenericElement {
 		public LibraryElement(string libraries, bool automatic, string? condition, bool inverted) {
-			this.elementName=libraries;
-			this.automatic=automatic;
-			this.condition=condition;
-			this.invertCondition=inverted;
+			this.elementName = libraries;
+			this.automatic = automatic;
+			this.condition = condition;
+			this.invertCondition = inverted;
 		}
 	}
 
 	public class DestinationElement:GenericElement {
 		public DestinationElement(string destination, bool automatic, string? condition, bool inverted) {
-			this.elementName=destination;
-			this.automatic=automatic;
-			this.condition=condition;
-			this.invertCondition=inverted;
+			this.elementName = destination;
+			this.automatic = automatic;
+			this.condition = condition;
+			this.invertCondition = inverted;
 		}
 	}
 
 	public class ResourceElement:GenericElement {
 		public ResourceElement(string resource, bool automatic, string? condition, bool inverted) {
-			this.elementName=resource;
-			this.automatic=automatic;
-			this.condition=condition;
-			this.invertCondition=inverted;
+			this.elementName = resource;
+			this.automatic = automatic;
+			this.condition = condition;
+			this.invertCondition = inverted;
 		}
 	}
 
@@ -106,13 +107,13 @@ namespace AutoVala {
 		public bool GDBus;
 
 		public DBusElement(string destination, string obj, bool systemBus, bool GDBus, bool automatic) {
-			this.elementName=destination;
-			this.obj=obj;
-			this.systemBus=systemBus;
-			this.automatic=automatic;
-			this.condition=null;
-			this.invertCondition=false;
-			this.GDBus=GDBus;
+			this.elementName = destination;
+			this.obj = obj;
+			this.systemBus = systemBus;
+			this.automatic = automatic;
+			this.condition = null;
+			this.invertCondition = false;
+			this.GDBus = GDBus;
 		}
 	}
 
