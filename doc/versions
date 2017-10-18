@@ -7,6 +7,15 @@
 <p><a href="index.html">Home</a></p>
 <h2 id="history-of-versions">History of versions</h2>
 <ul>
+<li>version 1.1.2 (2017-10-16)
+<ul>
+<li>Improved the support for Meson build system (thanks to cromerc for the invaluable help)</li>
+<li>Fixed the parallel compilation under CMake</li>
+</ul></li>
+<li>version 1.1.1 (2017-08-17)
+<ul>
+<li>Updated bash completion options</li>
+</ul></li>
 <li>version 1.1.0 (2017-02-11)
 <ul>
 <li>Added meson support</li>

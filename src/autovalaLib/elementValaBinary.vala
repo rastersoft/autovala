@@ -30,6 +30,15 @@ namespace AutoVala {
 		public string[]? comments = null;
 	}
 
+	public class AliasElement:GenericElement {
+
+		public AliasElement(string alias, bool automatic, string? condition, bool inverted) {
+			this.elementName = alias;
+			this.automatic = automatic;
+			this.condition = condition;
+			this.invertCondition = inverted;
+		}
+	}
 
 	public class PackageElement:GenericElement {
 
@@ -130,6 +139,10 @@ namespace AutoVala {
 		private Gee.List<ResourceElement ?> _resources;
 		public Gee.List<ResourceElement ?> resources {
 			get {return this._resources;}
+		}
+		private Gee.List<AliasElement ?> _aliases;
+		public Gee.List<AliasElement ?> aliases {
+			get {return this._aliases;}
 		}
 		private Gee.List<PackageElement ?> _packages;
 		public Gee.List<PackageElement ?> packages {
@@ -269,6 +282,7 @@ namespace AutoVala {
 			this.defines=null;
 			this.namespaceAutomatic=true;
 			this.namespaces=null;
+			this._aliases=new Gee.ArrayList<AliasElement ?>();
 			this._packages=new Gee.ArrayList<PackageElement ?>();
 			this._resources=new Gee.ArrayList<ResourceElement ?>();
 			this._sources=new Gee.ArrayList<SourceElement ?>();
@@ -662,16 +676,22 @@ namespace AutoVala {
 				this._currentNamespace=null;
 				this.namespaceAutomatic=true;
 			}
-			var packagesTmp=new Gee.ArrayList<PackageElement ?>();
-			var sourcesTmp=new Gee.ArrayList<SourceElement ?>();
-			var unitestsTmp=new Gee.ArrayList<SourceElement ?>();
-			var cSourcesTmp=new Gee.ArrayList<SourceElement ?>();
-			var hFoldersTmp=new Gee.ArrayList<SourceElement ?>();
-			var vapisTmp=new Gee.ArrayList<VapiElement ?>();
-			var compileTmp=new Gee.ArrayList<CompileElement ?>();
-			var dbusTmp=new Gee.ArrayList<DBusElement ?>();
-			var librariesTmp=new Gee.ArrayList<LibraryElement ?>();
+			var aliasesTmp = new Gee.ArrayList<AliasElement ?>();
+			var packagesTmp = new Gee.ArrayList<PackageElement ?>();
+			var sourcesTmp = new Gee.ArrayList<SourceElement ?>();
+			var unitestsTmp = new Gee.ArrayList<SourceElement ?>();
+			var cSourcesTmp = new Gee.ArrayList<SourceElement ?>();
+			var hFoldersTmp = new Gee.ArrayList<SourceElement ?>();
+			var vapisTmp = new Gee.ArrayList<VapiElement ?>();
+			var compileTmp = new Gee.ArrayList<CompileElement ?>();
+			var dbusTmp = new Gee.ArrayList<DBusElement ?>();
+			var librariesTmp = new Gee.ArrayList<LibraryElement ?>();
 
+			foreach (var e in this._aliases) {
+				if (e.automatic==false) {
+					aliasesTmp.add(e);
+				}
+			}
 			foreach (var e in this._packages) {
 				if (e.automatic==false) {
 					packagesTmp.add(e);
@@ -717,15 +737,16 @@ namespace AutoVala {
 					librariesTmp.add(e);
 				}
 			}
-			this._packages=packagesTmp;
-			this._sources=sourcesTmp;
-			this._unitests=unitestsTmp;
-			this._cSources=cSourcesTmp;
-			this._hFolders=hFoldersTmp;
-			this._vapis=vapisTmp;
-			this._compileOptions=compileTmp;
-			this._dbusElements=dbusTmp;
-			this._link_libraries=librariesTmp;
+			this._aliases = aliasesTmp;
+			this._packages = packagesTmp;
+			this._sources = sourcesTmp;
+			this._unitests = unitestsTmp;
+			this._cSources = cSourcesTmp;
+			this._hFolders = hFoldersTmp;
+			this._vapis = vapisTmp;
+			this._compileOptions = compileTmp;
+			this._dbusElements = dbusTmp;
+			this._link_libraries = librariesTmp;
 		}
 
 		public static int comparePackages (GenericElement? a, GenericElement? b) {
@@ -889,6 +910,28 @@ namespace AutoVala {
 
 			return false;
 		}
+
+		private bool addAlias(string alias, bool automatic, string? condition, bool invertCondition, int lineNumber, string[]? comments) {
+
+			automatic = false; // aliases are always manual
+
+			// adding a non-automatic destination to an automatic binary transforms this binary to non-automatic
+			if ((automatic == false) && (this._automatic == true)) {
+				this.transformToNonAutomatic(false);
+			}
+
+			foreach(var element in this._aliases) {
+				if (element.elementName == alias) {
+					return false;
+				}
+			}
+
+			var element = new AliasElement(alias, automatic, condition, invertCondition);
+			element.comments = comments;
+			this._aliases.add(element);
+			return false;
+		}
+
 
 		private bool setDestination(string destination, bool automatic, string? condition, bool invertCondition, int lineNumber, string[]? comments) {
 
@@ -1162,31 +1205,37 @@ namespace AutoVala {
 			} else if (line.has_prefix("compile_c_options: ")) {
 				return this.setCompileCOptions(line.substring(19).strip(),automatic, condition, invertCondition, lineNumber, comments);
 			} else if (line.has_prefix("vala_destination: ")) {
-				return this.setDestination(line.substring(18).strip(),automatic,condition, invertCondition,lineNumber, comments);
+				return this.setDestination(line.substring(18).strip(),automatic,condition, invertCondition, lineNumber, comments);
 			} else if (line.has_prefix("vala_package: ")) {
-				return this.addPackage(line.substring(14).strip(),packageType.NO_CHECK,automatic,condition,invertCondition,lineNumber, comments);
+				return this.addPackage(line.substring(14).strip(),packageType.NO_CHECK, automatic, condition, invertCondition, lineNumber, comments);
 			} else if (line.has_prefix("vala_check_package: ")) {
-				return this.addPackage(line.substring(20).strip(),packageType.DO_CHECK,automatic,condition,invertCondition,lineNumber, comments);
+				return this.addPackage(line.substring(20).strip(),packageType.DO_CHECK, automatic, condition, invertCondition, lineNumber, comments);
 			} else if (line.has_prefix("vala_local_package: ")) {
-				return this.addPackage(line.substring(20).strip(),packageType.LOCAL,automatic,condition,invertCondition,lineNumber, comments);
+				return this.addPackage(line.substring(20).strip(),packageType.LOCAL, automatic, condition, invertCondition, lineNumber, comments);
 			} else if (line.has_prefix("c_check_package: ")) {
-				return this.addPackage(line.substring(17).strip(),packageType.C_DO_CHECK,automatic,condition,invertCondition,lineNumber, comments);
+				return this.addPackage(line.substring(17).strip(),packageType.C_DO_CHECK, automatic, condition, invertCondition, lineNumber, comments);
 			} else if (line.has_prefix("vala_source: ")) {
-				return this.addSource(line.substring(13).strip(),automatic,condition,invertCondition,lineNumber, comments);
+				return this.addSource(line.substring(13).strip(), automatic, condition, invertCondition, lineNumber, comments);
 			} else if (line.has_prefix("c_source: ")) {
-				return this.addCSource(line.substring(10).strip(),automatic,condition,invertCondition,lineNumber, comments);
+				return this.addCSource(line.substring(10).strip(), automatic, condition, invertCondition, lineNumber, comments);
 			} else if (line.has_prefix("unitest: ")) {
-				return this.addUnitest(line.substring(9).strip(),automatic,condition,invertCondition,lineNumber, comments);
+				return this.addUnitest(line.substring(9).strip(), automatic, condition, invertCondition, lineNumber, comments);
 			} else if (line.has_prefix("vala_vapi: ")) {
-				return this.addVapi(line.substring(11).strip(),automatic,condition,invertCondition,lineNumber, comments);
+				return this.addVapi(line.substring(11).strip(), automatic, condition, invertCondition, lineNumber, comments);
 			} else if (line.has_prefix("dbus_interface: ")) {
-				return this.addDBus(line.substring(16).strip(),automatic,condition,invertCondition,lineNumber, comments);
+				return this.addDBus(line.substring(16).strip(), automatic, condition, invertCondition, lineNumber, comments);
 			} else if (line.has_prefix("c_library: ")) {
-				return this.setCLibrary(line.substring(11).strip(),automatic,condition,invertCondition,lineNumber, comments);
+				return this.setCLibrary(line.substring(11).strip(), automatic, condition, invertCondition, lineNumber, comments);
 			} else if (line.has_prefix("h_folder: ")) {
-				return this.addHFolder(line.substring(10).strip(),automatic,condition,invertCondition,lineNumber, comments);
+				return this.addHFolder(line.substring(10).strip(), automatic, condition, invertCondition, lineNumber, comments);
 			} else if (line.has_prefix("use_gresource: ")) {
-				return this.addResource(line.substring(14).strip(),automatic,condition,invertCondition,lineNumber, comments);
+				return this.addResource(line.substring(14).strip(), automatic, condition, invertCondition, lineNumber, comments);
+			} else if (line.has_prefix("alias: ")) {
+				if (this._type != ConfigType.VALA_BINARY) {
+					ElementBase.globalData.addError(_("Alias command is valid only inside Vala binaries (line %d)").printf(lineNumber));
+					return true;
+				}
+				return this.addAlias(line.substring(7).strip(), automatic, condition, invertCondition, lineNumber, comments);
 			} else {
 				var badCommand = line.split(": ")[0];
 				ElementBase.globalData.addError(_("Invalid command %s after command %s (line %d)").printf(badCommand,this.command, lineNumber));
@@ -1336,7 +1385,7 @@ namespace AutoVala {
 			if (ElementValaBinary.addedLibraryWarning == false) {
 				ElementValaBinary.addedLibraryWarning = true;
 				foreach(var element in ElementBase.globalData.globalElements) {
-					if (element.eType==ConfigType.VALA_LIBRARY) {
+					if (element.eType == ConfigType.VALA_LIBRARY) {
 						try {
 							dataStream.put_string("\ninstall(CODE \"MESSAGE (\\\"\n************************************************\n* Run 'sudo ldconfig' to complete installation *\n************************************************\n\n\\\") \" )");
 							dataStream.put_string("\n\n");
@@ -1497,7 +1546,7 @@ namespace AutoVala {
 						if (element.eType==ConfigType.GRESOURCE) {
 							var gresource = element as ElementGResource;
 							if (gresource.identifier == resource.elementName) {
-								printConditions.printCondition(element.condition,element.invertCondition);
+								printConditions.printCondition(element.condition, element.invertCondition);
 								this.setMesonVar(dataStream,"sources","%s_file_c".printf(gresource.name.replace(".","_")));
 							}
 						}
@@ -1524,7 +1573,7 @@ namespace AutoVala {
 				foreach(var element in ElementBase.globalData.globalElements) {
 					if (element.eType==ConfigType.VAPIDIR) {
 						this.setMesonPrecondition(dataStream,element.condition,"vala_args");
-						printConditions.printCondition(element.condition,element.invertCondition);
+						printConditions.printCondition(element.condition, element.invertCondition);
 						if (element.fullPath[0] == GLib.Path.DIR_SEPARATOR) {
 							// should check if it exists...
 							this.setMesonVar(dataStream,"vala_args","'--vapidir='+join_paths(meson.source_root(),'%s')".printf(element.fullPath));
@@ -1541,7 +1590,7 @@ namespace AutoVala {
 							var gresource = element as ElementGResource;
 							if (gresource.identifier == resource.elementName) {
 								this.setMesonPrecondition(dataStream,element.condition,"vala_args");
-								printConditions.printCondition(element.condition,element.invertCondition);
+								printConditions.printCondition(element.condition, element.invertCondition);
 								this.setMesonVar(dataStream,"vala_args","'--gresources='+join_paths(meson.source_root(),'%s')".printf(element.fullPath));
 							}
 						}
@@ -1610,7 +1659,7 @@ namespace AutoVala {
 
 				foreach(var element in this._hFolders) {
 					this.setMesonPrecondition(dataStream,element.condition,"hfolders");
-					printConditions.printCondition(element.condition,element.invertCondition);
+					printConditions.printCondition(element.condition, element.invertCondition);
 					this.setMesonVar(dataStream,"hfolders","'%s'".printf(element.elementName));
 				}
 				printConditions.printTail();
@@ -1692,6 +1741,12 @@ namespace AutoVala {
 				}
 				dataStream.put_string(",install: true");
 				dataStream.put_string(")\n\n");
+
+				foreach(var alias in this._aliases) {
+					printConditions.printCondition(alias.condition, alias.invertCondition);
+					dataStream.put_string("meson.add_install_script('sh', '-c', 'ln -sf %s ${DESTDIR}/${MESON_INSTALL_PREFIX}/bin/%s')\n".printf(libFilename, alias.elementName));
+				}
+				printConditions.printTail();
 
 				if ((this._type == ConfigType.VALA_LIBRARY) && (this._currentNamespace != null)) {
 					dataStream.put_string("%s_requires = []\n".printf(this.name.replace("-","_")));
@@ -1938,7 +1993,7 @@ namespace AutoVala {
 				foreach(var element in ElementBase.globalData.globalElements) {
 					if (element.eType==ConfigType.VAPIDIR) {
 						addDefines=true;
-						printConditions.printCondition(element.condition,element.invertCondition);
+						printConditions.printCondition(element.condition, element.invertCondition);
 						if (element.fullPath[0] == GLib.Path.DIR_SEPARATOR) {
 							dataStream.put_string("if (EXISTS %s)\n".printf(element.fullPath));
 							dataStream.put_string("\tset (COMPILE_OPTIONS ${COMPILE_OPTIONS} --vapidir=%s )\n".printf(element.fullPath));
@@ -1967,7 +2022,7 @@ namespace AutoVala {
 
 				foreach(var element in this._compileOptions) {
 					addDefines=true;
-					printConditions.printCondition(element.condition,element.invertCondition);
+					printConditions.printCondition(element.condition, element.invertCondition);
 					if (element.elementName.strip()[0] == '@') {
 						var pos = element.elementName.index_of_char(' ');
 						if (pos == -1) {
@@ -2003,7 +2058,7 @@ namespace AutoVala {
 				bool addedCFlags=false;
 				foreach(var element in this._compileCOptions) {
 					addedCFlags=true;
-					printConditions.printCondition(element.condition,element.invertCondition);
+					printConditions.printCondition(element.condition, element.invertCondition);
 					if (element.elementName.strip()[0] == '@') {
 						var pos = element.elementName.index_of_char(' ');
 						if (pos == -1) {
@@ -2021,7 +2076,7 @@ namespace AutoVala {
 
 				foreach(var element in this._hFolders) {
 					addedCFlags=true;
-					printConditions.printCondition(element.condition,element.invertCondition);
+					printConditions.printCondition(element.condition, element.invertCondition);
 					dataStream.put_string("include_directories (AFTER %s )\n".printf(element.elementName));
 				}
 				if (addedCFlags) {
@@ -2080,7 +2135,7 @@ namespace AutoVala {
 					this.add_other_dependencies(dataStream, printConditions, libFilename);
 
 					foreach (var element in this._link_libraries) {
-						printConditions.printCondition(element.condition,element.invertCondition);
+						printConditions.printCondition(element.condition, element.invertCondition);
 						dataStream.put_string("target_link_libraries( "+libFilename+" "+element.elementName+" )\n");
 					}
 					printConditions.printTail();
@@ -2097,7 +2152,7 @@ namespace AutoVala {
 						if (this._destination.size != 0) {
 							cond_dest = true;
 						foreach(var element in this._destination) {
-							printConditions.printCondition(element.condition,element.invertCondition);
+							printConditions.printCondition(element.condition, element.invertCondition);
 							dataStream.put_string("set (INSTALL_LIBRARY_%s \"%s\" )\n".printf(libFilename,element.elementName));
 							dataStream.put_string("set (INSTALL_INCLUDE_%s \"%s\" )\n".printf(libFilename,element.elementName));
 							dataStream.put_string("set (INSTALL_VAPI_%s \"%s\" )\n".printf(libFilename,element.elementName));
@@ -2180,7 +2235,7 @@ namespace AutoVala {
 					this.add_other_dependencies(dataStream, printConditions, libFilename);
 
 					foreach (var element in this._link_libraries) {
-						printConditions.printCondition(element.condition,element.invertCondition);
+						printConditions.printCondition(element.condition, element.invertCondition);
 						dataStream.put_string("target_link_libraries( "+libFilename+" "+element.elementName+" )\n");
 					}
 					printConditions.printTail();
@@ -2189,7 +2244,7 @@ namespace AutoVala {
 					if (this._destination.size != 0) {
 						cond_dest = true;
 						foreach(var element in this._destination) {
-							printConditions.printCondition(element.condition,element.invertCondition);
+							printConditions.printCondition(element.condition, element.invertCondition);
 							dataStream.put_string("set (INSTALL_BINARYPATH_%s \"%s\" )\n".printf(libFilename,element.elementName));
 						}
 						printConditions.printTail();
@@ -2202,6 +2257,17 @@ namespace AutoVala {
 					} else {
 						dataStream.put_string("\t${CMAKE_INSTALL_BINDIR}\n)\n");
 					}
+
+					foreach(var alias in this._aliases) {
+						printConditions.printCondition(alias.condition, alias.invertCondition);
+						dataStream.put_string("if (INSTALL_BINARYPATH_%s)\n".printf(libFilename));
+						dataStream.put_string("\tset(ALIAS_DESTINATION_PATH ${INSTALL_BINARYPATH_%s})\n".printf(libFilename));
+						dataStream.put_string("else()\n");
+						dataStream.put_string("\tset(ALIAS_DESTINATION_PATH ${CMAKE_INSTALL_BINDIR})\n");
+						dataStream.put_string("endif()\n");
+						dataStream.put_string("install(CODE \"execute_process(COMMAND ln -sf %s ${DESTDIR}/${PREFIX}/${ALIAS_DESTINATION_PATH}/%s )\")\n".printf(libFilename, alias.elementName));
+					}
+					printConditions.printTail();
 				}
 
 				// unitary tests
@@ -2227,7 +2293,7 @@ namespace AutoVala {
 						dataStream.put_string(")\n\n");
 						dataStream.put_string("add_executable( test%d ${VALA_C_%d})\n".printf(ElementValaBinary.counter,ElementValaBinary.counter));
 						foreach (var element in this._link_libraries) {
-							printConditions.printCondition(element.condition,element.invertCondition);
+							printConditions.printCondition(element.condition, element.invertCondition);
 							dataStream.put_string("target_link_libraries( test%d %s)\n".printf(ElementValaBinary.counter,element.elementName));
 						}
 						printConditions.printTail();
@@ -2305,7 +2371,7 @@ namespace AutoVala {
 				}
 
 				foreach(var element in this._destination) {
-					printConditions.printCondition(element.condition,element.invertCondition);
+					printConditions.printCondition(element.condition, element.invertCondition);
 					if (element.comments != null) {
 						foreach(var comment in element.comments) {
 							dataStream.put_string("%s\n".printf(comment));
@@ -2318,8 +2384,22 @@ namespace AutoVala {
 				}
 				printConditions.printTail();
 
+				foreach(var element in this._aliases) {
+					printConditions.printCondition(element.condition, element.invertCondition);
+					if (element.comments != null) {
+						foreach(var comment in element.comments) {
+							dataStream.put_string("%s\n".printf(comment));
+						}
+					}
+					if (element.automatic) {
+						dataStream.put_string("*");
+					}
+					dataStream.put_string("alias: %s\n".printf(element.elementName));
+				}
+				printConditions.printTail();
+
 				foreach(var element in this._compileOptions) {
-					printConditions.printCondition(element.condition,element.invertCondition);
+					printConditions.printCondition(element.condition, element.invertCondition);
 					if (element.comments != null) {
 						foreach(var comment in element.comments) {
 							dataStream.put_string("%s\n".printf(comment));
@@ -2333,7 +2413,7 @@ namespace AutoVala {
 				printConditions.printTail();
 
 				foreach(var element in this._compileCOptions) {
-					printConditions.printCondition(element.condition,element.invertCondition);
+					printConditions.printCondition(element.condition, element.invertCondition);
 					if (element.comments != null) {
 						foreach(var comment in element.comments) {
 							dataStream.put_string("%s\n".printf(comment));
@@ -2347,7 +2427,7 @@ namespace AutoVala {
 				printConditions.printTail();
 
 				foreach(var element in this._resources) {
-					printConditions.printCondition(element.condition,element.invertCondition);
+					printConditions.printCondition(element.condition, element.invertCondition);
 					if (element.comments != null) {
 						foreach(var comment in element.comments) {
 							dataStream.put_string("%s\n".printf(comment));
@@ -2362,7 +2442,7 @@ namespace AutoVala {
 
 				foreach(var element in this._packages) {
 					if (element.type == packageType.LOCAL) {
-						printConditions.printCondition(element.condition,element.invertCondition);
+						printConditions.printCondition(element.condition, element.invertCondition);
 						if (element.comments != null) {
 							foreach(var comment in element.comments) {
 								dataStream.put_string("%s\n".printf(comment));
@@ -2377,7 +2457,7 @@ namespace AutoVala {
 				printConditions.printTail();
 
 				foreach(var element in this._vapis) {
-					printConditions.printCondition(element.condition,element.invertCondition);
+					printConditions.printCondition(element.condition, element.invertCondition);
 					if (element.comments != null) {
 						foreach(var comment in element.comments) {
 							dataStream.put_string("%s\n".printf(comment));
@@ -2392,7 +2472,7 @@ namespace AutoVala {
 
 				foreach(var element in this._packages) {
 					if (element.type == packageType.C_DO_CHECK) {
-						printConditions.printCondition(element.condition,element.invertCondition);
+						printConditions.printCondition(element.condition, element.invertCondition);
 						if (element.comments != null) {
 							foreach(var comment in element.comments) {
 								dataStream.put_string("%s\n".printf(comment));
@@ -2408,7 +2488,7 @@ namespace AutoVala {
 
 				foreach(var element in this._packages) {
 					if (element.type == packageType.NO_CHECK) {
-						printConditions.printCondition(element.condition,element.invertCondition);
+						printConditions.printCondition(element.condition, element.invertCondition);
 						if (element.comments != null) {
 							foreach(var comment in element.comments) {
 								dataStream.put_string("%s\n".printf(comment));
@@ -2424,7 +2504,7 @@ namespace AutoVala {
 
 				foreach(var element in this._packages) {
 					if (element.type == packageType.DO_CHECK) {
-						printConditions.printCondition(element.condition,element.invertCondition);
+						printConditions.printCondition(element.condition, element.invertCondition);
 						if (element.comments != null) {
 							foreach(var comment in element.comments) {
 								dataStream.put_string("%s\n".printf(comment));
@@ -2439,7 +2519,7 @@ namespace AutoVala {
 				printConditions.printTail();
 
 				foreach(var element in this._link_libraries) {
-					printConditions.printCondition(element.condition,element.invertCondition);
+					printConditions.printCondition(element.condition, element.invertCondition);
 					if (element.comments != null) {
 						foreach(var comment in element.comments) {
 							dataStream.put_string("%s\n".printf(comment));
@@ -2453,7 +2533,7 @@ namespace AutoVala {
 				printConditions.printTail();
 
 				foreach(var element in this._sources) {
-					printConditions.printCondition(element.condition,element.invertCondition);
+					printConditions.printCondition(element.condition, element.invertCondition);
 					if (element.comments != null) {
 						foreach(var comment in element.comments) {
 							dataStream.put_string("%s\n".printf(comment));
@@ -2467,7 +2547,7 @@ namespace AutoVala {
 				printConditions.printTail();
 
 				foreach(var element in this._unitests) {
-					printConditions.printCondition(element.condition,element.invertCondition);
+					printConditions.printCondition(element.condition, element.invertCondition);
 					if (element.comments != null) {
 						foreach(var comment in element.comments) {
 							dataStream.put_string("%s\n".printf(comment));
@@ -2481,7 +2561,7 @@ namespace AutoVala {
 				printConditions.printTail();
 
 				foreach(var element in this._dbusElements) {
-					printConditions.printCondition(element.condition,element.invertCondition);
+					printConditions.printCondition(element.condition, element.invertCondition);
 					if (element.comments != null) {
 						foreach(var comment in element.comments) {
 							dataStream.put_string("%s\n".printf(comment));
@@ -2495,7 +2575,7 @@ namespace AutoVala {
 				printConditions.printTail();
 
 				foreach(var element in this._cSources) {
-					printConditions.printCondition(element.condition,element.invertCondition);
+					printConditions.printCondition(element.condition, element.invertCondition);
 					if (element.comments != null) {
 						foreach(var comment in element.comments) {
 							dataStream.put_string("%s\n".printf(comment));
@@ -2509,7 +2589,7 @@ namespace AutoVala {
 				printConditions.printTail();
 
 				foreach(var element in this._hFolders) {
-					printConditions.printCondition(element.condition,element.invertCondition);
+					printConditions.printCondition(element.condition, element.invertCondition);
 					if (element.comments != null) {
 						foreach(var comment in element.comments) {
 							dataStream.put_string("%s\n".printf(comment));
