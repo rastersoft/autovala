@@ -1744,7 +1744,7 @@ namespace AutoVala {
 
 				foreach(var alias in this._aliases) {
 					printConditions.printCondition(alias.condition, alias.invertCondition);
-					dataStream.put_string("meson.add_install_script('sh', '-c', 'ln -sf %s ${DESTDIR}/${MESON_INSTALL_PREFIX}/bin/%s')\n".printf(libFilename, alias.elementName));
+					dataStream.put_string("meson.add_install_script('sh', '-c', 'ln -sf %s \\$ENV{DESTDIR}/${MESON_INSTALL_PREFIX}/bin/%s')\n".printf(libFilename, alias.elementName));
 				}
 				printConditions.printTail();
 
@@ -2265,7 +2265,7 @@ namespace AutoVala {
 						dataStream.put_string("else()\n");
 						dataStream.put_string("\tset(ALIAS_DESTINATION_PATH ${CMAKE_INSTALL_BINDIR})\n");
 						dataStream.put_string("endif()\n");
-						dataStream.put_string("install(CODE \"execute_process(COMMAND ln -sf %s ${DESTDIR}/${PREFIX}/${ALIAS_DESTINATION_PATH}/%s )\")\n".printf(libFilename, alias.elementName));
+						dataStream.put_string("install(CODE \"execute_process(COMMAND ln -sf %s \\$ENV{DESTDIR}/${PREFIX}/${ALIAS_DESTINATION_PATH}/%s )\")\n".printf(libFilename, alias.elementName));
 					}
 					printConditions.printTail();
 				}
