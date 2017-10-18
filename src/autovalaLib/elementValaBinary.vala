@@ -1744,7 +1744,7 @@ namespace AutoVala {
 
 				foreach(var alias in this._aliases) {
 					printConditions.printCondition(alias.condition, alias.invertCondition);
-					dataStream.put_string("meson.add_install_script('sh', '-c', 'ln -sf %s \\$ENV{DESTDIR}/${MESON_INSTALL_PREFIX}/bin/%s')\n".printf(libFilename, alias.elementName));
+					dataStream.put_string("meson.add_install_script('sh', '-c', 'ln -sf %s ${DESTDIR}/${MESON_INSTALL_PREFIX}/bin/%s')\n".printf(libFilename, alias.elementName));
 				}
 				printConditions.printTail();
 
