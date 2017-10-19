@@ -7,20 +7,20 @@ set (GETTEXT_PACKAGE "autovala")
 set (RELEASE_NAME "autovala")
 set (CMAKE_C_FLAGS "")
 set (PREFIX ${CMAKE_INSTALL_PREFIX})
-set (VERSION "0.99.39")
+set (VERSION "1.1.2")
 set (TESTSRCDIR "${CMAKE_SOURCE_DIR}")
 set (DOLLAR "$")
 
-configure_file (${CMAKE_SOURCE_DIR}/src/Config.vala.cmake ${CMAKE_BINARY_DIR}/src/Config.vala)
+configure_file (${CMAKE_SOURCE_DIR}/src/Config.vala.base ${CMAKE_BINARY_DIR}/src/Config.vala)
 add_definitions(-DGETTEXT_PACKAGE=\"${GETTEXT_PACKAGE}\")
-set (VERSION "0.99.39")
+set (VERSION "1.1.2")
 add_definitions (${DEPS_CFLAGS})
 include_directories ( ${CMAKE_BINARY_DIR}/src/autovalaLib )
 link_libraries ( ${DEPS_LIBRARIES} -lAutoVala )
 link_directories ( ${DEPS_LIBRARY_DIRS} ${CMAKE_BINARY_DIR}/src/autovalaLib )
 find_package (Vala REQUIRED)
 include (ValaVersion)
-ensure_vala_version ("0.20" MINIMUM)
+ensure_vala_version ("0.30" MINIMUM)
 include (ValaPrecompile)
 
 set (VALA_PACKAGES ${VALA_PACKAGES} posix)
@@ -33,18 +33,10 @@ set (APP_SOURCES ${APP_SOURCES} autovala.vala)
 
 set (CUSTOM_VAPIS_LIST ${CUSTOM_VAPIS_LIST} ${CMAKE_BINARY_DIR}/src/autovalaLib/AutoVala.vapi)
 
-if (GTK_OLD)
-	set (COMPILE_OPTIONS ${COMPILE_OPTIONS} -D GTK_OLD)
-	set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DGTK_OLD " )
-	set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DGTK_OLD " )
-endif ()
-if (DEBUG)
-	set (COMPILE_OPTIONS ${COMPILE_OPTIONS} -D DEBUG)
-	set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DDEBUG " )
-	set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DDEBUG " )
-endif ()
 
-set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O2 " )
+if ((${CMAKE_BUILD_TYPE} STREQUAL "Debug") OR (${CMAKE_BUILD_TYPE} STREQUAL "RelWithDebInfo"))
+	set(COMPILE_OPTIONS ${COMPILE_OPTIONS} "-g")
+endif()
 
 vala_precompile(VALA_C autovala
 	${APP_SOURCES}
@@ -52,11 +44,11 @@ PACKAGES
 	${VALA_PACKAGES}
 CUSTOM_VAPIS
 	${CUSTOM_VAPIS_LIST}
-OPTIONS
-	${COMPILE_OPTIONS}
 )
 
 add_executable(autovala ${VALA_C})
+set ( autovala_DEPENDENCIES ${autovala_DEPENDENCIES} AutoVala )
+add_dependencies( autovala ${autovala_DEPENDENCIES} )
 
 
 install(TARGETS
@@ -86,3 +78,4 @@ install(CODE "MESSAGE (\"
 ************************************************
 
 \") " )
+

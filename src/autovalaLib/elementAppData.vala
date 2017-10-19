@@ -40,7 +40,7 @@ namespace AutoVala {
 			return error;
 		}
 
-		public override bool configureLine(string line, bool automatic, string? condition, bool invertCondition, int lineNumber) {
+		public override bool configureLine(string line, bool automatic, string? condition, bool invertCondition, int lineNumber, string[]? comments) {
 
 			// The line starts with 'appdata: '
 			if (line.has_prefix("appdata: ")) {
@@ -52,6 +52,7 @@ namespace AutoVala {
 				return true;
 			}
 			var data=line.substring(2+this.command.length).strip();
+			this.comments = comments;
 			return this.configureElement(data,null,null,automatic,condition,invertCondition);
 		}
 
@@ -79,6 +80,18 @@ namespace AutoVala {
 				dataStream.put_string("install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/"+this.name+" DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/appdata/ )\n");
 			} catch (Error e) {
 				ElementBase.globalData.addError(_("Failed to add file %s").printf(this.name));
+				return true;
+			}
+			return false;
+		}
+
+		public override bool generateMeson(ConditionalText dataStream, MesonCommon mesonCommon) {
+			try {
+				var counter = Globals.counter;
+				dataStream.put_string("installfile_%d = files('%s')\n".printf(counter,Path.build_filename(this._path,this._name)));
+				dataStream.put_string("install_data(installfile_%d, install_dir: join_paths(get_option('prefix'),'appdata'))\n".printf(counter));
+			} catch (GLib.Error e) {
+				ElementBase.globalData.addError(_("Failed to write to meson.build at '%s' element, at '%s' path: %s").printf(this.command,this._path,e.message));
 				return true;
 			}
 			return false;

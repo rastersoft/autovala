@@ -23,7 +23,7 @@ namespace AutoVala {
 	private class ElementGResource : ElementBase {
 
 		private string[] gresource_files;
-		private string identifier;
+		public string identifier;
 
 		public ElementGResource() {
 			this._type = ConfigType.GRESOURCE;
@@ -32,7 +32,7 @@ namespace AutoVala {
 			this.identifier = "";
 		}
 
-		public override bool configureLine(string line, bool automatic, string? condition, bool invertCondition, int lineNumber) {
+		public override bool configureLine(string line, bool automatic, string? condition, bool invertCondition, int lineNumber, string[]? comments) {
 
 			if (false == line.has_prefix(this.command+": ")) {
 				var badCommand = line.split(": ")[0];
@@ -46,6 +46,7 @@ namespace AutoVala {
 				return true;
 			}
 			this.identifier = data.substring(0,pos).strip();
+			this.comments = comments;
 			return this.configureElement(data.substring(pos).strip(),null,null,automatic,condition,invertCondition);
 		}
 
@@ -66,21 +67,49 @@ namespace AutoVala {
 			return error;
 		}
 
-		public bool add_inner_files() {
+		public string[]? get_inner_files(bool full) {
 
 			GResourceXML parser;
+
+			string[]? filelist = {};
 
 			try {
 				parser = new GResourceXML(Path.build_filename(ElementBase.globalData.projectFolder,this._fullPath));
 			} catch (MarkupError e) {
 				ElementBase.globalData.addError(e.message);
-				return true;
+				return null;
 			}
 
 			bool found_error = false;
 			foreach(var filename in parser.files) {
 				string full_filename = Path.build_filename(ElementBase.globalData.projectFolder,this.path,filename);
 				string filename2 = Path.build_filename(this.path,filename);
+				var f = File.new_for_path(full_filename);
+				if (f.query_exists() == false) {
+					found_error = true;
+					ElementBase.globalData.addError(_("The file %s, defined in the GResource file %s, doesn't exist").printf(filename2,this._fullPath));
+					continue;
+				}
+				if (full) {
+					filelist += filename2;
+				} else {
+					filelist += filename;
+				}
+			}
+			return filelist;
+		}
+
+		public bool add_inner_files() {
+
+			var filelist = this.get_inner_files(false);
+			if (filelist == null) {
+				return true;
+			}
+
+			bool found_error = false;
+			foreach(var filename in filelist) {
+				string filename2 = Path.build_filename(this.path,filename);
+				string full_filename = Path.build_filename(ElementBase.globalData.projectFolder,filename2);
 				var f = File.new_for_path(full_filename);
 				if (f.query_exists() == false) {
 					found_error = true;
@@ -99,6 +128,33 @@ namespace AutoVala {
 			return found_error;
 		}
 
+		public override void add_files() {
+
+			this.file_list = this.get_inner_files(true);
+			if (this.file_list == null) {
+				this.file_list = {};
+			}
+			var full_path = GLib.Path.build_filename(this._path, this._name);
+			this.file_list += full_path;
+
+		}
+
+		public override bool generateMeson(ConditionalText dataStream, MesonCommon mesonCommon) {
+
+			this.add_inner_files();
+
+			try {
+				dataStream.put_string("%s_generator = generator(find_program('glib-compile-resources'), arguments: [ '--sourcedir=@SOURCE_DIR@/%s' , '--generate-source', '--target=@BUILD_DIR@/%s.c', '@INPUT@'], output: '@PLAINNAME@.c')\n\n".printf(this._name.replace(".","_"),this.path,this._name));
+				dataStream.put_string("%s_file_c = %s_generator.process(['%s'])\n\n".printf(this._name.replace(".","_"),this._name.replace(".","_"),this.fullPath));
+
+			} catch (Error e) {
+				ElementBase.globalData.addError(_("Failed to write to meson.build at '%s' element, at '%s' path: %s").printf(this.command,this._path,e.message));
+				return true;
+			}
+			return false;
+		}
+
+
 		public override bool generateCMake(DataOutputStream dataStream) {
 
 			this.add_inner_files();
@@ -108,7 +164,7 @@ namespace AutoVala {
 
 			try {
 				dataStream.put_string("EXECUTE_PROCESS( COMMAND glib-compile-resources --sourcedir=${CMAKE_CURRENT_SOURCE_DIR} --generate-source --target=%s %s)\n".printf(Path.build_filename("${CMAKE_CURRENT_BINARY_DIR}",c_name),Path.build_filename("${CMAKE_CURRENT_SOURCE_DIR}",this._name)));
-				
+
 				dataStream.put_string("EXECUTE_PROCESS( COMMAND glib-compile-resources --sourcedir=${CMAKE_CURRENT_SOURCE_DIR} --generate-header --target=%s %s)\n".printf(Path.build_filename("${CMAKE_CURRENT_BINARY_DIR}",h_name),Path.build_filename("${CMAKE_CURRENT_SOURCE_DIR}",this._name)));
 				dataStream.put_string("ADD_CUSTOM_COMMAND (\n");
 

@@ -8,19 +8,21 @@ Autovala rules - Rules followed by autovala to guess what kind of file is each o
 
 The rules followed by Autovala are the following:
 
-* All **.vala** and **.c** files in the **src/** folder belong to a binary called like the project name. Vala files will be scanned to determine the packages needed to compile them. The **.vala** and **.c** files in the subfolders are also added, unless there is another binary or library that already posesses that folder
+* All **.vala**, **.c** and **.gs** (genie) files in the **src/** folder belong to a binary called like the project name. Vala files will be scanned to determine the packages needed to compile them. The **.vala**, **.c** and **.gs** files in the subfolders are also added, unless there is another binary or library that already posesses that folder
 
 * All folders that contains a **.h** file inside the **src/** folder will be added to the list of folders where to search for include files in that project.
 
-* All **.vala** and **.c** files in a folder posessed by a binary or library belong to it. Vala files will be scanned to determine the packages needed to compile them. The **.vala** and **.c** files in the subfolders are also added, unless there is another binary or library that already posesses that folder
+* All **.vala**, **.c** and **.gs** files in a folder posessed by a binary or library belong to it. Vala files will be scanned to determine the packages needed to compile them. The **.vala**, **.c** and **.gs** files in the subfolders are also added, unless there is another binary or library that already posesses that folder
 
 * All folders that contains a **.h** file inside a folder posessed by a binary or library will be added to the list of folders where to search for include files in that project.
 
-* All **.vala** files in a folder called **unitests**, in the root of each binary or library path, will be considered unitary tests for that binary or library.
+* All **.vala** and **.gs** files in a folder called **unitests**, in the root of each binary or library path, will be considered unitary tests for that binary or library.
 
-* The VALA sources will be scanned to find the version number in a specific format, allowing to keep it inside the sources and avoiding the need of editing the project file manually
+* The VALA and GENIE sources will be scanned to find the version number in a specific format, allowing to keep it inside the sources and avoiding the need of editing the project file manually
 
-* All **.vapi** files inside a **vapis** folder, located in a binary/library top folder will be added to that binary/library
+* All **.vapi** files inside a **vapis** folder, located in a binary/library top folder will be added to that binary/library using the *vapi_file* command.
+
+* If it exists a **vapidir** folder inside the **src** folder, it will be added to the project with the *vapidir* command.
 
 * All **.gresource.xml** files inside **data** folder will be considered a GResource XML file, so it will be added to the .avprj's root, and the files inside it won't be added automatically. The .ui files defined inside will be added to the translation list.
 
@@ -28,7 +30,7 @@ The rules followed by Autovala are the following:
 
 * All **.png**, **.jpg** or **.svg** files in the folder **data/pixmaps/** (and subfolders) are considered pixmaps, and will be installed in **share/pixmaps/**.
 
-* All **.po** files in **po/** folder will be considered as po files, and will be installed in the right locale. Also, will find the **.vala** and **.ui** files and add them as sources for internationalization process.
+* All **.po** files in **po/** folder will be considered as po files, and will be installed in the right locale. Also, will find the **.vala**, **.gs** and **.ui** files and add them as sources for internationalization process.
 
 * Each **.desktop** file in **data/** will be copied to **share/desktop/**, unless it contains the line **X-GNOME-Autostart-enabled=**, in which case it will be copied to **/etc/xdg/autostart**.
 

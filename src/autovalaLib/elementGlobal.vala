@@ -27,19 +27,27 @@ namespace AutoVala {
 			this.command = "";
 		}
 
-		public override bool configureLine(string line, bool automatic, string? condition, bool invertCondition, int lineNumber) {
+		public override bool configureLine(string line, bool automatic, string? condition, bool invertCondition, int lineNumber, string[]? comments) {
 			return false;
 		}
 
 		public override void add_files() {
+			this.file_list = ElementBase.getFilesFromFolder("meson_scripts",{".sh"},false);
 		}
 
-		private void addFolderToMainCMakeLists(string element, DataOutputStream dataStream) {
+		private void addFolderToMainCMakeLists(string element, DataOutputStream dataStream, ConfigType eType) {
 
-			var path = Path.build_filename(ElementBase.globalData.projectFolder,element);
+			string path;
+			if (element[0] == GLib.Path.DIR_SEPARATOR) {
+				path = element;
+			} else {
+				path = Path.build_filename(ElementBase.globalData.projectFolder,element);
+			}
 			var dirpath=File.new_for_path(path);
 			if (dirpath.query_exists()==false) {
-				ElementBase.globalData.addWarning(_("Directory %s doesn't exists").printf(element));
+				if (eType != ConfigType.VAPIDIR) {
+					ElementBase.globalData.addWarning(_("Directory %s doesn't exist").printf(element));
+				}
 				return;
 			} else {
 				if (element!="src") {
@@ -67,10 +75,12 @@ namespace AutoVala {
 						return;
 					}
 				}
-				try {
-					dataStream.put_string("add_subdirectory("+element+")\n");
-				} catch (Error e) {
-					ElementBase.globalData.addWarning(_("Can't add subdirectory %s").printf(element));
+				if (element[0] != GLib.Path.DIR_SEPARATOR) {
+					try {
+						dataStream.put_string("add_subdirectory("+element+")\n");
+					} catch (Error e) {
+						ElementBase.globalData.addWarning(_("Can't add subdirectory %s").printf(element));
+					}
 				}
 			}
 		}
@@ -88,11 +98,16 @@ namespace AutoVala {
 				dataStream.put_string("option(BUILD_VALADOC \"Build API documentation if Valadoc is available\" OFF)\n");
 
 				foreach(var element in ElementBase.globalData.globalElements) {
-					if (element.eType!=ConfigType.DEFINE) {
+					if (element.eType != ConfigType.DEFINE) {
 						continue;
 					}
 					dataStream.put_string("option(%s \"%s\" OFF)\n".printf(element.name,element.name));
 				}
+
+				dataStream.put_string("\nif( NOT CMAKE_BUILD_TYPE )\n");
+				dataStream.put_string("\tset(CMAKE_BUILD_TYPE Release)\n");
+				dataStream.put_string("endif()\n");
+
 				dataStream.put_string("\ninclude(GNUInstallDirs)\n");
 				dataStream.put_string("if( ( ${CMAKE_INSTALL_PREFIX} MATCHES \"^/usr/local\" ) )\n");
 				dataStream.put_string("\t# A workaround to ensure that works 'out of the box' in Debian-based systems\n");
@@ -148,7 +163,7 @@ namespace AutoVala {
 				}
 
 				elements.sort(ElementValaBinary.comparePackages);
-				var printConditions=new ConditionalText(dataStream,true);
+				var printConditions=new ConditionalText(dataStream,ConditionalType.CMAKE);
 				foreach(var module in elements) {
 					printConditions.printCondition(module.condition,module.invertCondition);
 					dataStream.put_string("set(MODULES_TO_CHECK ${MODULES_TO_CHECK} %s)\n".printf(module.elementName));
@@ -166,29 +181,29 @@ namespace AutoVala {
 					}
 				}
 
-                // Check for files that must be available
-                foreach(var element in ElementBase.globalData.globalElements) {
+				// Check for files that must be available
+				foreach(var element in ElementBase.globalData.globalElements) {
 					if ((element.eType != ConfigType.SOURCE_DEPENDENCY) && (element.eType!=ConfigType.BINARY_DEPENDENCY)) {
 						continue;
 					}
-				    printConditions.printCondition(element.condition,element.invertCondition);
+					printConditions.printCondition(element.condition,element.invertCondition);
 					dataStream.put_string("if ( ");
 					var paths = element.path.split(" ");
 					bool first = true;
 					foreach (var path in paths) {
-					    if (path == "") {
-					        continue;
-					    }
-					    if (! first) {
-    					    dataStream.put_string(" AND ");
-					    }
-					    first = false;
-					    dataStream.put_string("(NOT EXISTS \"%s\")".printf(path));
+						if (path == "") {
+							continue;
+						}
+						if (! first) {
+							dataStream.put_string(" AND ");
+						}
+						first = false;
+						dataStream.put_string("(NOT EXISTS \"%s\")".printf(path));
 					}
 					dataStream.put_string(")\n\tmessage(FATAL_ERROR \"Can't find any of the files %s\")\nendif()\n".printf(element.path));
-					printConditions.printTail();
-					dataStream.put_string("\n");
 				}
+				printConditions.printTail();
+				dataStream.put_string("\n");
 
 				// check for PANDOC, but only if there are man pages in non-groff format
 				foreach(var element in ElementBase.globalData.globalElements) {
@@ -243,12 +258,12 @@ namespace AutoVala {
 						}
 						if ((element.eType!=ConfigType.VALA_LIBRARY) && (element.eType!=ConfigType.VALA_BINARY)) {
 							element.processed=true;
-							this.addFolderToMainCMakeLists(path,dataStream);
+							this.addFolderToMainCMakeLists(path,dataStream,element.eType);
 							addedOne=true;
 							continue;
 						}
 					}
-										foreach(var path in paths.keys) {
+					foreach(var path in paths.keys) {
 						var element=paths.get(path);
 						if ((element.eType==ConfigType.DEFINE) || (element.eType == ConfigType.SOURCE_DEPENDENCY) || (element.eType == ConfigType.BINARY_DEPENDENCY)) {
 							continue;
@@ -270,7 +285,7 @@ namespace AutoVala {
 								continue;
 							}
 
-							this.addFolderToMainCMakeLists(path,dataStream);
+							this.addFolderToMainCMakeLists(path,dataStream,element.eType);
 							addedOne=true;
 							element.processed=true;
 							if ((binElement.eType==ConfigType.VALA_LIBRARY)&&(binElement.currentNamespace!="")) {
@@ -302,6 +317,16 @@ namespace AutoVala {
 					}
 				}
 				dataStream.put_string("\n");
+
+				// add dependencies
+				var namespaces = new Gee.HashMap<string,ElementValaBinary>();
+				foreach(var element in ElementBase.globalData.globalElements) {
+					if (element.eType != ConfigType.VALA_LIBRARY) {
+						continue;
+					}
+					var binElement = element as ElementValaBinary;
+					namespaces.set(binElement.currentNamespace, binElement);
+				}
 			} catch (Error e) {
 				ElementBase.globalData.addError(_("Failed to generate the main CMakeLists.txt file"));
 			}
@@ -314,6 +339,96 @@ namespace AutoVala {
 				dataStream.put_string("### CMakeLists automatically created with AutoVala\n### Do not edit\n\n");
 			} catch (Error e) {
 				ElementBase.globalData.addError(_("Failed to store a header"));
+				return true;
+			}
+			return false;
+		}
+
+		public override bool generateMeson(ConditionalText dataStream, MesonCommon mesonCommon) {
+
+			try {
+
+				dataStream.put_string("project('%s',['c','vala'])\n\n".printf(ElementBase.globalData.projectName));
+
+				// Let's check if there are options
+				DataOutputStream? optionsStream = null;
+				var found = false;
+				foreach(var element in ElementBase.globalData.globalElements) {
+					if (element.eType != ConfigType.DEFINE) {
+						continue;
+					}
+					found = true;
+					if (optionsStream == null) {
+						var mainPath = GLib.Path.build_filename(globalData.projectFolder,"meson_options.txt");
+						var file = File.new_for_path(mainPath);
+						if (file.query_exists()) {
+							file.delete();
+						}
+						var dis = file.create(FileCreateFlags.NONE);
+						optionsStream = new DataOutputStream(dis);
+					}
+					dataStream.put_string("%s = (get_option('%s') != '')\n".printf(element.name,element.name));
+					optionsStream.put_string("option('%s',type : 'string', value: '')\n".printf(element.name));
+				}
+				if (optionsStream != null) {
+					optionsStream.close();
+				}
+				if (found) {
+					dataStream.put_string("\n");
+				}
+
+				dataStream.put_string("add_global_arguments('-DGETTEXT_PACKAGE=\"%s\"',language: 'c')\n\n".printf(ElementBase.globalData.projectName));
+
+				Gee.Set<string> tocheck=new Gee.HashSet<string>();
+				Gee.List<GenericElement> elements=new Gee.ArrayList<GenericElement>();
+
+				// First add the ones without conditions
+				foreach(var element in ElementBase.globalData.globalElements) {
+					if ((element.eType!=ConfigType.VALA_BINARY)&&(element.eType!=ConfigType.VALA_LIBRARY)) {
+						continue;
+					}
+					var binElement = element as ElementValaBinary;
+					foreach(var module in binElement.packages) {
+						if (((module.type==packageType.DO_CHECK)||(module.type==packageType.C_DO_CHECK))&&(module.condition==null)) {
+							if (tocheck.contains(module.elementName)) {
+								continue;
+							}
+							elements.add(module);
+							tocheck.add(module.elementName);
+						}
+					}
+				}
+
+				// And now add the ones with conditions, so those present with and without conditions will be checked unconditionally
+				foreach(var element in ElementBase.globalData.globalElements) {
+					if ((element.eType!=ConfigType.VALA_BINARY)&&(element.eType!=ConfigType.VALA_LIBRARY)) {
+						continue;
+					}
+					var binElement = element as ElementValaBinary;
+					foreach(var module in binElement.packages) {
+						if (((module.type==packageType.DO_CHECK)||(module.type==packageType.C_DO_CHECK))&&(module.condition!=null)) {
+							if (tocheck.contains(module.elementName)) {
+								continue;
+							}
+							elements.add(module);
+						}
+					}
+				}
+
+				elements.sort(ElementValaBinary.comparePackages);
+				found = false;
+				var printConditions = new ConditionalText(dataStream.dataStream, ConditionalType.MESON, dataStream.tabs);
+				foreach(var module in elements) {
+					found = true;
+					printConditions.printCondition(module.condition,module.invertCondition);
+					dataStream.put_string("%s_dep = dependency('%s')\n".printf(module.elementName.replace("-","_").replace("+","").replace(".","_"),module.elementName));
+				}
+				printConditions.printTail();
+				if (found) {
+					dataStream.put_string("\n");
+				}
+			} catch (GLib.Error e) {
+				ElementBase.globalData.addError(_("Failed to write to meson.build at '%s' element, at '%s' path: %s").printf(this.command,this._path,e.message));
 				return true;
 			}
 			return false;

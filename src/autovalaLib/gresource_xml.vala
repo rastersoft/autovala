@@ -50,12 +50,21 @@ namespace AutoVala {
 				throw new MarkupError.PARSE (error_msg (_("File %s (GResource XML) doesn't exist"),filename));
 			}
 
-			var dis = new DataInputStream (file.read ());
+			DataInputStream dis;
+			try {
+				dis = new DataInputStream (file.read ());
+			} catch (GLib.Error e) {
+				throw new MarkupError.PARSE (error_msg (e.message));
+			}
 
-		    while ((line = dis.read_line (null)) != null) {
-		    	text += line + "\n";
-		    }
-			context.parse(text,-1);
+			try {
+		    	while ((line = dis.read_line (null)) != null) {
+		    		text += line + "\n";
+		    	}
+				context.parse(text,-1);
+			} catch (GLib.IOError e) {
+				throw new MarkupError.PARSE (error_msg (e.message));
+			}
 		}
 
 		private string error_msg (string msg, ...) {

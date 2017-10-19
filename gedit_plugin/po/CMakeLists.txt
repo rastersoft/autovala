@@ -3,3 +3,4 @@
 
 include (Translations)
 add_translations_directory("autovala_gedit")
+add_translations_catalog("autovala_gedit" ../src )

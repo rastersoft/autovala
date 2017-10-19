@@ -9,6 +9,11 @@
     <file>pixmaps/test_vala.svg</file>
     <file>pixmaps/vala.svg</file>
     <file>pixmaps/vapi.svg</file>
+    <file>pixmaps/build.svg</file>
+    <file>pixmaps/full_build.svg</file>
+    <file>pixmaps/refresh.svg</file>
+    <file>pixmaps/refresh_langs.svg</file>
+    <file>pixmaps/update.svg</file>
     <file compressed="true">interface/binary_properties.ui</file>
     <file compressed="true">interface/new_project.ui</file>
   </gresource>

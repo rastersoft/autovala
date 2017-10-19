@@ -1,7 +1,9 @@
 # AUTOVALA #
 
 Autovala is a program and a library designed to help in the creation of
-projects with Vala and CMake.
+projects with Vala and CMake. It also has support for Genie.
+
+Now also has experimental Meson build system support.
 
 The idea is quite simple: CMake is very powerful, but writting the CMakeLists
 files is boring and repetitive. Why not let the computer create them, by
@@ -51,4 +53,3 @@ instructions.
 The DOC folder contains the Wiki dumped in HTML format. Just open the
 **index.html** file with your browser, or go to the **Wiki section** in GitHub,
 and enjoy.
-

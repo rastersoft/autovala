@@ -1,0 +1,20 @@
+'scopeName': 'text.autovala'
+'name': 'Autovala'
+'fileTypes': ['avprj']
+
+'patterns': [
+  {
+    'match' : '^#.*'
+    'name' : 'comment.line.number-sign.generic-config'
+  }, {
+     'match' : '^[a-z_]+:'
+     'name' : 'variable.parameter.generic-config'
+ }, {
+    'match' : '^(\\*)([a-z_]+):'
+    'captures':
+      '1':
+         'name' : 'keyword.control.generic-config'
+      '2':
+         'name' : 'variable.parameter.generic-config'
+ }
+]

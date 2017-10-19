@@ -1,8 +1,98 @@
-autovala (0.99.39-debian1) sid; urgency=low
+autovala (1.1.1-Debian1) sid; urgency=low
 
-  * Changes made
+  * Updated bash completion options
 
- -- Sergio Costas <rastersoft@gmail.com>  Sun, 08 May 2016 22:01:56 +0200
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Thu, 17 Aug 2017 23:55:00 +0200
+
+autovala (1.1.0-Debian1) sid; urgency=low
+
+  * Added meson support
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Sat, 11 Feb 2017 23:55:00 +0200
+
+autovala (1.0.1-Debian1) sid; urgency=low
+
+  * Now includes the main CMakeLists.txt and the Config.vala.base files in the project's file list
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Thu, 09 Feb 2017 23:55:00 +0200
+
+autovala (1.0.0-Debian1) sid; urgency=low
+
+  * Updated version to 1.0.0
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Fry, 30 Dec 2016 23:55:00 +0200
+
+autovala (0.99.48-Debian1) sid; urgency=low
+
+  * Added initial support for Genie
+  * Now adds the .VAPI and .GS (Genie) files in all src/ folder to the list of files generated for SCM systems like GIT
+  * Now can find the icon themes even if XDG_DATA_DIRS is not defined
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Fry, 16 Dec 2016 23:55:00 +0200
+
+autovala (0.99.47-Debian1) sid; urgency=low
+
+  * Now the list of files to translate is kept ordered between executions, reducing the number of changes in repositories due to changes in the file order
+  * Added support for external data (useful to store data for external programs that use autovala)
+  * Added support for persistent comments in the AVPRJ file
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Sun, 23 Oct 2016 23:55:00 +0200
+
+autovala (0.99.46-Debian1) sid; urgency=low
+
+  * Fixed bug when using an absolute path for vapidir: commands
+  * Allows to add non-existing folders with vapidir
+  * Fixed several english errors ("doesn't exists" changed to "doesn't exist")
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Sun, 02 Oct 2016 23:55:00 +0200
+
+autovala (0.99.45-Debian1) sid; urgency=low
+
+  * Allows to use CMAKE_BUILD_TYPE with standard and custom-defined types
+  * Now automagically generates the debugging symbols when the build type specified should have them
+  * By default compiles with the **Release** build type, ensuring -O3 optimizations for the binaries
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Wed, 21 Sep 2016 23:55:00 +0200
+
+autovala (0.99.44-Debian1) sid; urgency=low
+
+  * Allows to use conditionals in INCLUDE, SOURCE_DEPENDENCY and BINARY_DEPENDENCY commands
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Tue, 20 Sep 2016 23:55:00 +0200
+
+autovala (0.99.43-Debian1) sid; urgency=low
+
+  * Allows to compile and fully rebuild the project from external editors, like Gedit
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Sun, 18 Sep 2016 23:55:00 +0200
+
+autovala (0.99.42-Debian1) sid; urgency=low
+
+  * Now it pases the gresource files to the vala compiler, allowing to use Gtk Templates
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Sun, 18 Sep 2016 23:50:00 +0200
+
+autovala (0.99.41-Debian1) sid; urgency=low
+
+  * Fixed a bug in the --vapidir folder generation
+  * Fixed some compilation warnings
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Thu, 25 Aug 2016 23:55:00 +0200
+
+autovala (0.99.40-Debian1) sid; urgency=low
+
+  * Allows to specify --vapidir folders
+  * Now includes the files inside a GResource XML file in the project's file list
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Sun, 21 Aug 2016 23:55:00 +0200
+
+autovala (0.99.39-Debian1) sid; urgency=low
+
+  * Allows to use GResource files in projects
+  * Uses GResources to store icons and glade files
+  * Now shows the output of autovala when it can't refresh the widgets in an editor
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Tue, 02 Aug 2016 23:55:00 +0200
 
 autovala (0.99.38-Debian1) sid; urgency=low
 

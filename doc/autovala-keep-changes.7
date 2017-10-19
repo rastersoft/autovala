@@ -9,9 +9,9 @@
 <h1 id="name">NAME</h1>
 <p>autovala keeping your changes - How to manually modify the configuration file without loosing your changes</p>
 <h1 id="description">DESCRIPTION</h1>
-<p>By default, nearly all the lines in the project file starts with an asterisk. Those lines contains automatically created commands, and every time the user launches the command <strong>autovala refresh</strong>, they are deleted and recreated using the current files in the disk.</p>
-<p>Lines without the asterisk contains manually set commands, and they are not deleted before recreating the project file.</p>
-<p>Also, when an automatically created <strong>vala_library</strong> or <strong>vala_binary</strong> command (this is, prefixed with the asterisk) contains at least one subcommand added manually, that command will be considered manually added too, so it will be preserved even if you delete its folder. This is made this way to ensure that the manual data is preserved always.</p>
+<p>By default, nearly all the lines in the project file start with an asterisk. Those lines contain automatically created commands, and every time the user launches the command <strong>autovala refresh</strong> or <strong>autovala update</strong>, they are deleted and recreated using the current files in the disk and the <a href="autovala-rules.7">rules</a>.</p>
+<p>Lines without the asterisk contain commands specified manually by the user, and they are not deleted before recreating the project file.</p>
+<p>Also, when an automatically created <strong>vala_library</strong> or <strong>vala_binary</strong> command (this is, prefixed with the asterisk) contains at least one subcommand added manually, that command will be considered manually added too, so it will be preserved even if you delete its folder. This is made this way to ensure that the manual data is preserved in all cases.</p>
 <p>Example: let's suppose we have this project file:</p>
 <pre><code>    ### AutoVala Project ###
     autovala_version: 1
@@ -65,17 +65,12 @@
     *vala_source: generate.vala
     *vala_source: configuration.vala
     *vala_source: autovala.vala</code></pre>
-<p>Now the change will remain, no matter how many times <strong>autovala refresh</strong> or <strong>autovala update</strong> is run.</p>
+<p>Now the change will remain, no matter how many times <strong>autovala refresh</strong> or <strong>autovala update</strong> are run.</p>
 <h1 id="see-also">SEE ALSO</h1>
 <p><a href="autovala.1">autovala(1)</a> <a href="autovala-rules.7">autovala-rules(7)</a> <a href="autovala-fileformat.5">autovala-fileformat(5)</a> <a href="autovala-tricks.7">autovala-tricks(7)</a></p>
 <h1 id="author">AUTHOR</h1>
 <p>Sergio Costas Rodriguez<br />
-<script type="text/javascript">
-<!--
-h='&#114;&#x61;&#x73;&#116;&#x65;&#114;&#x73;&#x6f;&#102;&#116;&#46;&#x63;&#x6f;&#x6d;';a='&#64;';n='&#114;&#x61;&#x73;&#116;&#x65;&#114;';e=n+a+h;
-document.write('<a h'+'ref'+'="ma'+'ilto'+':'+e+'" clas'+'s="em' + 'ail">'+e+'<\/'+'a'+'>');
-// -->
-</script><noscript>&#114;&#x61;&#x73;&#116;&#x65;&#114;&#32;&#x61;&#116;&#32;&#114;&#x61;&#x73;&#116;&#x65;&#114;&#x73;&#x6f;&#102;&#116;&#32;&#100;&#x6f;&#116;&#32;&#x63;&#x6f;&#x6d;</noscript><br />
+<a href="mailto:raster@rastersoft.com">raster@rastersoft.com</a><br />
 <a href="http://www.rastersoft.com" class="uri">http://www.rastersoft.com</a><br />
 <a href="http://github.com/rastersoft" class="uri">http://github.com/rastersoft</a></p>
 <p><a href="index.html">Home</a></p>

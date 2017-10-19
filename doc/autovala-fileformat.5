@@ -10,10 +10,11 @@
 <p>autovala fileformat - The syntax for autovala configuration file</p>
 <h1 id="description">DESCRIPTION</h1>
 <p>The project file has a very simple format. Usually you don't need to manually edit it, but when the guesses of autovala are incorrect, you can do it, and your changes will be remembered each time you refresh the file.</p>
-<p>The current version for the project file format is <strong>20</strong>.</p>
+<p>The current version for the project file format is <strong>25</strong>.</p>
 <p>The file is based on commands in the format:</p>
 <pre><code>    command: data</code></pre>
-<p>one in each line. Every line that starts with # is ignored (is a comment), but also will be removed when the file is recreated.</p>
+<p>one in each line. Each command can be optionally be prefixed with an asterisk (*). In that case, it is assumed that the command has been created automatically by AutoVala, after applying the guessing rules, and will be erased and regerenated every time the .avprj file is recreated. If the command lacks the asterisk, it is assumed that it has been manually added by the user, so it will be preserved between refreshes.</p>
+<p>Every line that starts with # is ignored (is a comment), but they will be associated with the next command. This means that comments will be preserved, as long as they are associated with a manually added command; comments put before an automatically added command will be lost.</p>
 <p>Except where otherwise is specified, the paths must be relative to the project path.</p>
 <p>The first line in a project file is, always, ### AutoVala Project ###. This string identifies it as an Autovala project file.</p>
 <p>The next line has the command <strong>autovala_version</strong>. This command specifies which version of the syntax uses this file, to avoid an old version of Autovala to open a newer, with commands that it wouldn't understand.</p>
@@ -25,91 +26,98 @@
 <li><p><strong>define</strong>: specifies a condition parameter set in a <strong>#define</strong> statement in the source code, for conditional compilation. These parameters can be set during Makefile creating with <strong>-Dparameter=ON</strong>, and will be passed to <strong>valac</strong> during compilation.</p></li>
 <li><p><strong>data</strong>: specifies a folder with local data that must be installed in <strong>share/project_name</strong>. By default it is <strong>data/local</strong>.</p></li>
 <li><p><strong>doc</strong>: specifies a folder with the documentation that must be installed in <strong>share/doc/project_name</strong>. By default it is <strong>doc</strong>.</p></li>
-<li><p><strong>appdata</strong>: specifies an AppData file, which contains metadata about the application (details at <a href="http://www.freedesktop.org/software/appstream/docs/chap-Metadata.html" class="uri">http://www.freedesktop.org/software/appstream/docs/chap-Metadata.html</a> and <a href="http://www.freedesktop.org/software/appstream/docs/chap-Quickstart.html#sect-Quickstart-DesktopApps" class="uri">http://www.freedesktop.org/software/appstream/docs/chap-Quickstart.html#sect-Quickstart-DesktopApps</a>). When creating<br />
-packages, Autovala will try to take data from this file if it exists, like a summary and a description.</p></li>
+<li><p><strong>appdata</strong>: specifies an AppData file, which contains metadata about the application (details at <a href="http://www.freedesktop.org/software/appstream/docs/chap-Metadata.html" class="uri">http://www.freedesktop.org/software/appstream/docs/chap-Metadata.html</a> and <a href="http://www.freedesktop.org/software/appstream/docs/chap-Quickstart.html#sect-Quickstart-DesktopApps" class="uri">http://www.freedesktop.org/software/appstream/docs/chap-Quickstart.html#sect-Quickstart-DesktopApps</a>). When creating packages, Autovala will try to take data from this file if it exists, like a summary and a description.</p></li>
 <li><p><strong>gresource</strong>: specifies a GResource file and an identifier for it. Example:</p>
-<pre><code>    gresource: data_gresource_xml data/data.gresource.xml</code></pre></li>
-</ul>
-<p>the identifier is used in the binaries/libraries to specify which resource file to include there, and the path specifies where is the XML file with the GResources data. AutoVala will check the files specified inside, to prevent adding them automatically in other parts (example: if you have an icon file in <em>data/icons</em>, by default it will be installed at <em>/usr/share/icons...</em>; but if that file is inside a <em>gresource</em> file, it won't be installed, unless you add it manually to the .avprj file). Also, those files will be added as dependencies, so any change to any of them will force a recompilation of the corresponding object file and binaries.</p>
-<ul>
+<pre><code>    gresource: data_gresource_xml data/data.gresource.xml</code></pre>
+<p>the identifier is used in the binaries/libraries to specify which resource file to include there, and the path specifies where is the XML file with the GResources data. AutoVala will check the files specified inside, to prevent adding them automatically in other parts (example: if you have an icon file in <em>data/icons</em>, by default it will be installed at <em>/usr/share/icons...</em>; but if that file is inside a <em>gresource</em> file, it won't be installed, unless you add it manually to the .avprj file). Also, those files will be added as dependencies, so any change to any of them will force a recompilation of the corresponding object file and binaries.</p></li>
+<li><p><strong>vapidir</strong>: points to a folder where extra VAPI files can be found. This is a global path, used in all binaries and libraries used in the project (unlike the <em>vapi_file</em> statement, that is binary-specific). This command is useful when a program puts their .vapi files in a non-standard folder (which is the current case of Gnome-Builder), or when you have a library installed in your system but it doesn't include a .vapi file. When asking the file list with the <em>project_files</em> command-line parameter, it will include the .vapi files inside these folders only if the folder is relative to the project's folder; if it is an absolute path (which points, let's say, to /usr/share...) won't list those .vapi files.</p></li>
 <li><p><strong>vala_binary</strong>: contains a path and a name, and specifies that, in the path, there are several source files that must be compiled to create that binary. Example:</p>
-<pre><code>    vala_binary: src/test_file</code></pre></li>
-</ul>
+<pre><code>    vala_binary: src/test_file</code></pre>
 <p>says that the src folder contains the source files to create the binary test_file.</p>
 <p>After this command will come several subcommands that specifies details about this binary. Those are:</p>
 <ul>
 <li><p><strong>version</strong>: contains the version of this binary file. It is more useful when creating libraries. If it is not set manually in the project file, Autovala will check the source files for a global variable with the format:</p>
-<pre><code>        // project version=XX.YY.ZZ</code></pre></li>
-</ul>
-<p>and will use that number as version. If it is unable to find it in none of the source files, then it will use 1.0.0 by default.</p>
-<ul>
+<pre><code>    // project version=XX.YY.ZZ</code></pre>
+<p>and will use that number as version. If it is unable to find it in none of the source files, then it will use 1.0.0 by default.</p></li>
 <li><p><strong>namespace</strong>: contains the namespace used in all the source files. It is more useful when creating libraries.</p></li>
 <li><p><strong>vala_destination</strong>: specifies a custom path where to install this library or binary. If the path is given in relative format (this is, if it doesn't start with an slash) the file will be installed relative to the PREFIX (<strong>/usr</strong> or <strong>/usr/local</strong>); but if it is given in absolute format (this is, the path starts with a slash) the file will be installed in that precise folder.</p></li>
 <li><p><strong>compile_options</strong>: contains the options to pass to the Vala compiler. Example:</p>
-<pre><code>        compile_options: -g</code></pre></li>
+<pre><code>    compile_options: -g</code></pre>
+<p>It is possible to specify a <em>build type</em> using @TYPE. Example:</p>
+<pre><code>    compile_options: @Debug -D USING_DEBUG_TYPE</code></pre>
+<p>will pass the definition &quot;USING_DEBUG_TYPE&quot; to the vala compiler when cmake is called with -DCMAKE_BUILD_TYPE=Debug.</p>
+<p>It is possible to use any of the four predefined <em>build types</em> (Debug, Release, RelWithDebInfo and MinSizeRel), and also it is possible to define new types.</p>
+<p>By default, Autovala will add '-g' to the compiler options for the <em>Debug</em> and <em>RelWithDebInfo</em> types, thus ensuring that the debugging will work with the CMake standard system.</p>
+<p>When cmake is called without specifying a <em>build type</em>, the <em>Release</em> one will be used by default.</p></li>
 <li><p><strong>compile_c_options</strong>: contains the options to pass to the C compiler and linker. Example:</p>
-<pre><code>        compile_c_options: -O2</code></pre></li>
+<pre><code>    compile_c_options: -O2</code></pre>
+<p>It is also possible to specify a <em>build type</em> using @TYPE. Example:</p>
+<pre><code>    compile_c_options: @Debug -DUSING_DEBUG_TYPE_AT_C -Os</code></pre>
+<p>will pass the definition &quot;USING_DEBUG_TYPE_AT_C&quot; and the option <strong>-Os</strong> to the C compiler when cmake is called with -DCMAKE_BUILD_TYPE=Debug.</p>
+<p>It is possible to use any of the four predefined <em>build types</em> (<em>Debug</em>, <em>Release</em>, <em>RelWithDebInfo</em> and <em>MinSizeRel</em>), and also it is possible to define new types. This command works by adding the options to CMAKE_C_FLAGS_XXXXX (being XXXXX the <em>build type</em> specified after the @, converted to uppercase).</p></li>
 <li><p><strong>vala_package</strong>: specify a package that must be added with <strong>--pkg=...</strong> to the vala compiler. These are automatically found by Autovala by reading the sources and processing the <strong>Using</strong> directives</p></li>
 <li><p><strong>vala_check_package</strong>: is like <strong>vala_package</strong>, but these packages must, also, be checked during cmake to ensure that they are installed in the system. Autovala finds these automatically by reading the sources, as with vala_package, and checking if the corresponding <strong>.pc</strong> file exists</p></li>
 <li><p><strong>c_check_package</strong>: is like <strong>vala_check_package</strong>, but will be added only when compiling and linking the C code, not to the Vala compiler. It is useful when mixing Vala and C sources and the C code needs a library that the Vala source doesn't need.</p></li>
 <li><p><strong>vala_local_package</strong>: is like <strong>vala_package</strong>, but these packages aren't installed in the system. Instead, they belong to this project, and will be compiled automatically before this binary/library.</p></li>
-<li><p><strong>vala_source</strong>: this command specifies one VALA source file that belongs to this binary. The path must be relative to the binary/library path.</p></li>
+<li><p><strong>vala_source</strong>: this command specifies one VALA or GENIE source file that belongs to this binary. The path must be relative to the binary/library path.</p></li>
 <li><p><strong>c_source</strong>: this command specifies one C source file that belongs to this binary. The path must be relative to the binary/library path.</p></li>
 <li><p><strong>h_folder</strong>: this command specifies one folder containing .h files that must be included when compiling the C source files in this binary. The path must be relative to the binary/library path.</p></li>
 <li><p><strong>vala_vapi</strong>: this command specifies one custom <strong>.vapi</strong> file, needed to compile your project. Each file must be prepended by the relative path from the project folder. The path must be relative to the binary/library path.</p></li>
 <li><p><strong>dbus_interface</strong>: this command specifies a DBus interface to be automatically extracted using introspection, and to generate a source file with it. It must be followed by the connection name (e.g. org.freedesktop.ConsoleKit), the object path (e.g. /org/freedesktop/ConsoleKit/Manager), and whether it must connect to the <strong>system</strong> or <strong>session</strong> bus. Finally, it can have an extra parameter specifying if the generated interface must be for <strong>gdbus</strong> (the default option) or for the obsolete <strong>dbus-glib</strong> library.</p></li>
 <li><p><strong>c_library</strong>: this command specifies one or more C libraries which must be linked against this binary (separated by blank spaces), useful for libraries not supported with <strong>pkg_config</strong> like the math C library. The libraries must be specified without the 'l' preffix; this is, the math library is 'm'; the posix threads library is 'pthread', and so on.</p></li>
 <li><p><strong>unitest</strong>: this command specifies one VALA source file that contains an unitary test. Each one of these files will be compiled with all the source files of this executable/library as a stand-alone executable. The path must be relative to the binary/library path. For details, read the FAQ.</p></li>
-<li><p><strong>use_resource</strong>: this command instructs AutoVala to include in this binary the resources specified by an identifier. Example:</p>
-<pre><code>    use_resource: data_gresource_xml</code></pre>
+<li><p><strong>use_gresource</strong>: this command instructs AutoVala to include in this binary the resources specified by an identifier. Example:</p>
+<pre><code>use_gresource: data_gresource_xml</code></pre>
 <p>Here, data_gresource_xml is the identifier used in a <em>gresource</em> command.</p>
 <p>The last fourteen subcommands (compile_options, compile_c_options, vala_package, vala_check_package, c_check_package, vala_local_package, vala_source, c_source, vala_vapi, dbus_interface, c_library, unitest and use_resource) can be repeated as many times as needed to specify all the sources and packages needed.</p></li>
-<li><p><strong>vala_library</strong>: the same than vala_binary, but creates a dynamic linking library. It uses the same subcommands.</p></li>
+<li><p><strong>alias</strong>: allows to create a symbolic link to this binary; thus, the binary could be called with any of both names.</p></li>
+</ul></li>
+<li><p><strong>vala_library</strong>: the same than vala_binary, but creates a dynamic linking library. It uses the same subcommands with the exception of <strong>alias</strong>.</p></li>
 <li><p><strong>bash_completion</strong>: specifies that the file is a bash_completion stript that must be copied to where <strong>pkg-config --variable=completionsdir bash-completion</strong> specifies (usually /usr/share/bash-completion/completions). To allow to do installations in the HOME directory, these files won't be installed if <em>CMAKE_INSTALL_PREFIX</em> starts with <em>/home</em>.</p></li>
-<li><p><strong>binary</strong>: specifies that the file is a precompiled binary (or a shell script) that must be copied as-is to vbin/**</p></li>
+<li><p><strong>binary</strong>: specifies that the file is a precompiled binary (or a shell script) that must be copied as-is to <strong>/usr/bin/</strong> or <strong>/usr/local/bin</strong>.</p></li>
 <li><p><strong>full_icon</strong>: followed by the theme, the category and the icon path/name. Autovala will determine the icon size and use it to copy it to the right place (only if it is a <strong>.png</strong> file; it it is a <strong>.svg</strong> will copy to &quot;scalable&quot;). Also, by default, the cathegory will be <strong>apps</strong>, unless it is a <strong>.svg</strong> with <strong>-symbolic</strong>; in that case will be put in the <strong>status</strong> category. Example:</p>
 <pre><code>    full_icon: Hicolor Applications finger.svg</code></pre></li>
 <li><p><strong>fixed_size_icon</strong>: similar to full_icon, but for <strong>svg</strong> icons, they will be put always in a fixed size entry, based on the canvas size; will never be put in an scalable entry. This is useful when there are several SVG pictures for different sizes of the same icon.</p></li>
 <li><p><strong>pixmap</strong>: followed by a picture filename. Will be copied to <strong>share/pixmaps</strong></p></li>
 <li><p><strong>glade</strong>: the file specified is a glade UI file, that will be installed in <strong>share/project_name/</strong> These files, and the <strong>.vala</strong> source files, will be used with gettext to get the translatable strings.</p></li>
-<li><p><strong>dbus_service</strong>: the file specified is a D-Bus service. The file must be written as a classic D-Bus service file, but prefixing the binary filename with <script type="text/javascript">
-<!--
-h='&#68;&#66;&#x55;&#x53;&#x5f;&#80;&#82;&#x45;&#70;&#x49;&#88;&#64;&#42;&#42;';a='&#64;';n='&#42;&#42;';e=n+a+h;
-document.write('<a h'+'ref'+'="ma'+'ilto'+':'+e+'" clas'+'s="em' + 'ail">'+e+'<\/'+'a'+'>');
-// -->
-</script><noscript>&#42;&#42;&#32;&#x61;&#116;&#32;&#68;&#66;&#x55;&#x53;&#x5f;&#80;&#82;&#x45;&#70;&#x49;&#88;&#64;&#42;&#42;</noscript>. Example from Cronopete:</p>
+<li><p><strong>dbus_service</strong>: the file specified is a D-Bus service. The file must be written as a classic D-Bus service file, but prefixing the binary filename with <strong>@DBUS_PREFIX@</strong>. Example from Cronopete:</p>
 <pre><code>    [D-BUS Service]
     Name=com.rastersoft.cronopete
-    Exec=@DBUS_PREFIX@/bin/cronopete</code></pre></li>
-</ul>
-<p>This allows to use cmake to install everything in a temporary folder, and ensure that the <strong>Exec</strong> entry points to the right place. This is paramount when using these CMakeLists files for creating a <strong>.deb</strong> or <strong>.rpm</strong> package.</p>
-<ul>
+    Exec=@DBUS_PREFIX@/bin/cronopete</code></pre>
+<p>This allows to use cmake to install everything in a temporary folder, and ensure that the <strong>Exec</strong> entry points to the right place. This is paramount when using these CMakeLists files for creating a <strong>.deb</strong> or <strong>.rpm</strong> package.</p></li>
 <li><p><strong>desktop</strong>: the file specified is a <strong>.desktop</strong> file that must be copied to <strong>share/applications</strong> to ensure that it is shown in the applications menu.</p></li>
 <li><p><strong>eos_plug</strong>: the file is an ElementaryOS plug for the configuration system</p></li>
 <li><p><strong>scheme</strong>: the file is a <strong>GSettings</strong> file that contains configuration settings. It is automagically compiled if needed.</p></li>
 <li><p><strong>autostart</strong>: the file is a <strong>.desktop</strong> one, but must be installed in <strong>/etc/xdg/autostart</strong> because the program specified there must be launched automatically when starting the desktop session. Don't forget to add <strong>X-GNOME-Autostart-enabled=true</strong> inside.</p></li>
 <li><p><strong>include</strong>: allows to include the specified file in the CMakeLists of its path. This allows to manually add CMake statements. Example:</p>
-<pre><code>    include: src/mycmake.txt</code></pre></li>
-</ul>
-<p>will append the contents of the file <strong>mycmake.txt</strong>, located in the <strong>src/</strong> folder, to the end of the <strong>CMakeLists.txt</strong> file also located in the <strong>src/</strong> folder</p>
-<ul>
+<pre><code>    include: src/mycmake.txt</code></pre>
+<p>will append the contents of the file <strong>mycmake.txt</strong>, located in the <strong>src/</strong> folder, to the end of the <strong>CMakeLists.txt</strong> file also located in the <strong>src/</strong> folder</p></li>
 <li><p><strong>ignore</strong>: the path that follows will be ignored when Autovala guesses each file. Examples:</p>
-<pre><code>    ignore: src/PROG/test.vala will ignore the file test.vala when automatically creating the PROG binary
-
-    ignore: src/OTHER will ignore the folder OTHER when creating binaries</code></pre></li>
+<pre><code>    ignore: src/PROG/test.vala</code></pre>
+<p>will ignore the file test.vala when automatically creating the PROG binary</p>
+<pre><code>    ignore: src/OTHER</code></pre>
+<p>will ignore the folder OTHER when creating binaries</p></li>
 <li><p><strong>custom</strong>: followed by a path/filename and another path. Installs the specified file in the path. If the path is given in relative format (this is, if it doesn't start with an slash) the file will be installed relative to the PREFIX (<strong>/usr</strong> or <strong>/usr/local</strong>); but if it is given in absolute format (this is, the path starts with a slash) the file will be installed in that precise folder. Examples:</p>
-<pre><code>    custom: data/config_system.txt share/ will install the file **config_system.txt** in **/usr/share** or **/usr/local/share**
-
-    custom: data/config_system.txt /etc/myfolder will install the file **config_system.txt** in **/etc/myfolder**</code></pre></li>
+<pre><code>    custom: data/config_system.txt share/</code></pre>
+<p>will install the file <strong>config_system.txt</strong> in <strong>/usr/share</strong> or <strong>/usr/local/share</strong></p>
+<pre><code>    custom: data/config_system.txt /etc/myfolder</code></pre>
+<p>will install the file <strong>config_system.txt</strong> in <strong>/etc/myfolder</strong></p></li>
 <li><p><strong>translate</strong>: followed by a file type (currently <em>vala</em>, <em>c</em> or <em>glade</em>) and a path/filename. Specifies that the file must be included in the POTFILES.in file, to be scanned for translatable strings.</p></li>
 <li><p><strong>manpage</strong>: followed by a path/filename, and optionally a language and a page section. Specifies that the file is a man page in the specified language (<strong>default</strong> to install it in the default folder), and for the specified section. If the section is not specified, it will be assumed to be section 1. If the language is not specified, it will be assumed <strong>default</strong>. If the file ends in <strong>.md</strong>, Autovala will presume that it is a <strong>markdown</strong> file, and will convert it to groff before. Other supported formats and its extensions are HTML (<strong>.html</strong>), ReStructured Text (<strong>.rst</strong>), LaTeX (<strong>.tex</strong>), JSON version of native AST format (<strong>.json</strong>), TexTile/RedCloth (<strong>.rdoc</strong>), DocBook format (<strong>.xml</strong>) and MediaWiki (<strong>.txt</strong>). Examples:</p>
-<pre><code>    manpage: data/man/autovala.1   will install the file **data/man/autovala** in **/usr/local/share/man/man1**
-    manpage: data/man/autovala-rules.7.md es 7   will install the file **data/man/autovala-rules** in **/usr/local/share/man/es/man7**
-    manpage: data/man/autovala-modifying.5.md default 5   will install the file **data/man/autovala-modifying** in **/usr/local/share/man/man5**</code></pre></li>
+<pre><code>    manpage: data/man/autovala.1</code></pre>
+<p>will install the file <strong>data/man/autovala</strong> in <strong>/usr/local/share/man/man1</strong></p>
+<pre><code>    manpage: data/man/autovala-rules.7.md es 7</code></pre>
+<p>will install the file <strong>data/man/autovala-rules</strong> in <strong>/usr/local/share/man/es/man7</strong></p>
+<pre><code>    manpage: data/man/autovala-modifying.5.md default 5</code></pre>
+<p>will install the file <strong>data/man/autovala-modifying</strong> in <strong>/usr/local/share/man/man5</strong></p></li>
 <li><p><strong>source_dependency</strong>: followed by one or more path/filenames (separated by spaces), it defines a system file needed for compiling the source, so, when creating a system package, the package that contains that file will be added to the build dependencies list. It will also be checked when creating the CMAKE files. If there are several paths, only one must exists to fullfill the condition. This is useful, for example, when checking for <em>pkgconfig</em> files, because in debian-based 64-bit systems they are stored at <em>/usr/lib/pkgconfig</em>, but in fedora-based 64-bit systems they are at <em>/usr/lib64/pkgconfig</em>.</p></li>
 <li><p><strong>binary_dependency</strong>: followed by one or more path/filenames (separated by spaces), it defines a system file needed for running the project, so, when creating a system package, the package that contains that file will be added to the dependencies list. It will also be checked when creating the CMAKE files. This is useful, for example, when checking for library files, because in debian-based 64-bit systems they are stored at <em>/usr/lib</em>, but in fedora-based 64-bit systems they are at <em>/usr/lib64</em>.</p></li>
+<li><p><strong>external</strong>: followed by an onwer ID and a free-form text, allows to store custom data inside the project file, useful for external apps that integrates with autovala. Example:</p>
+<pre><code>    external: GEDIT custom_margin: 8
+    external: GNOME_BUILDER ask_exit</code></pre></li>
 </ul>
-<p>It is also possible to add conditions to nearly all of these commands (more specifically, all can be conditional with the exception of <strong>vala_version</strong>, <strong>vala_binary</strong>, <strong>vala_library</strong>, <strong>version</strong>, <strong>namespace</strong>, <strong>include</strong>, <strong>project_name</strong>, <strong>define</strong>, <strong>source_dependency</strong>, <strong>binary_dependency</strong> and <strong>autovala_version</strong>). To do so, you can use the commands <strong>if CONDITION</strong>, <strong>else</strong> and <strong>end</strong>. The format for the <strong>CONDITION</strong> string is the CMake format (statements that can be true or false, parenteses, and AND, OR and NOT operators).</p>
+<p>It is possible to ask autovalaLib to return all the external data for an specific owner, and to overwrite it, again for an specific owner, leaving unmodified the external data of other owners.</p>
+<p>It is also possible to add conditions to nearly all of these commands (more specifically, all can be conditional with the exception of <strong>vala_version</strong>, <strong>vala_binary</strong>, <strong>vala_library</strong>, <strong>version</strong>, <strong>namespace</strong>, <strong>project_name</strong>, <strong>define</strong> and <strong>autovala_version</strong>). To do so, you can use the commands <strong>if CONDITION</strong>, <strong>else</strong> and <strong>end</strong>. The format for the <strong>CONDITION</strong> string is the CMake format (statements that can be true or false, parenteses, and AND, OR and NOT operators).</p>
 <p>An example taken from Cronopete:</p>
 <pre><code>    vala_binary: src/cronopete
     *vala_package: posix
@@ -138,12 +146,7 @@ document.write('<a h'+'ref'+'="ma'+'ilto'+':'+e+'" clas'+'s="em' + 'ail">'+e+'<\
 <p><a href="autovala.1">autovala(1)</a> <a href="autovala-rules.7">autovala-rules(7)</a> <a href="autovala-keep-changes.7">autovala-keep-changes(7)</a> <a href="autovala-tricks.7">autovala-tricks(7)</a></p>
 <h1 id="author">AUTHOR</h1>
 <p>Sergio Costas Rodriguez<br />
-<script type="text/javascript">
-<!--
-h='&#114;&#x61;&#x73;&#116;&#x65;&#114;&#x73;&#x6f;&#102;&#116;&#46;&#x63;&#x6f;&#x6d;';a='&#64;';n='&#114;&#x61;&#x73;&#116;&#x65;&#114;';e=n+a+h;
-document.write('<a h'+'ref'+'="ma'+'ilto'+':'+e+'" clas'+'s="em' + 'ail">'+e+'<\/'+'a'+'>');
-// -->
-</script><noscript>&#114;&#x61;&#x73;&#116;&#x65;&#114;&#32;&#x61;&#116;&#32;&#114;&#x61;&#x73;&#116;&#x65;&#114;&#x73;&#x6f;&#102;&#116;&#32;&#100;&#x6f;&#116;&#32;&#x63;&#x6f;&#x6d;</noscript><br />
+<a href="mailto:raster@rastersoft.com">raster@rastersoft.com</a><br />
 <a href="http://www.rastersoft.com" class="uri">http://www.rastersoft.com</a><br />
 <a href="http://github.com/rastersoft" class="uri">http://github.com/rastersoft</a></p>
 <p><a href="index.html">Home</a></p>

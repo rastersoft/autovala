@@ -1,0 +1,40 @@
+@import 'ui-variables';
+
+@iconWidth: 18px;
+@iconHeight: 18px;
+
+@iconlist: build,full_build,refresh_langs,refresh,test_vala,update;
+
+.myloop(@mycounter) when (@mycounter < length(@iconlist)) {
+	@iconName: extract(@iconlist,@mycounter);
+	.autovala_@{iconName} {
+		background-image: url("atom://autovala-atom/lib/svg/@{iconName}.svg");
+		background-repeat: no-repeat;
+		background-size: @iconWidth @iconHeight;
+		padding-left: @iconWidth;
+		padding-top: @iconHeight;
+		margin-right: 2px;
+		margin-bottom: 0px;
+	}
+	.myloop((@mycounter + 1));
+}
+
+@iconlist2: project,application,library,c,h,vala,vapi;
+
+.myloop2(@mycounter) when (@mycounter < length(@iconlist2)) {
+	@iconName: extract(@iconlist2,@mycounter);
+	.autovala_@{iconName} {
+		padding-left: @iconWidth;
+		padding-top: @iconHeight;
+		-webkit-mask: url("atom://autovala-atom/lib/svg/@{iconName}.svg");
+		background-color: @text-color;
+		-webkit-mask-repeat: no-repeat;
+		-webkit-mask-size: @iconWidth @iconHeight;
+		margin-top: 1px;
+		margin-bottom: 1px;
+	}
+	.myloop2((@mycounter + 1));
+}
+
+.myloop(1);
+.myloop2(1);

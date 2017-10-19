@@ -11,7 +11,7 @@ set (VERSION "1.0.0")
 set (TESTSRCDIR "${CMAKE_SOURCE_DIR}")
 set (DOLLAR "$")
 
-configure_file (${CMAKE_SOURCE_DIR}/src/Config.vala.cmake ${CMAKE_BINARY_DIR}/src/Config.vala)
+configure_file (${CMAKE_SOURCE_DIR}/src/Config.vala.base ${CMAKE_BINARY_DIR}/src/Config.vala)
 add_definitions(-DGETTEXT_PACKAGE=\"${GETTEXT_PACKAGE}\")
 configure_file (${CMAKE_CURRENT_SOURCE_DIR}/autovalagedit.pc ${CMAKE_CURRENT_BINARY_DIR}/autovalagedit.pc)
 configure_file (${CMAKE_CURRENT_SOURCE_DIR}/autovalagedit.deps ${CMAKE_CURRENT_BINARY_DIR}/autovalagedit.deps)
@@ -21,7 +21,7 @@ link_libraries ( ${DEPS_LIBRARIES} )
 link_directories ( ${DEPS_LIBRARY_DIRS} )
 find_package (Vala REQUIRED)
 include (ValaVersion)
-ensure_vala_version ("0.24" MINIMUM)
+ensure_vala_version ("0.30" MINIMUM)
 include (ValaPrecompile)
 
 if (OLD_GEDIT)
@@ -44,6 +44,7 @@ set (VALA_PACKAGES ${VALA_PACKAGES} libpeas-1.0)
 set (VALA_PACKAGES ${VALA_PACKAGES} libxml-2.0)
 set (VALA_PACKAGES ${VALA_PACKAGES} pango)
 set (VALA_PACKAGES ${VALA_PACKAGES} pangocairo)
+set (VALA_PACKAGES ${VALA_PACKAGES} vte-2.91)
 set (VALA_PACKAGES ${VALA_PACKAGES} x11)
 
 set (APP_SOURCES ${APP_SOURCES} ${CMAKE_CURRENT_BINARY_DIR}/Config.vala)
@@ -52,7 +53,6 @@ set (APP_SOURCES ${APP_SOURCES} gedit_plugin.vala)
 if (NOT(OLD_GEDIT))
 	set (CUSTOM_VAPIS_LIST ${CUSTOM_VAPIS_LIST} ${CMAKE_SOURCE_DIR}/src/vapis/gedit.vapi)
 endif ()
-
 
 if (ATHOME)
 	set (COMPILE_OPTIONS ${COMPILE_OPTIONS} -D ATHOME)
@@ -64,6 +64,11 @@ if (OLD_GEDIT)
 	set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DOLD_GEDIT " )
 	set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DOLD_GEDIT " )
 endif ()
+
+if ((${CMAKE_BUILD_TYPE} STREQUAL "Debug") OR (${CMAKE_BUILD_TYPE} STREQUAL "RelWithDebInfo"))
+	set(COMPILE_OPTIONS ${COMPILE_OPTIONS} "-g")
+endif()
+
 set (COMPILE_OPTIONS ${COMPILE_OPTIONS} --library=autovalagedit --gir autovalagedit-1.0.gir )
 
 vala_precompile(VALA_C autovalagedit
@@ -101,7 +106,6 @@ set (INSTALL_VAPI_autovalagedit "lib/gedit/plugins/autovala" )
 set (INSTALL_GIR_autovalagedit "lib/gedit/plugins/autovala" )
 set (INSTALL_PKGCONFIG_autovalagedit "lib/gedit/plugins/autovala" )
 endif ()
-
 
 install(TARGETS
 	autovalagedit

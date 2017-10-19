@@ -1,5 +1,5 @@
 /*
- Copyright 2013-2015 (C) Raster Software Vigo (Sergio Costas)
+ Copyright 2013-2017 (C) Raster Software Vigo (Sergio Costas)
 
  This file is part of AutoVala
 
@@ -20,14 +20,37 @@ using GLib;
 using Gee;
 using Posix;
 
-//project version = 0.99.39
+//project version = 1.1.2
 
 void help() {
 
-	GLib.stdout.printf(_("Autovala. Usage:\n\tautovala help: shows this help\n\tautovala version: shows the current version\n\tautovala init project_name: initializates a new Vala CMake project and creates an initial project file\n\tautovala refresh: tries to guess the type for each file in the folders and adds them to the project file\n\tautovala cmake: creates the CMake files from the project file\n\tautovala update: the same than 'refresh'+'cmake'\n\tautovala po: updates translatable strings\n\tautovala clear: removes the automatic parts in the project file, leaving only the manual ones.\n\tautovala project_files: lists all the files belonging to the project (with paths relative to the project's root). Useful for adding all the files to a versioning system like git, bazaar or subversion\n\tautovala deb: creates the 'debian' folder for packaging the project as a .deb package\n\tautovala rpm: creates the 'rpmbuild' folder for packaging the project as a .rpm package\n\tautovala pacman: creates a package for PACMAN package manager\n\tautovala valama: exports the project to a VALAMA project file\n\n"));
+	GLib.stdout.printf(_("""Autovala. Usage:
+	autovala help: shows this help.
+	autovala version: shows the current version.
+	autovala init project_name: initializates a new Vala CMake project and creates an initial project file.
+	autovala ginit project_name: initializates a new Genie CMake project and creates an initial project file.
+	autovala refresh: tries to guess the type for each file in the folders and adds them to the project file.
+	autovala cmake: creates the CMake files from the project file.
+	autovala meson: creates the meson.build files from the project file.
+	autovala update: the same than 'refresh' + 'cmake' + 'meson'.
+	autovala po: updates translatable strings.
+	autovala clear: removes the automatic parts in the project file, leaving only the manual ones.
+	autovala project_files: lists all the files belonging to the project (with paths relative to the project's root).
+	autovala git: adds to git all the project files.
+	autovala deb: creates the 'debian' folder for packaging the project as a .deb package.
+	autovala rpm: creates the 'rpmbuild' folder for packaging the project as a .rpm package.
+	autovala pacman: creates a package for PACMAN package manager.
+	autovala valama: exports the project to a VALAMA project file.
+	autovala external owner_id: shows the external data of the specified owner.
+
+"""));
 }
 
+#if UNITEST
+int main2(string[] argv) {
+#else
 int main(string[] argv) {
+#endif
 
 	Intl.bindtextdomain(Constants.GETTEXT_PACKAGE, Path.build_filename(Constants.DATADIR,"locale"));
 	Intl.setlocale (LocaleCategory.ALL, "");
@@ -48,12 +71,13 @@ int main(string[] argv) {
 		GLib.stdout.printf("Autovala version: %s\n".printf(Constants.VERSION));
 		break;
 	case "init":
+	case "ginit":
 		if (argv.length!=3) {
 			help();
 			return -1;
 		}
 		var gen = new AutoVala.ManageProject();
-		retval=gen.init(argv[2]);
+		retval=gen.init(argv[2], argv[1] == "ginit");
 		gen.showErrors();
 		if (retval) {
 			GLib.stderr.printf(_("Aborting\n"));
@@ -75,13 +99,27 @@ int main(string[] argv) {
 		}
 		GLib.stderr.printf(_("Done\n"));
 		break;
+	case "meson":
+		if (argv.length!=2) {
+			help();
+			return -1;
+		}
+		var gen = new AutoVala.ManageProject();
+		retval = gen.meson();
+		gen.showErrors();
+		if (retval) {
+			GLib.stderr.printf(_("Aborting\n"));
+			return -1;
+		}
+		GLib.stderr.printf(_("Done\n"));
+		break;
 	case "project_files":
 		if (argv.length!=2) {
 			help();
 			return -1;
 		}
 		var gen = new AutoVala.ManageProject();
-		var retval2=gen.get_files();
+		var retval2 = gen.get_files();
 		if (retval2 == null) {
 			gen.showErrors();
 			GLib.stderr.printf(_("Aborting\n"));
@@ -91,26 +129,67 @@ int main(string[] argv) {
 			GLib.stdout.printf("%s\n",element);
 		}
 		break;
+	case "git":
+		if (argv.length != 2) {
+			help();
+			return -1;
+		}
+		var gen = new AutoVala.ManageProject();
+		var retval2 = gen.get_files();
+		if (retval2 == null) {
+			gen.showErrors();
+			GLib.stderr.printf(_("Aborting\n"));
+			return -1;
+		}
+		string[] spawn_env = Environ.get();
+		string[] spawn_args = {};
+		spawn_args += "git";
+		spawn_args += "add";
+		foreach(var element in retval2) {
+			spawn_args += element;
+		}
+		string output;
+		string errput;
+		int errval;
+		try {
+			GLib.Process.spawn_sync(gen.getProjectPath(),spawn_args,spawn_env,GLib.SpawnFlags.SEARCH_PATH,null, out output, out errput,out errval);
+		} catch(Error e) {
+			print(_("Failed to launch GIT: %s").printf(e.message));
+			return -1;
+		}
+		if (output != "") {
+			print(output+"\n");
+		}
+		if (errput != "") {
+			print(errput+"\n");
+		}
+		if (errval != 0) {
+			return errval;
+		}
+		GLib.stderr.printf(_("Done\n"));
+		break;
 	case "update":
-		if (argv.length!=2) {
+		if (argv.length != 2) {
 			help();
 			return -1;
 		}
 		var gen = new AutoVala.ManageProject();
 		GLib.stdout.printf(_("Updating project file\n"));
-		retval=gen.refresh();
+		retval = gen.refresh();
 		gen.showErrors();
 		if (retval) {
 			GLib.stderr.printf(_("Aborting\n"));
 			return -1;
-		} else {
-			GLib.stdout.printf(_("Updating CMake files\n"));
-			retval=gen.cmake();
-			gen.showErrors();
-			if (retval) {
-				GLib.stderr.printf(_("Aborting\n"));
-				return -1;
-			}
+		}
+		GLib.stdout.printf(_("Updating CMake files\n"));
+		retval = gen.cmake();
+		gen.showErrors();
+		GLib.stdout.printf(_("Updating Meson files\n"));
+		retval |= gen.meson();
+		gen.showErrors();
+		if (retval) {
+			GLib.stderr.printf(_("Aborting\n"));
+			return -1;
 		}
 		GLib.stderr.printf(_("Done\n"));
 		break;
@@ -120,6 +199,7 @@ int main(string[] argv) {
 			return -1;
 		}
 		var gen = new AutoVala.ManageProject();
+		GLib.stdout.printf(_("Updating project file\n"));
 		retval=gen.refresh();
 		gen.showErrors();
 		if (retval) {
@@ -229,6 +309,17 @@ int main(string[] argv) {
 		}
 		generate_valamang(data);
 		GLib.stderr.printf(_("Done\n"));
+		break;
+	case "external":
+		if (argv.length!=3) {
+			help();
+			return -1;
+		}
+		var gen = new AutoVala.ManageProject();
+		var project = gen.get_binaries_list(null,argv[2]);
+		foreach(var data in project.external) {
+			GLib.stdout.printf("%s: %s\n",argv[2],data);
+		}
 		break;
 	default:
 		help();
