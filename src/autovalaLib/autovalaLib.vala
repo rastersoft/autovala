@@ -125,11 +125,13 @@ namespace AutoVala {
 		}
 
 
-		private bool createPath(string configPath, string path) {
+		private bool createPath(string configPath, string path, bool do_check) {
 			try {
 				var folder=File.new_for_path(Path.build_filename(configPath,path));
 				if (folder.query_exists()) {
-					ElementBase.globalData.addWarning(_("The folder '%s' already exists").printf(path));
+					if (do_check) {
+						ElementBase.globalData.addWarning(_("The folder '%s' already exists").printf(path));
+					}
 				} else {
 					folder.make_directory_with_parents();
 				}
@@ -196,6 +198,30 @@ namespace AutoVala {
 		}
 
 		/**
+		 * Creates the folders for the project
+		 */
+		private bool create_folders(string configPath, bool do_check) {
+
+			var error = this.createPath(configPath,"src", do_check);
+			error |= this.createPath(configPath,"src/vapis", do_check);
+			error |= this.createPath(configPath,"po", do_check);
+			error |= this.createPath(configPath,"doc", do_check);
+			error |= this.createPath(configPath,"install", do_check);
+			error |= this.createPath(configPath,"packages", do_check);
+			error |= this.createPath(configPath,"data", do_check);
+			error |= this.createPath(configPath,"data/icons", do_check);
+			error |= this.createPath(configPath,"data/pixmaps", do_check);
+			error |= this.createPath(configPath,"data/interface", do_check);
+			error |= this.createPath(configPath,"data/local", do_check);
+			error |= this.createPath(configPath,"data/bash_completion", do_check);
+			error |= this.createPath(configPath,"data/dbus", do_check);
+			error |= this.createIgnore(configPath,".gitignore");
+			error |= this.createIgnore(configPath,".bzrignore");
+			error |= this.createIgnore(configPath,".hgignore");
+			return error;
+		}
+
+		/**
 		 * Creates a new Autovala project in an specified path
 		 * @param projectName The name for the project
 		 * @param isGenie True if it is a Genie project; false if it is a Vala project
@@ -216,11 +242,11 @@ namespace AutoVala {
 			}
 			string configPath;
 			if (basePath == null) {
-				configPath=Posix.realpath(GLib.Environment.get_current_dir());
+				configPath = Posix.realpath(GLib.Environment.get_current_dir());
 			} else {
 				configPath = basePath;
 			}
-			var directory=File.new_for_path(configPath);
+			var directory = File.new_for_path(configPath);
 
 			try {
 				var enumerator = directory.enumerate_children(FileAttribute.STANDARD_NAME, 0);
@@ -237,28 +263,14 @@ namespace AutoVala {
 			}
 
 
-			var folder=File.new_for_path(Path.build_filename(configPath,"cmake"));
+			var folder = File.new_for_path(Path.build_filename(configPath,"cmake"));
 			if (folder.query_exists()) {
 				ElementBase.globalData.addWarning(_("The 'cmake' folder already exists"));
 			} else {
 				this.copy_cmake(configPath);
 			}
 
-			error|=this.createPath(configPath,"src");
-			error|=this.createPath(configPath,"src/vapis");
-			error|=this.createPath(configPath,"po");
-			error|=this.createPath(configPath,"doc");
-			error|=this.createPath(configPath,"install");
-			error|=this.createPath(configPath,"packages");
-			error|=this.createPath(configPath,"data");
-			error|=this.createPath(configPath,"data/icons");
-			error|=this.createPath(configPath,"data/pixmaps");
-			error|=this.createPath(configPath,"data/interface");
-			error|=this.createPath(configPath,"data/local");
-			error|=this.createPath(configPath,"data/bash_completion");
-			error|=this.createIgnore(configPath,".gitignore");
-			error|=this.createIgnore(configPath,".bzrignore");
-			error|=this.createIgnore(configPath,".hgignore");
+			error |= this.create_folders(configPath, true);
 
 			try {
 				var extension = isGenie ? ".gs" : ".vala";
@@ -637,6 +649,10 @@ namespace AutoVala {
 				return true;
 			}
 
+			//print("Carpeta: %s\n".printf(GLib.Path.get_dirname(ElementBase.globalData.configFile)));
+			// recreate the folders to add every new folder to the project
+			this.create_folders(GLib.Path.get_dirname(ElementBase.globalData.configFile), false);
+
 			ElementBase.globalData.clearAutomatic();
 			ElementBase.globalData.generateExtraData();
 
@@ -645,27 +661,27 @@ namespace AutoVala {
 				element.autoConfigure();
 			}
 
-			error|=ElementVapidir.autoGenerate();
-			error|=ElementGResource.autoGenerate();
-			error|=ElementBashCompletion.autoGenerate();
-			error|=ElementBinary.autoGenerate();
-			error|=ElementData.autoGenerate();
-			error|=ElementDBusService.autoGenerate();
-			error|=ElementDesktop.autoGenerate();
-			error|=ElementDoc.autoGenerate();
-			error|=ElementEosPlug.autoGenerate();
-			error|=ElementGlade.autoGenerate();
-			error|=ElementIcon.autoGenerate();
-			error|=ElementManPage.autoGenerate();
-			error|=ElementPixmap.autoGenerate();
-			error|=ElementPo.autoGenerate();
-			error|=ElementScheme.autoGenerate();
-			error|=ElementValaBinary.autoGenerate();
-			error|=ElementAppData.autoGenerate();
-			error|=ElementTranslation.autoGenerate();
+			error |= ElementVapidir.autoGenerate();
+			error |= ElementGResource.autoGenerate();
+			error |= ElementBashCompletion.autoGenerate();
+			error |= ElementBinary.autoGenerate();
+			error |= ElementData.autoGenerate();
+			error |= ElementDBusService.autoGenerate();
+			error |= ElementDesktop.autoGenerate();
+			error |= ElementDoc.autoGenerate();
+			error |= ElementEosPlug.autoGenerate();
+			error |= ElementGlade.autoGenerate();
+			error |= ElementIcon.autoGenerate();
+			error |= ElementManPage.autoGenerate();
+			error |= ElementPixmap.autoGenerate();
+			error |= ElementPo.autoGenerate();
+			error |= ElementScheme.autoGenerate();
+			error |= ElementValaBinary.autoGenerate();
+			error |= ElementAppData.autoGenerate();
+			error |= ElementTranslation.autoGenerate();
 
 			if (error==false) {
-				error|=this.config.saveConfiguration();
+				error |= this.config.saveConfiguration();
 			}
 			return error;
 		}

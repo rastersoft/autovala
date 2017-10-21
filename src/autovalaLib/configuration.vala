@@ -41,13 +41,13 @@ namespace AutoVala {
 		 * @param init_gettext When called from an internal function, set it to false to avoid initializating gettext twice
 		 */
 
-		public Configuration(string ?basePath,string projectName="",bool init_gettext=true) throws GLib.Error {
+		public Configuration(string ?basePath,string projectName="", bool init_gettext=true) throws GLib.Error {
 
 			if (init_gettext) {
 				Intl.bindtextdomain(AutoValaConstants.GETTEXT_PACKAGE, Path.build_filename(AutoValaConstants.DATADIR,"locale"));
 			}
 
-			this.currentVersion = 25; // currently we support version 25 of the syntax
+			this.currentVersion = 26; // currently we support version 26 of the syntax
 			this.version = 0;
 
 			this.globalData = new AutoVala.Globals(projectName,basePath);
@@ -244,7 +244,9 @@ namespace AutoVala {
 					} else if (line.has_prefix("doc: ")) {
 						element = new ElementDoc();
 					} else if (line.has_prefix("dbus_service: ")) {
-						element = new ElementDBusService();
+						element = new ElementDBusService(false);
+					} else if (line.has_prefix("dbus_system_service: ")) {
+						element = new ElementDBusService(true);
 					} else if (line.has_prefix("desktop: ")) {
 						element = new ElementDesktop();
 					} else if (line.has_prefix("autostart: ")) {
@@ -400,7 +402,7 @@ namespace AutoVala {
 					this.globalData.configFile=GLib.Path.build_filename(GLib.Environment.get_current_dir(),filename);
 				}
 			}
-			this.basepath=GLib.Path.get_dirname(this.globalData.configFile);
+			this.basepath = GLib.Path.get_dirname(this.globalData.configFile);
 			var file=File.new_for_path(this.globalData.configFile);
 			if (file.query_exists()) {
 				try {

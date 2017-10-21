@@ -101,7 +101,7 @@ namespace AutoVala {
 		 * @returns A list with all the files with its relative path to the specified starting path
 		 */
 
-		public static string[] getFilesFromFolder(string folder, string[]? extensions, bool recursive,bool removeFolder=false, string ? masterFolder=null) {
+		public static string[] getFilesFromFolder(string folder, string[]? extensions, bool recursive, bool removeFolder=false, string ? masterFolder=null) {
 
 			string[] files = {};
 
