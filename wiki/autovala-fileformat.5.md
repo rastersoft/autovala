@@ -8,7 +8,7 @@ autovala fileformat - The syntax for autovala configuration file
 
 The project file has a very simple format. Usually you don't need to manually edit it, but when the guesses of autovala are incorrect, you can do it, and your changes will be remembered each time you refresh the file.
 
-The current version for the project file format is **25**.
+The current version for the project file format is **26**.
 
 The file is based on commands in the format:
 
@@ -149,6 +149,10 @@ After that, it comes several commands, some of them repeated several times, to s
             Exec=@DBUS_PREFIX@/bin/cronopete
 
     This allows to use cmake to install everything in a temporary folder, and ensure that the **Exec** entry points to the right place. This is paramount when using these CMakeLists files for creating a **.deb** or **.rpm** package.
+
+    These files will be installed at *share/dbus-1/services* folder.
+
+ * **dbus_system_service**: it is like *dbus_service*, but for D-Bus *system* services. These files, after being processed, will be installed at *share/dbus-1/system-services* folder.
 
  * **desktop**: the file specified is a **.desktop** file that must be copied to **share/applications** to ensure that it is shown in the applications menu.
 

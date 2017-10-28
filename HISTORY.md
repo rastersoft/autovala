@@ -1,4 +1,7 @@
 ## History of versions ##
+* version 1.1.3 (2017-10-29)
+    * Added support for system dbus files
+    * Fixed bug with aliases
 * version 1.1.2 (2017-10-16)
     * Improved the support for Meson build system (thanks to cromerc for the invaluable help)
     * Fixed the parallel compilation under CMake
