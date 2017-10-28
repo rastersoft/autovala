@@ -4,6 +4,50 @@ Autovala-tricks(1)
 
 Autovala tricks - Several tricks for Autovala
 
+## I migrated to Meson from CMake, but my libraries seems to not being installed...
+
+Meson installs libraries at */usr/lib/x86_64-linux-gnu*, while CMake installs them at */usr/lib*. Ensure that you remove any old library from */usr/lib* and */usr/local/lib*.
+
+## Adding the project files to a versioning system like git, mercurial or bazaar
+
+Autovala simplifies this taks by listing for you all the files it knows belong to the project. This is what the *autovala project_files* command is for. You can add all these files to, let's say, a bazaar repository, just running from the project root folder:
+
+    bzr add `autovala project_files`
+
+For git there is some syntactic sugar in the form:
+
+	autovala git
+
+This has the advantage that can be run from any folder, not only from the root.
+
+## Working with GENIE
+
+Genie is another syntax for the Vala compiler. It can be used with Autovala since version 0.99.48.
+
+To create a Genie project just use
+
+    autovala ginit PROJECT_NAME
+
+This will create all the folders for a standard project and an empty **.gs** file to begin writting source code. Autovala will do the same tricks with Genie, like peeking the source files to discover which packages they need to be compiled, or simplify building libraries, or mixing C, Vala and Genie code in the same project.
+
+## Enabling debug symbols
+
+Version 0.99.45 of Autovala added support for the CMake standard way for enabling debug symbols. This is achieved just by using:
+
+    cmake -DCMAKE_BUILD_TYPE=Debug
+
+or
+
+    cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo
+
+The other two default options, *Release* and *MinSizeRel*, won't add debug symbols.
+
+Of course, it is possible to define new build types. Just read the section about **compile_options** and **compile_c_options** in the [file format](autovala-fileformat.5) page.
+
+When cmake is called without specifying a build type, the *Release* one will be used by default.
+
+Thanks to this change, it is possible now to remove the old lines with the conditional DEBUG statements from the .avprj files.
+
 ## Using vapidir and vapi_file commands
 
 The *vapidir* command will add a folder to the list of places where to search for .vapi files, passing them to the *valac* compiler with the *--vapidir=...* command line parameter. This is useful for programs (like Gnome-Builder 3.20) that put their vapi files in a non-standard location, or for libraries (like libkeybinder) that have .vapi files but they aren't included in Debian packages (at least at august 21, 2016). All the autovala's bells and whistles (like automatic search of pkg-config based on *Using* statements inside the source code, checking for existence during cmake execution and so on) are available for the .vapi files inside these folders. These folders are added for all the binaries and libraries in a project.
@@ -38,36 +82,20 @@ An example:
     *gresource: datas_gresource_xml data/datas.gresource.xml
 
     vala_binary: src/example
-    use_resource: datas_gresource_xml
+    use_gresource: datas_gresource_xml
     *vala_check_package: gio-2.0
     *vala_check_package: glib-2.0
     *vala_source: example.vala
 
 Here we have a project called *example*, with a GResource XML file located at *data/* and called *datas.gresource.xml*. This means that AutoVala is able to autodetect and include it automatically. Also, the identifier is the file name with the dots replaced by underscores.
 
-In the *vala_binary* section we added the *use_resource* sub-command, which instructs AutoVala to use that resources in this binary.
+In the *vala_binary* section we added the *use_gresource* sub-command, which instructs AutoVala to use that resources in this binary.
 
 It is mandatory to include GIO in the binaries that use GResource. It is as easy as including the line
 
     //using GIO
 
 at the begining of any of the source files (be carefull: you must put it as a comment, because GIO has not its own VAPI file, but uses a different library).
-
-## Enabling debug symbols
-
-Just add in your .avprj file, in each binary/library section, the lines
-
-    compile_options: -g
-    compile_c_options: -g
-
-If you want to do it conditional, just use something like this:
-
-    if DEBUG
-    compile_options: -g
-    compile_c_options: -g
-    endif
-
-And use "cmake .. -DDEBUG=on" to enable the debug symbols.
 
 ## Creating packages for linux distributions
 
@@ -108,7 +136,7 @@ Finally, the author's name and email will be asked the first time a package is c
 
 ## Adding more package types
 
-As commented, Autovala can generate the metadata por .deb and .rpm source packages. To add more package types, only a new class, derived from **packages** class, must be created. After initializing it and calling **init_all** method, the class should generate the files needed by the packaging system. To help into it, there are several properties that contains useful data, like a list of files needed to build the project (.vapi and .pc files), and for running it (like libraries). The class must use the package utilities to discover which packages contains those files, and use them for generating the dependencies.
+As commented, Autovala can generate the metadata for .deb and .rpm source packages. To add more package types, only a new class, derived from **packages** class, must be created. After initializing it and calling **init_all** method, the class should generate the files needed by the packaging system. To help into it, there are several properties that contains useful data, like a list of files needed to build the project (.vapi and .pc files), and for running it (like libraries). The class must use the package utilities to discover which packages contains those files, and use them for generating the dependencies.
 
 
 ## Using Valama
@@ -336,7 +364,7 @@ Let's supose that the executable is **myExecutable**, and the library is **myLib
 
         vala_library: src/mylibrary_src/myLibrary
         [several commands specific of this library]
-        
+
         *vala_binary: src/myExecutable
         [several commands specific of this binary]
 
@@ -349,7 +377,7 @@ To allow **myexecutable** to use **mylibrary**, just add to **myexecutable** a *
 
         vala_library: src/mylibrary_src/myLibrary
         [several commands specific of this library]
-        
+
         *vala_binary: src/myExecutable
         vala_local_package: myLibrarynamespace
         [several commands specific of this binary]

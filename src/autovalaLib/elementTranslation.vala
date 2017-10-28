@@ -20,7 +20,7 @@ using GLib;
 
 namespace AutoVala {
 
-	public enum TranslationType {C, VALA, GLADE}
+	public enum TranslationType {C, VALA, GLADE, GENIE}
 
 	private class ElementTranslation : ElementBase {
 
@@ -29,6 +29,7 @@ namespace AutoVala {
 			get {return this._translate_type;}
 			set {this._translate_type = value;}
 		}
+
 		protected string? _fullPath2; // Full file path, relative to the project's root
 
 		public string? fullPath2 {
@@ -51,7 +52,7 @@ namespace AutoVala {
 			this.file_list = {}; // this doesn't return files
 		}
 
-		public override bool configureElement(string? fullPathP, string? path, string? name, bool automatic, string? condition, bool invertCondition) {
+		public override bool configureElement(string? fullPathP, string? path, string? name, bool automatic, string? condition, bool invertCondition, bool accept_nonexisting_paths = false) {
 
 			if (fullPathP=="") {
 				ElementBase.globalData.addError(_("Trying to add an empty path: %s").printf(fullPath));
@@ -84,7 +85,7 @@ namespace AutoVala {
 			if ((path==null)||(name==null)) {
 				var file = File.new_for_path(Path.build_filename(ElementBase.globalData.projectFolder,fullPath_t));
 				if (file.query_exists()==false) {
-					ElementBase.globalData.addWarning(_("File %s doesn't exists").printf(fullPath_t));
+					ElementBase.globalData.addWarning(_("File %s doesn't exist").printf(fullPath_t));
 					return false;
 				}
 				if (file.query_file_type(FileQueryInfoFlags.NONE) != GLib.FileType.DIRECTORY) {
@@ -111,7 +112,7 @@ namespace AutoVala {
 			return false;
 		}
 
-		public override bool configureLine(string line, bool automatic, string? condition, bool invertCondition, int lineNumber) {
+		public override bool configureLine(string line, bool automatic, string? condition, bool invertCondition, int lineNumber, string[]? comments) {
 
 			if (false == line.has_prefix(this.command+": ")) {
 				var badCommand = line.split(": ")[0];
@@ -135,7 +136,11 @@ namespace AutoVala {
 				case "glade":
 					this._translate_type = TranslationType.GLADE;
 				break;
+				case "genie":
+					this._translate_type = TranslationType.GENIE;
+				break;
 			}
+			this.comments = comments;
 			return this.configureElement(data.substring(pos+1).strip(),null,null,automatic,condition,invertCondition);
 		}
 
@@ -160,6 +165,9 @@ namespace AutoVala {
 				case TranslationType.VALA:
 					type_v = "vala";
 				break;
+				case TranslationType.GENIE:
+					type_v = "genie";
+				break;
 			}
 
 			try {
@@ -172,6 +180,14 @@ namespace AutoVala {
 				return true;
 			}
 			return false;
+		}
+
+		public override string? getSortId() {
+			if (this.fullPath2 == null) {
+				return this.name;
+			} else {
+				return this.fullPath2;
+			}
 		}
 	}
 }

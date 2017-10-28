@@ -41,19 +41,19 @@ namespace AutoVala {
 		 * @param init_gettext When called from an internal function, set it to false to avoid initializating gettext twice
 		 */
 
-		public Configuration(string ?basePath,string projectName="",bool init_gettext=true) {
+		public Configuration(string ?basePath,string projectName="", bool init_gettext=true) throws GLib.Error {
 
 			if (init_gettext) {
 				Intl.bindtextdomain(AutoValaConstants.GETTEXT_PACKAGE, Path.build_filename(AutoValaConstants.DATADIR,"locale"));
 			}
 
-			this.currentVersion=22; // currently we support version 22 of the syntax
-			this.version=0;
+			this.currentVersion = 26; // currently we support version 26 of the syntax
+			this.version = 0;
 
 			this.globalData = new AutoVala.Globals(projectName,basePath);
 
-			this.globalData.valaVersionMajor=0;
-			this.globalData.valaVersionMinor=16;
+			this.globalData.valaVersionMajor = 0;
+			this.globalData.valaVersionMinor = 16;
 			this.resetCondition();
 		}
 
@@ -188,6 +188,8 @@ namespace AutoVala {
 				ElementBase element=null;
 				bool automatic=false;
 
+				string[] comments = {};
+
 				while((line = dis.read_line(null))!=null) {
 					string ?cond=null;
 					bool invert=false;
@@ -195,7 +197,15 @@ namespace AutoVala {
 
 					this.lineNumber++;
 
-					if ((line[0]=='#')||(line[0]==';')) { // it is a comment; forget it
+					if (line[0]==';') { // it is a comment; forget it
+						continue;
+					}
+
+					if (line[0]=='#') { // it is a comment; append it to the comment lis
+						if (line.has_prefix("### AutoVala Project ###")) {
+							continue; // don't add the header comment
+						}
+						comments += line.strip();
 						continue;
 					}
 					var finalline=line.strip();
@@ -209,7 +219,9 @@ namespace AutoVala {
 						automatic=false;
 					}
 
-					if (line.has_prefix("vapidir: ")) {
+					if (line.has_prefix("external: ")) {
+						element = new ElementExternal();
+					} else if (line.has_prefix("vapidir: ")) {
 						element = new ElementVapidir();
 					} else if (line.has_prefix("translate: ")) {
 						element = new ElementTranslation();
@@ -232,7 +244,9 @@ namespace AutoVala {
 					} else if (line.has_prefix("doc: ")) {
 						element = new ElementDoc();
 					} else if (line.has_prefix("dbus_service: ")) {
-						element = new ElementDBusService();
+						element = new ElementDBusService(false);
+					} else if (line.has_prefix("dbus_system_service: ")) {
+						element = new ElementDBusService(true);
 					} else if (line.has_prefix("desktop: ")) {
 						element = new ElementDesktop();
 					} else if (line.has_prefix("autostart: ")) {
@@ -329,7 +343,8 @@ namespace AutoVala {
 						}
 						continue;
 					}
-					error|=element.configureLine(line,automatic,cond,invert,lineNumber);
+					error|=element.configureLine(line,automatic,cond,invert,lineNumber,comments);
+					comments = {};
 				}
 			} catch (Error e) {
 				this.globalData.configFile="";
@@ -387,7 +402,7 @@ namespace AutoVala {
 					this.globalData.configFile=GLib.Path.build_filename(GLib.Environment.get_current_dir(),filename);
 				}
 			}
-			this.basepath=GLib.Path.get_dirname(this.globalData.configFile);
+			this.basepath = GLib.Path.get_dirname(this.globalData.configFile);
 			var file=File.new_for_path(this.globalData.configFile);
 			if (file.query_exists()) {
 				try {
@@ -436,32 +451,33 @@ namespace AutoVala {
 				this.storeData(ConfigType.BASH_COMPLETION,data_stream);
 				this.storeData(ConfigType.SOURCE_DEPENDENCY,data_stream);
 				this.storeData(ConfigType.BINARY_DEPENDENCY,data_stream);
+				this.storeData(ConfigType.EXTERNAL,data_stream);
 			} catch (Error e) {
 				this.globalData.addError(_("Can't create the config file %s").printf(this.globalData.configFile));
 				return true;
 			}
 			return false;
 		}
-		private void storeData(ConfigType type, GLib.DataOutputStream dataStream) {
+		private void storeData(ConfigType type, GLib.DataOutputStream dataStream) throws GLib.Error {
 
 			bool printed = false;
-			var printConditions = new ConditionalText(dataStream,false);
+			var printConditions = new ConditionalText(dataStream,ConditionalType.AUTOVALA);
 			foreach(var element in this.globalData.globalElements) {
 				if (element.eType == type) {
 					printConditions.printCondition(element.condition,element.invertCondition);
+					if (element.comments != null) {
+						foreach(var comment in element.comments) {
+							dataStream.put_string("%s\n".printf(comment));
+						}
+					}
 					element.storeConfig(dataStream,printConditions);
 					printed = true;
 				}
 			}
 			printConditions.printTail();
 			if (printed) {
-				try {
-					dataStream.put_string("\n");
-				} catch (Error e) {
-					this.globalData.addError(_("Error while storing the data"));
-				}
+				dataStream.put_string("\n");
 			}
 		}
 	}
 }
-

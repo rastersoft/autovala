@@ -66,5 +66,22 @@ namespace AutoVala {
 			}
 			return false;
 		}
+
+		public override bool generateMeson(ConditionalText dataStream, MesonCommon mesonCommon) {
+			try {
+				var counter = Globals.counter;
+				dataStream.put_string("runoutput_%d = run_command('pkg-config',['--variable=completionsdir','bash-completion'])\n".printf(counter));
+				dataStream.put_string("if (runoutput_%d.stdout().strip() != '')\n".printf(counter));
+				dataStream.put_string("\tinstallfile_%d = files('%s')\n".printf(counter,Path.build_filename(this._path,this._name)));
+				dataStream.put_string("\tinstall_data(installfile_%d, install_dir: runoutput_%d.stdout().strip())\n".printf(counter,counter));
+				dataStream.put_string("else\n");
+				dataStream.put_string("\tmessage('%s')\n".printf("Bash completion isn\\'t installed. Definitions will not be built."));
+				dataStream.put_string("endif\n");
+			} catch (GLib.Error e) {
+				ElementBase.globalData.addError(_("Failed to write to meson.build at '%s' element, at '%s' path: %s").printf(this.command,this._path,e.message));
+				return true;
+			}
+			return false;
+		}
 	}
 }

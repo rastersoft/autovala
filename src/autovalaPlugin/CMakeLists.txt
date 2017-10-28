@@ -11,7 +11,7 @@ set (VERSION "0.99")
 set (TESTSRCDIR "${CMAKE_SOURCE_DIR}")
 set (DOLLAR "$")
 
-configure_file (${CMAKE_SOURCE_DIR}/src/autovalaPlugin/Config.vala.cmake ${CMAKE_BINARY_DIR}/src/autovalaPlugin/Config.vala)
+configure_file (${CMAKE_SOURCE_DIR}/src/autovalaPlugin/Config.vala.base ${CMAKE_BINARY_DIR}/src/autovalaPlugin/Config.vala)
 add_definitions(-DGETTEXT_PACKAGE=\"${GETTEXT_PACKAGE}\")
 configure_file (${CMAKE_CURRENT_SOURCE_DIR}/AutovalaPlugin.pc ${CMAKE_CURRENT_BINARY_DIR}/AutovalaPlugin.pc)
 configure_file (${CMAKE_CURRENT_SOURCE_DIR}/AutovalaPlugin.deps ${CMAKE_CURRENT_BINARY_DIR}/AutovalaPlugin.deps)
@@ -26,6 +26,8 @@ ensure_vala_version ("0.30" MINIMUM)
 include (ValaPrecompile)
 
 set (VALA_PACKAGES ${VALA_PACKAGES} atk)
+set (VALA_PACKAGES ${VALA_PACKAGES} gtk+-3.0)
+set (VALA_PACKAGES ${VALA_PACKAGES} x11)
 set (VALA_PACKAGES ${VALA_PACKAGES} cairo)
 set (VALA_PACKAGES ${VALA_PACKAGES} gdk-3.0)
 set (VALA_PACKAGES ${VALA_PACKAGES} gdk-pixbuf-2.0)
@@ -33,14 +35,15 @@ set (VALA_PACKAGES ${VALA_PACKAGES} gee-0.8)
 set (VALA_PACKAGES ${VALA_PACKAGES} gio-2.0)
 set (VALA_PACKAGES ${VALA_PACKAGES} glib-2.0)
 set (VALA_PACKAGES ${VALA_PACKAGES} gobject-2.0)
-set (VALA_PACKAGES ${VALA_PACKAGES} gtk+-3.0)
 set (VALA_PACKAGES ${VALA_PACKAGES} pango)
 set (VALA_PACKAGES ${VALA_PACKAGES} pangocairo)
 set (VALA_PACKAGES ${VALA_PACKAGES} vte-2.91)
-set (VALA_PACKAGES ${VALA_PACKAGES} x11)
 
 set (APP_SOURCES ${APP_SOURCES} ${CMAKE_CURRENT_BINARY_DIR}/Config.vala)
+set (APP_SOURCES ${APP_SOURCES} CreateNewProject.vala)
 set (APP_SOURCES ${APP_SOURCES} PanedPercentage.vala)
+set (APP_SOURCES ${APP_SOURCES} ProjectProperties.vala)
+set (APP_SOURCES ${APP_SOURCES} ProjectViewerMenu.vala)
 set (APP_SOURCES ${APP_SOURCES} actionbuttons.vala)
 set (APP_SOURCES ${APP_SOURCES} fileview.vala)
 set (APP_SOURCES ${APP_SOURCES} outputview.vala)
@@ -49,22 +52,13 @@ set (APP_SOURCES ${APP_SOURCES} searchview.vala)
 
 set (CUSTOM_VAPIS_LIST ${CUSTOM_VAPIS_LIST} ${CMAKE_BINARY_DIR}/src/autovalaLib/AutoVala.vapi)
 
-if (DEBUG)
-	set (COMPILE_OPTIONS ${COMPILE_OPTIONS} -D DEBUG)
-	set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DDEBUG " )
-	set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DDEBUG " )
-endif ()
+
+if ((${CMAKE_BUILD_TYPE} STREQUAL "Debug") OR (${CMAKE_BUILD_TYPE} STREQUAL "RelWithDebInfo"))
+	set(COMPILE_OPTIONS ${COMPILE_OPTIONS} "-g")
+endif()
+
 set (COMPILE_OPTIONS ${COMPILE_OPTIONS} --library=AutovalaPlugin --gir AutovalaPlugin-0.0.gir )
-if (DEBUG)
-	set (COMPILE_OPTIONS ${COMPILE_OPTIONS} -g )
-endif ()
-
 set (COMPILE_OPTIONS ${COMPILE_OPTIONS} --gresources=${CMAKE_SOURCE_DIR}/data/extras.gresource.xml )
-
-if (DEBUG)
-	set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g " )
-endif ()
-
 
 vala_precompile(VALA_C AutovalaPlugin
 	${APP_SOURCES}
@@ -83,7 +77,9 @@ GENERATE_HEADER
 SET (VALA_C ${VALA_C} ${extras_gresource_xml_C_FILE})
 add_library(AutovalaPlugin SHARED ${VALA_C})
 
-add_dependencies (AutovalaPlugin extras_gresource_xml)
+set ( AutovalaPlugin_DEPENDENCIES ${AutovalaPlugin_DEPENDENCIES} extras_gresource_xml )
+set ( AutovalaPlugin_DEPENDENCIES ${AutovalaPlugin_DEPENDENCIES} AutoVala )
+add_dependencies( AutovalaPlugin ${AutovalaPlugin_DEPENDENCIES} )
 set_target_properties( AutovalaPlugin PROPERTIES
 VERSION
 	0.99

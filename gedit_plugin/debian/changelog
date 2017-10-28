@@ -1,3 +1,9 @@
+autovala-gedit (0.99.47-Debian1) sid; urgency=low
+
+  * Updated the plugin to last version
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Sun, 23 Oct 2016 23:55:00 +0200
+
 autovala-gedit (0.99.36-Debian1) sid; urgency=low
 
   * Now the Gedit plugin can be installed in the right folders both locally and globally

@@ -6,11 +6,11 @@ autovala keeping your changes - How to manually modify the configuration file wi
 
 # DESCRIPTION
 
-By default, nearly all the lines in the project file starts with an asterisk. Those lines contains automatically created commands, and every time the user launches the command **autovala refresh**, they are deleted and recreated using the current files in the disk.
+By default, nearly all the lines in the project file start with an asterisk. Those lines contain automatically created commands, and every time the user launches the command **autovala refresh** or **autovala update**, they are deleted and recreated using the current files in the disk and the [rules](autovala-rules.7).
 
-Lines without the asterisk contains manually set commands, and they are not deleted before recreating the project file.
+Lines without the asterisk contain commands specified manually by the user, and they are not deleted before recreating the project file.
 
-Also, when an automatically created **vala_library** or **vala_binary** command (this is, prefixed with the asterisk) contains at least one subcommand added manually, that command will be considered manually added too, so it will be preserved even if you delete its folder. This is made this way to ensure that the manual data is preserved always.
+Also, when an automatically created **vala_library** or **vala_binary** command (this is, prefixed with the asterisk) contains at least one subcommand added manually, that command will be considered manually added too, so it will be preserved even if you delete its folder. This is made this way to ensure that the manual data is preserved in all cases.
 
 Example: let's suppose we have this project file:
 
@@ -73,7 +73,7 @@ To ensure that the change remains, it must be put in a line **without** the aste
         *vala_source: configuration.vala
         *vala_source: autovala.vala
 
-Now the change will remain, no matter how many times **autovala refresh** or **autovala update** is run.
+Now the change will remain, no matter how many times **autovala refresh** or **autovala update** are run.
 
 # SEE ALSO
 

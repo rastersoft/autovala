@@ -30,21 +30,21 @@ namespace AutoVala {
 			this.command = "include";
 		}
 
-		public override bool configureElement(string? fullPathP, string? path, string? name, bool automatic, string? condition, bool invertCondition) {
+		public override bool configureElement(string? fullPathP, string? path, string? name, bool automatic, string? condition, bool invertCondition, bool accept_nonexisting_paths = false) {
 
 			this.post_condition = condition;
 			this.post_invertCondition = invertCondition;
 
-			return base.configureElement(fullPathP, path, name, automatic, null, false);
+			return base.configureElement(fullPathP, path, name, automatic, null, false, accept_nonexisting_paths);
 
 		}
 
 		public override bool generateCMakePostData(DataOutputStream dataStream,DataOutputStream dataStreamGlobal) {
 
 			try {
-				var condition = new ConditionalText(dataStream,true);
+				var condition = new ConditionalText(dataStream,ConditionalType.CMAKE);
 				condition.printCondition(this.post_condition,this.post_invertCondition);
-				dataStream.put_string("include(${CMAKE_CURRENT_SOURCE_DIR}/"+this.name+")\n");
+				dataStream.put_string("\ninclude(${CMAKE_CURRENT_SOURCE_DIR}/"+this.name+")\n");
 				condition.printTail();
 			} catch (Error e) {
 				ElementBase.globalData.addError(_("Failed to write the CMakeLists file for %s").printf(this.name));
@@ -53,10 +53,22 @@ namespace AutoVala {
 			return false;
 		}
 
+		public override bool generateMeson(ConditionalText dataStream, MesonCommon mesonCommon) {
+
+			ElementBase.globalData.addWarning(_("This project has an INCLUDE statement, which is valid only for CMAKE. Maybe it will fail to build."));
+			return false;
+
+		}
+
 		public override bool storeConfig(DataOutputStream dataStream,ConditionalText printConditions) {
 
-			printConditions.printCondition(this.post_condition,this.post_invertCondition);
-			return base.storeConfig(dataStream,printConditions);
+			try {
+				printConditions.printCondition(this.post_condition,this.post_invertCondition);
+				return base.storeConfig(dataStream,printConditions);
+			} catch (GLib.Error e) {
+				ElementBase.globalData.addError(_("Failed to write at '%s' element, at '%s' path: %s").printf(this.command,this._path,e.message));
+				return true;
+			}
 		}
 	}
 }

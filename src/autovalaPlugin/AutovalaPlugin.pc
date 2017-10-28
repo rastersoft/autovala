@@ -9,4 +9,4 @@ Description: AutovalaPlugin
 Version: 0.99
 Libs: -L@DOLLAR@{libdir} -lAutovalaPlugin
 Cflags: -I@DOLLAR@{includedir}
-Requires: AutoVala atk cairo gdk-3.0 gdk-pixbuf-2.0 gee-0.8 gio-2.0 glib-2.0 gobject-2.0 gtk+-3.0 pango pangocairo vte-2.91 x11
+Requires: AutoVala atk gtk+-3.0 x11 cairo gdk-3.0 gdk-pixbuf-2.0 gee-0.8 gio-2.0 glib-2.0 gobject-2.0 pango pangocairo vte-2.91

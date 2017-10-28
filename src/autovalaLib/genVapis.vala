@@ -73,15 +73,16 @@ namespace AutoVala {
 		 * @param minor Minor number of the version of Vala compiler currently installed
 		 * @param local If true, want to process local VAPI files, not the system-wide ones
 		 */
-		public ReadVapis(int major, int minor, bool local=false) {
+		public ReadVapis(int major, int minor, bool local=false) throws GLib.Error {
 
 			this.errorList={};
 			try {
 				this.regexGirVersion=new GLib.Regex("gir_version( )*=( )*\"[0-9]+(.[0-9]+)?\"");
 				this.regexVersion=new GLib.Regex("[0-9]+(.[0-9]+)?");
 				this.regexNamespace=new GLib.Regex("^[ \t]*namespace[ ]+[^ \\{]+[ ]*");
-			} catch (Error e) {
-				ElementBase.globalData.addError(_("Can't generate the regular expressions to read the VAPI files."));
+			} catch (GLib.Error e) {
+				ElementBase.globalData.addError(_("Failed to generate regular expressions to analyze vala files: %s").printf(e.message));
+				throw e;
 			}
 
 			this.namespaces=new Gee.HashMap<string,namespacesElement?>();

@@ -1,0 +1,6 @@
+# Things to do
+
+ * Allow to resize the Autovala panel
+ * Add a menu entry to allow to create a new Autovala project
+ * Add buttons or menu entries to allow to refresh, update and build the project from the editor
+ * Allow to define binaries and libraries in the project from the editor, without needing to manually edit the .avprj file

@@ -16,4 +16,5 @@ libpeas-1.0
 libxml-2.0
 pango
 pangocairo
+vte-2.91
 x11

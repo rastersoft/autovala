@@ -23,7 +23,7 @@ namespace AutoVala {
 
 	public enum ConfigType {GLOBAL, VALA_BINARY, VALA_LIBRARY, BINARY, ICON, PIXMAP, PO, GLADE, DBUS_SERVICE, DESKTOP, AUTOSTART,
 							 EOS_PLUG, SCHEME, DATA, DOC, INCLUDE, IGNORE, CUSTOM, DEFINE, MANPAGE, BASH_COMPLETION, SOURCE_DEPENDENCY,
-							 BINARY_DEPENDENCY, APPDATA, GRESOURCE, TRANSLATION, VAPIDIR }
+							 BINARY_DEPENDENCY, APPDATA, GRESOURCE, TRANSLATION, VAPIDIR, EXTERNAL }
 
 	/**
 	 * Represents a generic file of the project, with its path, filename, compilation condition...
@@ -44,6 +44,8 @@ namespace AutoVala {
 		protected string _name; // File name
 		protected ConfigType _type; // File type
 		protected string command; // command in the config file
+
+		public string[]? comments = null;
 
 		public string? fullPath {
 			get {return this._fullPath;}
@@ -78,7 +80,6 @@ namespace AutoVala {
 		public ElementBase() {
 		}
 
-
 		/**
 		 * fills the list of files for this element
 		 */
@@ -100,13 +101,13 @@ namespace AutoVala {
 		 * @returns A list with all the files with its relative path to the specified starting path
 		 */
 
-		public static string[] getFilesFromFolder(string folder, string[]? extensions, bool recursive,bool removeFolder=false, string ? masterFolder=null) {
+		public static string[] getFilesFromFolder(string folder, string[]? extensions, bool recursive, bool removeFolder=false, string ? masterFolder=null) {
 
 			string[] files = {};
 
 			var dirPath=File.new_for_path(Path.build_filename(ElementBase.globalData.projectFolder,folder));
 			if (dirPath.query_exists()==false) {
-				ElementBase.globalData.addWarning(_("Directory %s doesn't exists").printf(folder));
+				ElementBase.globalData.addWarning(_("Directory %s doesn't exist").printf(folder));
 				return files;
 			}
 
@@ -180,14 +181,14 @@ namespace AutoVala {
 		 * @param invertCondition When true, invert the condition (this is, the file is after the #else statement)
 		 * @return //true// if the file has been already processed
 		 */
-		public virtual bool configureElement(string? fullPathP, string? path, string? name, bool automatic, string? condition, bool invertCondition) {
+		public virtual bool configureElement(string? fullPathP, string? path, string? name, bool automatic, string? condition, bool invertCondition, bool accept_nonexisting_paths = false) {
 
-			if (fullPathP=="") {
+			if (fullPathP == "") {
 				ElementBase.globalData.addError(_("Trying to add an empty path: %s").printf(fullPath));
 				return true;
 			}
 
-			string? fullPath=fullPathP;
+			string? fullPath = fullPathP;
 			if (fullPath != null) {
 
 				if (fullPath.has_suffix(Path.DIR_SEPARATOR_S)) {
@@ -201,10 +202,15 @@ namespace AutoVala {
 			}
 
 			this._fullPath = fullPath;
-			if ((path==null)||(name==null)) {
-				var file = File.new_for_path(Path.build_filename(ElementBase.globalData.projectFolder,fullPath));
-				if (file.query_exists()==false) {
-					ElementBase.globalData.addWarning(_("File %s doesn't exists").printf(fullPath));
+			if ((path == null) || (name == null)) {
+				GLib.File file;
+				if ((fullPath != null) && (fullPath[0] == GLib.Path.DIR_SEPARATOR)) {
+					file = File.new_for_path(fullPath);
+				} else {
+					file = File.new_for_path(Path.build_filename(ElementBase.globalData.projectFolder,fullPath));
+				}
+				if ((accept_nonexisting_paths == false) && (file.query_exists()==false)) {
+					ElementBase.globalData.addWarning(_("File %s doesn't exist").printf(fullPath));
 					return false;
 				}
 				if (file.query_file_type(FileQueryInfoFlags.NONE)!=FileType.DIRECTORY) {
@@ -242,14 +248,16 @@ namespace AutoVala {
 		 * @param invertCondition When true, invert the condition (this is, the file is after the #else statement)
 		 * return //true// if there was an error; //false// if not. The error texts can be obtained by calling to returnErrors()
 		 */
-		public virtual bool configureLine(string line, bool automatic, string? condition, bool invertCondition, int lineNumber) {
+		public virtual bool configureLine(string line, bool automatic, string? condition, bool invertCondition, int lineNumber,string[]? comments) {
 
 			if (false == line.has_prefix(this.command+": ")) {
 				var badCommand = line.split(": ")[0];
 				ElementBase.globalData.addError(_("Invalid command %s after command %s (line %d)").printf(badCommand,this.command, lineNumber));
 				return true;
 			}
-			var data=line.substring(2+this.command.length).strip();
+
+			var data=line.substring(1+this.command.length).strip();
+			this.comments = comments;
 
 			return this.configureElement(data,null,null,automatic,condition,invertCondition);
 		}
@@ -303,6 +311,29 @@ namespace AutoVala {
 		public virtual void endedCMakeFile() {
 		}
 
+		/**
+		 * Adds the specific data for this element to a Meson build file that must be added before anything
+		 * @param dataStream The data stream for the meson.build file being processed
+		 * @return //true// if there was an error; //false// if not. The error texts can be obtained by calling to returnErrors()
+		 */
+		public virtual bool generateMesonHeader(ConditionalText dataStream, MesonCommon mesonCommon) {
+			return false;
+		}
+
+		/**
+		 * Adds the specific data for this element to a Meson build file
+		 * @param dataStream The data stream for the meson.build file being processed
+		 * @return //true// if there was an error; //false// if not. The error texts can be obtained by calling to returnErrors()
+		 */
+		public virtual bool generateMeson(ConditionalText dataStream, MesonCommon mesonCommon) {
+			return false;
+		}
+
+		/**
+		 * Notifies to all the objects that Autovala ended generating the meson script
+		 */
+		public virtual void endedMeson(MesonCommon mesonCommon) {
+		}
 
 		/**
 		 * Removes all the automatic data in the element
@@ -341,6 +372,29 @@ namespace AutoVala {
 		 */
 		public virtual void sortElements() {
 			return;
+		}
+
+		/**
+		 * Returns the sorting element, to allow to sort by any internal field
+		 */
+		public virtual string? getSortId() {
+			return this.fullPath;
+		}
+
+		protected string? getRelativePath(string origin, string destination) {
+
+			if (origin == destination) {
+				return null;
+			}
+
+			string output = "";
+			foreach(var element in origin.split("/")) {
+				if (element != "") {
+					output += "../";
+				}
+			}
+			output += destination;
+			return output;
 		}
 	}
 }

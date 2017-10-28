@@ -95,7 +95,7 @@ namespace AutoVala {
 			}
 		}
 
-		private void print_key(DataOutputStream of,Gee.HashMultiMap<string,string> keylist,bool multiline,string key,string val) {
+		private void print_key(DataOutputStream of,Gee.HashMultiMap<string,string> keylist,bool multiline,string key,string val) throws IOError {
 
 			Gee.Collection<string> final_value;
 			if (!keylist.contains(key)) {
@@ -221,7 +221,12 @@ namespace AutoVala {
 				ElementBase.globalData.addWarning(_("Failed to delete rpmbuild/SPECS/SPEC file (%s)").printf(e.message));
 			}
 			if (f_control.query_exists()) {
-				f_control.delete();
+				try {
+					f_control.delete();
+				} catch (Error e) {
+					ElementBase.globalData.addError(_("Failed to delete rpmbuild/SPECS/control file (%s)").printf(e.message));
+					return true;
+				}
 			}
 			try {
 				var dis = f_control.create_readwrite(GLib.FileCreateFlags.PRIVATE);

@@ -32,7 +32,7 @@ namespace AutoVala {
 			this.identifier = "";
 		}
 
-		public override bool configureLine(string line, bool automatic, string? condition, bool invertCondition, int lineNumber) {
+		public override bool configureLine(string line, bool automatic, string? condition, bool invertCondition, int lineNumber, string[]? comments) {
 
 			if (false == line.has_prefix(this.command+": ")) {
 				var badCommand = line.split(": ")[0];
@@ -46,6 +46,7 @@ namespace AutoVala {
 				return true;
 			}
 			this.identifier = data.substring(0,pos).strip();
+			this.comments = comments;
 			return this.configureElement(data.substring(pos).strip(),null,null,automatic,condition,invertCondition);
 		}
 
@@ -137,6 +138,22 @@ namespace AutoVala {
 			this.file_list += full_path;
 
 		}
+
+		public override bool generateMeson(ConditionalText dataStream, MesonCommon mesonCommon) {
+
+			this.add_inner_files();
+
+			try {
+				dataStream.put_string("%s_generator = generator(find_program('glib-compile-resources'), arguments: [ '--sourcedir=@SOURCE_DIR@/%s' , '--generate-source', '--target=@BUILD_DIR@/%s.c', '@INPUT@'], output: '@PLAINNAME@.c')\n\n".printf(this._name.replace(".","_"),this.path,this._name));
+				dataStream.put_string("%s_file_c = %s_generator.process(['%s'])\n\n".printf(this._name.replace(".","_"),this._name.replace(".","_"),this.fullPath));
+
+			} catch (Error e) {
+				ElementBase.globalData.addError(_("Failed to write to meson.build at '%s' element, at '%s' path: %s").printf(this.command,this._path,e.message));
+				return true;
+			}
+			return false;
+		}
+
 
 		public override bool generateCMake(DataOutputStream dataStream) {
 
