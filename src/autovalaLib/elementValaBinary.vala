@@ -1487,12 +1487,10 @@ namespace AutoVala {
 
 			string girFilename = "";
 			string libFilename = this.name.replace("-","_");
-			string fullLibFilename = this.name;
 			if (this._currentNamespace != null) {
 				// Build the GIR filename
 				girFilename = this._currentNamespace + "-" + this.version.split(".")[0] + ".0.gir";
 				libFilename = this._currentNamespace;
-				fullLibFilename = this._currentNamespace;
 			}
 			string depsFilename = libFilename+".deps";
 
@@ -1746,7 +1744,7 @@ namespace AutoVala {
 
 				foreach(var alias in this._aliases) {
 					printConditions.printCondition(alias.condition, alias.invertCondition);
-					dataStream.put_string("meson.add_install_script('sh', '-c', 'ln -sf %s ${DESTDIR}/${MESON_INSTALL_PREFIX}/bin/%s')\n".printf(fullLibFilename, alias.elementName));
+					dataStream.put_string("meson.add_install_script('sh', '-c', 'ln -sf %s ${DESTDIR}/${MESON_INSTALL_PREFIX}/bin/%s')\n".printf(this.name, alias.elementName));
 				}
 				printConditions.printTail();
 
@@ -2267,7 +2265,7 @@ namespace AutoVala {
 						dataStream.put_string("else()\n");
 						dataStream.put_string("\tset(ALIAS_DESTINATION_PATH ${CMAKE_INSTALL_BINDIR})\n");
 						dataStream.put_string("endif()\n");
-						dataStream.put_string("install(CODE \"execute_process(COMMAND ln -sf %s \\$ENV{DESTDIR}/${PREFIX}/${ALIAS_DESTINATION_PATH}/%s )\")\n".printf(libFilename, alias.elementName));
+						dataStream.put_string("install(CODE \"execute_process(COMMAND ln -sf %s \\$ENV{DESTDIR}/${PREFIX}/${ALIAS_DESTINATION_PATH}/%s )\")\n".printf(this.name, alias.elementName));
 					}
 					printConditions.printTail();
 				}
