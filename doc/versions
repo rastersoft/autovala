@@ -13,6 +13,7 @@
 <li>Added support for configuration dbus files</li>
 <li>Fixed bug with aliases</li>
 <li>Fixed bug in meson when installing data files</li>
+<li>Now doesn't add conditionals to the <em>translate</em> statement when a source file is conditional</li>
 </ul></li>
 <li>version 1.1.2 (2017-10-16)
 <ul>
