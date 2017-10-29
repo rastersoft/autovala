@@ -56,7 +56,7 @@ namespace AutoVala {
 
 		public override bool generateMeson(ConditionalText dataStream, MesonCommon mesonCommon) {
 			try {
-				dataStream.put_string("install_data( '%s',install_dir: join_paths(get_option('prefix'),get_option('datadir'),'dbus-1','system.d'))\n".printf(Path.build_filename(this._fullPath)));
+				dataStream.put_string("install_data( '%s',install_dir: join_paths(get_option('prefix'),get_option('datadir'),'dbus-1','system.d'))\n".printf(this._fullPath));
 			} catch (Error e) {
 				ElementBase.globalData.addError(_("Failed to write to meson.build at '%s' element, at '%s' path: %s").printf(this.command,this._path,e.message));
 				return true;
