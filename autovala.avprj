@@ -1,7 +1,7 @@
 ### AutoVala Project ###
 autovala_version: 27
 project_name: autovala
-global_version: 1.2.0
+project_version: 1.2.0
 vala_version: 0.30
 
 custom: data/debian share/autovala/debian

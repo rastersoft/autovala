@@ -221,8 +221,8 @@ namespace AutoVala {
 
 					if (line.has_prefix("external: ")) {
 						element = new ElementExternal();
-					} else if (line.has_prefix("global_version: ")) {
-						var gversion = line.substring(16).strip();
+					} else if (line.has_prefix("project_version: ")) {
+						var gversion = line.substring(17).strip();
 						if (!this.check_version(gversion)) {
 							this.globalData.addError(_("Global version number must be in the form X.Y or X.Y.Z, being X, Y and Z numbers with one or more digits (line %d)").printf(this.lineNumber));
 							error = true;
@@ -436,7 +436,7 @@ namespace AutoVala {
 				data_stream.put_string("autovala_version: %d\n".printf(this.currentVersion));
 				data_stream.put_string("project_name: %s\n".printf(this.globalData.projectName));
 				if (this.globalData.global_version != null) {
-					data_stream.put_string("global_version: %s\n".printf(this.globalData.global_version));
+					data_stream.put_string("project_version: %s\n".printf(this.globalData.global_version));
 				}
 				if (this.globalData.versionAutomatic) {
 					data_stream.put_string("*vala_version: %d.%d\n\n".printf(this.globalData.valaMajor,this.globalData.valaMinor));
