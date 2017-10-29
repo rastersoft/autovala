@@ -306,7 +306,7 @@ namespace AutoVala {
 		public void addError(string errorMsg) {
 			this.error = true;
 			// Shows an Error message
-			this.errorList += _("Error: %s").printf(errorMsg);
+			this.errorList += "\033[1;31m%s\033[0m %s".printf(_("Error:"),errorMsg);
 		}
 
 		/**
@@ -316,7 +316,7 @@ namespace AutoVala {
 		public void addWarning(string warningMsg) {
 			this.warning = true;
 			// Shows a Warning message
-			this.errorList += _("Warning: %s").printf(warningMsg);
+			this.errorList += "\033[1;33m%s\033[0m %s".printf(_("Warning:"),warningMsg);
 		}
 
 		/**
