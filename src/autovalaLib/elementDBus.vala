@@ -24,8 +24,10 @@ namespace AutoVala {
 
 		private static bool addedDBusPrefix;
 		private bool is_system;
+		private string? incorrect_file;
 
 		public ElementDBusService(bool is_system) {
+			this.incorrect_file = null;
 			this._type = ConfigType.DBUS_SERVICE;
 			this.is_system = is_system;
 			if (is_system) {
@@ -44,13 +46,9 @@ namespace AutoVala {
 			if (filePath.query_exists()) {
 				var files = ElementBase.getFilesFromFolder("data", {".service", ".service.base"}, false);
 				foreach (var file in files) {
-					ElementBase.globalData.addWarning(_("The DBus file %s at 'data' folder should be moved to 'data/dbus'".printf(file)));
 					ElementDBusService element;
-					if ((file.has_suffix(".system.service")) || (file.has_suffix(".system.service.base"))) {
-						element = new ElementDBusService(true);
-					} else {
-						element = new ElementDBusService(false);
-					}
+					element = new ElementDBusService(false);
+					element.incorrect_file = file;
 					error |= element.autoConfigure(file);
 				}
 			}
@@ -145,5 +143,14 @@ namespace AutoVala {
 			}
 			return false;
 		}
+
+		public override bool storeConfig(DataOutputStream dataStream, ConditionalText printConditions) {
+
+			if (this.incorrect_file != null) {
+				ElementBase.globalData.addWarning(_("The DBus file %s at 'data' folder should be moved to 'data/dbus'".printf(this.incorrect_file)));
+			}
+			return base.storeConfig(dataStream, printConditions);
+		}
+
 	}
 }
