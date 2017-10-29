@@ -9,6 +9,7 @@ src/autovalaLib/elementBashCompletion.vala
 src/autovalaLib/elementBinary.vala
 src/autovalaLib/elementCustom.vala
 src/autovalaLib/elementDBus.vala
+src/autovalaLib/elementDBusConf.vala
 src/autovalaLib/elementData.vala
 src/autovalaLib/elementDefine.vala
 src/autovalaLib/elementDesktop.vala

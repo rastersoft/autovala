@@ -154,6 +154,8 @@ After that, it comes several commands, some of them repeated several times, to s
 
  * **dbus_system_service**: it is like *dbus_service*, but for D-Bus *system* services. These files, after being processed, will be installed at *share/dbus-1/system-services* folder.
 
+ * **dbus_config**: specifies that the specified file is a dbus configuration file and it must be installed at **share/dbus-1/system.d**.
+
  * **desktop**: the file specified is a **.desktop** file that must be copied to **share/applications** to ensure that it is shown in the applications menu.
 
  * **eos_plug**: the file is an ElementaryOS plug for the configuration system

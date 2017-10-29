@@ -247,6 +247,8 @@ namespace AutoVala {
 						element = new ElementDBusService(false);
 					} else if (line.has_prefix("dbus_system_service: ")) {
 						element = new ElementDBusService(true);
+					} else if (line.has_prefix("dbus_config: ")) {
+						element = new ElementDBusConfiguration();
 					} else if (line.has_prefix("desktop: ")) {
 						element = new ElementDesktop();
 					} else if (line.has_prefix("autostart: ")) {

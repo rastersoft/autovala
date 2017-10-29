@@ -36,7 +36,9 @@ The rules followed by Autovala are the following:
 
 * Each **.service** and **.service.base** files in **data/dbus** will be presumed to be a D-Bus service, and will be preprocessed to put the right folder ( **share/dbus-1/services** ). Also, for compatibility reasons, the same files at **data** will be processed, but a warning message recommending to move it into **data/bus** will be shown.
 
-* Each **system.service** and **system.service.base** files in **data/dbus** will be presumed to be a system D-Bus service, and will be preprocessed to put the right folder ( **share/dbus-1/system-services** ).
+* Each **.system.service** and **.system.service.base** files in **data/dbus** will be presumed to be a system D-Bus service, and will be preprocessed to put the right folder ( **share/dbus-1/system-services** ).
+
+* Each **.conf** file in **data/dbus** will be presumed to be a D-Bus configuration file, and will be configured to be installed in the right folder (usually *share/dbus-1/system.d*)
 
 * Each **.plug** file in **data/** will be presumed to be an ElementaryOS PLUG file
 

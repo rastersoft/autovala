@@ -40,7 +40,7 @@ namespace AutoVala {
 
 		public static bool autoGenerate() {
 
-			bool error=false;
+			bool error = false;
 			var filePath = File.new_for_path(Path.build_filename(ElementBase.globalData.projectFolder, "data"));
 
 			if (filePath.query_exists()) {
