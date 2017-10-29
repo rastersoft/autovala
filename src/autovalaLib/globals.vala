@@ -30,11 +30,13 @@ namespace AutoVala {
 		public string? projectFolder; // The absolute path to the project's root folder
 		public string? configFile; // The absolute path to the project definition file
 
-		public int valaMajor; // Vala version currently installed in the system (major number)
-		public int valaMinor; // Vala version currently installed in the system (minor number)
-		public int valaVersionMajor; // Minimun Vala version needed to compile the project (major number)
-		public int valaVersionMinor; // Minimun Vala version needed to compile the project (minor number)
-		public bool versionAutomatic; // If true, the compiler version in the file has been automatically detected (it has an asterisk in the file)
+		public string? global_version; // The global version number
+
+		public int valaMajor; // vala version currently installed in the system (major number)
+		public int valaMinor; // vala version currently installed in the system (minor number)
+		public int valaVersionMajor; // minimun vala version needed to compile the project (major number)
+		public int valaVersionMinor; // minimun vala version needed to compile the project (minor number)
+		public bool versionAutomatic; // if true, the compiler version in the file has been automatically detected (it has an asterisk in the file)
 
 		public string[] excludeFiles; // A list with all the files and paths that must be avoided when doing automatic detection
 		public Gee.List<ElementBase> globalElements; // The list of all elements
@@ -68,8 +70,9 @@ namespace AutoVala {
 
 			ElementBase.globalData = this;
 			ConditionalText.globalData = this;
-			this.localModules=null;
-			this.pathList=null;
+			this.global_version = null;
+			this.localModules = null;
+			this.pathList = null;
 			this.error = false;
 			this.warning = false;
 			this.projectName = projectName;
