@@ -1868,10 +1868,8 @@ namespace AutoVala {
 						var dis = fname.create(FileCreateFlags.NONE);
 						var dataStream2 = new DataOutputStream(dis);
 						dataStream2.put_string("prefix=@CMAKE_INSTALL_PREFIX@\n");
-						dataStream2.put_string("real_prefix=@CMAKE_INSTALL_PREFIX@\n");
-						dataStream2.put_string("exec_prefix=@DOLLAR@{prefix}\n");
-						dataStream2.put_string("libdir=@DOLLAR@{exec_prefix}/${CMAKE_INSTALL_LIBDIR}\n");
-						dataStream2.put_string("includedir=@DOLLAR@{exec_prefix}/${CMAKE_INSTALL_INCLUDEDIR}\n\n");
+						dataStream2.put_string("libdir=@DOLLAR@{prefix}/${CMAKE_INSTALL_LIBDIR}\n");
+						dataStream2.put_string("includedir=@DOLLAR@{prefix}/${CMAKE_INSTALL_INCLUDEDIR}\n\n");
 						dataStream2.put_string("Name: "+libFilename+"\n");
 						dataStream2.put_string("Description: "+libFilename+"\n");
 						dataStream2.put_string("Version: "+this.version+"\n");

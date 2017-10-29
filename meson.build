@@ -30,7 +30,7 @@ meson.add_install_script(join_paths(meson.current_source_dir(),'meson_scripts','
 
 installfile_1 = files('data/com.rastersoft.autovala.metainfo.xml')
 install_data(installfile_1, install_dir: join_paths(get_option('prefix'),'appdata'))
-meson.add_install_script(join_paths(meson.current_source_dir(),'meson_scripts','install_data.sh'),join_paths(get_option('prefix'),get_option('datadir'),'doc'),join_paths(meson.current_source_dir(),'doc','','*'))
+meson.add_install_script(join_paths(meson.current_source_dir(),'meson_scripts','install_data.sh'),join_paths(get_option('prefix'),get_option('datadir'),'doc','autovala'),join_paths(meson.current_source_dir(),'doc','','*'))
 
 meson.add_install_script(join_paths(meson.current_source_dir(),'meson_scripts','install_manpage.sh'),
 	'2', join_paths(get_option('mandir'),'man5'),

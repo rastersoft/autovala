@@ -1,8 +1,6 @@
 prefix=@CMAKE_INSTALL_PREFIX@
-real_prefix=@CMAKE_INSTALL_PREFIX@
-exec_prefix=@DOLLAR@{prefix}
-libdir=@DOLLAR@{exec_prefix}/${CMAKE_INSTALL_LIBDIR}
-includedir=@DOLLAR@{exec_prefix}/${CMAKE_INSTALL_INCLUDEDIR}
+libdir=@DOLLAR@{prefix}/${CMAKE_INSTALL_LIBDIR}
+includedir=@DOLLAR@{prefix}/${CMAKE_INSTALL_INCLUDEDIR}
 
 Name: AutovalaPlugin
 Description: AutovalaPlugin
