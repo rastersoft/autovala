@@ -23,8 +23,10 @@ src/autovalaLib/elementIcon.vala
 src/autovalaLib/elementIgnore.vala
 src/autovalaLib/elementInclude.vala
 src/autovalaLib/elementManpage.vala
+src/autovalaLib/elementMimetype.vala
 src/autovalaLib/elementPixmap.vala
 src/autovalaLib/elementPo.vala
+src/autovalaLib/elementPolkit.vala
 src/autovalaLib/elementSDepend.vala
 src/autovalaLib/elementScheme.vala
 src/autovalaLib/elementTranslation.vala

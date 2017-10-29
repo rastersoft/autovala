@@ -47,7 +47,7 @@ namespace AutoVala {
 				Intl.bindtextdomain(AutoValaConstants.GETTEXT_PACKAGE, Path.build_filename(AutoValaConstants.DATADIR,"locale"));
 			}
 
-			this.currentVersion = 26; // currently we support version 26 of the syntax
+			this.currentVersion = 27; // currently we support version 27 of the syntax
 			this.version = 0;
 
 			this.globalData = new AutoVala.Globals(projectName,basePath);
@@ -269,6 +269,10 @@ namespace AutoVala {
 						element = new ElementBDepend();
 					} else if (line.has_prefix("appdata: ")) {
 						element = new ElementAppData();
+					} else if (line.has_prefix("mimetype: ")) {
+						element = new ElementMimetype();
+					} else if (line.has_prefix("polkit: ")) {
+						element = new ElementPolkit();
 					} else if ((line.has_prefix("vala_binary: "))||(line.has_prefix("vala_library: "))) {
 						if (this.checkConditionals(cond)) {
 							error=true;
@@ -455,6 +459,8 @@ namespace AutoVala {
 				this.storeData(ConfigType.SOURCE_DEPENDENCY,data_stream);
 				this.storeData(ConfigType.BINARY_DEPENDENCY,data_stream);
 				this.storeData(ConfigType.EXTERNAL,data_stream);
+				this.storeData(ConfigType.POLKIT,data_stream);
+				this.storeData(ConfigType.MIMETYPE,data_stream);
 			} catch (Error e) {
 				this.globalData.addError(_("Can't create the config file %s").printf(this.globalData.configFile));
 				return true;

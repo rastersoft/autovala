@@ -36,10 +36,6 @@ The rules followed by Autovala are the following:
 
 * Each **.service** and **.service.base** files in **data/dbus** will be presumed to be a D-Bus service, and will be preprocessed to put the right folder ( **share/dbus-1/services** ). Also, for compatibility reasons, the same files at **data** will be processed, but a warning message recommending to move it into **data/bus** will be shown.
 
-* Each **.system.service** and **.system.service.base** files in **data/dbus** will be presumed to be a system D-Bus service, and will be preprocessed to put the right folder ( **share/dbus-1/system-services** ).
-
-* Each **.conf** file in **data/dbus** will be presumed to be a D-Bus configuration file, and will be configured to be installed in the right folder (usually *share/dbus-1/system.d*)
-
 * Each **.plug** file in **data/** will be presumed to be an ElementaryOS PLUG file
 
 * Each **.gschema.xml** file in **data/** will be presumed to be a GTK schema, so will be copied in the right place and force a recompile of the schemas (if needed)
@@ -75,6 +71,14 @@ The rules followed by Autovala are the following:
 * All **.appdata.xml** and **.metainfo.xml** files in the folder **data** will be installed in **share/appdata**, and its content will be used to get the summary and description when creating packages.
 
 * All files in **data/bash_completion/** will be copied to where the command *pkg-config --variable=completionsdir bash-completion* specifies (usually **/usr/share/bash-completion/completions**), except when *CMAKE_INSTALL_PREFIX* starts with */home* (this allows to do installations in the HOME directory).
+
+* Each **.system.service** and **.system.service.base** files in **data/dbus** will be presumed to be a system D-Bus service, and will be preprocessed to put the right folder ( **share/dbus-1/system-services** ).
+
+* Each **.conf** file in **data/dbus** will be presumed to be a D-Bus configuration file, and will be configured to be installed in the right folder (usually *share/dbus-1/system.d*)
+
+* Each **.policy** file in **data/** or its child folders will be considered a *polkit* policy file, being added to the project file with the **polkit** statement.
+
+* Each **.xml** file in **data/** or its child folders will be scanned and, if its first line starts with *'<?xml '* and its second line with *'<mime-info '*, will be considered a *mimetype* file, and will be added to the project file using the **mimetype** statement.
 
 When Autovala searchs the packages, it uses only the versions available for the currently active version. Also, by default, it uses the most recent version. But if another version is selected manually, it will use that one instead.
 

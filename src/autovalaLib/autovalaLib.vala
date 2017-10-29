@@ -666,6 +666,8 @@ namespace AutoVala {
 			error |= ElementData.autoGenerate();
 			error |= ElementDBusService.autoGenerate();
 			error |= ElementDBusConfiguration.autoGenerate();
+			error |= ElementPolkit.autoGenerate();
+			error |= ElementMimetype.autoGenerate();
 			error |= ElementDesktop.autoGenerate();
 			error |= ElementDoc.autoGenerate();
 			error |= ElementEosPlug.autoGenerate();

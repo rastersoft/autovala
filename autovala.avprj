@@ -58,8 +58,10 @@ c_library: readline
 *vala_source: elementIgnore.vala
 *vala_source: elementInclude.vala
 *vala_source: elementManpage.vala
+*vala_source: elementMimetype.vala
 *vala_source: elementPixmap.vala
 *vala_source: elementPo.vala
+*vala_source: elementPolkit.vala
 *vala_source: elementSDepend.vala
 *vala_source: elementScheme.vala
 *vala_source: elementTranslation.vala
@@ -134,8 +136,10 @@ vala_check_package: x11
 *translate: vala src/autovalaLib/elementIgnore.vala
 *translate: vala src/autovalaLib/elementInclude.vala
 *translate: vala src/autovalaLib/elementManpage.vala
+*translate: vala src/autovalaLib/elementMimetype.vala
 *translate: vala src/autovalaLib/elementPixmap.vala
 *translate: vala src/autovalaLib/elementPo.vala
+*translate: vala src/autovalaLib/elementPolkit.vala
 *translate: vala src/autovalaLib/elementSDepend.vala
 *translate: vala src/autovalaLib/elementScheme.vala
 *translate: vala src/autovalaLib/elementTranslation.vala

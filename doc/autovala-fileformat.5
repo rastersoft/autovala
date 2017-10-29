@@ -118,6 +118,8 @@
 <li><p><strong>external</strong>: followed by an onwer ID and a free-form text, allows to store custom data inside the project file, useful for external apps that integrates with autovala. Example:</p>
 <pre><code>    external: GEDIT custom_margin: 8
     external: GNOME_BUILDER ask_exit</code></pre></li>
+<li><p><strong>mimetype</strong>: followed by a filename, will manage it as an XML mime type file, installing it at <em>share/mime/packages</em>.</p></li>
+<li><p><strong>polkit</strong>: followed by a filename, will consider it is a polkit policy file, and will install it at <em>share/polkit-1/actions</em>.</p></li>
 </ul>
 <p>It is possible to ask autovalaLib to return all the external data for an specific owner, and to overwrite it, again for an specific owner, leaving unmodified the external data of other owners.</p>
 <p>It is also possible to add conditions to nearly all of these commands (more specifically, all can be conditional with the exception of <strong>vala_version</strong>, <strong>vala_binary</strong>, <strong>vala_library</strong>, <strong>version</strong>, <strong>namespace</strong>, <strong>project_name</strong>, <strong>define</strong> and <strong>autovala_version</strong>). To do so, you can use the commands <strong>if CONDITION</strong>, <strong>else</strong> and <strong>end</strong>. The format for the <strong>CONDITION</strong> string is the CMake format (statements that can be true or false, parenteses, and AND, OR and NOT operators).</p>

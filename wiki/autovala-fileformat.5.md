@@ -8,7 +8,7 @@ autovala fileformat - The syntax for autovala configuration file
 
 The project file has a very simple format. Usually you don't need to manually edit it, but when the guesses of autovala are incorrect, you can do it, and your changes will be remembered each time you refresh the file.
 
-The current version for the project file format is **26**.
+The current version for the project file format is **27**.
 
 The file is based on commands in the format:
 
@@ -214,6 +214,10 @@ After that, it comes several commands, some of them repeated several times, to s
 
             external: GEDIT custom_margin: 8
             external: GNOME_BUILDER ask_exit
+
+* **mimetype**: followed by a filename, will manage it as an XML mime type file, installing it at *share/mime/packages*.
+
+* **polkit**: followed by a filename, will consider it is a polkit policy file, and will install it at *share/polkit-1/actions*.
 
 It is possible to ask autovalaLib to return all the external data for an specific owner, and to overwrite it, again for an specific owner, leaving unmodified the external data of other owners.
 
