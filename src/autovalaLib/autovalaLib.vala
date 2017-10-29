@@ -21,8 +21,6 @@ using Gee;
 using Posix;
 using Readline;
 
-// project version=1.1
-
 namespace AutoVala {
 
 	public class ManageProject: GLib.Object {

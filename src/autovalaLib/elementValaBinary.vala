@@ -274,14 +274,18 @@ namespace AutoVala {
 		public ElementValaBinary() {
 			this._meson_arrays = null;
 			this.command = "";
-			this.version="1.0.0";
-			this.versionSet=false;
-			this.versionAutomatic=true;
-			this._currentNamespace=null;
-			this.usingList=null;
-			this.defines=null;
-			this.namespaceAutomatic=true;
-			this.namespaces=null;
+			if (ElementBase.globalData.global_version == null) {
+				this.version = "1.0.0";
+			} else {
+				this.version = ElementBase.globalData.global_version;
+			}
+			this.versionSet = false;
+			this.versionAutomatic = true;
+			this._currentNamespace = null;
+			this.usingList = null;
+			this.defines = null;
+			this.namespaceAutomatic = true;
+			this.namespaces = null;
 			this._aliases=new Gee.ArrayList<AliasElement ?>();
 			this._packages=new Gee.ArrayList<PackageElement ?>();
 			this._resources=new Gee.ArrayList<ResourceElement ?>();
@@ -536,11 +540,11 @@ namespace AutoVala {
 
 				while ((line = dis.read_line (null)) != null) {
 					if (version!=null) {
-						if ((this.versionSet) && (version!=this.version)) {
+						if ((this.versionSet) && (version != this.version)) {
 							ElementBase.globalData.addWarning(_("File %s is overwritting the version number (line %d)").printf(pathP,lineCounter));
 						} else {
-							this.version=version;
-							this.versionSet=true;
+							this.version = version;
+							this.versionSet = true;
 						}
 						version=null;
 					}
@@ -551,7 +555,7 @@ namespace AutoVala {
 						ElementBase.globalData.addWarning(_("The contruction 'const string project_version=...' in file %s is deprecated. Replace it with '// project version=...'").printf(pathP));
 						var pos=line.index_of("\"",30);
 						if (pos!=-1) {
-							this.version=line.substring(30,pos-30);
+							this.version = line.substring(30,pos-30);
 						}
 						continue;
 					}
@@ -667,10 +671,14 @@ namespace AutoVala {
 
 		public override void clearAutomatic() {
 
-			if ((this.versionSet)&&(this.versionAutomatic)) {
-				this.version="1.0.0";
-				this.versionSet=false;
-				this.versionAutomatic=true;
+			if ((this.versionSet) && (this.versionAutomatic)) {
+				if (ElementBase.globalData.global_version == null) {
+					this.version = "1.0.0";
+				} else {
+					this.version = ElementBase.globalData.global_version;
+				}
+				this.versionSet = false;
+				this.versionAutomatic = true;
 			}
 			if ((this._currentNamespace!=null)&&(this.namespaceAutomatic)) {
 				this._currentNamespace=null;

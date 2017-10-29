@@ -224,7 +224,7 @@ namespace AutoVala {
 					} else if (line.has_prefix("global_version: ")) {
 						var gversion = line.substring(16).strip();
 						if (!this.check_version(gversion)) {
-							this.globalData.addError(_("Global version number must be in the form XX.YY.XXdddd, being XX, YY and ZZ numbers (line %d)").printf(this.lineNumber));
+							this.globalData.addError(_("Global version number must be in the form XX.YY.ZZ, being XX, YY and ZZ numbers (line %d)").printf(this.lineNumber));
 							error = true;
 						} else {
 							this.globalData.global_version = gversion;

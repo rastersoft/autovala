@@ -1,6 +1,7 @@
 ### AutoVala Project ###
-autovala_version: 26
+autovala_version: 27
 project_name: autovala
+global_version: 1.1.4
 vala_version: 0.30
 
 custom: data/debian share/autovala/debian
@@ -9,7 +10,6 @@ custom: data/cmake share/autovala/cmake
 *gresource: extras_gresource_xml data/extras.gresource.xml
 
 vala_binary: src/autovala
-*version: 1.1.4
 vala_local_package: AutoVala
 *vala_package: posix
 vala_check_package: gio-2.0
@@ -19,7 +19,6 @@ vala_check_package: gio-2.0
 
 
 vala_library: src/autovalaLib/autovalaLib
-*version: 1.1
 *namespace: AutoVala
 *vala_package: posix
 *vala_package: readline
@@ -79,7 +78,6 @@ c_library: readline
 *vala_source: readPkgconfig.vala
 
 vala_library: src/autovalaPlugin/autovalaPlugin
-*version: 0.99
 *namespace: AutovalaPlugin
 use_gresource: extras_gresource_xml
 vala_local_package: AutoVala
@@ -183,4 +181,3 @@ source_dependency: /usr/include/readline/readline.h
 
 binary_dependency: /usr/bin/pandoc
 binary_dependency: /usr/bin/curl
-
