@@ -443,6 +443,7 @@ namespace AutoVala {
 				this.storeData(ConfigType.DESKTOP,data_stream);
 				this.storeData(ConfigType.AUTOSTART,data_stream);
 				this.storeData(ConfigType.DBUS_SERVICE,data_stream);
+				this.storeData(ConfigType.DBUS_CONFIG,data_stream);
 				this.storeData(ConfigType.EOS_PLUG,data_stream);
 				this.storeData(ConfigType.SCHEME,data_stream);
 				this.storeData(ConfigType.GLADE,data_stream);
