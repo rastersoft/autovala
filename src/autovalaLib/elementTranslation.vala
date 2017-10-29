@@ -119,7 +119,7 @@ namespace AutoVala {
 				ElementBase.globalData.addError(_("Invalid command %s after command %s (line %d)").printf(badCommand,this.command, lineNumber));
 				return true;
 			}
-			var data=line.substring(2+this.command.length).strip();
+			var data = line.substring(2 + this.command.length).strip();
 			var pos = data.index_of_char(' ');
 			if (pos == -1) {
 				ElementBase.globalData.addError(_("Translate command without type at line %d").printf(lineNumber));
@@ -141,10 +141,10 @@ namespace AutoVala {
 				break;
 			}
 			this.comments = comments;
-			return this.configureElement(data.substring(pos+1).strip(),null,null,automatic,condition,invertCondition);
+			return this.configureElement(data.substring(pos+1).strip(), null, null, automatic, condition, invertCondition);
 		}
 
-		public override bool storeConfig(DataOutputStream dataStream,ConditionalText printConditions) {
+		public override bool storeConfig(DataOutputStream dataStream, ConditionalText printConditions) {
 
 			string data;
 			if (this.fullPath2 == null) {
