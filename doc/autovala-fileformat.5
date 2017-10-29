@@ -19,7 +19,7 @@
 <p>The first line in a project file is, always, ### AutoVala Project ###. This string identifies it as an Autovala project file.</p>
 <p>The next line has the command <strong>autovala_version</strong>. This command specifies which version of the syntax uses this file, to avoid an old version of Autovala to open a newer, with commands that it wouldn't understand.</p>
 <p>The next line has the command <strong>project_name</strong>. This command sets the name assigned to this project.</p>
-<p>Next line can contain <strong>global_version</strong>. This allows to set a default version number for the project. Thus, every binary or library that doesn't specify a version number will take it from this. The version can be defined as <em>X.Y</em> or <em>X.Y.Z</em> (being X, Y and Z numbers with one or more digits).</p>
+<p>Next line can contain <strong>project_version</strong>. This allows to set a default version number for the project. Thus, every binary or library that doesn't specify a version number will take it from this. The version can be defined as <em>X.Y</em> or <em>X.Y.Z</em> (being X, Y and Z numbers with one or more digits).</p>
 <p>Then, the next line contains <strong>vala_version</strong>, which specifies the minimum Vala version needed to compile this project. By default, it is filled with the version number of the vala version installed when the project was created.</p>
 <p>After that, it comes several commands, some of them repeated several times, to specify what to do with each file in your project. These commands are:</p>
 <ul>
