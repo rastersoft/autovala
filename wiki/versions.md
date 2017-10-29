@@ -1,4 +1,8 @@
 ## History of versions ##
+* version 1.2.0 (2017-10-29)
+    * Added support for mime files
+    * Added support for Polkit policy files
+    * Added support for global version number
 * version 1.1.3 (2017-10-29)
     * Added support for system dbus files
     * Added support for configuration dbus files

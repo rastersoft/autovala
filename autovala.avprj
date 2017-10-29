@@ -1,6 +1,7 @@
 ### AutoVala Project ###
-autovala_version: 26
+autovala_version: 27
 project_name: autovala
+global_version: 1.2.0
 vala_version: 0.30
 
 custom: data/debian share/autovala/debian
@@ -9,7 +10,7 @@ custom: data/cmake share/autovala/cmake
 *gresource: extras_gresource_xml data/extras.gresource.xml
 
 vala_binary: src/autovala
-*version: 1.1.3
+*version: 1.2.0
 vala_local_package: AutoVala
 *vala_package: posix
 vala_check_package: gio-2.0
@@ -19,7 +20,7 @@ vala_check_package: gio-2.0
 
 
 vala_library: src/autovalaLib/autovalaLib
-*version: 1.0
+*version: 1.2.0
 *namespace: AutoVala
 *vala_package: posix
 *vala_package: readline
@@ -58,8 +59,10 @@ c_library: readline
 *vala_source: elementIgnore.vala
 *vala_source: elementInclude.vala
 *vala_source: elementManpage.vala
+*vala_source: elementMimetype.vala
 *vala_source: elementPixmap.vala
 *vala_source: elementPo.vala
+*vala_source: elementPolkit.vala
 *vala_source: elementSDepend.vala
 *vala_source: elementScheme.vala
 *vala_source: elementTranslation.vala
@@ -134,8 +137,10 @@ vala_check_package: x11
 *translate: vala src/autovalaLib/elementIgnore.vala
 *translate: vala src/autovalaLib/elementInclude.vala
 *translate: vala src/autovalaLib/elementManpage.vala
+*translate: vala src/autovalaLib/elementMimetype.vala
 *translate: vala src/autovalaLib/elementPixmap.vala
 *translate: vala src/autovalaLib/elementPo.vala
+*translate: vala src/autovalaLib/elementPolkit.vala
 *translate: vala src/autovalaLib/elementSDepend.vala
 *translate: vala src/autovalaLib/elementScheme.vala
 *translate: vala src/autovalaLib/elementTranslation.vala

@@ -47,7 +47,7 @@ namespace AutoVala {
 				Intl.bindtextdomain(AutoValaConstants.GETTEXT_PACKAGE, Path.build_filename(AutoValaConstants.DATADIR,"locale"));
 			}
 
-			this.currentVersion = 26; // currently we support version 26 of the syntax
+			this.currentVersion = 27; // currently we support version 27 of the syntax
 			this.version = 0;
 
 			this.globalData = new AutoVala.Globals(projectName,basePath);
@@ -177,22 +177,22 @@ namespace AutoVala {
 				return true;
 			}
 
-			var file=File.new_for_path(this.globalData.configFile);
-			bool error=false;
-			int ifLineNumber=0;
+			var file = File.new_for_path(this.globalData.configFile);
+			bool error = false;
+			int ifLineNumber = 0;
 			try {
 				var dis = new DataInputStream(file.read());
 
-				this.lineNumber=0;
+				this.lineNumber = 0;
 				string line;
-				ElementBase element=null;
-				bool automatic=false;
+				ElementBase element = null;
+				bool automatic = false;
 
 				string[] comments = {};
 
-				while((line = dis.read_line(null))!=null) {
-					string ?cond=null;
-					bool invert=false;
+				while((line = dis.read_line(null)) != null) {
+					string ?cond = null;
+					bool invert = false;
 					this.getCurrentCondition(out cond,out invert);
 
 					this.lineNumber++;
@@ -221,6 +221,15 @@ namespace AutoVala {
 
 					if (line.has_prefix("external: ")) {
 						element = new ElementExternal();
+					} else if (line.has_prefix("global_version: ")) {
+						var gversion = line.substring(16).strip();
+						if (!this.check_version(gversion)) {
+							this.globalData.addError(_("Global version number must be in the form X.Y or X.Y.Z, being X, Y and Z numbers with one or more digits (line %d)").printf(this.lineNumber));
+							error = true;
+						} else {
+							this.globalData.global_version = gversion;
+						}
+						continue;
 					} else if (line.has_prefix("vapidir: ")) {
 						element = new ElementVapidir();
 					} else if (line.has_prefix("translate: ")) {
@@ -269,6 +278,10 @@ namespace AutoVala {
 						element = new ElementBDepend();
 					} else if (line.has_prefix("appdata: ")) {
 						element = new ElementAppData();
+					} else if (line.has_prefix("mimetype: ")) {
+						element = new ElementMimetype();
+					} else if (line.has_prefix("polkit: ")) {
+						element = new ElementPolkit();
 					} else if ((line.has_prefix("vala_binary: "))||(line.has_prefix("vala_library: "))) {
 						if (this.checkConditionals(cond)) {
 							error=true;
@@ -422,6 +435,9 @@ namespace AutoVala {
 				data_stream.put_string("### AutoVala Project ###\n");
 				data_stream.put_string("autovala_version: %d\n".printf(this.currentVersion));
 				data_stream.put_string("project_name: %s\n".printf(this.globalData.projectName));
+				if (this.globalData.global_version != null) {
+					data_stream.put_string("global_version: %s\n".printf(this.globalData.global_version));
+				}
 				if (this.globalData.versionAutomatic) {
 					data_stream.put_string("*vala_version: %d.%d\n\n".printf(this.globalData.valaMajor,this.globalData.valaMinor));
 				} else {
@@ -455,6 +471,8 @@ namespace AutoVala {
 				this.storeData(ConfigType.SOURCE_DEPENDENCY,data_stream);
 				this.storeData(ConfigType.BINARY_DEPENDENCY,data_stream);
 				this.storeData(ConfigType.EXTERNAL,data_stream);
+				this.storeData(ConfigType.POLKIT,data_stream);
+				this.storeData(ConfigType.MIMETYPE,data_stream);
 			} catch (Error e) {
 				this.globalData.addError(_("Can't create the config file %s").printf(this.globalData.configFile));
 				return true;

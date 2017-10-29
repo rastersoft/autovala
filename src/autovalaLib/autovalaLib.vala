@@ -21,8 +21,6 @@ using Gee;
 using Posix;
 using Readline;
 
-// project version=1.0
-
 namespace AutoVala {
 
 	public class ManageProject: GLib.Object {
@@ -666,6 +664,8 @@ namespace AutoVala {
 			error |= ElementData.autoGenerate();
 			error |= ElementDBusService.autoGenerate();
 			error |= ElementDBusConfiguration.autoGenerate();
+			error |= ElementPolkit.autoGenerate();
+			error |= ElementMimetype.autoGenerate();
 			error |= ElementDesktop.autoGenerate();
 			error |= ElementDoc.autoGenerate();
 			error |= ElementEosPlug.autoGenerate();

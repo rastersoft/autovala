@@ -8,7 +8,7 @@ autovala fileformat - The syntax for autovala configuration file
 
 The project file has a very simple format. Usually you don't need to manually edit it, but when the guesses of autovala are incorrect, you can do it, and your changes will be remembered each time you refresh the file.
 
-The current version for the project file format is **26**.
+The current version for the project file format is **27**.
 
 The file is based on commands in the format:
 
@@ -25,6 +25,8 @@ The first line in a project file is, always, ### AutoVala Project ###. This stri
 The next line has the command **autovala_version**. This command specifies which version of the syntax uses this file, to avoid an old version of Autovala to open a newer, with commands that it wouldn't understand.
 
 The next line has the command **project_name**. This command sets the name assigned to this project.
+
+Next line can contain **global_version**. This allows to set a default version number for the project. Thus, every binary or library that doesn't specify a version number will take it from this. The version can be defined as *X.Y* or *X.Y.Z* (being X, Y and Z numbers with one or more digits).
 
 Then, the next line contains **vala_version**, which specifies the minimum Vala version needed to compile this project. By default, it is filled with the version number of the vala version installed when the project was created.
 
@@ -214,6 +216,10 @@ After that, it comes several commands, some of them repeated several times, to s
 
             external: GEDIT custom_margin: 8
             external: GNOME_BUILDER ask_exit
+
+* **mimetype**: followed by a filename, will manage it as an XML mime type file, installing it at *share/mime/packages*.
+
+* **polkit**: followed by a filename, will consider it is a polkit policy file, and will install it at *share/polkit-1/actions*.
 
 It is possible to ask autovalaLib to return all the external data for an specific owner, and to overwrite it, again for an specific owner, leaving unmodified the external data of other owners.
 

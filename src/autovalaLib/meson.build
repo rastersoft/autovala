@@ -4,7 +4,7 @@ cfg_autovalaLib.set('PKGDATADIR', join_paths(get_option('prefix'),get_option('da
 cfg_autovalaLib.set('GETTEXT_PACKAGE', 'autovala')
 cfg_autovalaLib.set('RELEASE_NAME', 'autovala')
 cfg_autovalaLib.set('PREFIX', get_option('prefix'))
-cfg_autovalaLib.set('VERSION', '1.0')
+cfg_autovalaLib.set('VERSION', '1.2.0')
 cfg_autovalaLib.set('TESTSRCDIR', meson.source_root())
 
 cfgfile_4 = configure_file(input: 'Config.vala.base',output: 'Config.vala',configuration: cfg_autovalaLib)
@@ -44,8 +44,10 @@ autovalaLib_sources += ['elementIcon.vala']
 autovalaLib_sources += ['elementIgnore.vala']
 autovalaLib_sources += ['elementInclude.vala']
 autovalaLib_sources += ['elementManpage.vala']
+autovalaLib_sources += ['elementMimetype.vala']
 autovalaLib_sources += ['elementPixmap.vala']
 autovalaLib_sources += ['elementPo.vala']
+autovalaLib_sources += ['elementPolkit.vala']
 autovalaLib_sources += ['elementSDepend.vala']
 autovalaLib_sources += ['elementScheme.vala']
 autovalaLib_sources += ['elementTranslation.vala']
@@ -67,7 +69,7 @@ autovalaLib_link_args = ['-lreadline']
 autovalaLib_vala_args += ['--gir=AutoVala-1.0.gir']
 
 
-AutoVala_library = shared_library('AutoVala',autovalaLib_sources,dependencies: autovalaLib_deps,vala_args: autovalaLib_vala_args,link_args: autovalaLib_link_args,version: '1.0',soversion: '1',install: true)
+AutoVala_library = shared_library('AutoVala',autovalaLib_sources,dependencies: autovalaLib_deps,vala_args: autovalaLib_vala_args,link_args: autovalaLib_link_args,version: '1.2.0',soversion: '1',install: true)
 
 autovalaLib_requires = []
 autovalaLib_requires += ['cairo']
@@ -82,7 +84,7 @@ autovalaLib_requires += ['pango']
 autovalaLib_requires += ['pangocairo']
 pkg_mod = import('pkgconfig')
 pkg_mod.generate(libraries : AutoVala_library,
-	version : '1.0',
+	version : '1.2.0',
 	name : 'AutoVala',
 	filebase : 'AutoVala',
 	description : 'AutoVala',

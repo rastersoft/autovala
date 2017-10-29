@@ -20,8 +20,6 @@ using GLib;
 using Gee;
 using Posix;
 
-//project version = 1.1.3
-
 void help() {
 
 	GLib.stdout.printf(_("""Autovala. Usage:
