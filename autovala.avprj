@@ -44,6 +44,7 @@ c_library: readline
 *vala_source: elementBinary.vala
 *vala_source: elementCustom.vala
 *vala_source: elementDBus.vala
+*vala_source: elementDBusConf.vala
 *vala_source: elementData.vala
 *vala_source: elementDefine.vala
 *vala_source: elementDesktop.vala
@@ -119,6 +120,7 @@ vala_check_package: x11
 *translate: vala src/autovalaLib/elementBinary.vala
 *translate: vala src/autovalaLib/elementCustom.vala
 *translate: vala src/autovalaLib/elementDBus.vala
+*translate: vala src/autovalaLib/elementDBusConf.vala
 *translate: vala src/autovalaLib/elementData.vala
 *translate: vala src/autovalaLib/elementDefine.vala
 *translate: vala src/autovalaLib/elementDesktop.vala

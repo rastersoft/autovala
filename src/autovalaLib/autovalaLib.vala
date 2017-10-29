@@ -655,18 +655,17 @@ namespace AutoVala {
 
 			ElementBase.globalData.clearAutomatic();
 			ElementBase.globalData.generateExtraData();
-
 			// refresh the automatic configuration for the manually set elements
 			foreach (var element in ElementBase.globalData.globalElements) {
 				element.autoConfigure();
 			}
-
 			error |= ElementVapidir.autoGenerate();
 			error |= ElementGResource.autoGenerate();
 			error |= ElementBashCompletion.autoGenerate();
 			error |= ElementBinary.autoGenerate();
 			error |= ElementData.autoGenerate();
 			error |= ElementDBusService.autoGenerate();
+			error |= ElementDBusConfiguration.autoGenerate();
 			error |= ElementDesktop.autoGenerate();
 			error |= ElementDoc.autoGenerate();
 			error |= ElementEosPlug.autoGenerate();

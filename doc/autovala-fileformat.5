@@ -87,6 +87,7 @@
 <p>This allows to use cmake to install everything in a temporary folder, and ensure that the <strong>Exec</strong> entry points to the right place. This is paramount when using these CMakeLists files for creating a <strong>.deb</strong> or <strong>.rpm</strong> package.</p>
 <p>These files will be installed at <em>share/dbus-1/services</em> folder.</p></li>
 <li><p><strong>dbus_system_service</strong>: it is like <em>dbus_service</em>, but for D-Bus <em>system</em> services. These files, after being processed, will be installed at <em>share/dbus-1/system-services</em> folder.</p></li>
+<li><p><strong>dbus_config</strong>: specifies that the specified file is a dbus configuration file and it must be installed at <strong>share/dbus-1/system.d</strong>.</p></li>
 <li><p><strong>desktop</strong>: the file specified is a <strong>.desktop</strong> file that must be copied to <strong>share/applications</strong> to ensure that it is shown in the applications menu.</p></li>
 <li><p><strong>eos_plug</strong>: the file is an ElementaryOS plug for the configuration system</p></li>
 <li><p><strong>scheme</strong>: the file is a <strong>GSettings</strong> file that contains configuration settings. It is automagically compiled if needed.</p></li>

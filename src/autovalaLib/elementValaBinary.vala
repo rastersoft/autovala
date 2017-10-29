@@ -995,21 +995,26 @@ namespace AutoVala {
 				this.transformToNonAutomatic(false);
 			}
 
+			bool add_binary = true;
 			foreach(var element in this._sources) {
-				if (element.elementName==sourceFile) {
-					return false;
+				if (element.elementName == sourceFile) {
+					add_binary = false;
+					break;
 				}
 			}
-			var element=new SourceElement(sourceFile,automatic,condition, invertCondition);
-			element.comments = comments;
-			this._sources.add(element);
+
+			if (add_binary) {
+				var element = new SourceElement(sourceFile,automatic,condition, invertCondition);
+				element.comments = comments;
+				this._sources.add(element);
+			}
 			var translation = new ElementTranslation();
 			if (sourceFile.has_suffix(".gs")) {
 				translation.translate_type = TranslationType.GENIE;
 			} else {
 				translation.translate_type = TranslationType.VALA;
 			}
-			translation.configureElement(GLib.Path.build_filename(this._path,sourceFile),null,null,automatic,condition,invertCondition);
+			translation.configureElement(GLib.Path.build_filename(this._path, sourceFile), null, null, true, null, false);
 			return false;
 		}
 
@@ -1070,17 +1075,22 @@ namespace AutoVala {
 				this.transformToNonAutomatic(false);
 			}
 
+			bool add_source = true;
 			foreach(var element in this._cSources) {
-				if (element.elementName==sourceFile) {
-					return false;
+				if (element.elementName == sourceFile) {
+					add_source = false;
+					break;
 				}
 			}
-			var element=new SourceElement(sourceFile,automatic,condition, invertCondition);
-			element.comments = comments;
-			this._cSources.add(element);
+			if (add_source) {
+				var element = new SourceElement(sourceFile,automatic,condition, invertCondition);
+				element.comments = comments;
+				this._cSources.add(element);
+			}
+
 			var translation = new ElementTranslation();
 			translation.translate_type = TranslationType.C;
-			translation.configureElement(GLib.Path.build_filename(this._path,sourceFile),null,null,automatic,condition,invertCondition);
+			translation.configureElement(GLib.Path.build_filename(this._path, sourceFile), null, null, true, null, false);
 			return false;
 		}
 
