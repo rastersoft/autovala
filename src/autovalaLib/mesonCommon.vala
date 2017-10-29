@@ -79,7 +79,7 @@ namespace AutoVala {
 			var dataStream2 = new DataOutputStream(scriptPath.create(FileCreateFlags.NONE));
 			dataStream2.put_string("""#!/bin/sh
 mkdir -p $DESTDIR/$1
-if [[ -d $2 ]]; then
+if [ -d "$2" ]; then
 	cp -a $2/* $DESTDIR/$1
 else
 	cp -a $2 $DESTDIR/$1
