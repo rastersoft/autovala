@@ -2379,7 +2379,9 @@ namespace AutoVala {
 					}
 					dataStream.put_string("version: %s\n".printf(this.version));
 				} else {
-					dataStream.put_string("*version: %s\n".printf(ElementBase.globalData.global_version));
+					if (ElementBase.globalData.global_version != null) {
+						dataStream.put_string("*version: %s\n".printf(ElementBase.globalData.global_version));
+					}
 				}
 				if ((this._currentNamespace!=null) && (this._type==ConfigType.VALA_LIBRARY)) {
 					if (this.namespaceAutomatic) {
