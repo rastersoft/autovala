@@ -7,6 +7,10 @@
 <p><a href="index.html">Home</a></p>
 <h2 id="history-of-versions">History of versions</h2>
 <ul>
+<li>version 1.2.1 (2017-11-08)
+<ul>
+<li>Fixed a bug when there is neither global nor local &quot;version&quot; statement</li>
+</ul></li>
 <li>version 1.2.0 (2017-10-29)
 <ul>
 <li>Added support for mime files</li>

@@ -1,4 +1,6 @@
 ## History of versions ##
+* version 1.2.1 (2017-11-08)
+    * Fixed a bug when there is neither global nor local "version" statement
 * version 1.2.0 (2017-10-29)
     * Added support for mime files
     * Added support for Polkit policy files
