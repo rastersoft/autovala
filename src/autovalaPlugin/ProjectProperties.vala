@@ -8,7 +8,6 @@ namespace AutovalaPlugin {
 	 * Creates a dialog to add a new binary to a project, or to modify a current one
 	 */
 	private class ProjectProperties : Object {
-
 		private Gtk.Dialog main_window;
 		private Gtk.Entry name;
 		private Gtk.FileChooserButton path;
@@ -21,7 +20,7 @@ namespace AutovalaPlugin {
 		private Gtk.Button accept_button;
 		private Gtk.Label error_message;
 		private string project_file;
-		private string? binary_name;
+		private string ? binary_name;
 		private bool editing;
 
 		/**
@@ -31,11 +30,10 @@ namespace AutovalaPlugin {
 		 * @param project_file The full path to the current project file where to edit or create the binary
 		 * @param project A project class
 		 */
-		public ProjectProperties(string? binary_name, string project_file, AutoVala.ManageProject project) {
-
-			this.project = project;
+		public ProjectProperties(string ? binary_name, string project_file, AutoVala.ManageProject project) {
+			this.project      = project;
 			this.project_file = project_file;
-			this.binary_name = binary_name;
+			this.binary_name  = binary_name;
 			if (binary_name == null) {
 				this.editing = false;
 			} else {
@@ -45,36 +43,36 @@ namespace AutovalaPlugin {
 			var builder = new Gtk.Builder();
 			builder.set_translation_domain(AutovalaPluginConstants.GETTEXT_PACKAGE);
 			builder.add_from_resource("/com/rastersoft/autovala/interface/binary_properties.ui");
-			this.main_window = (Gtk.Dialog) builder.get_object("binary_properties");
-			this.name = (Gtk.Entry) builder.get_object("binary_name");
-			this.path = (Gtk.FileChooserButton) builder.get_object("path");
-			this.is_library = (Gtk.RadioButton) builder.get_object("is_library");
-			this.is_executable = (Gtk.RadioButton) builder.get_object("is_executable");
-			this.vala_options = (Gtk.Entry) builder.get_object("vala_compile_options");
-			this.c_options = (Gtk.Entry) builder.get_object("c_compile_options");
-			this.libraries = (Gtk.Entry) builder.get_object("libraries");
-			this.accept_button = (Gtk.Button) builder.get_object("button_accept");
-			this.error_message = (Gtk.Label) builder.get_object("error_message");
+			this.main_window   = (Gtk.Dialog)builder.get_object("binary_properties");
+			this.name          = (Gtk.Entry)builder.get_object("binary_name");
+			this.path          = (Gtk.FileChooserButton)builder.get_object("path");
+			this.is_library    = (Gtk.RadioButton)builder.get_object("is_library");
+			this.is_executable = (Gtk.RadioButton)builder.get_object("is_executable");
+			this.vala_options  = (Gtk.Entry)builder.get_object("vala_compile_options");
+			this.c_options     = (Gtk.Entry)builder.get_object("c_compile_options");
+			this.libraries     = (Gtk.Entry)builder.get_object("libraries");
+			this.accept_button = (Gtk.Button)builder.get_object("button_accept");
+			this.error_message = (Gtk.Label)builder.get_object("error_message");
 
-            this.path.file_set.connect(this.path_changed);
-            this.path.current_folder_changed.connect(this.path_changed);
-            this.name.changed.connect(this.name_changed);
+			this.path.file_set.connect(this.path_changed);
+			this.path.current_folder_changed.connect(this.path_changed);
+			this.name.changed.connect(this.name_changed);
 
-			if(this.editing) {
+			if (this.editing) {
 				var project_data = project.get_binaries_list(project_file);
 				if (project_data != null) {
-					foreach(var element in project_data.binaries) {
+					foreach (var element in project_data.binaries) {
 						if (((element.type == AutoVala.ConfigType.VALA_BINARY) || (element.type == AutoVala.ConfigType.VALA_LIBRARY)) && (element.name == binary_name)) {
 							this.name.text = element.name;
-							this.path.set_filename(Path.build_filename(project_data.projectPath,element.fullPath));
+							this.path.set_filename(Path.build_filename(project_data.projectPath, element.fullPath));
 							if (element.type == AutoVala.ConfigType.VALA_BINARY) {
 								this.is_executable.active = true;
 							} else {
 								this.is_library.active = true;
 							}
-							this.vala_options.text=element.vala_opts;
-							this.c_options.text=element.c_opts;
-							this.libraries.text=element.libraries;
+							this.vala_options.text = element.vala_opts;
+							this.c_options.text    = element.c_opts;
+							this.libraries.text    = element.libraries;
 						}
 					}
 				}
@@ -89,12 +87,12 @@ namespace AutovalaPlugin {
 			if (this.main_window == null) {
 				return;
 			}
-			while(true) {
+			while (true) {
 				var retval = this.main_window.run();
 				if (retval != 2) {
 					break;
 				}
-				var retMsg = this.project.process_binary(this.binary_name,this.project_file,this.name.text,this.is_library.active,this.path.get_filename(),this.vala_options.text,this.c_options.text,this.libraries.text);
+				var retMsg = this.project.process_binary(this.binary_name, this.project_file, this.name.text, this.is_library.active, this.path.get_filename(), this.vala_options.text, this.c_options.text, this.libraries.text);
 				if (null == retMsg) {
 					break;
 				} else {
@@ -108,12 +106,12 @@ namespace AutovalaPlugin {
 			this.main_window = null;
 		}
 
-		[CCode(instance_pos=-1)]
+		[CCode(instance_pos = -1)]
 		public void name_changed() {
 			this.set_status();
 		}
 
-		[CCode(instance_pos=-1)]
+		[CCode(instance_pos = -1)]
 		public void path_changed(Gtk.FileChooser entry) {
 			this.set_status();
 		}

@@ -4,14 +4,12 @@ using Gee;
 using Vte;
 
 namespace AutovalaPlugin {
-
 	/**
 	 * This is a GTK3 widget that allows to show the warnings and errors when
 	 * building a project.
 	 * This widget needs a ProjectView widget in order to work.
 	 */
 	public class OutputView : Gtk.Box {
-
 		public bool running;
 
 		private Vte.Terminal view;
@@ -23,22 +21,21 @@ namespace AutovalaPlugin {
 
 		public OutputView() {
 			this.current_pid = -1;
-			this.view = null;
-			this.scroll = new Gtk.ScrolledWindow(null,null);
-			this.pack_start(this.scroll,true,true);
+			this.view        = null;
+			this.scroll      = new Gtk.ScrolledWindow(null, null);
+			this.pack_start(this.scroll, true, true);
 			this.clear_buffer();
 			this.show_all();
 		}
 
 		public void clear_buffer() {
-
 			if (this.view != null) {
 				this.scroll.remove(this.view);
 			}
 			this.view = new Vte.Terminal();
-			this.view.child_exited.connect( (status) => {
+			this.view.child_exited.connect((status) => {
 				this.running = false;
-				this.ended_command(this.current_pid,status);
+				this.ended_command(this.current_pid, status);
 			});
 			this.scroll.add(this.view);
 			this.view.show_all();
@@ -49,11 +46,10 @@ namespace AutovalaPlugin {
 		}
 
 		public void append_text(string text) {
-			this.view.feed((uint8[]) text.replace("\n","\r\n"));
+			this.view.feed((uint8[]) text.replace("\n", "\r\n"));
 		}
 
 		public int run_command(string[] command, string working_path, bool clear = true) {
-
 			if (this.running) {
 				return -1;
 			}
@@ -63,7 +59,7 @@ namespace AutovalaPlugin {
 				this.clear_buffer();
 			}
 
-			var retval = this.view.spawn_sync(Vte.PtyFlags.DEFAULT,working_path,command,Environ.get(),GLib.SpawnFlags.SEARCH_PATH,null, out this.current_pid);
+			var retval = this.view.spawn_sync(Vte.PtyFlags.DEFAULT, working_path, command, Environ.get(), GLib.SpawnFlags.SEARCH_PATH, null, out this.current_pid);
 
 			if (retval) {
 				return this.current_pid;

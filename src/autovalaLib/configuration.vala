@@ -1,34 +1,32 @@
 /*
- Copyright 2013 (C) Raster Software Vigo (Sergio Costas)
-
- This file is part of AutoVala
-
- AutoVala is free software; you can redistribute it and/or modify
- it under the terms of the GNU General Public License as published by
- the Free Software Foundation; either version 3 of the License, or
- (at your option) any later version.
-
- AutoVala is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU General Public License for more details.
-
- You should have received a copy of the GNU General Public License
- along with this program.  If not, see <http://www.gnu.org/licenses/>. */
+ * Copyright 2013 (C) Raster Software Vigo (Sergio Costas)
+ *
+ * This file is part of AutoVala
+ *
+ * AutoVala is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * AutoVala is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 
 using GLib;
 using Gee;
 using Posix;
 
 namespace AutoVala {
-
-	private class Configuration:GLib.Object {
-
+	private class Configuration : GLib.Object {
 		public Globals globalData = null;
 
-		public string basepath; // Contains the full path where the configuration file is stored
+		public string basepath;         // Contains the full path where the configuration file is stored
 
-		public int currentVersion; // Contains the version of the currently supported syntax
+		public int currentVersion;      // Contains the version of the currently supported syntax
 
 		private int version;
 		private int lineNumber;
@@ -41,16 +39,15 @@ namespace AutoVala {
 		 * @param init_gettext When called from an internal function, set it to false to avoid initializating gettext twice
 		 */
 
-		public Configuration(string ?basePath,string projectName="", bool init_gettext=true) throws GLib.Error {
-
+		public Configuration(string ? basePath, string projectName = "", bool init_gettext = true) throws GLib.Error {
 			if (init_gettext) {
-				Intl.bindtextdomain(AutoValaConstants.GETTEXT_PACKAGE, Path.build_filename(AutoValaConstants.DATADIR,"locale"));
+				Intl.bindtextdomain(AutoValaConstants.GETTEXT_PACKAGE, Path.build_filename(AutoValaConstants.DATADIR, "locale"));
 			}
 
-			this.currentVersion = 27; // currently we support version 27 of the syntax
-			this.version = 0;
+			this.currentVersion = 27;             // currently we support version 27 of the syntax
+			this.version        = 0;
 
-			this.globalData = new AutoVala.Globals(projectName,basePath);
+			this.globalData = new AutoVala.Globals(projectName, basePath);
 
 			this.globalData.valaVersionMajor = 0;
 			this.globalData.valaVersionMinor = 16;
@@ -61,9 +58,8 @@ namespace AutoVala {
 		 * Shows all the errors ocurred until now
 		 */
 		public void showErrors() {
-
 			var errorList = this.globalData.getErrorList();
-			foreach(var e in errorList) {
+			foreach (var e in errorList) {
 				GLib.stderr.printf("%s\n".printf(e));
 			}
 			this.globalData.clearErrors();
@@ -73,10 +69,9 @@ namespace AutoVala {
 		 * Returns all the errors ocurred until now
 		 */
 		public string[] getErrors() {
-
-			string[] retval = {};
-			var errorList = this.globalData.getErrorList();
-			foreach(var e in errorList) {
+			string[] retval    = {};
+			var      errorList = this.globalData.getErrorList();
+			foreach (var e in errorList) {
 				retval += e;
 			}
 			this.globalData.clearErrors();
@@ -87,40 +82,40 @@ namespace AutoVala {
 		 * Removes all the non-automatic elements
 		 */
 
-		 public void clearAutomatic() {
+		public void clearAutomatic() {
 			this.globalData.clearAutomatic();
-		 }
+		}
 
 		/**
 		 * Condition management methods
 		 */
 		private void resetCondition() {
-			this.currentCondition="";
-			this.conditionInverted=false;
+			this.currentCondition  = "";
+			this.conditionInverted = false;
 		}
 
-		private void getCurrentCondition(out string? condition, out bool inverted) {
-			if (this.currentCondition=="") {
-				condition=null;
-				inverted=false;
+		private void getCurrentCondition(out string ? condition, out bool inverted) {
+			if (this.currentCondition == "") {
+				condition = null;
+				inverted  = false;
 			} else {
-				condition=this.currentCondition;
-				inverted=this.conditionInverted;
+				condition = this.currentCondition;
+				inverted  = this.conditionInverted;
 			}
 		}
 
-		private bool addCondition(string? condition) {
-			if (this.currentCondition!="") {
+		private bool addCondition(string ? condition) {
+			if (this.currentCondition != "") {
 				this.globalData.addError(_("Nested IFs not allowed (line %d)").printf(this.lineNumber));
 				return true;
 			} else {
-				this.currentCondition=condition;
-				this.conditionInverted=false;
-				var newCondition=" "+(condition.replace("("," ").replace(")"," "))+" ";
-				var listConditions=newCondition.replace(" AND "," ").replace(" and "," ").replace(" And "," ").replace(" OR "," ").replace(" or "," ").replace(" Or "," ").replace(" NOT "," ").replace(" not "," ").replace(" Not "," ").split(" ");
-				foreach(var l in listConditions) {
-					if ((l!="")&&(l.ascii_casecmp("true")!=0)&&(l.ascii_casecmp("false")!=0)) {
-						var define=new ElementDefine();
+				this.currentCondition  = condition;
+				this.conditionInverted = false;
+				var newCondition   = " " + (condition.replace("(", " ").replace(")", " ")) + " ";
+				var listConditions = newCondition.replace(" AND ", " ").replace(" and ", " ").replace(" And ", " ").replace(" OR ", " ").replace(" or ", " ").replace(" Or ", " ").replace(" NOT ", " ").replace(" not ", " ").replace(" Not ", " ").split(" ");
+				foreach (var l in listConditions) {
+					if ((l != "") && (l.ascii_casecmp("true") != 0) && (l.ascii_casecmp("false") != 0)) {
+						var define = new ElementDefine();
 						define.addNewDefine(l);
 					}
 				}
@@ -129,7 +124,7 @@ namespace AutoVala {
 		}
 
 		private bool removeCondition() {
-			if (this.currentCondition=="") {
+			if (this.currentCondition == "") {
 				this.globalData.addError(_("Mismatched END (line %d)").printf(this.lineNumber));
 				return true;
 			} else {
@@ -139,7 +134,7 @@ namespace AutoVala {
 		}
 
 		private bool invertCondition() {
-			if (this.currentCondition=="") {
+			if (this.currentCondition == "") {
 				this.globalData.addError(_("Mismatched ELSE (line %d)").printf(this.lineNumber));
 				return true;
 			} else {
@@ -147,7 +142,7 @@ namespace AutoVala {
 					this.globalData.addError(_("Mismatched ELSE (line %d)").printf(this.lineNumber));
 					return true;
 				} else {
-					this.conditionInverted=true;
+					this.conditionInverted = true;
 					return false;
 				}
 			}
@@ -170,53 +165,52 @@ namespace AutoVala {
 		 */
 
 		public bool readConfiguration() {
-
 			this.resetCondition();
 
 			if (this.globalData.configFile == null) {
 				return true;
 			}
 
-			var file = File.new_for_path(this.globalData.configFile);
-			bool error = false;
-			int ifLineNumber = 0;
+			var  file         = File.new_for_path(this.globalData.configFile);
+			bool error        = false;
+			int  ifLineNumber = 0;
 			try {
 				var dis = new DataInputStream(file.read());
 
 				this.lineNumber = 0;
-				string line;
-				ElementBase element = null;
-				bool automatic = false;
+				string      line;
+				ElementBase element   = null;
+				bool        automatic = false;
 
 				string[] comments = {};
 
-				while((line = dis.read_line(null)) != null) {
-					string ?cond = null;
+				while ((line = dis.read_line(null)) != null) {
+					string ? cond = null;
 					bool invert = false;
-					this.getCurrentCondition(out cond,out invert);
+					this.getCurrentCondition(out cond, out invert);
 
 					this.lineNumber++;
 
-					if (line[0]==';') { // it is a comment; forget it
+					if (line[0] == ';') {                   // it is a comment; forget it
 						continue;
 					}
 
-					if (line[0]=='#') { // it is a comment; append it to the comment lis
+					if (line[0] == '#') {                   // it is a comment; append it to the comment lis
 						if (line.has_prefix("### AutoVala Project ###")) {
-							continue; // don't add the header comment
+							continue;                       // don't add the header comment
 						}
 						comments += line.strip();
 						continue;
 					}
-					var finalline=line.strip();
-					if (finalline=="") {
+					var finalline = line.strip();
+					if (finalline == "") {
 						continue;
 					}
-					if (line[0]=='*') { // it's an element added automatically, not by the user
-						automatic=true;
-						line=line.substring(1).strip();
+					if (line[0] == '*') {                   // it's an element added automatically, not by the user
+						automatic = true;
+						line      = line.substring(1).strip();
 					} else {
-						automatic=false;
+						automatic = false;
 					}
 
 					if (line.has_prefix("external: ")) {
@@ -282,9 +276,9 @@ namespace AutoVala {
 						element = new ElementMimetype();
 					} else if (line.has_prefix("polkit: ")) {
 						element = new ElementPolkit();
-					} else if ((line.has_prefix("vala_binary: "))||(line.has_prefix("vala_library: "))) {
+					} else if ((line.has_prefix("vala_binary: ")) || (line.has_prefix("vala_library: "))) {
 						if (this.checkConditionals(cond)) {
-							error=true;
+							error = true;
 							continue;
 						}
 						element = new ElementValaBinary();
@@ -292,94 +286,93 @@ namespace AutoVala {
 						element = new ElementInclude();
 					} else if (line.has_prefix("define: ")) {
 						if (this.checkConditionals(cond)) {
-							error=true;
+							error = true;
 							continue;
 						}
 						element = new ElementDefine();
 					} else if (line.has_prefix("if ")) {
-						error |= this.addCondition(line.substring(3).strip());
-						ifLineNumber=this.lineNumber;
+						error       |= this.addCondition(line.substring(3).strip());
+						ifLineNumber = this.lineNumber;
 						continue;
-					} else if (line.strip()=="else") {
-						error|=this.invertCondition();
+					} else if (line.strip() == "else") {
+						error |= this.invertCondition();
 						continue;
-					} else if (line.strip()=="end") {
-						error|=this.removeCondition();
+					} else if (line.strip() == "end") {
+						error |= this.removeCondition();
 						continue;
 					} else if (line.has_prefix("vala_version: ")) {
 						if (this.checkConditionals(cond)) {
 							this.globalData.addError(_("Vala version can't be conditional (line %d)").printf(this.lineNumber));
-							error=true;
+							error = true;
 							continue;
 						}
-						var version=line.substring(14).strip();
-						if (false==this.check_version(version)) {
+						var version = line.substring(14).strip();
+						if (false == this.check_version(version)) {
 							this.globalData.addError(_("Vala version string not valid. It must be in the form N.N or N.N.N (line %d)").printf(this.lineNumber));
-							error=true;
+							error = true;
 						} else {
-							var version_elements=version.split(".");
+							var version_elements = version.split(".");
 
 							int fMajor;
 							int fMinor;
 
-							fMajor=int.parse(version_elements[0]);
-							fMinor=int.parse(version_elements[1]);
-							if ((fMajor>this.globalData.valaMajor)||((fMajor==this.globalData.valaMajor)&&(fMinor>this.globalData.valaMinor))) {
-								this.globalData.configFile="";
+							fMajor = int.parse(version_elements[0]);
+							fMinor = int.parse(version_elements[1]);
+							if ((fMajor > this.globalData.valaMajor) || ((fMajor == this.globalData.valaMajor) && (fMinor > this.globalData.valaMinor))) {
+								this.globalData.configFile = "";
 								this.resetCondition();
-								this.globalData.addError(_("This project needs Vala version %s or greater, but you have version %d.%d. Can't open it.").printf(version,this.globalData.valaMajor,this.globalData.valaMinor));
-								error=true;
+								this.globalData.addError(_("This project needs Vala version %s or greater, but you have version %d.%d. Can't open it.").printf(version, this.globalData.valaMajor, this.globalData.valaMinor));
+								error = true;
 								break;
 							}
-							this.globalData.valaVersionMajor=fMajor;
-							this.globalData.valaVersionMinor=fMinor;
+							this.globalData.valaVersionMajor = fMajor;
+							this.globalData.valaVersionMinor = fMinor;
 							this.globalData.versionAutomatic = automatic;
 						}
 						continue;
 					} else if (line.has_prefix("project_name: ")) {
 						if (this.checkConditionals(cond)) {
-							error=true;
+							error = true;
 							continue;
 						}
-						this.globalData.projectName=line.substring(14).strip();
+						this.globalData.projectName = line.substring(14).strip();
 						continue;
 					} else if (line.has_prefix("autovala_version: ")) {
 						if (this.checkConditionals(cond)) {
-							error=true;
+							error = true;
 							continue;
 						}
-						this.version=int.parse(line.substring(18).strip());
-						if (this.version>this.currentVersion) {
-							this.globalData.configFile="";
+						this.version = int.parse(line.substring(18).strip());
+						if (this.version > this.currentVersion) {
+							this.globalData.configFile = "";
 							this.resetCondition();
 							this.globalData.addError(_("This project was created with a newer version of Autovala. Can't open it."));
-							error=true;
+							error = true;
 							break;
 						}
 						continue;
 					}
-					error|=element.configureLine(line,automatic,cond,invert,lineNumber,comments);
+					error   |= element.configureLine(line, automatic, cond, invert, lineNumber, comments);
 					comments = {};
 				}
 			} catch (Error e) {
-				this.globalData.configFile="";
+				this.globalData.configFile = "";
 				this.resetCondition();
 				this.globalData.addError(_("Can't open configuration file"));
-				error=true;
+				error = true;
 			}
-			string ?condition;
+			string ? condition;
 			bool invert;
-			this.getCurrentCondition(out condition,out invert);
-			if (condition!=null) {
+			this.getCurrentCondition(out condition, out invert);
+			if (condition != null) {
 				this.globalData.addError(_("IF without END in line %d").printf(ifLineNumber));
-				error=true;
+				error = true;
 			}
 			return error;
 		}
 
-		private bool checkConditionals(string ?cond) {
-
-			if (cond!=null) {
+		private bool checkConditionals(string ? cond) {
+			if (cond != null) {
 				this.globalData.addError(_("Conditionals are not supported in this statement (line %d)").printf(this.lineNumber));
 				this.resetCondition();
 				return true;
@@ -388,7 +381,7 @@ namespace AutoVala {
 		}
 
 		private bool check_version(string version) {
-			return Regex.match_simple("^[0-9]+.[0-9]+(.[0-9]+)?$",version);
+			return Regex.match_simple("^[0-9]+.[0-9]+(.[0-9]+)?$", version);
 		}
 
 		/**
@@ -399,26 +392,25 @@ namespace AutoVala {
 		 * @return //false// if there was no error, //true// if there was an error
 		 */
 
-		public bool saveConfiguration(string filename="") {
-
-			if(this.globalData.projectName=="") {
+		public bool saveConfiguration(string filename = "") {
+			if (this.globalData.projectName == "") {
 				this.globalData.addError(_("Can't store the configuration. Project name not defined."));
 				return true;
 			}
 
-			if((filename=="")&&(this.globalData.configFile=="")) {
+			if ((filename == "") && (this.globalData.configFile == "")) {
 				this.globalData.addError(_("Can't store the configuration. Path not defined."));
 				return true;
 			}
-			if (filename!="") {
+			if (filename != "") {
 				if (GLib.Path.is_absolute(filename)) {
-					this.globalData.configFile=filename;
+					this.globalData.configFile = filename;
 				} else {
-					this.globalData.configFile=GLib.Path.build_filename(GLib.Environment.get_current_dir(),filename);
+					this.globalData.configFile = GLib.Path.build_filename(GLib.Environment.get_current_dir(), filename);
 				}
 			}
 			this.basepath = GLib.Path.get_dirname(this.globalData.configFile);
-			var file=File.new_for_path(this.globalData.configFile);
+			var file = File.new_for_path(this.globalData.configFile);
 			if (file.query_exists()) {
 				try {
 					file.delete();
@@ -430,7 +422,7 @@ namespace AutoVala {
 			this.globalData.addMessage(_("Storing configuration in file %s").printf(this.globalData.configFile));
 			this.globalData.sortElements();
 			try {
-				var dis = file.create(FileCreateFlags.NONE);
+				var dis         = file.create(FileCreateFlags.NONE);
 				var data_stream = new DataOutputStream(dis);
 				data_stream.put_string("### AutoVala Project ###\n");
 				data_stream.put_string("autovala_version: %d\n".printf(this.currentVersion));
@@ -439,59 +431,59 @@ namespace AutoVala {
 					data_stream.put_string("project_version: %s\n".printf(this.globalData.global_version));
 				}
 				if (this.globalData.versionAutomatic) {
-					data_stream.put_string("*vala_version: %d.%d\n\n".printf(this.globalData.valaMajor,this.globalData.valaMinor));
+					data_stream.put_string("*vala_version: %d.%d\n\n".printf(this.globalData.valaMajor, this.globalData.valaMinor));
 				} else {
-					data_stream.put_string("vala_version: %d.%d\n\n".printf(this.globalData.valaVersionMajor,this.globalData.valaVersionMinor));
+					data_stream.put_string("vala_version: %d.%d\n\n".printf(this.globalData.valaVersionMajor, this.globalData.valaVersionMinor));
 				}
-				this.storeData(ConfigType.IGNORE,data_stream);
-				this.storeData(ConfigType.CUSTOM,data_stream);
-				this.storeData(ConfigType.DEFINE,data_stream);
-				this.storeData(ConfigType.GRESOURCE,data_stream);
-				this.storeData(ConfigType.VAPIDIR,data_stream);
-				this.storeData(ConfigType.VALA_BINARY,data_stream);
-				this.storeData(ConfigType.VALA_LIBRARY,data_stream);
-				this.storeData(ConfigType.PO,data_stream);
-				this.storeData(ConfigType.TRANSLATION,data_stream);
-				this.storeData(ConfigType.DATA,data_stream);
-				this.storeData(ConfigType.APPDATA,data_stream);
-				this.storeData(ConfigType.DOC,data_stream);
-				this.storeData(ConfigType.BINARY,data_stream);
-				this.storeData(ConfigType.DESKTOP,data_stream);
-				this.storeData(ConfigType.AUTOSTART,data_stream);
-				this.storeData(ConfigType.DBUS_SERVICE,data_stream);
-				this.storeData(ConfigType.DBUS_CONFIG,data_stream);
-				this.storeData(ConfigType.EOS_PLUG,data_stream);
-				this.storeData(ConfigType.SCHEME,data_stream);
-				this.storeData(ConfigType.GLADE,data_stream);
-				this.storeData(ConfigType.ICON,data_stream);
-				this.storeData(ConfigType.PIXMAP,data_stream);
-				this.storeData(ConfigType.INCLUDE,data_stream);
-				this.storeData(ConfigType.MANPAGE,data_stream);
-				this.storeData(ConfigType.BASH_COMPLETION,data_stream);
-				this.storeData(ConfigType.SOURCE_DEPENDENCY,data_stream);
-				this.storeData(ConfigType.BINARY_DEPENDENCY,data_stream);
-				this.storeData(ConfigType.EXTERNAL,data_stream);
-				this.storeData(ConfigType.POLKIT,data_stream);
-				this.storeData(ConfigType.MIMETYPE,data_stream);
+				this.storeData(ConfigType.IGNORE, data_stream);
+				this.storeData(ConfigType.CUSTOM, data_stream);
+				this.storeData(ConfigType.DEFINE, data_stream);
+				this.storeData(ConfigType.GRESOURCE, data_stream);
+				this.storeData(ConfigType.VAPIDIR, data_stream);
+				this.storeData(ConfigType.VALA_BINARY, data_stream);
+				this.storeData(ConfigType.VALA_LIBRARY, data_stream);
+				this.storeData(ConfigType.PO, data_stream);
+				this.storeData(ConfigType.TRANSLATION, data_stream);
+				this.storeData(ConfigType.DATA, data_stream);
+				this.storeData(ConfigType.APPDATA, data_stream);
+				this.storeData(ConfigType.DOC, data_stream);
+				this.storeData(ConfigType.BINARY, data_stream);
+				this.storeData(ConfigType.DESKTOP, data_stream);
+				this.storeData(ConfigType.AUTOSTART, data_stream);
+				this.storeData(ConfigType.DBUS_SERVICE, data_stream);
+				this.storeData(ConfigType.DBUS_CONFIG, data_stream);
+				this.storeData(ConfigType.EOS_PLUG, data_stream);
+				this.storeData(ConfigType.SCHEME, data_stream);
+				this.storeData(ConfigType.GLADE, data_stream);
+				this.storeData(ConfigType.ICON, data_stream);
+				this.storeData(ConfigType.PIXMAP, data_stream);
+				this.storeData(ConfigType.INCLUDE, data_stream);
+				this.storeData(ConfigType.MANPAGE, data_stream);
+				this.storeData(ConfigType.BASH_COMPLETION, data_stream);
+				this.storeData(ConfigType.SOURCE_DEPENDENCY, data_stream);
+				this.storeData(ConfigType.BINARY_DEPENDENCY, data_stream);
+				this.storeData(ConfigType.EXTERNAL, data_stream);
+				this.storeData(ConfigType.POLKIT, data_stream);
+				this.storeData(ConfigType.MIMETYPE, data_stream);
 			} catch (Error e) {
 				this.globalData.addError(_("Can't create the config file %s").printf(this.globalData.configFile));
 				return true;
 			}
 			return false;
 		}
-		private void storeData(ConfigType type, GLib.DataOutputStream dataStream) throws GLib.Error {
 
-			bool printed = false;
-			var printConditions = new ConditionalText(dataStream,ConditionalType.AUTOVALA);
-			foreach(var element in this.globalData.globalElements) {
+		private void storeData(ConfigType type, GLib.DataOutputStream dataStream) throws GLib.Error {
+			bool printed         = false;
+			var  printConditions = new ConditionalText(dataStream, ConditionalType.AUTOVALA);
+			foreach (var element in this.globalData.globalElements) {
 				if (element.eType == type) {
-					printConditions.printCondition(element.condition,element.invertCondition);
+					printConditions.printCondition(element.condition, element.invertCondition);
 					if (element.comments != null) {
-						foreach(var comment in element.comments) {
+						foreach (var comment in element.comments) {
 							dataStream.put_string("%s\n".printf(comment));
 						}
 					}
-					element.storeConfig(dataStream,printConditions);
+					element.storeConfig(dataStream, printConditions);
 					printed = true;
 				}
 			}

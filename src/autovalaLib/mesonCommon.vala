@@ -1,28 +1,26 @@
 /*
- Copyright 2013-2016 (C) Raster Software Vigo (Sergio Costas)
-
- This file is part of AutoVala
-
- AutoVala is free software; you can redistribute it and/or modify
- it under the terms of the GNU General Public License as published by
- the Free Software Foundation; either version 3 of the License, or
- (at your option) any later version.
-
- AutoVala is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU General Public License for more details.
-
- You should have received a copy of the GNU General Public License
- along with this program.  If not, see <http://www.gnu.org/licenses/>. */
+ * Copyright 2013-2016 (C) Raster Software Vigo (Sergio Costas)
+ *
+ * This file is part of AutoVala
+ *
+ * AutoVala is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * AutoVala is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 
 using GLib;
 using Posix;
 
 namespace AutoVala {
-
 	class MesonCommon : GLib.Object {
-
 		private bool install_script_created;
 		private bool install_schemas_created;
 		private bool manpage_script_created;
@@ -33,13 +31,13 @@ namespace AutoVala {
 		private string scriptPathS;
 
 		public void init() {
-			this.install_script_created = false;
+			this.install_script_created         = false;
 			this.install_library_script_created = false;
-			this.added_dbus_prefix = false;
+			this.added_dbus_prefix         = false;
 			this.check_path_script_created = false;
-			this.manpage_script_created = false;
-			this.install_schemas_created = false;
-			this.scriptPathS = Path.build_filename(ElementBase.globalData.projectFolder,"meson_scripts");
+			this.manpage_script_created    = false;
+			this.install_schemas_created   = false;
+			this.scriptPathS = Path.build_filename(ElementBase.globalData.projectFolder, "meson_scripts");
 			var tmpPath = File.new_for_path(this.scriptPathS);
 			if (tmpPath.query_exists()) {
 				ManageProject.delete_recursive(this.scriptPathS);
@@ -47,16 +45,15 @@ namespace AutoVala {
 		}
 
 		private void create_folder() {
-
 			var scriptPath = File.new_for_path(this.scriptPathS);
 			try {
 				scriptPath.make_directory_with_parents();
-			} catch(GLib.Error e) {
+			} catch (GLib.Error e) {
 			}
 		}
 
 		private void set_permissions(string script) {
-			Posix.chmod(Path.build_filename(this.scriptPathS,script),0x1ED);
+			Posix.chmod(Path.build_filename(this.scriptPathS, script), 0x1ED);
 		}
 
 		/**
@@ -65,13 +62,12 @@ namespace AutoVala {
 		 * The second argument is the source file expresion (can have wildcards)
 		 */
 		public void create_install_script() throws GLib.Error {
-
 			if (this.install_script_created) {
 				return;
 			}
 
 			this.create_folder();
-			var scriptPath = File.new_for_path(Path.build_filename(this.scriptPathS,"install_data.sh"));
+			var scriptPath = File.new_for_path(Path.build_filename(this.scriptPathS, "install_data.sh"));
 			if (scriptPath.query_exists()) {
 				scriptPath.delete();
 			}
@@ -96,12 +92,11 @@ fi
 		 * The second argument is the source file expresion (can have wildcards)
 		 */
 		public void create_schemas_script() throws GLib.Error {
-
 			if (this.install_schemas_created) {
 				return;
 			}
 			this.create_folder();
-			var scriptPath = File.new_for_path(Path.build_filename(this.scriptPathS,"install_schemas.py"));
+			var scriptPath = File.new_for_path(Path.build_filename(this.scriptPathS, "install_schemas.py"));
 			if (scriptPath.query_exists()) {
 				scriptPath.delete();
 			}
@@ -128,13 +123,12 @@ if not os.environ.get('DESTDIR'):
 		 * The second argument is the source file expresion (can have wildcards)
 		 */
 		public void create_manpages_script() throws GLib.Error {
-
 			if (this.manpage_script_created) {
 				return;
 			}
 
 			this.create_folder();
-			var scriptPath = File.new_for_path(Path.build_filename(this.scriptPathS,"install_manpage.sh"));
+			var scriptPath = File.new_for_path(Path.build_filename(this.scriptPathS, "install_manpage.sh"));
 			if (scriptPath.query_exists()) {
 				scriptPath.delete();
 			}
@@ -166,11 +160,11 @@ fi
 			}
 
 			this.create_folder();
-			var scriptPath = File.new_for_path(Path.build_filename(this.scriptPathS,"install_library.sh"));
+			var scriptPath = File.new_for_path(Path.build_filename(this.scriptPathS, "install_library.sh"));
 			if (scriptPath.query_exists()) {
 				scriptPath.delete();
 			}
-			var dis = scriptPath.create(FileCreateFlags.NONE);
+			var dis         = scriptPath.create(FileCreateFlags.NONE);
 			var dataStream2 = new DataOutputStream(dis);
 			dataStream2.put_string("""#!/bin/sh
 
@@ -188,17 +182,16 @@ install -m 644 "${MESON_BUILD_ROOT}/$1/$2@sha/$3" "${DESTDIR}${MESON_INSTALL_PRE
 		}
 
 		public void create_check_paths_script() throws GLib.Error {
-
 			if (this.check_path_script_created) {
 				return;
 			}
 
 			this.create_folder();
-			var scriptPath = File.new_for_path(Path.build_filename(this.scriptPathS,"check_path.sh"));
+			var scriptPath = File.new_for_path(Path.build_filename(this.scriptPathS, "check_path.sh"));
 			if (scriptPath.query_exists()) {
 				scriptPath.delete();
 			}
-			var dis = scriptPath.create(FileCreateFlags.NONE);
+			var dis         = scriptPath.create(FileCreateFlags.NONE);
 			var dataStream2 = new DataOutputStream(dis);
 			dataStream2.put_string("""#!/bin/sh
 
@@ -215,7 +208,6 @@ fi
 		}
 
 		public void add_dbus_config(ConditionalText dataStream) throws Error {
-
 			if (this.added_dbus_prefix) {
 				return;
 			}
@@ -224,5 +216,4 @@ fi
 			this.added_dbus_prefix = true;
 		}
 	}
-
 }

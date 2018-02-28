@@ -3,7 +3,6 @@ using Gdk;
 using Gee;
 
 namespace AutovalaPlugin {
-
 	/**
 	 * This is a GTK3 widget that allows to show all the files and folders
 	 * starting in a specific folder, in an hierarchical fashion
@@ -11,12 +10,11 @@ namespace AutovalaPlugin {
 	 */
 
 	public class FileViewer : Gtk.TreeView {
-
 		private TreeStore treeModel;
 		private Gee.ArrayList<FileMonitor> monitors;
 		private Gtk.CellRendererText renderer;
-		private string? current_file;
-		private string? current_folder;
+		private string ? current_file;
+		private string ? current_folder;
 		private bool show_hiden;
 		private FileViewerMenu folder_menu;
 		private Gee.ArrayList<string> open_folders;
@@ -37,15 +35,14 @@ namespace AutovalaPlugin {
 		 * Constructor
 		 */
 		public FileViewer() {
+			Intl.bindtextdomain(AutoValaConstants.GETTEXT_PACKAGE, Path.build_filename(AutoValaConstants.DATADIR, "locale"));
 
-			Intl.bindtextdomain(AutoValaConstants.GETTEXT_PACKAGE, Path.build_filename(AutoValaConstants.DATADIR,"locale"));
-
-			this.monitors = new Gee.ArrayList<FileMonitor>();
-			this.current_file = null;
+			this.monitors       = new Gee.ArrayList<FileMonitor>();
+			this.current_file   = null;
 			this.current_folder = null;
-			this.show_hiden = false;
-			this.folder_menu = null;
-			this.open_folders = new Gee.ArrayList<string>();
+			this.show_hiden     = false;
+			this.folder_menu    = null;
+			this.open_folders   = new Gee.ArrayList<string>();
 
 			/*
 			 * string: visible text (with markup)
@@ -54,20 +51,20 @@ namespace AutovalaPlugin {
 			 * string: named icon
 			 * bool: if TRUE, is a file (this is, openable); if FALSE, is a folder (not openable)
 			 */
-			this.treeModel = new TreeStore(5,typeof(string),typeof(string),typeof(bool),typeof(string),typeof(bool));
+			this.treeModel = new TreeStore(5, typeof(string), typeof(string), typeof(bool), typeof(string), typeof(bool));
 			this.set_model(this.treeModel);
 			var column = new Gtk.TreeViewColumn();
 			this.renderer = new Gtk.CellRendererText();
 			var pixbuf = new Gtk.CellRendererPixbuf();
-			column.pack_start(pixbuf,false);
-			column.add_attribute(pixbuf,"icon_name",3);
-			column.pack_start(this.renderer,false);
-			column.add_attribute(this.renderer,"markup",0);
-			column.add_attribute(this.renderer,"editable",2);
+			column.pack_start(pixbuf, false);
+			column.add_attribute(pixbuf, "icon_name", 3);
+			column.pack_start(this.renderer, false);
+			column.add_attribute(this.renderer, "markup", 0);
+			column.add_attribute(this.renderer, "editable", 2);
 			this.append_column(column);
 
 			//this.activate_on_single_click = true;
-			this.headers_visible = false;
+			this.headers_visible      = false;
 			this.get_selection().mode = SelectionMode.SINGLE;
 
 			this.renderer.edited.connect(this.cell_edited);
@@ -75,16 +72,16 @@ namespace AutovalaPlugin {
 			this.button_press_event.connect(this.click_event);
 			this.row_expanded.connect((iter, path) => {
 				string filepath;
-				this.treeModel.get(iter,1,out filepath,-1);
-				if(!this.open_folders.contains(filepath)) {
-					this.open_folders.add(filepath);
+				this.treeModel.get(iter, 1, out filepath, -1);
+				if (!this.open_folders.contains(filepath)) {
+				    this.open_folders.add(filepath);
 				}
 			});
 			this.row_collapsed.connect((iter, path) => {
 				string filepath;
-				this.treeModel.get(iter,1,out filepath,-1);
-				if(this.open_folders.contains(filepath)) {
-					this.open_folders.remove(filepath);
+				this.treeModel.get(iter, 1, out filepath, -1);
+				if (this.open_folders.contains(filepath)) {
+				    this.open_folders.remove(filepath);
 				}
 			});
 		}
@@ -95,7 +92,7 @@ namespace AutovalaPlugin {
 		 * when saving, which launches filesystem events.
 		 * @param file The full path to the current file being edited
 		 */
-		public void set_current_file(string? file) {
+		public void set_current_file(string ? file) {
 			this.current_file = file;
 		}
 
@@ -103,8 +100,7 @@ namespace AutovalaPlugin {
 		 * Sets the base folder that will be shown in this file view
 		 * @param folder The top folder
 		 */
-		public void set_base_folder(string? folder) {
-
+		public void set_base_folder(string ? folder) {
 			if (folder == null) {
 				this.open_folders.clear();
 				this.current_folder = null;
@@ -114,7 +110,7 @@ namespace AutovalaPlugin {
 				if (this.current_folder != folder) {
 					this.open_folders.clear();
 					this.current_folder = folder;
-					this.fill_files(folder,null);
+					this.fill_files(folder, null);
 				}
 			}
 		}
@@ -130,20 +126,20 @@ namespace AutovalaPlugin {
 			if (new_name == "") {
 				return;
 			}
-			if (!this.treeModel.get_iter_from_string(out iter,path)) {
+			if (!this.treeModel.get_iter_from_string(out iter, path)) {
 				return;
 			}
 			string old_file;
-			this.treeModel.get(iter,1,out old_file,-1);
-			var new_file = Path.build_filename(Path.get_dirname(old_file),new_name);
+			this.treeModel.get(iter, 1, out old_file, -1);
+			var new_file = Path.build_filename(Path.get_dirname(old_file), new_name);
 			// there is no change
 			if (old_file == new_file) {
 				return;
 			}
-			var file = File.new_for_path(old_file);
+			var file   = File.new_for_path(old_file);
 			var opFile = File.new_for_path(new_file);
 			try {
-				file.move(opFile,FileCopyFlags.NONE);
+				file.move(opFile, FileCopyFlags.NONE);
 			} catch (GLib.Error e) {
 			}
 		}
@@ -154,27 +150,27 @@ namespace AutovalaPlugin {
 		 * @return true to stop processing the event; false to continue processing the event.
 		 */
 		public bool click_event(EventButton event) {
-			if (event.button == 3) { // right click
-				TreePath path;
+			if (event.button == 3) {             // right click
+				TreePath       path;
 				TreeViewColumn column;
-				int x;
-				int y;
-				TreeIter iter;
+				int            x;
+				int            y;
+				TreeIter       iter;
 
-				if (this.get_path_at_pos((int)event.x, (int)event.y, out path, out column, out x, out y)) {
+				if (this.get_path_at_pos((int) event.x, (int) event.y, out path, out column, out x, out y)) {
 					if (!this.treeModel.get_iter(out iter, path)) {
 						return false;
 					}
 
-					string? element_path;
+					string ? element_path;
 					bool is_file;
-					this.treeModel.get(iter,1,out element_path,4,out is_file,-1);
-					this.folder_menu = new FileViewerMenu(element_path, is_file, this.show_hiden, this, this.treeModel,iter);
+					this.treeModel.get(iter, 1, out element_path, 4, out is_file, -1);
+					this.folder_menu = new FileViewerMenu(element_path, is_file, this.show_hiden, this, this.treeModel, iter);
 					this.folder_menu.set_hiden.connect(this.changed_hide_status);
-					this.folder_menu.open.connect( (file_path) => {
-						this.clicked_file (file_path);
+					this.folder_menu.open.connect((file_path) => {
+						this.clicked_file(file_path);
 					});
-					this.folder_menu.popup(null,null,null,event.button,event.time);
+					this.folder_menu.popup(null, null, null, event.button, event.time);
 					this.folder_menu.show_all();
 					return false;
 				}
@@ -187,7 +183,6 @@ namespace AutovalaPlugin {
 		 * @param new_status If true, the hiden files will be visible; if false, they won't
 		 */
 		public void changed_hide_status(bool new_status) {
-
 			if (new_status != this.show_hiden) {
 				this.show_hiden = new_status;
 				this.fill_files(this.current_folder);
@@ -201,7 +196,7 @@ namespace AutovalaPlugin {
 		 */
 		public void clicked(TreePath path, TreeViewColumn column) {
 			TreeModel model;
-			TreeIter iter;
+			TreeIter  iter;
 
 			var selection = this.get_selection();
 			if (!selection.get_selected(out model, out iter)) {
@@ -209,9 +204,9 @@ namespace AutovalaPlugin {
 			}
 
 			string filepath;
-			bool is_file;
-			model.get(iter,1,out filepath,4,out is_file,-1);
-			if(!is_file) {
+			bool   is_file;
+			model.get(iter, 1, out filepath, 4, out is_file, -1);
+			if (!is_file) {
 				return;
 			}
 
@@ -222,7 +217,7 @@ namespace AutovalaPlugin {
 		 * Removes all the current file monitors
 		 */
 		private void cancel_monitors() {
-			foreach(var mon in this.monitors) {
+			foreach (var mon in this.monitors) {
 				mon.cancel();
 			}
 			this.monitors = new Gee.ArrayList<FileMonitor>();
@@ -235,38 +230,38 @@ namespace AutovalaPlugin {
 		 * @param other_file
 		 * @param event_type The event that happened (created, deleted...)
 		 */
-		public void folder_changed (File file, File? other_file, FileMonitorEvent event_type) {
-
+		public void folder_changed(File file, File ? other_file, FileMonitorEvent event_type) {
 			if (event_type == FileMonitorEvent.CHANGED) {
 				var filename = file.get_basename();
 				if (filename.has_suffix(".avprj")) {
-					this.changed_file(); // if the file that has changed is the project file, refresh the project view
+					this.changed_file();                     // if the file that has changed is the project file, refresh the project view
 				}
 				return;
 			}
 
-			if ((event_type!=FileMonitorEvent.CREATED) &&
-				(event_type!=FileMonitorEvent.DELETED) &&
-				(event_type!=FileMonitorEvent.MOVED)) {
+			if ((event_type != FileMonitorEvent.CREATED) &&
+			    (event_type != FileMonitorEvent.DELETED) &&
+			    (event_type != FileMonitorEvent.MOVED)) {
 				return;
 			}
 
 			var filename = file.get_basename();
-			if((filename[0]=='.')&&(this.show_hiden==false)) {
+			if ((filename[0] == '.') && (this.show_hiden == false)) {
 				// don't check hiden files
 				return;
 			}
 
 			// For some reason, a CREATE event is sent when we save the current file
 			// But we don't need to refresh in that case, because the file is already there
-			if((file.get_path()==this.current_file)&&(event_type==FileMonitorEvent.CREATED)) {
+			if ((file.get_path() == this.current_file) && (event_type == FileMonitorEvent.CREATED)) {
 				return;
 			}
-			this.fill_files(this.current_folder,null);
+			this.fill_files(this.current_folder, null);
+
 /*			if(filename.has_suffix("~")) {
-				// don't inform about backup files
-				return;
-			}*/
+ *                              // don't inform about backup files
+ *                              return;
+ *                      }*/
 		}
 
 		/**
@@ -279,21 +274,21 @@ namespace AutovalaPlugin {
 		 * @param top If true, this is the top folder, so the TreeView will be cleared and the
 		 * file monitors will be destroyed before starting. If false, it is being called recursively
 		 */
-		private void fill_files(string? path, TreeIter? iter=null, bool top=true) {
+		private void fill_files(string ? path, TreeIter ? iter = null, bool top = true) {
 			if (path == null) {
 				return;
 			}
 			if (top) {
 				this.cancel_monitors();
 				this.treeModel.clear();
-				this.folder_menu = null;
+				this.folder_menu        = null;
 				this.elements_to_expand = {};
 			}
-			this.fill_files2(path,iter,true,top);
-			this.fill_files2(path,iter,false,top);
+			this.fill_files2(path, iter, true, top);
+			this.fill_files2(path, iter, false, top);
 			if (top) {
 				foreach (var tmpIter in this.elements_to_expand) {
-					this.expand_row(this.treeModel.get_path(tmpIter),false);
+					this.expand_row(this.treeModel.get_path(tmpIter), false);
 				}
 			}
 		}
@@ -307,14 +302,13 @@ namespace AutovalaPlugin {
 		 * @param top If true, path is the top folder of our file tree; if false, means that the
 		 * method is being called recursively
 		 */
-		private void fill_files2(string path,TreeIter? parent,bool folders,bool top) {
-
-			FileType type;
-			TreeIter tmpIter;
+		private void fill_files2(string path, TreeIter ? parent, bool folders, bool top) {
+			FileType       type;
+			TreeIter       tmpIter;
 			FileEnumerator enumerator;
-			FileInfo info_file;
+			FileInfo       info_file;
 
-			if(folders) {
+			if (folders) {
 				type = FileType.DIRECTORY;
 			} else {
 				type = FileType.REGULAR;
@@ -329,33 +323,32 @@ namespace AutovalaPlugin {
 			}
 			var fileList = new Gee.ArrayList<ElementFileViewer>();
 			try {
-				enumerator = directory.enumerate_children(GLib.FileAttribute.STANDARD_NAME+","+GLib.FileAttribute.STANDARD_TYPE,GLib.FileQueryInfoFlags.NOFOLLOW_SYMLINKS,null);
+				enumerator = directory.enumerate_children(GLib.FileAttribute.STANDARD_NAME + "," + GLib.FileAttribute.STANDARD_TYPE, GLib.FileQueryInfoFlags.NOFOLLOW_SYMLINKS, null);
 				while ((info_file = enumerator.next_file(null)) != null) {
-
-					var typeinfo=info_file.get_file_type();
-					if (typeinfo!=type) {
+					var typeinfo = info_file.get_file_type();
+					if (typeinfo != type) {
 						continue;
 					}
-					var filename=info_file.get_name();
-					if((filename[0]=='.')&&(this.show_hiden==false)) {
+					var filename = info_file.get_name();
+					if ((filename[0] == '.') && (this.show_hiden == false)) {
 						continue;
 					}
-					var full_path=Path.build_filename(path,filename);
-					var element = new ElementFileViewer(filename,full_path);
+					var full_path = Path.build_filename(path, filename);
+					var element   = new ElementFileViewer(filename, full_path);
 					fileList.add(element);
 				}
 				// sort files alphabetically
 				fileList.sort(FileViewer.CompareFiles);
 				foreach (var element in fileList) {
-					this.treeModel.append(out tmpIter,parent);
+					this.treeModel.append(out tmpIter, parent);
 					if (folders) {
-						this.treeModel.set(tmpIter,0,element.filename,1,element.fullPath,3,"folder",4,false,-1);
-						if(this.open_folders.contains(element.fullPath)) {
-							this.elements_to_expand+=tmpIter;
+						this.treeModel.set(tmpIter, 0, element.filename, 1, element.fullPath, 3, "folder", 4, false, -1);
+						if (this.open_folders.contains(element.fullPath)) {
+							this.elements_to_expand += tmpIter;
 						}
-						this.fill_files(element.fullPath,tmpIter,false);
+						this.fill_files(element.fullPath, tmpIter, false);
 					} else {
-						this.treeModel.set(tmpIter,0,element.filename,1,element.fullPath,3,"text-x-generic",4,true,-1);
+						this.treeModel.set(tmpIter, 0, element.filename, 1, element.fullPath, 3, "text-x-generic", 4, true, -1);
 					}
 				}
 			} catch (Error e) {
@@ -370,11 +363,10 @@ namespace AutovalaPlugin {
 		 * @result wheter a must be before (-1), after (1) or no matter (0), b
 		 */
 		public static int CompareFiles(ElementFileViewer a, ElementFileViewer b) {
-
-			if ((a.filename[0]=='.') && (b.filename[0]!='.')) {
+			if ((a.filename[0] == '.') && (b.filename[0] != '.')) {
 				return -1;
 			}
-			if ((a.filename[0]!='.') && (b.filename[0]=='.')) {
+			if ((a.filename[0] != '.') && (b.filename[0] == '.')) {
 				return 1;
 			}
 
@@ -392,15 +384,13 @@ namespace AutovalaPlugin {
 	 * Class used to store the data of one file
 	 */
 	public class ElementFileViewer : Object {
-
 		public string filename;
 		public string filename_casefold;
 		public string fullPath;
 
 		public ElementFileViewer(string fName, string fPath) {
-
-			this.filename = fName;
-			this.fullPath = fPath;
+			this.filename          = fName;
+			this.fullPath          = fPath;
 			this.filename_casefold = this.filename.casefold();
 		}
 	}
@@ -409,7 +399,6 @@ namespace AutovalaPlugin {
 	 * This class manages the popup menu in the file view
 	 */
 	public class FileViewerMenu : Gtk.Menu {
-
 		private TreeIter element;
 		private TreeStore treeModel;
 		private TreeView view;
@@ -427,19 +416,18 @@ namespace AutovalaPlugin {
 		public signal void open(string file);
 
 		public FileViewerMenu(string path, bool is_file, bool show_hiden, TreeView view, TreeStore model, TreeIter element) {
-
-			this.file_path = path;
-			this.is_file = is_file;
+			this.file_path  = path;
+			this.is_file    = is_file;
 			this.show_hiden = show_hiden;
-			this.element = element;
-			this.treeModel = model;
-			this.view = view;
+			this.element    = element;
+			this.treeModel  = model;
+			this.view       = view;
 
-			this.action_open = new Gtk.MenuItem.with_label(_("Open"));
-			this.action_showhide = new Gtk.MenuItem.with_label(show_hiden ? _("Don't show hiden files") : _("Show hiden files"));
-			this.rename_file = new Gtk.MenuItem.with_label(_("Rename"));
-			this.delete_file = new Gtk.MenuItem.with_label(_("Delete"));
-			this.action_new_file = new Gtk.MenuItem.with_label(_("Create file"));
+			this.action_open       = new Gtk.MenuItem.with_label(_("Open"));
+			this.action_showhide   = new Gtk.MenuItem.with_label(show_hiden ? _("Don't show hiden files") : _("Show hiden files"));
+			this.rename_file       = new Gtk.MenuItem.with_label(_("Rename"));
+			this.delete_file       = new Gtk.MenuItem.with_label(_("Delete"));
+			this.action_new_file   = new Gtk.MenuItem.with_label(_("Create file"));
 			this.action_new_folder = new Gtk.MenuItem.with_label(_("Create folder"));
 
 			if (is_file) {
@@ -456,48 +444,48 @@ namespace AutovalaPlugin {
 			this.append(this.rename_file);
 			this.append(this.delete_file);
 
-			this.action_open.activate.connect( () => {
+			this.action_open.activate.connect(() => {
 				this.open(this.file_path);
 			});
-			this.action_showhide.activate.connect( () => {
+			this.action_showhide.activate.connect(() => {
 				this.set_hiden(this.show_hiden ? false : true);
 			});
-			this.rename_file.activate.connect( () => {
-				this.treeModel.set(this.element,2,true,-1);
-				this.view.set_cursor(this.treeModel.get_path(this.element),this.view.get_column(0),true);
+			this.rename_file.activate.connect(() => {
+				this.treeModel.set(this.element, 2, true, -1);
+				this.view.set_cursor(this.treeModel.get_path(this.element), this.view.get_column(0), true);
 			});
-			this.action_new_file.activate.connect( () => {
+			this.action_new_file.activate.connect(() => {
 				string basepath;
 				if (this.is_file) {
-					basepath = Path.get_dirname(this.file_path);
+				    basepath = Path.get_dirname(this.file_path);
 				} else {
-					basepath = this.file_path;
-					this.view.expand_row(this.treeModel.get_path(this.element),false);
+				    basepath = this.file_path;
+				    this.view.expand_row(this.treeModel.get_path(this.element), false);
 				}
-				var file = File.new_for_path(Path.build_filename(basepath,_("Untitled file")));
+				var file = File.new_for_path(Path.build_filename(basepath, _("Untitled file")));
 				try{
-					file.create(FileCreateFlags.NONE);
+				    file.create(FileCreateFlags.NONE);
 				} catch (GLib.Error e) {
 				}
 			});
-			this.action_new_folder.activate.connect( () => {
+			this.action_new_folder.activate.connect(() => {
 				string basepath;
 				if (this.is_file) {
-					basepath = Path.get_dirname(this.file_path);
+				    basepath = Path.get_dirname(this.file_path);
 				} else {
-					basepath = this.file_path;
-					this.view.expand_row(this.treeModel.get_path(this.element),false);
+				    basepath = this.file_path;
+				    this.view.expand_row(this.treeModel.get_path(this.element), false);
 				}
-				var folder = File.new_for_path(Path.build_filename(basepath,_("Untitled folder")));
+				var folder = File.new_for_path(Path.build_filename(basepath, _("Untitled folder")));
 				try {
-					folder.make_directory();
+				    folder.make_directory();
 				} catch (GLib.Error e) {
 				}
 			});
-			this.delete_file.activate.connect( () => {
+			this.delete_file.activate.connect(() => {
 				var file = File.new_for_path(this.file_path);
 				try {
-					file.delete();
+				    file.delete();
 				} catch (GLib.Error e) {
 				}
 			});
