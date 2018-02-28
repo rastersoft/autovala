@@ -1,5 +1,7 @@
 # History of versions #
 
+* version 1.2.2 (2018-02-28)
+  * Now works with vala 0.39
 * version 1.2.1 (2017-11-08)
   * Fixed a bug when there is neither global nor local "version" statement
 * version 1.2.0 (2017-10-29)

@@ -1,3 +1,9 @@
+autovala (1.2.2-Debian1) sid; urgency=low
+
+  * Now works with vala 0.39
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Wed, 28 Feb 2018 23:55:00 +0200
+
 autovala (1.2.1-Debian1) sid; urgency=low
 
   * Fixed a bug when there is neither global nor local "version" statement
