@@ -36,10 +36,10 @@ namespace AutoVala {
 		public string[] files;
 
 		public GResourceXML(string filename) throws MarkupError {
-		
+
 		    string line;
 		    string text = "";
-		
+
 			this.depth = 0;
 			this.files = {};
 
@@ -86,7 +86,7 @@ namespace AutoVala {
 		}
 
 		private void visit_start (MarkupParseContext context, string name, string[] attr_names, string[] attr_values) throws MarkupError {
-			
+
 			if (this.depth == 0 && name != "gresources") {
 				throw new MarkupError.PARSE (error_msg (_("Ilegal tag <%s>; should be <gresources>"),name));
 			}
@@ -98,13 +98,13 @@ namespace AutoVala {
 			if (this.depth == 2 && name != "file") {
 				throw new MarkupError.PARSE (error_msg (_("Ilegal tag <%s>; should be <file>"),name));
 			}
-			
+
 			this.depth++;
 			if (this.depth > 3) {
 				throw new MarkupError.PARSE (error_msg (_("GResource XML can't be deeper than 2")));
 			}
 		}
-		
+
 		private void visit_end (MarkupParseContext context, string name) throws MarkupError {
 			this.depth--;
 
@@ -119,7 +119,7 @@ namespace AutoVala {
 			}
 		}
 
-		private void visit_passthrough () {
+		private void visit_passthrough (MarkupParseContext context, string passthrough_text, size_t text_len) throws MarkupError {
 			// process instructions, comments
 		}
 

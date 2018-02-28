@@ -90,10 +90,20 @@ namespace AutoVala {
 			this.pkgConfigs=new ReadPkgConfig();
 
 			if(local==false) {
+				bool odd_version = false;
+				if ((minor %2) == 1) {
+					odd_version = true;
+				}
 				this.fillNamespaces("/usr/share/vala",true);
-				this.fillNamespaces("/usr/share/vala-%d.%d".printf(major,minor),true);
+				if (this.fillNamespaces("/usr/share/vala-%d.%d".printf(major,minor),true) && odd_version) {
+					// if the folder doesn't exist, but the minor is odd and there is the folder for the next version, use it
+					this.fillNamespaces("/usr/share/vala-%d.%d".printf(major,minor + 1),true);
+				}
 				this.fillNamespaces("/usr/local/share/vala",true);
-				this.fillNamespaces("/usr/local/share/vala-%d.%d".printf(major,minor),true);
+				if (this.fillNamespaces("/usr/local/share/vala-%d.%d".printf(major,minor),true) && odd_version) {
+					// if the folder doesn't exist, but the minor is odd and there is the folder for the next version, use it
+					this.fillNamespaces("/usr/local/share/vala-%d.%d".printf(major,minor + 1),true);
+				}
 			}
 		}
 
@@ -382,8 +392,10 @@ namespace AutoVala {
 		 * Fills the NAMESPACES hashmap with a list of each namespace and the files that provides it, and also
 		 * the "best" one (bigger version)
 		 * @param basepath The path where to find VAPI files
+		 * @param inside_vapi TRUE if the file is inside a VAPI folder
+		 * @return FALSE is everything went OK, or TRUE if the path doesn't exist
 		 */
-		public void fillNamespaces(string basepath,bool inside_vapi = false) {
+		public bool fillNamespaces(string basepath,bool inside_vapi = false) {
 
 			string full_basepath;
 			if (inside_vapi) {
@@ -393,7 +405,7 @@ namespace AutoVala {
 			}
 			var newpath=File.new_for_path(full_basepath);
 			if (newpath.query_exists()==false) {
-				return;
+				return true;
 			}
 			FileInfo fileInfo;
 			FileEnumerator enumerator;
@@ -413,8 +425,9 @@ namespace AutoVala {
 					this.checkDepsFile(Path.build_filename(full_basepath,deps_name+".deps"),deps_name);
 				}
 			} catch (Error e) {
-				return;
+				return false;
 			}
+			return false;
 		}
 	}
 }
