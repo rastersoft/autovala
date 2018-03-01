@@ -56,7 +56,8 @@ namespace AutoVala {
 				return;
 			}
 
-			var      enumerator = dirPath.enumerate_children(FileAttribute.STANDARD_NAME + "," + FileAttribute.STANDARD_TYPE, 0);
+			var enumerator = dirPath.enumerate_children(FileAttribute.STANDARD_NAME + "," + FileAttribute.STANDARD_TYPE, 0);
+
 			FileInfo file_info;
 			while ((file_info = enumerator.next_file()) != null) {
 				var ftype = file_info.get_file_type();
@@ -101,17 +102,21 @@ namespace AutoVala {
 	private class ValaVersion : GLib.Object {
 		public int major;
 		public int minor;
+		public int api_major;
+		public int api_minor;
 		public string path;
 
 		public ValaVersion() {
-			this.major = 0;
-			this.minor = 16;
+			this.major     = 0;
+			this.minor     = 16;
+			this.api_major = 0;
+			this.api_minor = 16;
 		}
 
 		/**
 		 * Sets the version of Vala compiler passed in lPath.
 		 * @param lPath The complete path to the vala compiler
-		 * @return //false// if there was no error, //true// if the version can't be determined
+		 * @return *false* if there was no error, *true* if the version can't be determined
 		 */
 		public bool setValaVersion(string lPath) {
 			this.path = lPath;
@@ -121,9 +126,19 @@ namespace AutoVala {
 			 */
 
 			string[] spawn_args = { lPath, "--version" };
-			string   ls_stdout;
-			int      ls_status;
+			if (this.readVersionLine(spawn_args, out this.major, out this.minor)) {
+				return true;
+			}
+			spawn_args = { lPath, "--api-version" };
+			if (this.readVersionLine(spawn_args, out this.api_major, out this.api_minor)) {
+				return true;
+			}
+			return false;
+		}
 
+		private bool readVersionLine(string[] spawn_args, out int vmajor, out int vminor) {
+			string ls_stdout;
+			int    ls_status;
 			try {
 				if (!Process.spawn_sync(null, spawn_args, Environ.get(), 0, null, out ls_stdout, null, out ls_status)) {
 					return true;
@@ -141,8 +156,8 @@ namespace AutoVala {
 				foreach (var element in version) {
 					if (Regex.match_simple("^[0-9]+.[0-9]+(.[0-9]+)?", element)) {
 						var numbers = element.split(".");
-						this.major = int.parse(numbers[0]);
-						this.minor = int.parse(numbers[1]);
+						vmajor = int.parse(numbers[0]);
+						vminor = int.parse(numbers[1]);
 						return false;
 					}
 				}

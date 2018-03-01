@@ -66,11 +66,11 @@ namespace AutoVala {
 		private GLib.Regex regexNamespace;
 
 		/**
-		 * @param major Major number of the version of Vala compiler currently installed
-		 * @param minor Minor number of the version of Vala compiler currently installed
+		 * @param api_major Major number of the version of Vala API for the currently installed compiler
+		 * @param appi_minor Minor number of the version of Vala API for the currently installed compiler
 		 * @param local If true, want to process local VAPI files, not the system-wide ones
 		 */
-		public ReadVapis(int major, int minor, bool local = false) throws GLib.Error {
+		public ReadVapis(int api_major, int api_minor, bool local = false) throws GLib.Error {
 			this.errorList = {};
 			try {
 				this.regexGirVersion = new GLib.Regex("gir_version( )*=( )*\"[0-9]+(.[0-9]+)?\"");
@@ -86,20 +86,10 @@ namespace AutoVala {
 			this.pkgConfigs   = new ReadPkgConfig();
 
 			if (local == false) {
-				bool odd_version = false;
-				if ((minor % 2) == 1) {
-					odd_version = true;
-				}
 				this.fillNamespaces("/usr/share/vala", true);
-				if (this.fillNamespaces("/usr/share/vala-%d.%d".printf(major, minor), true) && odd_version) {
-					// if the folder doesn't exist, but the minor is odd and there is the folder for the next version, use it
-					this.fillNamespaces("/usr/share/vala-%d.%d".printf(major, minor + 1), true);
-				}
+				this.fillNamespaces("/usr/share/vala-%d.%d".printf(api_major, api_minor), true);
 				this.fillNamespaces("/usr/local/share/vala", true);
-				if (this.fillNamespaces("/usr/local/share/vala-%d.%d".printf(major, minor), true) && odd_version) {
-					// if the folder doesn't exist, but the minor is odd and there is the folder for the next version, use it
-					this.fillNamespaces("/usr/local/share/vala-%d.%d".printf(major, minor + 1), true);
-				}
+				this.fillNamespaces("/usr/local/share/vala-%d.%d".printf(api_major, api_minor), true);
 			}
 		}
 
@@ -119,7 +109,7 @@ namespace AutoVala {
 		 * For a given namespace, returns the package that provides it, and also if it is a library with
 		 * a pkgconfig file.
 		 * @param namespaceP The namespace to find
-		 * @param checkable If //true//, the package has a pkgconfig file (like //Gtk//) and can be checked by CMake; if false, it is an //internal// package (like //Posix// or //Gio//)
+		 * @param checkable If *true*, the package has a pkgconfig file (like //Gtk//) and can be checked by CMake; if false, it is an //internal// package (like //Posix// or //Gio//)
 		 * @return the greatest package version that implements that namespace, or //null// if no package implements it
 		 */
 		public string ? getPackageFromNamespace(string namespaceP, out bool checkable) {
@@ -187,7 +177,8 @@ namespace AutoVala {
 			cMinor = girMinor;
 
 			if (filename.has_suffix(".vapi")) {
-				file = filename.substring(0, filename.length - 5);                            // remove the .vapi extension
+				// remove the .vapi extension
+				file = filename.substring(0, filename.length - 5);
 			} else {
 				file = filename;
 			}
@@ -202,7 +193,8 @@ namespace AutoVala {
 				if ((cMajor == 0) && (cMinor == 0)) {
 					var version = file.substring(pos + 1);
 					pos = version.index_of(".");
-					if (pos == -1) {                                       // only one number
+					if (pos == -1) {
+						// only one number
 						cMajor = int.parse(version);
 						cMinor = 0;
 					} else {
@@ -215,7 +207,6 @@ namespace AutoVala {
 				cMajor = 0;
 				cMinor = 6;
 			}
-
 
 			// always take the shortest filename
 			if ((element.currentFile == null) || (newfile.length < element.currentFile.length)) {
@@ -262,7 +253,8 @@ namespace AutoVala {
 						if (regexVersion.match(girVersionString, 0, out foundVersion)) {
 							var version = foundVersion.fetch(0);
 							var pos     = version.index_of(".");
-							if (pos == -1) {                                                       // single number
+							if (pos == -1) {
+								// single number
 								girMajor = int.parse(version);
 								girMinor = 0;
 							} else {
@@ -288,7 +280,8 @@ namespace AutoVala {
 						// split the string in statements (there can be an space and a '{' after the namespace)
 						// the first one is the namespace
 						lastNamespace = foundString.fetch(0).strip().substring(9).strip().split(" ")[0];
-						if (lastNamespace == "GLib") {                                               // GLib needs several tricks
+						if (lastNamespace == "GLib") {
+							// GLib needs several tricks
 							if (fileP.has_prefix("glib-")) {
 							} else if (fileP.has_prefix("gio-unix-")) {
 								lastNamespace = "GIO-unix";
@@ -410,7 +403,8 @@ namespace AutoVala {
 						continue;
 					}
 					this.checkVapiFile(Path.build_filename(full_basepath, fname), fname);
-					var deps_name = fname.substring(0, fname.length - 5);                                      // remove the .vapi extension
+					// remove the .vapi extension
+					var deps_name = fname.substring(0, fname.length - 5);
 					this.checkDepsFile(Path.build_filename(full_basepath, deps_name + ".deps"), deps_name);
 				}
 			} catch (Error e) {

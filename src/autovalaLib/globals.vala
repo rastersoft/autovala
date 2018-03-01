@@ -24,24 +24,40 @@ namespace AutoVala {
 	 */
 
 	private class Globals : GLib.Object {
-		public string projectName;                   // The project's name
-		public string ? projectFolder;               // The absolute path to the project's root folder
-		public string ? configFile;                  // The absolute path to the project definition file
+		// The project's name
+		public string projectName;
+		// The absolute path to the project's root folder
+		public string ? projectFolder;
+		// The absolute path to the project definition file
+		public string ? configFile;
+		// The global version number
+		public string ? global_version;
+		// vala version currently installed in the system (major number)
+		public int valaMajor;
+		// vala version currently installed in the system (minor number)
+		public int valaMinor;
+		// api version for the current vala compiler (major number)
+		public int apiMajor;
+		// api version for the current vala compiler (minor number)
+		public int apiMinor;
+		// minimun vala version needed to compile the project (major number)
+		public int valaVersionMajor;
+		// minimun vala version needed to compile the project (minor number)
+		public int valaVersionMinor;
+		// if true, the compiler version in the file has been automatically detected (it has an asterisk in the file)
+		public bool versionAutomatic;
 
-		public string ? global_version;              // The global version number
+		// A list with all the files and paths that must be avoided when doing automatic detection
+		public string[] excludeFiles;
+		// The list of all elements
+		public Gee.List<ElementBase> globalElements;
 
-		public int valaMajor;                        // vala version currently installed in the system (major number)
-		public int valaMinor;                        // vala version currently installed in the system (minor number)
-		public int valaVersionMajor;                 // minimun vala version needed to compile the project (major number)
-		public int valaVersionMinor;                 // minimun vala version needed to compile the project (minor number)
-		public bool versionAutomatic;                // if true, the compiler version in the file has been automatically detected (it has an asterisk in the file)
-
-		public string[] excludeFiles;                // A list with all the files and paths that must be avoided when doing automatic detection
-		public Gee.List<ElementBase> globalElements; // The list of all elements
-
-		public bool error;                           // There is at least one error message in the the error list
-		public bool warning;                         // There is at least one warning message in the the error list
-		private string[] errorList;                  // Contains all the messages to show to the user: normal messages, warnings and errors
+		// There is at least one error message in the the error list
+		public bool error;
+		// There is at least one warning message in the the error list
+		public bool warning;
+		// Contains all the messages to show to the user: normal messages, warnings and errors
+		private string[] errorList;
 
 		public Gee.Map<string, string> localModules;
 		public Gee.Set<string> pathList;
@@ -80,7 +96,7 @@ namespace AutoVala {
 			this.clearErrors();
 
 			if (Globals.vapiList == null) {
-				Globals.vapiList = new ReadVapis(this.valaMajor, this.valaMinor);
+				Globals.vapiList = new ReadVapis(this.apiMajor, this.apiMinor);
 			}
 
 			this.configFile = this.findConfiguration(searchPath);
@@ -191,7 +207,7 @@ namespace AutoVala {
 		/**
 		 * Checks whether a file/path is in the exclude list
 		 * @param filename The file/path to check (with path relative to the project's root)
-		 * @return //true// if the file is in the list; //false// if not
+		 * @return *true* if the file is in the list; *false* if not
 		 */
 		public bool checkExclude(string filenameP) {
 			string filename = filenameP;
@@ -261,7 +277,7 @@ namespace AutoVala {
 		/**
 		 * Returns the version of Vala compiler installed in the system (the default one)
 		 *
-		 * @return //false// if there was no error, //true// if the version can't be determined
+		 * @return *false* if there was no error, *true* if the version can't be determined
 		 */
 
 		public bool getValaVersion() {
@@ -283,6 +299,8 @@ namespace AutoVala {
 			if (compilers.defaultVersion != null) {
 				this.valaMajor = compilers.defaultVersion.major;
 				this.valaMinor = compilers.defaultVersion.minor;
+				this.apiMajor  = compilers.defaultVersion.api_major;
+				this.apiMinor  = compilers.defaultVersion.api_minor;
 				return false;
 			}
 
@@ -396,9 +414,11 @@ namespace AutoVala {
 					if (b_data == null) {
 						return 1;
 					}
-					return Posix.strcmp(a_data, b_data);                   // both are equal; sort alphabetically
+					// both are equal; sort alphabetically
+					return Posix.strcmp(a_data, b_data);
 				} else {
-					return a.invertCondition ? 1 : -1;                     // the one with the condition not inverted goes first
+					// the one with the condition not inverted goes first
+					return a.invertCondition ? 1 : -1;
 				}
 			}
 			return (Posix.strcmp(a.condition, b.condition));
