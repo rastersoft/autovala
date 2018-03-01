@@ -37,11 +37,16 @@ namespace AutoVala {
 		public static Globals globalData = null;
 		public bool processed            = false;
 
-		protected string ? _fullPath;   // Full file path, relative to the project's root
-		protected string _path;         // File path relative to the project's root
-		protected string _name;         // File name
-		protected ConfigType _type;     // File type
-		protected string command;       // command in the config file
+		// Full file path, relative to the project's root
+		protected string ? _fullPath;
+		// File path relative to the project's root
+		protected string _path;
+		// File name
+		protected string _name;
+		// File type
+		protected ConfigType _type;
+		// command in the config file
+		protected string command;
 
 		public string[] ? comments = null;
 
@@ -58,9 +63,12 @@ namespace AutoVala {
 			get { return this._type; }
 		}
 
-		protected string ? _condition;     // Condition (#if/#else/#end) for this file (null if there is no condition)
-		protected bool _invertCondition;   // When true, invert the condition (this is, the file is after the #else, not before)
-		protected bool _automatic;         // This file class has been filled automatically by AutoVala
+		// Condition (#if/#else/#end) for this file (null if there is no condition)
+		protected string ? _condition;
+		// When true, invert the condition (this is, the file is after the #else, not before)
+		protected bool _invertCondition;
+		// This file class has been filled automatically by AutoVala
+		protected bool _automatic;
 
 		public bool automatic {
 			get { return this._automatic; }
@@ -172,10 +180,10 @@ namespace AutoVala {
 		 * @param fullPath The file path and file name, relative to the project's root
 		 * @param path Only the file path, or null if it must be derived from fullPath
 		 * @param name Only the file name, or null if it must be derived from fullPath
-		 * @param automatic //true// if this file has been processed automatically; //false// if the user modified something manually in the configuration file
+		 * @param automatic *true* if this file has been processed automatically; *false* if the user modified something manually in the configuration file
 		 * @param condition The condition (#if / #else / #endif) for this file (or null if there is no compilation condition)
 		 * @param invertCondition When true, invert the condition (this is, the file is after the #else statement)
-		 * @return //true// if the file has been already processed
+		 * @return *true* if the file has been already processed
 		 */
 		public virtual bool configureElement(string ? fullPathP, string ? path, string ? name, bool automatic, string ? condition, bool invertCondition, bool accept_nonexisting_paths = false) {
 			if (fullPathP == "") {
@@ -237,10 +245,10 @@ namespace AutoVala {
 		/**
 		 * The Configuration class will call this method for each line in the configuration file that belong to it
 		 * @param line The complete, unprocessed line from the configuration file, except for the (optional) asterisk as the first character
-		 * @param automatic //true// if this file has been processed automatically; //false// if the user modified something manually in the configuration file
+		 * @param automatic *true* if this file has been processed automatically; *false* if the user modified something manually in the configuration file
 		 * @param condition The condition (#if / #else / #endif) for this file (or null if there is no compilation condition)
 		 * @param invertCondition When true, invert the condition (this is, the file is after the #else statement)
-		 * return //true// if there was an error; //false// if not. The error texts can be obtained by calling to returnErrors()
+		 * return *true* if there was an error; *false* if not. The error texts can be obtained by calling to returnErrors()
 		 */
 		public virtual bool configureLine(string line, bool automatic, string ? condition, bool invertCondition, int lineNumber, string[] ? comments) {
 			if (false == line.has_prefix(this.command + ": ")) {
@@ -259,7 +267,7 @@ namespace AutoVala {
 		 * Reads the file specified and adds automatically all its parameters
 		 * @param path The file path (relative to the project root). If null, the object must reconfigure itself, taking into account the current values
 		 * (this is needed when refreshing a file with manually-added elements)
-		 * @return //true// if there was an error; //false// if not. The error texts can be obtained by calling to returnErrors()
+		 * @return *true* if there was an error; *false* if not. The error texts can be obtained by calling to returnErrors()
 		 */
 		public virtual bool autoConfigure(string ? path = null) {
 			if (path == null) {
@@ -272,7 +280,7 @@ namespace AutoVala {
 		/**
 		 * Inserts the CMake commands needed for this file in the data stream specified
 		 * @param dataStream The data stream for the CMakeList.txt file being processed
-		 * @return //true// if there was an error; //false// if not. The error texts can be obtained by calling to returnErrors()
+		 * @return *true* if there was an error; *false* if not. The error texts can be obtained by calling to returnErrors()
 		 */
 		public virtual bool generateCMake(DataOutputStream dataStream) {
 			return false;
@@ -281,7 +289,7 @@ namespace AutoVala {
 		/**
 		 * Inserts the CMake commands needed for this file AT THE HEADER in the data stream specified. This allows to add definitions and other preparatory commands at the head of a file
 		 * @param dataStream The data stream for the CMakeList.txt file being processed
-		 * @return //true// if there was an error; //false// if not. The error texts can be obtained by calling to returnErrors()
+		 * @return *true* if there was an error; *false* if not. The error texts can be obtained by calling to returnErrors()
 		 */
 		public virtual bool generateCMakeHeader(DataOutputStream dataStream) {
 			return false;
@@ -291,7 +299,7 @@ namespace AutoVala {
 		 * Inserts the CMake commands needed for this file AT ITS END in the data stream specified. This allows to add extra commands at the end of a file
 		 * @param dataStream The data stream for the CMakeList.txt file being processed
 		 * @param dataStreamGlobal The data stream for the main CMakeList.txt file being processed, to allow to add extra commands at its end
-		 * @return //true// if there was an error; //false// if not. The error texts can be obtained by calling to returnErrors()
+		 * @return *true* if there was an error; *false* if not. The error texts can be obtained by calling to returnErrors()
 		 */
 		public virtual bool generateCMakePostData(DataOutputStream dataStream, DataOutputStream dataStreamGlobal) {
 			return false;
@@ -306,7 +314,7 @@ namespace AutoVala {
 		/**
 		 * Adds the specific data for this element to a Meson build file that must be added before anything
 		 * @param dataStream The data stream for the meson.build file being processed
-		 * @return //true// if there was an error; //false// if not. The error texts can be obtained by calling to returnErrors()
+		 * @return *true* if there was an error; *false* if not. The error texts can be obtained by calling to returnErrors()
 		 */
 		public virtual bool generateMesonHeader(ConditionalText dataStream, MesonCommon mesonCommon) {
 			return false;
@@ -315,7 +323,7 @@ namespace AutoVala {
 		/**
 		 * Adds the specific data for this element to a Meson build file
 		 * @param dataStream The data stream for the meson.build file being processed
-		 * @return //true// if there was an error; //false// if not. The error texts can be obtained by calling to returnErrors()
+		 * @return *true* if there was an error; *false* if not. The error texts can be obtained by calling to returnErrors()
 		 */
 		public virtual bool generateMeson(ConditionalText dataStream, MesonCommon mesonCommon) {
 			return false;
@@ -336,7 +344,7 @@ namespace AutoVala {
 		/**
 		 * Stores in the specified stream the configuration lines needed for this file
 		 * @param dataStream The data stream for the CMakeList.txt file being processed
-		 * @return //true// if there was an error; //false// if not. The error texts can be obtained by calling to returnErrors()
+		 * @return *true* if there was an error; *false* if not. The error texts can be obtained by calling to returnErrors()
 		 */
 		public virtual bool storeConfig(DataOutputStream dataStream, ConditionalText printConditions) {
 			string data;

@@ -69,10 +69,13 @@ namespace AutoVala {
 					if (fname.has_suffix(".pc") == false) {
 						continue;
 					}
-					var final_name = fname.substring(0, fname.length - 3);                // remove .pc extension
-					this.pkgconfigs.add(final_name);                                      // add to the list
+					// remove .pc extension
+					var final_name = fname.substring(0, fname.length - 3);
+					// add to the list
+					this.pkgconfigs.add(final_name);
 					if (!this.paths.has_key(final_name)) {
-						this.paths.set(final_name, Path.build_filename(basepath, fname)); // store the path found
+						// store the path found
+						this.paths.set(final_name, Path.build_filename(basepath, fname));
 					}
 				}
 			} catch (Error e) {

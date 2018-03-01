@@ -28,7 +28,8 @@ namespace AutoVala {
 			set { this._translate_type = value; }
 		}
 
-		protected string ? _fullPath2;        // Full file path, relative to the project's root
+		// Full file path, relative to the project's root
+		protected string ? _fullPath2;
 
 		public string ? fullPath2 {
 			get { return this._fullPath2; }
@@ -46,7 +47,8 @@ namespace AutoVala {
 		}
 
 		public override void add_files() {
-			this.file_list = {};             // this doesn't return files
+			// this doesn't return files
+			this.file_list = {};
 		}
 
 		public override bool configureElement(string ? fullPathP, string ? path, string ? name, bool automatic, string ? condition, bool invertCondition, bool accept_nonexisting_paths = false) {

@@ -180,7 +180,8 @@ namespace AutovalaPlugin {
 		 * @return true to stop processing the event; false to continue processing the event.
 		 */
 		private bool click_event(EventButton event) {
-			if (event.button == 3) {             // right click
+			if (event.button == 3) {
+				// right click
 				TreePath       path;
 				TreeViewColumn column;
 				int            x;

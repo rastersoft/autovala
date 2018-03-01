@@ -337,7 +337,8 @@ namespace AutoVala {
 					of.put_string("Description: %s\n".printf(binary_keys.get("Description")));
 				}
 				dis.close();
-				Posix.chmod(f_control_path, 420);                // 644 permissions)
+				// 644 permissions)
+				Posix.chmod(f_control_path, 420);
 			} catch (Error e) {
 				ElementBase.globalData.addError(_("Failed to write data to debian/control file (%s)").printf(e.message));
 				return true;
@@ -369,7 +370,8 @@ namespace AutoVala {
 					}
 					dis.close();
 					dis2.close();
-					Posix.chmod(fname, 493);                    // 755 permissions)
+					// 755 permissions)
+					Posix.chmod(fname, 493);
 				} catch (Error e) {
 					ElementBase.globalData.addError(_("Failed to write data to debian/rules file (%s)").printf(e.message));
 					try {
@@ -380,7 +382,8 @@ namespace AutoVala {
 					return true;
 				}
 			}
-			GLib.FileUtils.chmod(fname, 0x1ED);            // 755 permissions (octal)
+			// 755 permissions (octal)
+			GLib.FileUtils.chmod(fname, 0x1ED);
 			return false;
 		}
 
@@ -411,7 +414,8 @@ namespace AutoVala {
 					of.put_string(line + "\n");
 				}
 				dis.close();
-				Posix.chmod(f_rules_path, 493);                // 755 permissions)
+				// 755 permissions)
+				Posix.chmod(f_rules_path, 493);
 			} catch (Error e) {
 				ElementBase.globalData.addError(_("Failed to write data to debian/preinst file (%s)").printf(e.message));
 				try {
@@ -451,7 +455,8 @@ namespace AutoVala {
 					of.put_string(line + "\n");
 				}
 				dis.close();
-				Posix.chmod(f_rules_path, 493);                // 755 permissions)
+				// 755 permissions)
+				Posix.chmod(f_rules_path, 493);
 			} catch (Error e) {
 				ElementBase.globalData.addError(_("Failed to write data to debian/prerm file (%s)").printf(e.message));
 				try {
@@ -491,7 +496,8 @@ namespace AutoVala {
 					of.put_string(line + "\n");
 				}
 				dis.close();
-				Posix.chmod(f_rules_path, 493);                // 755 permissions)
+				// 755 permissions
+				Posix.chmod(f_rules_path, 493);
 			} catch (Error e) {
 				ElementBase.globalData.addError(_("Failed to write data to debian/postinst file (%s)").printf(e.message));
 				try {
@@ -531,7 +537,8 @@ namespace AutoVala {
 					of.put_string(line + "\n");
 				}
 				dis.close();
-				Posix.chmod(f_rules_path, 493);                // 755 permissions)
+				// 755 permissions
+				Posix.chmod(f_rules_path, 493);
 			} catch (Error e) {
 				ElementBase.globalData.addError(_("Failed to write data to debian/postrm file (%s)").printf(e.message));
 				try {
@@ -582,7 +589,8 @@ namespace AutoVala {
 						}
 						var version = line.substring(pos1 + 1, pos2 - pos1 - 1);
 						var pos3    = version.last_index_of_char('-');
-						if (pos3 != -1) {                         // remove the debian_revision field
+						if (pos3 != -1) {
+							// remove the debian_revision field
 							version = version.substring(0, pos3);
 						}
 						if (version == this.version) {
@@ -704,7 +712,8 @@ namespace AutoVala {
 					of.put_string(line + "\n");
 				}
 				dis.close();
-				Posix.chmod(fname, 420);                // 644 permissions)
+				// 644 permissions)
+				Posix.chmod(fname, 420);
 			} catch (Error e) {
 				ElementBase.globalData.addError(_("Failed to write data to debian/changelog file (%s)").printf(e.message));
 				try {

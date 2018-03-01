@@ -93,7 +93,8 @@ namespace AutoVala {
 			var dirs = data.get_string("Icon Theme", "Directories").split(",");
 			foreach (var group in dirs) {
 				if ((!data.has_group(group)) || (!data.has_key(group, "Size"))) {
-					continue;                     // just to avoid problems with malformed index.theme files
+					// just to avoid problems with malformed index.theme files
+					continue;
 				}
 				string    context = "Actions";
 				IconTypes type    = IconTypes.Thresold;
@@ -245,8 +246,9 @@ namespace AutoVala {
 			this._type         = ConfigType.ICON;
 			this.appendText    = {};
 			this.iconCathegory = "";
-			this.iconTheme     = "Hicolor";         // default value
-			this.command       = "full_icon";
+			// default value
+			this.iconTheme = "Hicolor";
+			this.command   = "full_icon";
 		}
 
 		public static bool autoGenerate() {
@@ -284,7 +286,8 @@ namespace AutoVala {
 				// The line starts with 'icon: '
 				data = line.substring(6).strip();
 				var pos = data.index_of(" ");
-				if (pos != -1) {               // there is a cathegory for the icon; use it instead the default one
+				if (pos != -1) {
+					// there is a cathegory for the icon; use it instead the default one
 					this.iconCathegory = data.substring(0, pos);
 					data = data.substring(pos + 1).strip();
 				} else {
@@ -304,13 +307,15 @@ namespace AutoVala {
 					this.fixed_size = true;
 				}
 				var pos = data.index_of(" ");
-				if (pos == -1) {               // there is no theme for the icon; it is an error
+				if (pos == -1) {
+					// there is no theme for the icon; it is an error
 					ElementBase.globalData.addError(_("%s must have a cathegory and a theme (line %d)").printf(command, lineNumber));
 					return true;
 				}
 
 				var pos2 = data.index_of(" ", pos + 1);
-				if (pos2 == -1) {               // there is no cathegory for the icon; it is an error
+				if (pos2 == -1) {
+					// there is no cathegory for the icon; it is an error
 					ElementBase.globalData.addError(_("%s must have a cathegory and a theme (line %d)").printf(command, lineNumber));
 					return true;
 				}
@@ -467,33 +472,40 @@ namespace AutoVala {
 				}
 				var pos1 = data.index_of("<svg");
 				if (pos1 == -1) {
-					return false;                     // it is not an SVG file
+					// it is not an SVG file
+					return false;
 				}
 				var pos2 = data.index_of_char('>', pos1);
 				if (pos2 == -1) {
-					return false;                     // it is not a valid SVG file
+					// it is not a valid SVG file
+					return false;
 				}
 				data = data.substring(pos1, pos2 - pos1);
 				var pos3 = data.index_of("width");
 				var pos4 = data.index_of("height");
 				if ((pos3 == -1) || (pos4 == -1)) {
-					return false;                     // no width or height values
+					// no width or height values
+					return false;
 				}
 				var pos5 = data.index_of("\"", pos3);
 				if (pos5 == -1) {
-					return false;                     // malformed SVG file
+					// malformed SVG file
+					return false;
 				}
 				var pos6 = data.index_of("\"", pos5 + 1);
 				if (pos6 == -1) {
-					return false;                     // malformed SVG file
+					// malformed SVG file
+					return false;
 				}
 				var pos7 = data.index_of("\"", pos4);
 				if (pos7 == -1) {
-					return false;                     // malformed SVG file
+					// malformed SVG file
+					return false;
 				}
 				var pos8 = data.index_of("\"", pos7 + 1);
 				if (pos8 == -1) {
-					return false;                     // malformed SVG file
+					// malformed SVG file
+					return false;
 				}
 
 				// The width is between pos5 and pos6, and the height between pos7 and pos8

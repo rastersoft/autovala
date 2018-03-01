@@ -40,7 +40,8 @@ namespace AutoVala {
 				while ((line = dis.read_line(null)) != null) {
 					line = line.strip();
 					if (line == "") {
-						continue;                         // empty lines don't count
+						// empty lines don't count
+						continue;
 					}
 					nline++;
 					if (nline == 1) {

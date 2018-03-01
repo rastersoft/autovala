@@ -24,9 +24,11 @@ namespace AutoVala {
 	private class Configuration : GLib.Object {
 		public Globals globalData = null;
 
-		public string basepath;         // Contains the full path where the configuration file is stored
+		// Contains the full path where the configuration file is stored
+		public string basepath;
 
-		public int currentVersion;      // Contains the version of the currently supported syntax
+		// Contains the version of the currently supported syntax
+		public int currentVersion;
 
 		private int version;
 		private int lineNumber;
@@ -44,7 +46,8 @@ namespace AutoVala {
 				Intl.bindtextdomain(AutoValaConstants.GETTEXT_PACKAGE, Path.build_filename(AutoValaConstants.DATADIR, "locale"));
 			}
 
-			this.currentVersion = 27;             // currently we support version 27 of the syntax
+			// currently we support version 27 of the syntax
+			this.currentVersion = 27;
 			this.version        = 0;
 
 			this.globalData = new AutoVala.Globals(projectName, basePath);
@@ -160,8 +163,8 @@ namespace AutoVala {
 		 * passed), and upwards. This allows to just pass the path to a file of a project, and it will automatically find the project
 		 * configuration file.
 		 *
-		 * @return //false// if there was no error; //true// if there was an error. this.globalData.errorList will contain one or more strings with all
-		 * the warnings and errors
+		 * @return *false* if there was no error; *true* if there was an error. this.globalData.errorList will
+		 * contain one or more strings with all the warnings and errors
 		 */
 
 		public bool readConfiguration() {
@@ -191,13 +194,16 @@ namespace AutoVala {
 
 					this.lineNumber++;
 
-					if (line[0] == ';') {                   // it is a comment; forget it
+					if (line[0] == ';') {
+						// it is a comment; forget it
 						continue;
 					}
 
-					if (line[0] == '#') {                   // it is a comment; append it to the comment lis
+					if (line[0] == '#') {
+						// it is a comment; append it to the comment lis
 						if (line.has_prefix("### AutoVala Project ###")) {
-							continue;                       // don't add the header comment
+							// don't add the header comment
+							continue;
 						}
 						comments += line.strip();
 						continue;
@@ -206,7 +212,8 @@ namespace AutoVala {
 					if (finalline == "") {
 						continue;
 					}
-					if (line[0] == '*') {                   // it's an element added automatically, not by the user
+					if (line[0] == '*') {
+						// it's an element added automatically, not by the user
 						automatic = true;
 						line      = line.substring(1).strip();
 					} else {
@@ -387,9 +394,10 @@ namespace AutoVala {
 		/**
 		 * Saves this configuration to the current filename, overwriting it if it already exists
 		 *
-		 * @param filename If a path and filename is given, the configuration will be stored there instead of in the current filename. The current filename is overwriten with this value
+		 * @param filename If a path and filename is given, the configuration will be stored there
+		 * instead of in the current filename. The current filename is overwriten with this value
 		 *
-		 * @return //false// if there was no error, //true// if there was an error
+		 * @return *false* if there was no error, *true* if there was an error
 		 */
 
 		public bool saveConfiguration(string filename = "") {

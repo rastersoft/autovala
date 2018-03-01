@@ -164,7 +164,8 @@ namespace AutoVala {
 							continue;
 						}
 
-						if (line[0] == '%') {                         // multiline entry
+						if (line[0] == '%') {
+							// multiline entry
 							key       = line.substring(1);
 							multiline = true;
 							data      = "";
@@ -308,7 +309,8 @@ namespace AutoVala {
 				}
 
 				dis.close();
-				Posix.chmod(f_control_path, 420);                // 644 permissions
+				// 644 permissions
+				Posix.chmod(f_control_path, 420);
 			} catch (Error e) {
 				ElementBase.globalData.addError(_("Failed to write data to rpmbuild/SPECS/SPEC file (%s)").printf(e.message));
 				return true;

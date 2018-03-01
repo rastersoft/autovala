@@ -221,7 +221,8 @@ namespace AutoVala {
 			string libs = "";
 			foreach (var element in this._link_libraries) {
 				if (element.automatic == true) {
-					continue;                     // don't put the automatically added ones
+					// don't put the automatically added ones
+					continue;
 				}
 				if (libs != "") {
 					libs += " ";
@@ -310,7 +311,8 @@ namespace AutoVala {
 						continue;
 					}
 					if (lib == library) {
-						return;                         // that library already exists
+						// that library already exists
+						return;
 					}
 				}
 			}
@@ -355,7 +357,8 @@ namespace AutoVala {
 			this.defines    = new Gee.ArrayList<string>();
 			this.namespaces = new Gee.ArrayList<string>();
 
-			this.usingList.add("GLib");             // GLib is always needed
+			// GLib is always needed
+			this.usingList.add("GLib");
 
 			foreach (var element in this._packages) {
 				if (element.type != packageType.LOCAL) {
@@ -431,7 +434,8 @@ namespace AutoVala {
 
 			var fullPath = File.new_for_path(Path.build_filename(ElementBase.globalData.projectFolder, vapisPath));
 			if (fullPath.query_exists() == false) {
-				return false;                 // there's no VAPIS folder
+				// there's no VAPIS folder
+				return false;
 			}
 			var  files = ElementBase.getFilesFromFolder(vapisPath, { ".vapi" }, true, true);
 			bool error = false;
@@ -573,7 +577,8 @@ namespace AutoVala {
 							pos2 = 2 + regexString.index_of("g ");
 						}
 						if (pos == -1) {
-							pos = regexString.length;                             // allow to put //using without a ; at the end, but also accept with it
+							// allow to put //using without a ; at the end, but also accept with it
+							pos = regexString.length;
 						}
 						var namespacesFound = regexString.substring(pos2, pos - pos2).split(",");
 						foreach (var namespaceFound_tmp in namespacesFound) {
@@ -632,7 +637,8 @@ namespace AutoVala {
 						}
 						continue;
 					}
-					if ((line.has_prefix("#if ")) || (line.has_prefix("#elif "))) {                     // Add #defines
+					if ((line.has_prefix("#if ")) || (line.has_prefix("#elif "))) {
+						// Add #defines
 						var    pos     = line.index_of(" ");
 						string element = line.substring(pos).strip();
 						// remove all logical elements to get a set of DEFINEs
@@ -741,7 +747,8 @@ namespace AutoVala {
 
 		public static int comparePackages(GenericElement ? a, GenericElement ? b) {
 			if (a.automatic != b.automatic) {
-				return (a.automatic ? 1 : -1);                 // put the manual ones first
+				// put the manual ones first
+				return (a.automatic ? 1 : -1);
 			}
 			if ((a.condition == null) && (b.condition == null)) {
 				return Posix.strcmp(a.elementName, b.elementName);
@@ -754,9 +761,11 @@ namespace AutoVala {
 			}
 			if (a.condition == b.condition) {
 				if (a.invertCondition == b.invertCondition) {
-					return Posix.strcmp(a.elementName, b.elementName);     // both are equal; sort alphabetically
+					// both are equal; sort alphabetically
+					return Posix.strcmp(a.elementName, b.elementName);
 				} else {
-					return a.invertCondition ? 1 : -1;                     // the one with the condition not inverted goes first
+					// the one with the condition not inverted goes first
+					return a.invertCondition ? 1 : -1;
 				}
 			}
 			return (Posix.strcmp(a.condition, b.condition));
@@ -898,7 +907,8 @@ namespace AutoVala {
 		}
 
 		private bool addAlias(string alias, bool automatic, string ? condition, bool invertCondition, int lineNumber, string[] ? comments) {
-			automatic = false;             // aliases are always manual
+			// aliases are always manual
+			automatic = false;
 
 			// adding a non-automatic destination to an automatic binary transforms this binary to non-automatic
 			if ((automatic == false) && (this._automatic == true)) {
@@ -968,7 +978,8 @@ namespace AutoVala {
 
 		private bool addSource(string sourceFile, bool automatic, string ? condition, bool invertCondition, int lineNumber, string[] ? comments) {
 			if (condition != null) {
-				automatic = false;               // if a source file is conditional, it MUST be manual, because conditions are not added automatically
+				// if a source file is conditional, it MUST be manual, because conditions are not added automatically
+				automatic = false;
 			}
 
 			// adding a non-automatic source to an automatic binary transforms this binary to non-automatic
@@ -1001,7 +1012,8 @@ namespace AutoVala {
 
 		private bool addResource(string resourceFile, bool automatic, string ? condition, bool invertCondition, int lineNumber, string[] ? comments) {
 			if (condition != null) {
-				automatic = false;               // if a resource file is conditional, it MUST be manual, because conditions are not added automatically
+				// if a resource file is conditional, it MUST be manual, because conditions are not added automatically
+				automatic = false;
 			}
 
 			// adding a non-automatic resource to an automatic binary transforms this binary to non-automatic
@@ -1023,7 +1035,8 @@ namespace AutoVala {
 
 		private bool addUnitest(string unitestFile, bool automatic, string ? condition, bool invertCondition, int lineNumber, string[] ? comments) {
 			if (condition != null) {
-				automatic = false;               // if a source file is conditional, it MUST be manual, because conditions are not added automatically
+				// if a source file is conditional, it MUST be manual, because conditions are not added automatically
+				automatic = false;
 			}
 
 			// adding a non-automatic source to an automatic binary transforms this binary to non-automatic
@@ -1044,7 +1057,8 @@ namespace AutoVala {
 
 		private bool addCSource(string sourceFile, bool automatic, string ? condition, bool invertCondition, int lineNumber, string[] ? comments) {
 			if (condition != null) {
-				automatic = false;               // if a source file is conditional, it MUST be manual, because conditions are not added automatically
+				// if a source file is conditional, it MUST be manual, because conditions are not added automatically
+				automatic = false;
 			}
 
 			// adding a non-automatic source to an automatic binary transforms this binary to non-automatic
@@ -1073,7 +1087,8 @@ namespace AutoVala {
 
 		private bool addVapi(string vapiFile, bool automatic, string ? condition, bool invertCondition, int lineNumber, string[] ? comments) {
 			if (condition != null) {
-				automatic = false;               // if a VAPI file is conditional, it MUST be manual, because conditions are not added automatically
+				// if a VAPI file is conditional, it MUST be manual, because conditions are not added automatically
+				automatic = false;
 			}
 
 			// adding a non-automatic VAPI to an automatic binary transforms this binary to non-automatic
@@ -1151,7 +1166,8 @@ namespace AutoVala {
 
 		private bool addHFolder(string includeFolder, bool automatic, string ? condition, bool invertCondition, int lineNumber, string[] ? comments) {
 			if (condition != null) {
-				automatic = false;               // if an include folder is conditional, it MUST be manual, because conditions are not added automatically
+				// if an include folder is conditional, it MUST be manual, because conditions are not added automatically
+				automatic = false;
 			}
 
 			// adding a non-automatic source to an automatic binary transforms this binary to non-automatic

@@ -56,12 +56,14 @@ namespace AutoVala {
 							var fname = fileInfo.get_name();
 							var ftype = fileInfo.get_file_type();
 							if (ftype == FileType.DIRECTORY) {
-								continue;                                 // don't add folders that only contains folders
+								// don't add folders that only contains folders
+								continue;
 							}
 							if (fname == "CMakeLists.txt") {
 								continue;
 							}
-							hasChildrens = true;                           // found a file, so we add it
+							// found a file, so we add it
+							hasChildrens = true;
 							break;
 						}
 					} catch (Error e) {
@@ -208,7 +210,8 @@ namespace AutoVala {
 					}
 					var len = element.name.length;
 					if ((len > 1) && (element.name[len - 2] != '.') && (element.name[len - 1] >= '1') && (element.name[len - 1] <= '9')) {
-						continue;                         // this filename ends in .1, .2, ..., .9, so it is a groff man page
+						// this filename ends in .1, .2, ..., .9, so it is a groff man page
+						continue;
 					}
 					// if we reach here, it is a non-groff man page, so ask for PANDOC
 					dataStream.put_string("find_program ( WHERE_PANDOC pandoc )\n");
@@ -232,7 +235,8 @@ namespace AutoVala {
 					if ((paths.has_key(element.path) == false) && (ignoreList.contains(element.path) == false)) {
 						if ((element.eType == ConfigType.VALA_BINARY) || (element.eType == ConfigType.VALA_LIBRARY)) {
 							var binElement = element as ElementValaBinary;
-							if (binElement.sources.size == 0) {                           // don't add binary folders without source files
+							if (binElement.sources.size == 0) {
+								// don't add binary folders without source files
 								continue;
 							}
 						}
@@ -277,7 +281,8 @@ namespace AutoVala {
 									break;
 								}
 							}
-							if (valid == false) {                           // has dependencies still not satisfied
+							if (valid == false) {
+								// has dependencies still not satisfied
 								continue;
 							}
 

@@ -198,7 +198,8 @@ namespace AutoVala {
 							data = line.substring(pos + 1);
 							if (data[0] == '"') {
 								pos = data.index_of_char('"', 1);
-								if (pos == -1) {                                 // multiline
+								if (pos == -1) {
+									// multiline
 									multiline_key  = key;
 									multiline_data = data.substring(1) + "\n";
 									continue;
@@ -329,7 +330,8 @@ namespace AutoVala {
 				}
 
 				dis.close();
-				Posix.chmod(f_control_path, 420);                // 644 permissions)
+				// 644 permissions
+				Posix.chmod(f_control_path, 420);
 			} catch (Error e) {
 				ElementBase.globalData.addError(_("Failed to write data to debian/control file (%s)").printf(e.message));
 				return true;

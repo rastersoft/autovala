@@ -44,7 +44,8 @@ namespace AutoVala {
 		public bool addNewDefine(string data, bool automatic = true) {
 			foreach (var element in ElementBase.globalData.globalElements) {
 				if (element.name == data) {
-					return false;                     // this DEFINE already exists
+					// this DEFINE already exists
+					return false;
 				}
 			}
 			// A define with a value "true", "false", "0" or "1" must not be counted as a configuration parameter

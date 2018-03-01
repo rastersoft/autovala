@@ -654,7 +654,8 @@ namespace AutoVala {
 		 */
 		private void fill_libraries(string path) {
 			if (path.has_prefix("/usr/local")) {
-				return;                 // /usr/local is not stored in packages
+				// /usr/local is not stored in packages
+				return;
 			}
 
 			try {

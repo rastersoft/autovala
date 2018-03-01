@@ -227,7 +227,8 @@ namespace AutoVala {
 				return true;
 			}
 			if (this.config.globalData.error) {
-				return true;                 // if there was at least one error during initialization, return
+				// if there was at least one error during initialization, return
+				return true;
 			}
 			string configPath;
 			if (basePath == null) {
@@ -242,8 +243,9 @@ namespace AutoVala {
 				FileInfo file_info;
 				while ((file_info = enumerator.next_file()) != null) {
 					if (file_info.get_name().has_suffix(".avprj")) {
+						// there's already a project here!!!!
 						ElementBase.globalData.addError(_("There's already a project in folder %s").printf(configPath));
-						return true;                         // there's already a project here!!!!
+						return true;
 					}
 				}
 			} catch (Error e) {
@@ -301,7 +303,8 @@ namespace AutoVala {
 				return true;
 			}
 			if (this.config.globalData.error) {
-				return true;                 // if there was at least one error during initialization, return
+				// if there was at least one error during initialization, return
+				return true;
 			}
 			var globalData = ElementBase.globalData;
 
@@ -463,7 +466,8 @@ namespace AutoVala {
 								break;
 							}
 						}
-						if (valid == false) {                         // has dependencies still not satisfied
+						if (valid == false) {
+							// has dependencies still not satisfied
 							continue;
 						}
 						addedOne          = true;
@@ -524,7 +528,8 @@ namespace AutoVala {
 				return true;
 			}
 			if (this.config.globalData.error) {
-				return true;                 // if there was at least one error during initialization, return
+				// if there was at least one error during initialization, return
+				return true;
 			}
 			var globalData = ElementBase.globalData;
 			AutoVala.Globals.resetCounter();
@@ -626,7 +631,8 @@ namespace AutoVala {
 				return true;
 			}
 			if (this.config.globalData.error) {
-				return true;                 // if there was at least one error during initialization, return
+				// if there was at least one error during initialization, return
+				return true;
 			}
 
 			error = config.readConfiguration();
@@ -695,7 +701,8 @@ namespace AutoVala {
 				return null;
 			}
 			if (this.config.globalData.error) {
-				return null;                 // if there was at least one error during initialization, return
+				// if there was at least one error during initialization, return
+				return null;
 			}
 
 			var error = this.config.readConfiguration();
@@ -757,7 +764,8 @@ namespace AutoVala {
 				return true;
 			}
 			if (this.config.globalData.error) {
-				return true;                 // if there was at least one error during initialization, return
+				// if there was at least one error during initialization, return
+				return true;
 			}
 
 			bool error = this.config.readConfiguration();
@@ -841,7 +849,8 @@ namespace AutoVala {
 				return true;
 			}
 			if (config.globalData.error) {
-				return true;                 // if there was at least one error during initialization, return
+				// if there was at least one error during initialization, return
+				return true;
 			}
 			var retval = config.readConfiguration();
 			if (retval) {
@@ -970,7 +979,8 @@ namespace AutoVala {
 				}
 				retval += _("Path already in use in other element");
 			}
-			if (original_name == null) {             // create a new binary element
+			if (original_name == null) {
+				// create a new binary element
 				if (name_already_in_use) {
 					if (retval != "") {
 						retval += "\n";
@@ -1194,13 +1204,15 @@ namespace AutoVala {
 
 			ElementBase.globalData.generateExtraData();
 
-			ElementExternal[] tmpList = {};            //new Gee.ArrayList<ElementExternal>();
+			ElementExternal[] tmpList = {};
+
 
 			foreach (var element in config.globalData.globalElements) {
 				if (element.eType == ConfigType.EXTERNAL) {
 					var element2 = element as ElementExternal;
 					if (element2.owner == owner) {
-						tmpList += element2;                         // we have to create a different list before removing the elements in the globalElements list
+						// we have to create a different list before removing the elements in the globalElements list
+						tmpList += element2;
 					}
 				}
 			}

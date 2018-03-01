@@ -150,7 +150,8 @@ namespace AutovalaPlugin {
 		 * @return true to stop processing the event; false to continue processing the event.
 		 */
 		public bool click_event(EventButton event) {
-			if (event.button == 3) {             // right click
+			if (event.button == 3) {
+				// right click
 				TreePath       path;
 				TreeViewColumn column;
 				int            x;
@@ -234,7 +235,8 @@ namespace AutovalaPlugin {
 			if (event_type == FileMonitorEvent.CHANGED) {
 				var filename = file.get_basename();
 				if (filename.has_suffix(".avprj")) {
-					this.changed_file();                     // if the file that has changed is the project file, refresh the project view
+					// if the file that has changed is the project file, refresh the project view
+					this.changed_file();
 				}
 				return;
 			}

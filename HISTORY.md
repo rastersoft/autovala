@@ -1,5 +1,7 @@
 # History of versions #
 
+* version 1.3.0 (2018-03-01)
+  * Now uses valac --api-version to get the true folder with the VAPI files
 * version 1.2.2 (2018-02-28)
   * Now works with vala 0.39
 * version 1.2.1 (2017-11-08)

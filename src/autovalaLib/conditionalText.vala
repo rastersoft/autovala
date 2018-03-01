@@ -41,7 +41,7 @@ namespace AutoVala {
 
 		/**
 		 * @param stream The file stream to which write the statements
-		 * @param cmake //true// if we are writting to a CMakeLists.txt file; //false// if it is a .avprj file
+		 * @param cmake *true* if we are writting to a CMakeLists.txt file; *false* if it is a .avprj file
 		 */
 		public ConditionalText(DataOutputStream stream, ConditionalType condType, int basetabs = 0) {
 			this.dataStream = stream;

@@ -103,7 +103,8 @@ namespace AutoVala {
 		}
 
 		public override void endedCMakeFile() {
-			ElementDBusService.addedDBusPrefix = false;           // set the flag to false to allow to add more DBus services in other CMakeList.txt files
+			// set the flag to false to allow to add more DBus services in other CMakeList.txt files
+			ElementDBusService.addedDBusPrefix = false;
 		}
 
 		public override bool generateMesonHeader(ConditionalText dataStream, MesonCommon mesonCommon) {
