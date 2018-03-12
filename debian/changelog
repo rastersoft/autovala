@@ -1,3 +1,9 @@
+autovala (1.3.1-Debian1) sid; urgency=low
+
+  * Updated documentation style
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Mon, 12 Mar 2018 23:55:00 +0200
+
 autovala (1.3.0-Debian1) sid; urgency=low
 
   * Now uses valac --api-version to get the true folder with the VAPI files
