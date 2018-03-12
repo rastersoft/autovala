@@ -5,23 +5,23 @@
 <body>
 <div class="main_frame">
 <p><a href="index.html">Home</a></p>
-<p>Autovala-tricks(1)</p>
-<h1 id="name">NAME</h1>
+<h1 id="autovala-tricks1">Autovala-tricks(1)</h1>
+<h2 id="name">NAME</h2>
 <p>Autovala tricks - Several tricks for Autovala</p>
-<h2 id="i-migrated-to-meson-from-cmake-but-my-libraries-seems-to-not-being-installed...">I migrated to Meson from CMake, but my libraries seems to not being installed...</h2>
+<h3 id="i-migrated-to-meson-from-cmake-but-my-libraries-seems-to-not-being-installed...">I migrated to Meson from CMake, but my libraries seems to not being installed...</h3>
 <p>Meson installs libraries at <em>/usr/lib/x86_64-linux-gnu</em>, while CMake installs them at <em>/usr/lib</em>. Ensure that you remove any old library from <em>/usr/lib</em> and <em>/usr/local/lib</em>.</p>
-<h2 id="adding-the-project-files-to-a-versioning-system-like-git-mercurial-or-bazaar">Adding the project files to a versioning system like git, mercurial or bazaar</h2>
+<h3 id="adding-the-project-files-to-a-versioning-system-like-git-mercurial-or-bazaar">Adding the project files to a versioning system like git, mercurial or bazaar</h3>
 <p>Autovala simplifies this taks by listing for you all the files it knows belong to the project. This is what the <em>autovala project_files</em> command is for. You can add all these files to, let's say, a bazaar repository, just running from the project root folder:</p>
 <pre><code>bzr add `autovala project_files`</code></pre>
 <p>For git there is some syntactic sugar in the form:</p>
 <pre><code>autovala git</code></pre>
 <p>This has the advantage that can be run from any folder, not only from the root.</p>
-<h2 id="working-with-genie">Working with GENIE</h2>
+<h3 id="working-with-genie">Working with GENIE</h3>
 <p>Genie is another syntax for the Vala compiler. It can be used with Autovala since version 0.99.48.</p>
 <p>To create a Genie project just use</p>
 <pre><code>autovala ginit PROJECT_NAME</code></pre>
 <p>This will create all the folders for a standard project and an empty <strong>.gs</strong> file to begin writting source code. Autovala will do the same tricks with Genie, like peeking the source files to discover which packages they need to be compiled, or simplify building libraries, or mixing C, Vala and Genie code in the same project.</p>
-<h2 id="enabling-debug-symbols">Enabling debug symbols</h2>
+<h3 id="enabling-debug-symbols">Enabling debug symbols</h3>
 <p>Version 0.99.45 of Autovala added support for the CMake standard way for enabling debug symbols. This is achieved just by using:</p>
 <pre><code>cmake -DCMAKE_BUILD_TYPE=Debug</code></pre>
 <p>or</p>
@@ -30,10 +30,10 @@
 <p>Of course, it is possible to define new build types. Just read the section about <strong>compile_options</strong> and <strong>compile_c_options</strong> in the <a href="autovala-fileformat.5">file format</a> page.</p>
 <p>When cmake is called without specifying a build type, the <em>Release</em> one will be used by default.</p>
 <p>Thanks to this change, it is possible now to remove the old lines with the conditional DEBUG statements from the .avprj files.</p>
-<h2 id="using-vapidir-and-vapi_file-commands">Using vapidir and vapi_file commands</h2>
+<h3 id="using-vapidir-and-vapi_file-commands">Using vapidir and vapi_file commands</h3>
 <p>The <em>vapidir</em> command will add a folder to the list of places where to search for .vapi files, passing them to the <em>valac</em> compiler with the <em>--vapidir=...</em> command line parameter. This is useful for programs (like Gnome-Builder 3.20) that put their vapi files in a non-standard location, or for libraries (like libkeybinder) that have .vapi files but they aren't included in Debian packages (at least at august 21, 2016). All the autovala's bells and whistles (like automatic search of pkg-config based on <em>Using</em> statements inside the source code, checking for existence during cmake execution and so on) are available for the .vapi files inside these folders. These folders are added for all the binaries and libraries in a project.</p>
 <p>On the other hand, the <em>vapi_file</em> command adds an specific .vapi file (and only that .vapi file), and does it only for an specific binary or library. It is added to the sources list, like another source file, and the only thing checked is if it fulfills any of the <em>Using</em> statements in the sources. Everything else (checking for existence, adding <em>-l...</em> to the C options and so on) is left to the user, who must configure them to ensure that the compilation works. This is useful mainly when a project generates a library used by another library or binary in the same project.</p>
-<h2 id="using-gresource">Using GResource</h2>
+<h3 id="using-gresource">Using GResource</h3>
 <p>GResource is a system available in GLib to include files (text, images, sound...) inside an executable, avoiding the problem of locating them in the hard disk. To do so, an utility called <strong>glib-compile-resources</strong> is used, which takes an XML file with the list of files to include, and generates a <strong>.c</strong> file with them, which can then be compiled with the source code. More information about it is available in the <a href="https://developer.gnome.org/gio/stable/GResource.html">GResource API documentation page</a>.</p>
 <p>AutoVala simplifies this process by checking the filenames inside the XML and adding them as dependencies for our binary, thus ensuring that any changes to these files will force a recompilation.</p>
 <p>To use GResource, start by writting an XML file with the files that you want to include inside your binary, and place it in your AutoVala project. Now edit your <em>.avprj</em> file and add a line like this:</p>
@@ -60,7 +60,7 @@ use_gresource: datas_gresource_xml
 <p>It is mandatory to include GIO in the binaries that use GResource. It is as easy as including the line</p>
 <pre><code>//using GIO</code></pre>
 <p>at the begining of any of the source files (be carefull: you must put it as a comment, because GIO has not its own VAPI file, but uses a different library).</p>
-<h2 id="creating-packages-for-linux-distributions">Creating packages for linux distributions</h2>
+<h3 id="creating-packages-for-linux-distributions">Creating packages for linux distributions</h3>
 <p>AutoVala can create the metadata files for creating .deb, .rpm and pacman source packages. It should be easy to add support for other package systems.</p>
 <p>To generate .deb files, just run <strong>autovala deb</strong>. It will create a folder called <strong>debian</strong> and inside will be the <strong>control</strong>, <strong>changelog</strong> and <strong>rules</strong> files, and, if needed, <strong>preinst</strong>, <strong>prerm</strong>, <strong>postinst</strong> and <strong>postrm</strong>. The <strong>control</strong> file will have only the bare minimum, but autovala will include inside the dependencies needed both for building the package, and for running the project. These dependencies are generated automatically from the information extracted from the project. The <strong>changelog</strong> will add a boilerplate line only if there is no line for the current version, so it is strongly recommended to edit and complete this file after doing the automatic generation.</p>
 <p>The <strong>rules</strong> file is designed to be compatible with <strong>launchpad</strong>. Also it is possible to manually generate a binary package by running, from the project's root folder, these commands:</p>
@@ -79,18 +79,18 @@ use_gresource: datas_gresource_xml
 <p>There are several fields extracted from the source itself. The <strong>Description</strong> is extracted from the AppData file in the project (ussually available in the <em>data</em> folder). If there is no such file, Autovala will use the <strong>README</strong> or <strong>README.md</strong> files. If the file is a pure text one, all it will be used; if it is a markdown one, only the first section will be used.</p>
 <p>The package name will be set to the project name. The same for the version number. Also, the version number can't be overriden with the template file (but the package name can be).</p>
 <p>Finally, the author's name and email will be asked the first time a package is created, but it will be stored at <strong>$HOME/.config/autovala</strong> to be used when creating new packages.</p>
-<h2 id="adding-more-package-types">Adding more package types</h2>
+<h3 id="adding-more-package-types">Adding more package types</h3>
 <p>As commented, Autovala can generate the metadata for .deb and .rpm source packages. To add more package types, only a new class, derived from <strong>packages</strong> class, must be created. After initializing it and calling <strong>init_all</strong> method, the class should generate the files needed by the packaging system. To help into it, there are several properties that contains useful data, like a list of files needed to build the project (.vapi and .pc files), and for running it (like libraries). The class must use the package utilities to discover which packages contains those files, and use them for generating the dependencies.</p>
-<h2 id="using-valama">Using Valama</h2>
+<h3 id="using-valama">Using Valama</h3>
 <p>Autovala can export a project to a Valama project, allowing to use this great editor.</p>
 <p>It is a good idea to refresh the data in the Autovala project using <em>autovala refresh</em> before exporting it with <em>autovala valama</em>.</p>
 <p>When the Autovala project contains several binaries, it will generate one Valama project for each one. Also, if one binary depends of another one, both will be added in the same Valama project. This allows to better edit both. An example is Autovala itself: it is a main library, <em>autovalaLib</em>, used by the main executable, <em>autovala</em>, and another library, <em>autovalaPlugin</em>.</p>
 <p>Remember that, currently, this support is extremely limited. This means that you must update your Autovala project with <em>autovala update</em> manually from command line, and sometimes you will have to use again <em>autovala valama</em> and open again the Valama project to reflect some changes in the editor. I hope to add, in a near future, more support.</p>
-<h2 id="using-svg-icons-for-several-sizes-of-the-same-icon">Using SVG icons for several sizes of the same icon</h2>
+<h3 id="using-svg-icons-for-several-sizes-of-the-same-icon">Using SVG icons for several sizes of the same icon</h3>
 <p>Sometimes it is a good idea to have diferent pictures for the same icon, using one or another for diferent sizes. When the icons are in <strong>png</strong> format, there are no problems, but with <strong>svg</strong> icons, if the final theme has scalable entries, all of them will go there. To avoid this, just open the <strong>.avprj</strong> file and replace the command <strong>full_icon</strong> with <strong>fixed_size_icon</strong>. This command will always use the canvas size of the <strong>svg</strong> file to determine the fixed size entry where to put it, and will never place an <strong>svg</strong> icon in an scalable entry. For <strong>png</strong> files it works exactly the same that <strong>full_icon</strong>.</p>
-<h2 id="using-alternative-cmake-files">Using alternative CMAKE files</h2>
+<h3 id="using-alternative-cmake-files">Using alternative CMAKE files</h3>
 <p>When updating the CMAKE files for Vala, Autovala will check if the <strong>AUTOVALA_CMAKE_SCRIPT</strong> environment variable is defined with a path. If that is the case, it will copy from that path the CMAKE scripts for the project, instead of using the default ones.</p>
-<h2 id="writing-unitary-tests">Writing unitary tests</h2>
+<h3 id="writing-unitary-tests">Writing unitary tests</h3>
 <p>To write unitary tests, just create a folder called <strong>unitests</strong> in the root folder of your executable/library folder. Each <strong>.vala</strong> source file inside it will be considered an unitary test, and will be compiled against <strong>ALL</strong> source files of its executable/library.</p>
 <p>When an unitary test is being compiled, it is done with the option <strong>UNITEST</strong>, so you can use <strong>#if UNITEST</strong> and <strong>#if !UNITEST</strong> to add or remove code in the project's source that should or shouldn't go with unitary tests (an example is the <strong>main</strong> function).</p>
 <p>If an unitary test needs to use data files, it can use the <strong>Constants</strong> namespace to gain access to the original source path. When compiling the tests, there will be a new variable, called <strong>TESTSRCDIR</strong> that contains the full path to the project folder, allowing the unitary test to easily get access to all the files in the project. This variable <strong>doesn't exist</strong> when compiling an executable or library, only unitary tests.</p>
@@ -110,16 +110,16 @@ use_gresource: datas_gresource_xml
              +test4.vala
              +test5.vala</code></pre>
 <p>Here, the first binary, created with <strong>file1.vala</strong> and <strong>file2.vala</strong>, has two unitary tests: <strong>test1.vala</strong> and <strong>test2.vala</strong>. The binary for the first unitary test will be created by compiling <strong>file1.vala</strong>, <strong>file2.vala</strong> and <strong>test1.vala</strong> in a single executable; the binary for the second unitary test will be created by compiling <strong>file1.vala</strong>, <strong>file2.vala</strong> and <strong>test2.vala</strong>. The second binary is created with <strong>file3.vala</strong> and <strong>file4.vala</strong>, and has three unitary tests: <strong>test3.vala</strong>, <strong>test4.vala</strong> and <strong>test5.vala</strong>.</p>
-<h2 id="using-the-math-library">Using the math library</h2>
+<h3 id="using-the-math-library">Using the math library</h3>
 <p>GLib includes the namespace GLib.Math, that contains all the C Math library functions. To use it from C it is mandatory to pass <em>-lm</em> to the compiler.</p>
 <p>In Autovala, instead, you only need to add at the start of your code an <strong>using</strong> statement with the namespace to ensure that the library will be linked. To do so, just use:</p>
 <pre><code>//using GLib.Math</code></pre>
 <p>(you can put it inside a comment, and Autovala will also understand it).</p>
-<h2 id="creating-an-autovala-plugin-for-a-gtk3-text-editor">Creating an Autovala plugin for a GTK3 text editor</h2>
+<h3 id="creating-an-autovala-plugin-for-a-gtk3-text-editor">Creating an Autovala plugin for a GTK3 text editor</h3>
 <p>Version 0.97 includes a library with two widgets, ProjectViewer and FileViewer, that greatly simplifies the task of creating a plugin for manage Autovala projects. An example of its use can be seen in the Gedit plugin for Autovala, available in a folder with the Autovala source code.</p>
-<h2 id="updating-projects-with-new-versions-of-autovala">Updating projects with new versions of Autovala</h2>
+<h3 id="updating-projects-with-new-versions-of-autovala">Updating projects with new versions of Autovala</h3>
 <p>Every time autovala gets updated, doing &quot;autovala update&quot; or &quot;autovala cmake&quot; will update the <em>CMaleLists.txt</em> for that project, so it will take advantage of all the new features added in the new Autovala version.</p>
-<h2 id="rules-followed-by-autovala-to-decide-which-valac-version-to-use">Rules followed by autovala to decide which valac version to use</h2>
+<h3 id="rules-followed-by-autovala-to-decide-which-valac-version-to-use">Rules followed by autovala to decide which valac version to use</h3>
 <p>Some source-based distros (like gentoo) doesn't set a soft link <em>valac</em> pointing to a default vala compiler version. This behaviour is intentional, to allow to choose with which version compile the packages.</p>
 <p>Until version 0.95.0, autovala projects could not be compiled under these distros, unless the user creates manually the link. In version 0.96.0 this has been fixed. The rules to decide which compiler version to use are the following:</p>
 <ul>
@@ -128,7 +128,7 @@ use_gresource: datas_gresource_xml
 </ul>
 <p>These rules are used for default compilation. It is possible to manually force an specific valac binary for compilation with:</p>
 <pre><code>    cmake .. -DUSE_VALA_BINARY=/path/to/a/valac/binary</code></pre>
-<h2 id="autogenerating-dbus-bindings">Autogenerating DBus bindings</h2>
+<h3 id="autogenerating-dbus-bindings">Autogenerating DBus bindings</h3>
 <p>Starting from version 0.92.0, autovala can use <strong>vala-dbus-binding-tool</strong> to generate automatically bindings for a DBus service. This process is done whenever <strong>autovala cmake</strong> or <strong>autovala update</strong> is done.</p>
 <p>To add a DBus binding to an executable, just edit your <em>.avprj</em> file and, in the executable section (this is, after a <em>vala_binary</em> or <em>vala_library</em> statement), add a line like this:</p>
 <pre><code>    dbus_interface: connection_name  object_path  session/system  [gdbus/dbus-glib]</code></pre>
@@ -136,9 +136,9 @@ use_gresource: datas_gresource_xml
 <p>An example: the following line</p>
 <pre><code>    dbus_interface: org.freedesktop.ConsoleKit /org/freedesktop/ConsoleKit/Manager system</code></pre>
 <p>will generate bindings for the <em>/org/freedesktop/ConsoleKit/Manager</em> object.</p>
-<h2 id="using-the-constants-namespace-and-variables">Using the <strong>Constants</strong> namespace and variables</h2>
+<h3 id="using-the-constants-namespace-and-variables">Using the <strong>Constants</strong> namespace and variables</h3>
 <p>Autovala will create a <strong>Constants</strong> namespace with several strings in it that specifies things like the project version or the final directory. These strings allow to simplify several things, like initializing the <strong>gettext</strong> functions, getting access to the version number set in the code, or getting access to <strong>glade</strong> files, as explained in the following entries.</p>
-<h2 id="setting-the-version-number">Setting the version number</h2>
+<h3 id="setting-the-version-number">Setting the version number</h3>
 <p>To simplify the maintenance of the code, Autovala allows to set the version number in an easy way inside the source code of your binary or library. That way you will always be sure to use the right number both for the <strong>About</strong> and <strong>--version</strong> commands, and for the library major and minor values.</p>
 <p>To do so, just put in one (no matter which) of the <strong>.vala</strong> source files the following statement:</p>
 <pre><code>    // project version=XX.YY.ZZ</code></pre>
@@ -151,7 +151,7 @@ use_gresource: datas_gresource_xml
 <pre><code>    GLib.stdout.printf(&quot;Version: %s\n&quot;,Constants.VERSION);</code></pre>
 <p>This new method allows to set the version number in libraries too, without symbol clash, because in libraries, the library namespace will be used to define the constants namespace. So, as an example, if we are creating a library <strong>MyExampleLibrary</strong>, which has all its code inside the namespace <strong>exampleLibrary</strong>, to print the library version from inside the library just use:</p>
 <pre><code>    GLib.stdout.printf(&quot;Library version: %s\n&quot;,exampleLibraryConstants.VERSION);</code></pre>
-<h2 id="using-gettext">Using GETTEXT</h2>
+<h3 id="using-gettext">Using GETTEXT</h3>
 <p>To initialize <strong>gettext</strong> it is mandatory to specify both the package name and the folder with the <strong>.mo</strong> files. This is as simple as using the <strong>Constants</strong> namespace with this code:</p>
 <pre><code>    Intl.bindtextdomain(Constants.GETTEXT_PACKAGE, Path.build_filename(Constants.DATADIR,&quot;locale&quot;));
     Intl.setlocale (LocaleCategory.ALL, &quot;&quot;);
@@ -160,11 +160,11 @@ use_gresource: datas_gresource_xml
 <p>For libraries, you must call only:</p>
 <pre><code>    Intl.bindtextdomain(LibraryConstants.GETTEXT_PACKAGE, path.build_filename(LibraryConstants.DATADIR,&quot;locale&quot;));</code></pre>
 <p>being <strong>LibraryConstants</strong> the library Constants namespace. The package name is the same than the project's name.</p>
-<h2 id="using-glade-files">Using GLADE files</h2>
+<h3 id="using-glade-files">Using GLADE files</h3>
 <p><strong>Glade</strong> files are stored at <strong>/usr/share/PROJECT_NAME/</strong> or <strong>/usr/local/share/PROJECT_NAME/</strong>. To get access to them, just use the Constants namespace. As an example, to load the <strong>example.ui</strong> glade file, just do:</p>
 <pre><code>    var data = new Builder();
     data.add_from_file(GLib.Path.build_filename(Constants.PKGDATADIR,&quot;example.ui&quot;));</code></pre>
-<h2 id="creating-several-binaries">Creating several binaries</h2>
+<h3 id="creating-several-binaries">Creating several binaries</h3>
 <p>By default, Autovala presumes that every source file inside <strong>src</strong> or its subdirectories belongs to a single binary. But maybe you want to generate several binaries because your program needs several executables.</p>
 <p>Let's suppose that you have a project called <strong>myproject</strong>, with a folder hierarchy inside <strong>src</strong> like this:</p>
 <pre><code>    src
@@ -195,13 +195,13 @@ use_gresource: datas_gresource_xml
     *vala_binary: src/myproject
     [several commands specific of this binary]</code></pre>
 <p>Save it and run <strong>autovala update</strong>. If you edit again the project file, you will see that Autovala automatically added all the packages and other data to the new executable, and will keep doing every time you run it.</p>
-<h2 id="creating-libraries">Creating libraries</h2>
+<h3 id="creating-libraries">Creating libraries</h3>
 <p>Creating a library is as easy as editing the project file and replacing the command <strong>vala_binary</strong> with <strong>vala_library</strong> and running again <strong>autovala update</strong>.</p>
 <p>When creating a library, Autovala will peek the source files and check the namespace used inside. If all files uses the same namespace, it will use it, by default, as the name for the library, and also to generate the <strong>.vapi</strong>, <strong>.gir</strong> and <strong>.pc</strong> files. Of course, is possible to set this name manually by editing the project file and modifying the command <strong>namespace</strong>.</p>
 <p>The major and minor numbers for the library are taken from the version number set by the user (read the entry <strong>Setting the version number</strong>). They will be used for the library itself, the <strong>.vapi</strong> and the <strong>.pc</strong> files. The <strong>.gir</strong> introspection file uses the version number <strong>major.0</strong> instead of <strong>major.minor</strong> to ensure compatibility.</p>
 <p>Libraries also can have the constants namespace, but modified to avoid clash between the variables in the library and the same in the binary. The final namespace for constants namespace in libraries is <strong>libraryNameSpaceConstants</strong>. Of course, this will work ONLY IF YOUR LIBRARY HAS DEFINED A NAMESPACE. If not, this variables will NOT be added.</p>
 <p>An example: if your library uses the namespace <strong>aBeautifulNameSpace</strong>, then the namespace for the constants will be <strong>aBeautifulNameSpaceConstants</strong>.</p>
-<h2 id="linking-an-executable-against-a-library-from-the-same-project">Linking an executable against a library from the same project</h2>
+<h3 id="linking-an-executable-against-a-library-from-the-same-project">Linking an executable against a library from the same project</h3>
 <p>Let's say that the project contains one or more libraries and an executable, and the executable must use that library we are creating in the same project.</p>
 <p>Let's supose that the executable is <strong>myExecutable</strong>, and the library is <strong>myLibrary</strong> (using the namespace <strong>myLibrarynamespace</strong>). The <strong>.avprj</strong> file will look like this:</p>
 <pre><code>    ### AutoVala Project ###
@@ -228,7 +228,7 @@ use_gresource: datas_gresource_xml
     [several commands specific of this binary]</code></pre>
 <p>Run <strong>autovala update</strong>, <strong>cmake ..</strong>, and everything should compile fine.</p>
 <p>Of course, if your executable needs several local libraries, you have to add one <strong>vala_local_package</strong> statement per library.</p>
-<h2 id="compiling-valadoc-in-ubuntu">Compiling Valadoc in Ubuntu</h2>
+<h3 id="compiling-valadoc-in-ubuntu">Compiling Valadoc in Ubuntu</h3>
 <p>At the time of writing this, the version of Valadoc shipped with Ubuntu 12.10 has a bug and sometimes fails. The solution is to manually compile it from the sources.</p>
 <p>To get the sources, just use</p>
 <pre><code>    git clone http://git.gnome.org/browse/valadoc</code></pre>
@@ -237,7 +237,7 @@ use_gresource: datas_gresource_xml
     make
     sudo make install
     sudo ldconfig</code></pre>
-<h2 id="using-d-bus-service-files">Using D-Bus service files</h2>
+<h3 id="using-d-bus-service-files">Using D-Bus service files</h3>
 <p>A D-Bus service file is a file that specifies which binary provides a specific D-Bus service. To ensure that Autovala find them, you must put these files in the <strong>data/</strong> folder, and ensure that their extension is <strong>.service</strong>.</p>
 <p>The problem with these files is that the binary path must be expressed in absolute format; this is: if the binary to run is <strong>mybinary</strong>, you have to put <strong>/usr/bin/mybinary</strong>, or <strong>/usr/local/bin/mybinary</strong>, or the full path where <strong>mybinary</strong> is. This can be a problem, because with CMake, by default, uses <strong>/usr/local/bin</strong>, unless you specify it to use <strong>/usr/bin</strong> when creating a <strong>.deb</strong> or <strong>.rpm</strong> package.</p>
 <p>To avoid this problem, you only need to use the macro <strong>\@DBUS_PREFIX\@</strong> in the path. This CMake macro will be expanded automatically to the base path ( <strong>/usr</strong> or <strong>/usr/local</strong> ), so you only will need to add <strong>bin/</strong> and the binary name.</p>
@@ -246,20 +246,20 @@ use_gresource: datas_gresource_xml
         Name=com.rastersoft.cronopete
         Exec=@DBUS_PREFIX@/bin/cronopete</code></pre>
 <p>In this file, the <strong>com.rastersoft.cronopete</strong> service is provided by the binary <strong>cronopete</strong>. The specific folder ( <strong>local</strong> or not <strong>local</strong> ) will be determined automatically by Autovala.</p>
-<h2 id="installing-a-project-in-a-different-final-folder">Installing a project in a different final folder</h2>
+<h3 id="installing-a-project-in-a-different-final-folder">Installing a project in a different final folder</h3>
 <p>You can set the <strong>CMAKE_INSTALL_PREFIX</strong> variable to define where to install the project. So, if you run</p>
 <pre><code>        cmake .. -DCMAKE_INSTALL_PREFIX=/usr</code></pre>
 <p>the project will be installed in <strong>/usr</strong> instead of <strong>/usr/local</strong>. Also, if you run</p>
 <pre><code>        cmake .. -DCMAKE_INSTALL_PREFIX=$HOME/tmp</code></pre>
 <p>the project will be installed in your personal directory.</p>
-<h2 id="creating-packages-for-a-linux-distro">Creating packages for a Linux distro</h2>
+<h3 id="creating-packages-for-a-linux-distro">Creating packages for a Linux distro</h3>
 <p>To create packages, you must set the install prefix to <strong>/usr</strong> like in the previous entry, and also specify to install everything in a temporal folder. This is made with the <strong>DESTDIR</strong> statement when running <strong>make install</strong>. For example, to create a package in the folder <strong>$HOME/tmpfolder</strong>, you should do:</p>
 <pre><code>        cmake .. -DCMAKE_INSTALL_PREFIX=/usr
         make
         make install DESTDIR=$HOME/tmpfolder</code></pre>
-<h2 id="using-gio-gio-unix-gobject-gmodule-or-math-packages">Using GIO, GIO-unix, GObject, GModule or Math packages</h2>
+<h3 id="using-gio-gio-unix-gobject-gmodule-or-math-packages">Using GIO, GIO-unix, GObject, GModule or Math packages</h3>
 <p>There are some exceptions for <strong>using</strong> and package autodetection. Since the packages <strong>GIO</strong>, <strong>GIO-unix</strong>, <strong>GObject</strong>, <strong>GModule</strong> and <strong>Math</strong> are included inside the <strong>GLib</strong> namespace, Autovala requires them to be manually marked by adding <strong>//using [package name]</strong>. Since it is a comment, it won't be processed by Valac, but will be understood by Autovala and add the required <strong>-pkg</strong> command (or <strong>-lm</strong> in the case of Math).</p>
-<h2 id="using-conditional-compilation-to-allow-to-use-gtk2-and-gtk3">Using conditional compilation to allow to use GTK2 and GTK3</h2>
+<h3 id="using-conditional-compilation-to-allow-to-use-gtk2-and-gtk3">Using conditional compilation to allow to use GTK2 and GTK3</h3>
 <p>An special case is when supporting both GTK2 and GTK3 with the same source code is desirable. It is possible to do it by using conditional compilation.</p>
 <p>First, decide a statement to choose between both libraries. Let's say USE_GTK2.</p>
 <p>In your source code use <strong>#if USE_GTK2</strong>, <strong>#else</strong> and <strong>#endif</strong> for keeping sepearated the code parts where GTK2 and GTK3 differs.</p>
@@ -282,13 +282,13 @@ use_gresource: datas_gresource_xml
     glade: data/interface/file2.ui
     glade: data/interface/file3.ui
     end</code></pre>
-<h2 id="mixing-vala-and-c-source-files">Mixing VALA and C source files</h2>
+<h3 id="mixing-vala-and-c-source-files">Mixing VALA and C source files</h3>
 <p>It is possible to mix in the same binary or library VALA and C source files, but is mandatory to manually create a <strong>.vapi</strong> file to access from VALA to the C functions.</p>
 <p>To access from C to the Vala functions, just include the corresponding header files. During compilation, cmake will add <strong>-I[whatever]/install/src/[whatever]</strong>, so the <strong>.h</strong> files created by <strong>valac</strong> will be available to the <strong>.c</strong> files.</p>
 <p>To add libraries needed only for the C sources, just use <strong>c_check_package</strong> instead of <strong>vala_check_package</strong>.</p>
-<h1 id="see-also">SEE ALSO</h1>
+<h2 id="see-also">SEE ALSO</h2>
 <p><a href="autovala.1">autovala(1)</a> <a href="autovala-fileformat.5">autovala-fileformat(5)</a> <a href="autovala-keep-changes.7">autovala-keep-changes(7)</a> <a href="autovala-rules.7">autovala-rules(7)</a></p>
-<h1 id="author">AUTHOR</h1>
+<h2 id="author">AUTHOR</h2>
 <p>Sergio Costas Rodriguez<br />
 <a href="mailto:raster@rastersoft.com">raster@rastersoft.com</a><br />
 <a href="http://www.rastersoft.com" class="uri">http://www.rastersoft.com</a><br />

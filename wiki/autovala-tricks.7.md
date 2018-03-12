@@ -1,14 +1,14 @@
-Autovala-tricks(1)
+# Autovala-tricks(1)
 
-# NAME
+## NAME
 
 Autovala tricks - Several tricks for Autovala
 
-## I migrated to Meson from CMake, but my libraries seems to not being installed...
+### I migrated to Meson from CMake, but my libraries seems to not being installed...
 
 Meson installs libraries at */usr/lib/x86_64-linux-gnu*, while CMake installs them at */usr/lib*. Ensure that you remove any old library from */usr/lib* and */usr/local/lib*.
 
-## Adding the project files to a versioning system like git, mercurial or bazaar
+### Adding the project files to a versioning system like git, mercurial or bazaar
 
 Autovala simplifies this taks by listing for you all the files it knows belong to the project. This is what the *autovala project_files* command is for. You can add all these files to, let's say, a bazaar repository, just running from the project root folder:
 
@@ -16,11 +16,11 @@ Autovala simplifies this taks by listing for you all the files it knows belong t
 
 For git there is some syntactic sugar in the form:
 
-	autovala git
+    autovala git
 
 This has the advantage that can be run from any folder, not only from the root.
 
-## Working with GENIE
+### Working with GENIE
 
 Genie is another syntax for the Vala compiler. It can be used with Autovala since version 0.99.48.
 
@@ -30,7 +30,7 @@ To create a Genie project just use
 
 This will create all the folders for a standard project and an empty **.gs** file to begin writting source code. Autovala will do the same tricks with Genie, like peeking the source files to discover which packages they need to be compiled, or simplify building libraries, or mixing C, Vala and Genie code in the same project.
 
-## Enabling debug symbols
+### Enabling debug symbols
 
 Version 0.99.45 of Autovala added support for the CMake standard way for enabling debug symbols. This is achieved just by using:
 
@@ -48,13 +48,13 @@ When cmake is called without specifying a build type, the *Release* one will be 
 
 Thanks to this change, it is possible now to remove the old lines with the conditional DEBUG statements from the .avprj files.
 
-## Using vapidir and vapi_file commands
+### Using vapidir and vapi_file commands
 
 The *vapidir* command will add a folder to the list of places where to search for .vapi files, passing them to the *valac* compiler with the *--vapidir=...* command line parameter. This is useful for programs (like Gnome-Builder 3.20) that put their vapi files in a non-standard location, or for libraries (like libkeybinder) that have .vapi files but they aren't included in Debian packages (at least at august 21, 2016). All the autovala's bells and whistles (like automatic search of pkg-config based on *Using* statements inside the source code, checking for existence during cmake execution and so on) are available for the .vapi files inside these folders. These folders are added for all the binaries and libraries in a project.
 
 On the other hand, the *vapi_file* command adds an specific .vapi file (and only that .vapi file), and does it only for an specific binary or library. It is added to the sources list, like another source file, and the only thing checked is if it fulfills any of the *Using* statements in the sources. Everything else (checking for existence, adding *-l...* to the C options and so on) is left to the user, who must configure them to ensure that the compilation works. This is useful mainly when a project generates a library used by another library or binary in the same project.
 
-## Using GResource
+### Using GResource
 
 GResource is a system available in GLib to include files (text, images, sound...) inside an executable, avoiding the problem of locating them in the hard disk. To do so, an utility called **glib-compile-resources** is used, which takes an XML file with the list of files to include, and generates a **.c** file with them, which can then be compiled with the source code. More information about it is available in the [GResource API documentation page](https://developer.gnome.org/gio/stable/GResource.html).
 
@@ -97,7 +97,7 @@ It is mandatory to include GIO in the binaries that use GResource. It is as easy
 
 at the begining of any of the source files (be carefull: you must put it as a comment, because GIO has not its own VAPI file, but uses a different library).
 
-## Creating packages for linux distributions
+### Creating packages for linux distributions
 
 AutoVala can create the metadata files for creating .deb, .rpm and pacman source packages. It should be easy to add support for other package systems.
 
@@ -133,13 +133,11 @@ The package name will be set to the project name. The same for the version numbe
 
 Finally, the author's name and email will be asked the first time a package is created, but it will be stored at **$HOME/.config/autovala** to be used when creating new packages.
 
-
-## Adding more package types
+### Adding more package types
 
 As commented, Autovala can generate the metadata for .deb and .rpm source packages. To add more package types, only a new class, derived from **packages** class, must be created. After initializing it and calling **init_all** method, the class should generate the files needed by the packaging system. To help into it, there are several properties that contains useful data, like a list of files needed to build the project (.vapi and .pc files), and for running it (like libraries). The class must use the package utilities to discover which packages contains those files, and use them for generating the dependencies.
 
-
-## Using Valama
+### Using Valama
 
 Autovala can export a project to a Valama project, allowing to use this great editor.
 
@@ -149,17 +147,15 @@ When the Autovala project contains several binaries, it will generate one Valama
 
 Remember that, currently, this support is extremely limited. This means that you must update your Autovala project with *autovala update* manually from command line, and sometimes you will have to use again *autovala valama* and open again the Valama project to reflect some changes in the editor. I hope to add, in a near future, more support.
 
-## Using SVG icons for several sizes of the same icon
+### Using SVG icons for several sizes of the same icon
 
 Sometimes it is a good idea to have diferent pictures for the same icon, using one or another for diferent sizes. When the icons are in **png** format, there are no problems, but with **svg** icons, if the final theme has scalable entries, all of them will go there. To avoid this, just open the **.avprj** file and replace the command **full_icon** with **fixed_size_icon**. This command will always use the canvas size of the **svg** file to determine the fixed size entry where to put it, and will never place an **svg** icon in an scalable entry. For **png** files it works exactly the same that **full_icon**.
 
-
-## Using alternative CMAKE files
+### Using alternative CMAKE files
 
 When updating the CMAKE files for Vala, Autovala will check if the **AUTOVALA_CMAKE_SCRIPT** environment variable is defined with a path. If that is the case, it will copy from that path the CMAKE scripts for the project, instead of using the default ones.
 
-
-## Writing unitary tests
+### Writing unitary tests
 
 To write unitary tests, just create a folder called **unitests** in the root folder of your executable/library folder. Each **.vala** source file inside it will be considered an unitary test, and will be compiled against **ALL** source files of its executable/library.
 
@@ -187,8 +183,7 @@ An example with two binaries:
 
 Here, the first binary, created with **file1.vala** and **file2.vala**, has two unitary tests: **test1.vala** and **test2.vala**. The binary for the first unitary test will be created by compiling **file1.vala**, **file2.vala** and **test1.vala** in a single executable; the binary for the second unitary test will be created by compiling **file1.vala**, **file2.vala** and **test2.vala**. The second binary is created with **file3.vala** and **file4.vala**, and has three unitary tests: **test3.vala**, **test4.vala** and **test5.vala**.
 
-
-## Using the math library
+### Using the math library
 
 GLib includes the namespace GLib.Math, that contains all the C Math library functions. To use it from C it is mandatory to pass *-lm* to the compiler.
 
@@ -198,32 +193,28 @@ In Autovala, instead, you only need to add at the start of your code an **using*
 
 (you can put it inside a comment, and Autovala will also understand it).
 
-
-## Creating an Autovala plugin for a GTK3 text editor
+### Creating an Autovala plugin for a GTK3 text editor
 
 Version 0.97 includes a library with two widgets, ProjectViewer and FileViewer, that greatly simplifies the task of creating a plugin for manage Autovala projects. An example of its use can be seen in the Gedit plugin for Autovala, available in a folder with the Autovala source code.
 
-
-## Updating projects with new versions of Autovala
+### Updating projects with new versions of Autovala
 
 Every time autovala gets updated, doing "autovala update" or "autovala cmake" will update the *CMaleLists.txt* for that project, so it will take advantage of all the new features added in the new Autovala version.
 
-
-## Rules followed by autovala to decide which valac version to use
+### Rules followed by autovala to decide which valac version to use
 
 Some source-based distros (like gentoo) doesn't set a soft link *valac* pointing to a default vala compiler version. This behaviour is intentional, to allow to choose with which version compile the packages.
 
 Until version 0.95.0, autovala projects could not be compiled under these distros, unless the user creates manually the link. In version 0.96.0 this has been fixed. The rules to decide which compiler version to use are the following:
 
-  * During project update, if there is a *valac* symlink, will use that version number to update the *.avprj* file; if not, will use the biggest version available in the system.
-  * During compilation: if the specific version set in the *.avprj* is available, will use it; if not, but there is a *valac* symlink, and its version is equal or greater than the set in the *.avprj* file, will use it. In other case, will return an error.
+* During project update, if there is a *valac* symlink, will use that version number to update the *.avprj* file; if not, will use the biggest version available in the system.
+* During compilation: if the specific version set in the *.avprj* is available, will use it; if not, but there is a *valac* symlink, and its version is equal or greater than the set in the *.avprj* file, will use it. In other case, will return an error.
 
 These rules are used for default compilation. It is possible to manually force an specific valac binary for compilation with:
 
         cmake .. -DUSE_VALA_BINARY=/path/to/a/valac/binary
 
-
-## Autogenerating DBus bindings
+### Autogenerating DBus bindings
 
 Starting from version 0.92.0, autovala can use **vala-dbus-binding-tool** to generate automatically bindings for a DBus service. This process is done whenever **autovala cmake** or **autovala update** is done.
 
@@ -239,13 +230,11 @@ An example: the following line
 
 will generate bindings for the */org/freedesktop/ConsoleKit/Manager* object.
 
-
-## Using the **Constants** namespace and variables
+### Using the **Constants** namespace and variables
 
 Autovala will create a **Constants** namespace with several strings in it that specifies things like the project version or the final directory. These strings allow to simplify several things, like initializing the **gettext** functions, getting access to the version number set in the code, or getting access to **glade** files, as explained in the following entries.
 
-
-## Setting the version number
+### Setting the version number
 
 To simplify the maintenance of the code, Autovala allows to set the version number in an easy way inside the source code of your binary or library. That way you will always be sure to use the right number both for the **About** and **--version** commands, and for the library major and minor values.
 
@@ -271,8 +260,7 @@ This new method allows to set the version number in libraries too, without symbo
 
         GLib.stdout.printf("Library version: %s\n",exampleLibraryConstants.VERSION);
 
-
-## Using GETTEXT
+### Using GETTEXT
 
 To initialize **gettext** it is mandatory to specify both the package name and the folder with the **.mo** files. This is as simple as using the **Constants** namespace with this code:
 
@@ -287,16 +275,14 @@ For libraries, you must call only:
 
 being **LibraryConstants** the library Constants namespace. The package name is the same than the project's name.
 
-
-## Using GLADE files
+### Using GLADE files
 
 **Glade** files are stored at **/usr/share/PROJECT_NAME/** or **/usr/local/share/PROJECT_NAME/**. To get access to them, just use the Constants namespace. As an example, to load the **example.ui** glade file, just do:
 
         var data = new Builder();
         data.add_from_file(GLib.Path.build_filename(Constants.PKGDATADIR,"example.ui"));
 
-
-## Creating several binaries
+### Creating several binaries
 
 By default, Autovala presumes that every source file inside **src** or its subdirectories belongs to a single binary. But maybe you want to generate several binaries because your program needs several executables.
 
@@ -312,7 +298,6 @@ Let's suppose that you have a project called **myproject**, with a folder hierar
          +another_folder
              +file5.vala
              +file6.vala
-
 
 And let's suppose that you want to compile **file5.vala** and **file6.vala** as a different executable called **otherprogram**. By default, after running **autovala refresh**, it will create a single executable called **myproject**, using all the source files ( **file1.vala** to **file6.vala** ), and the **.avprj** file will look like this:
 
@@ -337,8 +322,7 @@ What we have to do is add a new **vala_binary** command to the file, specifying 
 
 Save it and run **autovala update**. If you edit again the project file, you will see that Autovala automatically added all the packages and other data to the new executable, and will keep doing every time you run it.
 
-
-## Creating libraries
+### Creating libraries
 
 Creating a library is as easy as editing the project file and replacing the command **vala_binary** with **vala_library** and running again **autovala update**.
 
@@ -350,8 +334,7 @@ Libraries also can have the constants namespace, but modified to avoid clash bet
 
 An example: if your library uses the namespace **aBeautifulNameSpace**, then the namespace for the constants will be **aBeautifulNameSpaceConstants**.
 
-
-## Linking an executable against a library from the same project
+### Linking an executable against a library from the same project
 
 Let's say that the project contains one or more libraries and an executable, and the executable must use that library we are creating in the same project.
 
@@ -386,8 +369,7 @@ Run **autovala update**, **cmake ..**, and everything should compile fine.
 
 Of course, if your executable needs several local libraries, you have to add one **vala_local_package** statement per library.
 
-
-## Compiling Valadoc in Ubuntu
+### Compiling Valadoc in Ubuntu
 
 At the time of writing this, the version of Valadoc shipped with Ubuntu 12.10 has a bug and sometimes fails. The solution is to manually compile it from the sources.
 
@@ -402,8 +384,7 @@ Then, don't forget to uninstall the **valadoc** and **libvaladoc1** packages, in
         sudo make install
         sudo ldconfig
 
-
-## Using D-Bus service files
+### Using D-Bus service files
 
 A D-Bus service file is a file that specifies which binary provides a specific D-Bus service. To ensure that Autovala find them, you must put these files in the **data/** folder, and ensure that their extension is **.service**.
 
@@ -419,8 +400,7 @@ An example (extracted from Cronopete):
 
 In this file, the **com.rastersoft.cronopete** service is provided by the binary **cronopete**. The specific folder ( **local** or not **local** ) will be determined automatically by Autovala.
 
-
-## Installing a project in a different final folder
+### Installing a project in a different final folder
 
 You can set the **CMAKE_INSTALL_PREFIX** variable to define where to install the project. So, if you run
 
@@ -432,8 +412,7 @@ the project will be installed in **/usr** instead of **/usr/local**. Also, if yo
 
 the project will be installed in your personal directory.
 
-
-## Creating packages for a Linux distro
+### Creating packages for a Linux distro
 
 To create packages, you must set the install prefix to **/usr** like in the previous entry, and also specify to install everything in a temporal folder. This is made with the **DESTDIR** statement when running **make install**. For example, to create a package in the folder **$HOME/tmpfolder**, you should do:
 
@@ -441,13 +420,11 @@ To create packages, you must set the install prefix to **/usr** like in the prev
             make
             make install DESTDIR=$HOME/tmpfolder
 
-
-## Using GIO, GIO-unix, GObject, GModule or Math packages
+### Using GIO, GIO-unix, GObject, GModule or Math packages
 
 There are some exceptions for **using** and package autodetection. Since the packages **GIO**, **GIO-unix**, **GObject**, **GModule** and **Math** are included inside the **GLib** namespace, Autovala requires them to be manually marked by adding **//using [package name]**. Since it is a comment, it won't be processed by Valac, but will be understood by Autovala and add the required **-pkg** command (or **-lm** in the case of Math).
 
-
-## Using conditional compilation to allow to use GTK2 and GTK3
+### Using conditional compilation to allow to use GTK2 and GTK3
 
 An special case is when supporting both GTK2 and GTK3 with the same source code is desirable. It is possible to do it by using conditional compilation.
 
@@ -457,29 +434,28 @@ In your source code use **#if USE_GTK2**, **#else** and **#endif** for keeping s
 
 In your **.avprj** file use conditional compilation for choosing the libraries with these lines:
 
-		if USE_GTK2
-		vala_check_package: gtk+-2.0
-		vala_check_package: gdk-2.0
-		else
-		vala_check_package: gtk+-3.0
-		vala_check_package: gdk-3.0
-		vala_check_package: glib-2.0
-		end
+        if USE_GTK2
+        vala_check_package: gtk+-2.0
+        vala_check_package: gdk-2.0
+        else
+        vala_check_package: gtk+-3.0
+        vala_check_package: gdk-3.0
+        vala_check_package: glib-2.0
+        end
 
 Finally, if you have different **glade** files for each library version, use also conditional compilation in your **.avprj** file:
 
-		if USE_GTK2
-		glade: data/interface2/file1.ui
-		glade: data/interface2/file2.ui
-		glade: data/interface2/file3.ui
-		else
-		glade: data/interface/file1.ui
-		glade: data/interface/file2.ui
-		glade: data/interface/file3.ui
-		end
+        if USE_GTK2
+        glade: data/interface2/file1.ui
+        glade: data/interface2/file2.ui
+        glade: data/interface2/file3.ui
+        else
+        glade: data/interface/file1.ui
+        glade: data/interface/file2.ui
+        glade: data/interface/file3.ui
+        end
 
-
-## Mixing VALA and C source files
+### Mixing VALA and C source files
 
 It is possible to mix in the same binary or library VALA and C source files, but is mandatory to manually create a **.vapi** file to access from VALA to the C functions.
 
@@ -487,13 +463,11 @@ To access from C to the Vala functions, just include the corresponding header fi
 
 To add libraries needed only for the C sources, just use **c_check_package** instead of **vala_check_package**.
 
-
-# SEE ALSO
+## SEE ALSO
 
 [autovala(1)](autovala.1) [autovala-fileformat(5)](autovala-fileformat.5) [autovala-keep-changes(7)](autovala-keep-changes.7) [autovala-rules(7)](autovala-rules.7)
 
-
-# AUTHOR
+## AUTHOR
 
 Sergio Costas Rodriguez  
 raster@rastersoft.com  

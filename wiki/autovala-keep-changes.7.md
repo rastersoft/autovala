@@ -1,10 +1,10 @@
-Autovala-keep-changes(7)
+# Autovala-keep-changes(7)
 
-# NAME
+## NAME
 
 autovala keeping your changes - How to manually modify the configuration file without loosing your changes
 
-# DESCRIPTION
+## DESCRIPTION
 
 By default, nearly all the lines in the project file start with an asterisk. Those lines contain automatically created commands, and every time the user launches the command **autovala refresh** or **autovala update**, they are deleted and recreated using the current files in the disk and the [rules](autovala-rules.7).
 
@@ -75,11 +75,11 @@ To ensure that the change remains, it must be put in a line **without** the aste
 
 Now the change will remain, no matter how many times **autovala refresh** or **autovala update** are run.
 
-# SEE ALSO
+## SEE ALSO
 
 [autovala(1)](autovala.1) [autovala-rules(7)](autovala-rules.7) [autovala-fileformat(5)](autovala-fileformat.5) [autovala-tricks(7)](autovala-tricks.7)
 
-# AUTHOR
+## AUTHOR
 
 Sergio Costas Rodriguez  
 raster@rastersoft.com  

@@ -1,14 +1,14 @@
-Autovala(1)
+# Autovala(1)
 
-# NAME
+## NAME
 
 Autovala - simplify the creation of projects with Vala and CMake
 
-# SYNOPSIS
+## SYNOPSIS
 
-autovala {init PROJECT_NAME | clear | refresh | cmake | update | project_files | po | deb | rpm | valama | help | version}
+autovala {init PROJECT_NAME | ginit PROJECT_NAME | clear | refresh | cmake | meson | update | project_files | git | po | deb | rpm | pacman | valama | external USER_ID | help | version}
 
-# DESCRIPTION
+## DESCRIPTION
 
 Autovala is a program and a library designed to help in the creation of projects with Vala and CMake. The idea is quite simple: CMake is very powerful, but writting CMakeLists files is boring and repetitive. Why not let the computer create them, by guessing what to do with each file? And if, at the end, there are mistakes, let the user fix them in an easy way, and generate the final CMakeLists files.
 
@@ -16,33 +16,33 @@ New versions of Autovala have also experimental support for Meson Build system.
 
 This is what Autovala does. This process is done in three steps:
 
-  * First, Autovala checks all the folders and files, and creates a project with the type of each file
-  * It also peeks the source files to determine which Vala packages they need, and generate automagically that list
-  * After that (and after allowing the user to check, if (s)he wishes, the project file), it uses that project file to generate the needed CMakeLists files
+* First, Autovala checks all the folders and files, and creates a project with the type of each file
+* It also peeks the source files to determine which Vala packages they need, and generate automagically that list
+* After that (and after allowing the user to check, if (s)he wishes, the project file), it uses that project file to generate the needed CMakeLists files
 
 Autovala greatly simplifies the process of working with Vala because:
 
-  * Automatically determines the vala packages and libraries needed to compile
+* Automatically determines the vala packages and libraries needed to compile
     and run the project, by inspecting the source code
-  * Automatically generates the .vapi and pkg-config files for libraries
-  * Automatically determinates the final destination for an icon, by checking
+* Automatically generates the .vapi and pkg-config files for libraries
+* Automatically determinates the final destination for an icon, by checking
     its type (svg or png) and, in the later case, its size.
-  * Automatically generates manpages from text files in several possible input
+* Automatically generates manpages from text files in several possible input
     format (markdown, html, latex...).
-  * Greatly simplifies creating libraries in Vala, or a project with a binary
+* Greatly simplifies creating libraries in Vala, or a project with a binary
     that uses a library defined in the same project.
-  * Automatically generates the metadata files to create .DEB and .RPM packages.
-  * Easily integrates unitary tests for each binary in the project.
-  * Can generate automatically DBUS bindings by using the DBUS introspection
+* Automatically generates the metadata files to create .DEB and .RPM packages.
+* Easily integrates unitary tests for each binary in the project.
+* Can generate automatically DBUS bindings by using the DBUS introspection
     capabilities.
-  * Automatically generates the list of source files for GETTEXT.
-  * Simplifies mixing C and Vala source files.
+* Automatically generates the list of source files for GETTEXT.
+* Simplifies mixing C and Vala source files.
 
 It also includes several Gtk widgets that simplifies writing plugins for text editors. Currently plugins for GEdit 3.x and another for Scratch Text Editor 2.x are included.
 
 For a detailed explanation of the rules followed by Autovala, check the [rules page](autovala-rules.7).
 
-# USING AUTOVALA
+## USING AUTOVALA
 
 Autovala is designed as several Vala classes, so it can be embedded easily in other projects.
 
@@ -52,7 +52,7 @@ The first thing to do is to initializate the project. This is done by calling au
 
 For Genie, you can use instead
 
-		autovala ginit PROJECT_NAME
+        autovala ginit PROJECT_NAME
 
 This will create a file called **PROJECT_NAME.avprj**, with the most basic info about your project (the format for this file will be explained later). It will also try to create the basic folders for a vala project, and will show a warning if they already exist. It will never delete a file, except the **CMakeLists** files, of course. The folder hierarchy is:
 
@@ -117,7 +117,7 @@ When using this command, Autovala will guess all the info about your project and
 
 But if you prefer to try Meson, just use instead
 
-		autovala meson
+        autovala meson
 
 Now you can go to the **install/** folder and type ' **cmake ..** ' to generate the makefiles for compile your project. You can also use **cmake .. -DBUILD_VALADOC=ON** to add Valadoc support; but if you are using Ubuntu 12.10, maybe you should try to compile Valadoc from scratch, because it seems to be a bug in the version shipped from Canonical (more on this in the [tricks section](autovala-tricks.7)).
 
@@ -135,7 +135,7 @@ These commands can be called from any of the folders or subfolders of the projec
 
 Everytime you run **autovala cmake** or **autovala update**, the CMAKE scripts contained in the **cmake** folder will be refreshed; this allows to get advantage of new capabilities available in more recent versions of autovala. The scripts are copied, by default, from the autovala's system-wide installation folder, unless the environment variable **AUTOVALA_CMAKE_SCRIPT** is defined with the path to a folder containing an alternative script.
 
-# OPTIONS
+## OPTIONS
 
 **autovala help**
   Shows the available commands
@@ -200,12 +200,11 @@ Everytime you run **autovala cmake** or **autovala update**, the CMAKE scripts c
 **autovala external USER_ID**
   Shows the external info stored in the **.avprj** file for the user USER_ID.
 
-
-# SEE ALSO
+## SEE ALSO
 
 [autovala-rules(7)](autovala-rules.7) [autovala-fileformat(5)](autovala-fileformat.5) [autovala-keep-changes(7)](autovala-keep-changes.7) [autovala-tricks(7)](autovala-tricks.7)
 
-# AUTHOR
+## AUTHOR
 
 Sergio Costas Rodriguez  
 raster@rastersoft.com  

@@ -5,12 +5,12 @@
 <body>
 <div class="main_frame">
 <p><a href="index.html">Home</a></p>
-<p>Autovala(1)</p>
-<h1 id="name">NAME</h1>
+<h1 id="autovala1">Autovala(1)</h1>
+<h2 id="name">NAME</h2>
 <p>Autovala - simplify the creation of projects with Vala and CMake</p>
-<h1 id="synopsis">SYNOPSIS</h1>
-<p>autovala {init PROJECT_NAME | clear | refresh | cmake | update | project_files | po | deb | rpm | valama | help | version}</p>
-<h1 id="description">DESCRIPTION</h1>
+<h2 id="synopsis">SYNOPSIS</h2>
+<p>autovala {init PROJECT_NAME | ginit PROJECT_NAME | clear | refresh | cmake | meson | update | project_files | git | po | deb | rpm | pacman | valama | external USER_ID | help | version}</p>
+<h2 id="description">DESCRIPTION</h2>
 <p>Autovala is a program and a library designed to help in the creation of projects with Vala and CMake. The idea is quite simple: CMake is very powerful, but writting CMakeLists files is boring and repetitive. Why not let the computer create them, by guessing what to do with each file? And if, at the end, there are mistakes, let the user fix them in an easy way, and generate the final CMakeLists files.</p>
 <p>New versions of Autovala have also experimental support for Meson Build system.</p>
 <p>This is what Autovala does. This process is done in three steps:</p>
@@ -39,7 +39,7 @@ capabilities.</li>
 </ul>
 <p>It also includes several Gtk widgets that simplifies writing plugins for text editors. Currently plugins for GEdit 3.x and another for Scratch Text Editor 2.x are included.</p>
 <p>For a detailed explanation of the rules followed by Autovala, check the <a href="autovala-rules.7">rules page</a>.</p>
-<h1 id="using-autovala">USING AUTOVALA</h1>
+<h2 id="using-autovala">USING AUTOVALA</h2>
 <p>Autovala is designed as several Vala classes, so it can be embedded easily in other projects.</p>
 <p>The first thing to do is to initializate the project. This is done by calling autovala in your desired project's folder with:</p>
 <pre><code>    autovala init PROJECT_NAME</code></pre>
@@ -94,7 +94,7 @@ capabilities.</li>
 <pre><code>    autovala clear</code></pre>
 <p>These commands can be called from any of the folders or subfolders of the project, because it will search for the first <strong>.avprj</strong> file located in the current folder or upstream.</p>
 <p>Everytime you run <strong>autovala cmake</strong> or <strong>autovala update</strong>, the CMAKE scripts contained in the <strong>cmake</strong> folder will be refreshed; this allows to get advantage of new capabilities available in more recent versions of autovala. The scripts are copied, by default, from the autovala's system-wide installation folder, unless the environment variable <strong>AUTOVALA_CMAKE_SCRIPT</strong> is defined with the path to a folder containing an alternative script.</p>
-<h1 id="options">OPTIONS</h1>
+<h2 id="options">OPTIONS</h2>
 <p><strong>autovala help</strong><br />
 Shows the available commands</p>
 <p><strong>autovala version</strong><br />
@@ -135,9 +135,9 @@ Generates the metadata needed for building a <strong>PACMAN</strong> package (fo
 Generates a Valama project for each binary in the current project. This allows to use Valama to edit Autovala projects. <strong>THIS SUPPORT IS STILL EXPERIMENTAL</strong>. Don't forget to do a <em>refresh</em> before to update the Autovala project file.</p>
 <p><strong>autovala external USER_ID</strong><br />
 Shows the external info stored in the <strong>.avprj</strong> file for the user USER_ID.</p>
-<h1 id="see-also">SEE ALSO</h1>
+<h2 id="see-also">SEE ALSO</h2>
 <p><a href="autovala-rules.7">autovala-rules(7)</a> <a href="autovala-fileformat.5">autovala-fileformat(5)</a> <a href="autovala-keep-changes.7">autovala-keep-changes(7)</a> <a href="autovala-tricks.7">autovala-tricks(7)</a></p>
-<h1 id="author">AUTHOR</h1>
+<h2 id="author">AUTHOR</h2>
 <p>Sergio Costas Rodriguez<br />
 <a href="mailto:raster@rastersoft.com">raster@rastersoft.com</a><br />
 <a href="http://www.rastersoft.com" class="uri">http://www.rastersoft.com</a><br />

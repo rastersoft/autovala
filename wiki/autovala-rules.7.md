@@ -1,10 +1,10 @@
-Autovala-rules(7)
+# Autovala-rules(7)
 
-# NAME
+## NAME
 
 Autovala rules - Rules followed by autovala to guess what kind of file is each one in the folder tree.
 
-# DESCRIPTION
+## DESCRIPTION
 
 The rules followed by Autovala are the following:
 
@@ -84,11 +84,11 @@ When Autovala searchs the packages, it uses only the versions available for the 
 
 **Example:** if you put "using Gtk;" in your code, by default Autovala will use the package gtk+-3.0 to compile it; but if you manually add the package gtk+-2.0 to that binary, Autovala will use Gtk2 instead of Gtk3.
 
-# SEE ALSO
+## SEE ALSO
 
 [autovala(1)](autovala.1) [autovala-fileformat(5)](autovala-fileformat.5) [autovala-keep-changes(7)](autovala-keep-changes.7) [autovala-tricks(7)](autovala-tricks.7)
 
-# AUTHOR
+## AUTHOR
 
 Sergio Costas Rodriguez  
 raster@rastersoft.com  

@@ -139,6 +139,10 @@ namespace AutoVala {
 		private bool readVersionLine(string[] spawn_args, out int vmajor, out int vminor) {
 			string ls_stdout;
 			int    ls_status;
+
+			vmajor = 0;
+			vminor = 16;
+
 			try {
 				if (!Process.spawn_sync(null, spawn_args, Environ.get(), 0, null, out ls_stdout, null, out ls_status)) {
 					return true;

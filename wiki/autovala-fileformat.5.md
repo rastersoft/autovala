@@ -1,10 +1,10 @@
-Autovala-fileformat(5)
+# Autovala-fileformat(5)
 
-# NAME
+## NAME
 
 autovala fileformat - The syntax for autovala configuration file
 
-# DESCRIPTION
+## DESCRIPTION
 
 The project file has a very simple format. Usually you don't need to manually edit it, but when the guesses of autovala are incorrect, you can do it, and your changes will be remembered each time you refresh the file.
 
@@ -254,11 +254,11 @@ By default, all the statements will be **OFF**, and the user must turn them on b
 
 All the statements inside an **if else end** block are marked as manual to ensure that AutoVala doesn't modify them.
 
-# SEE ALSO
+## SEE ALSO
 
 [autovala(1)](autovala.1) [autovala-rules(7)](autovala-rules.7) [autovala-keep-changes(7)](autovala-keep-changes.7) [autovala-tricks(7)](autovala-tricks.7)
 
-# AUTHOR
+## AUTHOR
 
 Sergio Costas Rodriguez  
 raster@rastersoft.com  
