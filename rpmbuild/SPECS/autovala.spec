@@ -17,11 +17,11 @@ BuildRequires: gdk-pixbuf2-devel
 BuildRequires: libxml2-devel
 BuildRequires: pango-devel
 BuildRequires: atk-devel
-BuildRequires: vte291-devel
 BuildRequires: libX11-devel
+BuildRequires: vte291-devel
 BuildRequires: cmake
 BuildRequires: gettext
-BuildRequires: pkgconfig
+BuildRequires: pkgconf-pkg-config
 BuildRequires: make
 BuildRequires: intltool
 BuildRequires: pandoc
@@ -37,10 +37,11 @@ Requires: cairo-gobject
 Requires: libxml2
 Requires: readline
 Requires: atk
+Requires: libX11
 Requires: vte291
 Requires: zlib
+Requires: pcre2
 Requires: gnutls
-Requires: libX11
 Requires: pandoc
 Requires: curl
 

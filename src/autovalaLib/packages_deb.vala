@@ -243,27 +243,10 @@ namespace AutoVala {
 				}
 
 				if (source_keys.has_key("Build-Depends")) {
-					var elements = source_keys.get("Build-Depends").split(",");
-					foreach (var dep in elements) {
-						var fulldep = dep.strip();
-						if (fulldep == "") {
-							continue;
-						}
-						if (fulldep.index_of_char('|') != -1) {
-							this.source_packages.add(fulldep);
-							continue;
-						}
-						var pos  = fulldep.index_of_char('(');
-						var dep2 = "";
-						if (pos != -1) {
-							dep2 = fulldep.substring(0, pos).strip();
-						} else {
-							dep2 = fulldep;
-						}
-						if (this.source_packages.index_of(dep2) == -1) {
-							this.source_packages.add(fulldep);
-						}
-					}
+					this.add_package_name(source_keys.get("Build-Depends").split(","), true);
+				}
+				if (binary_keys.has_key("Depends")) {
+					this.add_package_name(binary_keys.get("Depends").split(","), false);
 				}
 
 				of.put_string("Build-Depends: ");
@@ -275,7 +258,6 @@ namespace AutoVala {
 					not_first = true;
 					of.put_string(element);
 				}
-
 				of.put_string("\n\n");
 
 				this.print_key(of, binary_keys, "Package", this.projectName);
@@ -287,30 +269,6 @@ namespace AutoVala {
 						continue;
 					}
 					of.put_string("%s: %s\n".printf(key, binary_keys.get(key)));
-				}
-
-				if (binary_keys.has_key("Depends")) {
-					var elements = binary_keys.get("Depends").split(",");
-					foreach (var dep in elements) {
-						var fulldep = dep.strip();
-						if (fulldep == "") {
-							continue;
-						}
-						if (fulldep.index_of_char('|') != -1) {
-							this.binary_packages.add(fulldep);
-							continue;
-						}
-						var pos  = fulldep.index_of_char('(');
-						var dep2 = "";
-						if (pos != -1) {
-							dep2 = fulldep.substring(0, pos).strip();
-						} else {
-							dep2 = fulldep;
-						}
-						if (this.binary_packages.index_of(dep2) == -1) {
-							this.binary_packages.add(fulldep);
-						}
-					}
 				}
 
 				of.put_string("Depends: ");
@@ -344,6 +302,39 @@ namespace AutoVala {
 				return true;
 			}
 			return false;
+		}
+
+		private void add_package_name(string[] elements, bool building) {
+			foreach (var dep in elements) {
+				var fulldep = dep.strip();
+				if (fulldep == "") {
+					continue;
+				}
+				if (fulldep.index_of_char('|') != -1) {
+					if (building) {
+						this.source_packages.add(fulldep);
+					} else {
+						this.binary_packages.add(fulldep);
+					}
+					continue;
+				}
+				var pos  = fulldep.index_of_char('(');
+				var dep2 = "";
+				if (pos != -1) {
+					dep2 = fulldep.substring(0, pos).strip();
+				} else {
+					dep2 = fulldep;
+				}
+				if (building) {
+					if (this.source_packages.index_of(dep2) == -1) {
+						this.source_packages.add(fulldep);
+					}
+				} else {
+					if (this.binary_packages.index_of(dep2) == -1) {
+						this.binary_packages.add(fulldep);
+					}
+				}
+			}
 		}
 
 		/**
