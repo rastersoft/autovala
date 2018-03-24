@@ -67,6 +67,9 @@ namespace AutoVala {
 			this.fill_dependencies(this.dependencies, this.binary_packages);
 			this.fill_dependencies(this.extra_dependencies, this.binary_packages);
 
+			this.source_packages = this.filter_dependencies(this.source_packages);
+			this.binary_packages = this.filter_dependencies(this.binary_packages);
+
 			if (this.create_control(path)) {
 				return true;
 			}
@@ -92,18 +95,81 @@ namespace AutoVala {
 		}
 
 		/**
+		 * Removes the packages that are already in the dependencies of other packages
+		 * @param dependencies The list with the current dependencies
+		 * @return a new list with the unneeded dependencies removed
+		 */
+		private Gee.List<string> filter_dependencies(Gee.List<string> dependencies) {
+			var      out_dependencies     = new Gee.ArrayList<string>();
+			var      current_dependencies = new Gee.ArrayList<string>();
+			string[] current_environment  = {};
+			foreach (var e in Environ.get()) {
+				if (e.has_prefix("LANG=")) {
+					current_environment += "LANG=en_US.UTF-8";
+				} else {
+					current_environment += e;
+				}
+			}
+			foreach (var dep in dependencies) {
+				print("Filtrando %s\n".printf(dep));
+				string[] spawn_args = { "apt", "depends", dep };
+				string   ls_stdout;
+				string   ls_stderr;
+				int      ls_status;
+
+				try {
+					if (!Process.spawn_sync(null, spawn_args, Environ.get(), SpawnFlags.SEARCH_PATH, null, out ls_stdout, out ls_stderr, out ls_status)) {
+						ElementBase.globalData.addWarning(_("Failed to launch apt for the file %s").printf(dep));
+						continue;
+					}
+					if (ls_status != 0) {
+						ElementBase.globalData.addWarning(_("Error %d when launching apt for the file %s").printf(ls_status, dep));
+						continue;
+					}
+				} catch (SpawnError e) {
+					ElementBase.globalData.addWarning(_("Exception '%s' when launching apt for the file %s").printf(e.message, dep));
+					continue;
+				}
+				foreach (var line in ls_stdout.split("\n")) {
+					var elements = line.split(":");
+					if (elements.length < 2) {
+						continue;
+					}
+					if (elements[0].strip() != "Depends") {
+						continue;
+					}
+					var package = elements[1].strip().split(" ")[0];
+					if (!current_dependencies.contains(package)) {
+						current_dependencies.add(package);
+					}
+				}
+			}
+			// Now we have all the dependencies already resolved by these packages in current_dependencies,
+			// so we can remove the original packages that already are dependencies for other packages
+			foreach (var dep in dependencies) {
+				if (current_dependencies.contains(dep)) {
+					continue;
+				}
+				out_dependencies.add(dep);
+			}
+			return out_dependencies;
+		}
+
+		/**
 		 * Uses dpkg to discover to which package belongs each of the dependencies
 		 * @param origin The list with the dependency files
 		 * @param destination The list into which store the packages
 		 */
 		private void fill_dependencies(Gee.List<string> origin, Gee.List<string> destination) {
+			var current_environment = Environ.get();
 			foreach (var element in origin) {
+				print(_("Finding package for %s\n").printf(element));
 				string[] spawn_args = { "dpkg", "-S", element };
 				string   ls_stdout;
 				int      ls_status;
 
 				try {
-					if (!Process.spawn_sync(null, spawn_args, Environ.get(), SpawnFlags.SEARCH_PATH, null, out ls_stdout, null, out ls_status)) {
+					if (!Process.spawn_sync(null, spawn_args, current_environment, SpawnFlags.SEARCH_PATH, null, out ls_stdout, null, out ls_status)) {
 						ElementBase.globalData.addWarning(_("Failed to launch dpkg for the file %s").printf(element));
 						ElementBase.globalData.addWarning(_("Can't find a package for the file %s").printf(element));
 						continue;
