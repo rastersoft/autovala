@@ -77,18 +77,21 @@ namespace AutoVala {
 				ElementBase.globalData.addError(_("Manpage command needs one, two or three parameters (line %d)").printf(lineNumber));
 				return true;
 
-			case 1:             // manpage in default language, section 1
+			case 1:
+				// manpage in default language, section 1
 				filename = elements[0];
 				break;
 
-			case 2:             // manpage in specific language, section 1
+			case 2:
+				// manpage in specific language, section 1
 				filename = elements[0];
 				if (elements[1] != "default") {
 					language = elements[1];
 				}
 				break;
 
-			case 3:             // manpage in specific language and custom section
+			case 3:
+				// manpage in specific language and custom section
 				filename = elements[0];
 				if (elements[1] != "default") {
 					language = elements[1];

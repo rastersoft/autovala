@@ -101,9 +101,8 @@ namespace AutoVala {
 		}
 
 		private void print_single_line(string line) {
-
 			var output_str = line;
-			var tmp_size = output_str.length;
+			var tmp_size   = output_str.length;
 			if (this.last_size != 0) {
 				for (int i = tmp_size; i < last_size; i++) {
 					output_str += " ";
@@ -624,12 +623,11 @@ namespace AutoVala {
 		}
 
 /**
-		 * Creates de debian/compat file
-		 * @param path The 'debian' path
-		 * @return false if everything went OK; true if there was an error
-		 */
+ * Creates de debian/compat file
+ * @param path The 'debian' path
+ * @return false if everything went OK; true if there was an error
+ */
 		private bool create_compat(string path) {
-
 			var f_rules_path = Path.build_filename(path, "compat");
 			var f_rules      = File.new_for_path(f_rules_path);
 			if (f_rules.query_exists()) {
