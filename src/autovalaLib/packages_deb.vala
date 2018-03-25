@@ -315,6 +315,7 @@ namespace AutoVala {
 				this.print_key(of, source_keys, "Maintainer", "%s <%s>".printf(this.author_package, this.email_package));
 				this.print_key(of, source_keys, "Priority", "optional");
 				this.print_key(of, source_keys, "Section", "misc");
+				this.print_key(of, source_keys, "Standards-Version", "4.0.0");
 
 				foreach (var key in source_keys.keys) {
 					if ((key == "Source") || (key == "Maintainer") || (key == "Priority") || (key == "Section") || (key == "Build-Depends")) {
@@ -331,6 +332,9 @@ namespace AutoVala {
 					}
 					not_first = true;
 					of.put_string(element);
+					if (element == "valac") {
+						of.put_string(" (>=%d.%d)".printf(this.config.globalData.valaVersionMajor, this.config.globalData.valaVersionMinor));
+					}
 				}
 				of.put_string("\n\n");
 
