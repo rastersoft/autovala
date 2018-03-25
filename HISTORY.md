@@ -1,5 +1,8 @@
 # History of versions #
 
+* version 1.5.0 (2018-03-25)
+  * Now the package optimization works in systems with non-english languages
+  * Now remembers the data in the old *control* file in debian package files, allowing to personalize the descriptions and more
 * version 1.4.0 (2018-03-24)
   * Now removes unneeded packages in the dependencies list in debian/control files
 * version 1.3.1 (2018-03-12)

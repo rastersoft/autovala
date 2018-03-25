@@ -109,7 +109,7 @@ The **rules** file is designed to be compatible with **launchpad**. Also it is p
     ./debian/rules build
     ./debian/rules binary-arch
 
-It is possible to create a template control file at **packages/control.base**. In this file you can manually add entries that you want to be included in the final **control** file for Debian packages. Its syntax is exactly the same than the final **control** file. Autovala will honor these entries and will use them instead the ones generated automatically, with one exception: the dependencies defined in this file will not overrule the automatic ones, but will be added to them. That way, if autovala is unable to detect that your program needs, let's say, *pandoc* to be run, you can put it in this file and it will be added to the dependency list.
+It is possible to manually modify the **packages/control** file, adding new entries that you want to be included in the final **control** file for Debian packages. Autovala will honor these entries and will use them instead the ones generated automatically, with the following exceptions: **Maintainer** (which will be asked when running *autovala deb*), **Build-Depends**, **Depends** and **Version**. Thus, you can edit the description or the priority manually, and the changes will be kept.
 
 You can manually edit the files **preinst**, **prerm**, **postinst** and **postrm** in the **debian** folder, and the changes will be kept if you run again the package generation.
 

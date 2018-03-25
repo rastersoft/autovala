@@ -25,6 +25,7 @@ namespace AutoVala {
 		private Gee.List<string> source_packages;
 		private Gee.List<string> binary_packages;
 		private string projectName;
+		private int last_size;
 
 		public bool create_deb_package() {
 			// adjust project name to Debian conventions (only letters, numbers, '+', '-' and '.'
@@ -62,6 +63,7 @@ namespace AutoVala {
 			} catch (Error e) {
 			}
 
+			this.last_size = 0;
 			this.fill_dependencies(this.source_dependencies, this.source_packages);
 			this.fill_dependencies(this.extra_source_dependencies, this.source_packages);
 			this.fill_dependencies(this.dependencies, this.binary_packages);
@@ -69,6 +71,7 @@ namespace AutoVala {
 
 			this.source_packages = this.filter_dependencies(this.source_packages);
 			this.binary_packages = this.filter_dependencies(this.binary_packages);
+			print("\n");
 
 			if (this.create_control(path)) {
 				return true;
@@ -94,6 +97,19 @@ namespace AutoVala {
 			return false;
 		}
 
+		private void print_single_line(string line) {
+
+			var output_str = line;
+			var tmp_size = output_str.length;
+			if (this.last_size != 0) {
+				for (int i = tmp_size; i < last_size; i++) {
+					output_str += " ";
+				}
+			}
+			this.last_size = tmp_size;
+			print(output_str + "\r");
+		}
+
 		/**
 		 * Removes the packages that are already in the dependencies of other packages
 		 * @param dependencies The list with the current dependencies
@@ -110,15 +126,16 @@ namespace AutoVala {
 					current_environment += e;
 				}
 			}
+
 			foreach (var dep in dependencies) {
-				print("Filtrando %s\n".printf(dep));
+				this.print_single_line(_("Filtering %s").printf(dep));
 				string[] spawn_args = { "apt", "depends", dep };
 				string   ls_stdout;
 				string   ls_stderr;
 				int      ls_status;
 
 				try {
-					if (!Process.spawn_sync(null, spawn_args, Environ.get(), SpawnFlags.SEARCH_PATH, null, out ls_stdout, out ls_stderr, out ls_status)) {
+					if (!Process.spawn_sync(null, spawn_args, current_environment, SpawnFlags.SEARCH_PATH, null, out ls_stdout, out ls_stderr, out ls_status)) {
 						ElementBase.globalData.addWarning(_("Failed to launch apt for the file %s").printf(dep));
 						continue;
 					}
@@ -163,7 +180,7 @@ namespace AutoVala {
 		private void fill_dependencies(Gee.List<string> origin, Gee.List<string> destination) {
 			var current_environment = Environ.get();
 			foreach (var element in origin) {
-				print(_("Finding package for %s\n").printf(element));
+				this.print_single_line(_("Finding package for %s").printf(element));
 				string[] spawn_args = { "dpkg", "-S", element };
 				string   ls_stdout;
 				int      ls_status;
@@ -210,16 +227,14 @@ namespace AutoVala {
 			Gee.Map<string, string> source_keys = new Gee.HashMap<string, string>();
 			Gee.Map<string, string> binary_keys = new Gee.HashMap<string, string>();
 
-			var f_control_path      = Path.build_filename(path, "control");
-			var f_control           = File.new_for_path(f_control_path);
-			var f_control_base_path = Path.build_filename(this.config.globalData.projectFolder, "packages", "control.base");
-			var f_control_base      = File.new_for_path(f_control_base_path);
+			var f_control_path = Path.build_filename(path, "control");
+			var f_control      = File.new_for_path(f_control_path);
 
 			try {
-				if (f_control_base.query_exists()) {
-					string[] not_valid_keys = { "Version" };
+				if (f_control.query_exists()) {
+					string[] not_valid_keys = { "Version", "Depends", "Build-Depends", "Maintainer" };
 					bool     source         = true;
-					var      dis            = new DataInputStream(f_control_base.read());
+					var      dis            = new DataInputStream(f_control.read());
 					string   line;
 					string ? key = "";
 					string data = "";
@@ -306,13 +321,6 @@ namespace AutoVala {
 						continue;
 					}
 					of.put_string("%s: %s\n".printf(key, source_keys.get(key)));
-				}
-
-				if (source_keys.has_key("Build-Depends")) {
-					this.add_package_name(source_keys.get("Build-Depends").split(","), true);
-				}
-				if (binary_keys.has_key("Depends")) {
-					this.add_package_name(binary_keys.get("Depends").split(","), false);
 				}
 
 				of.put_string("Build-Depends: ");
