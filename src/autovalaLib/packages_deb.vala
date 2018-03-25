@@ -562,7 +562,7 @@ namespace AutoVala {
 				var dis = f_rules.create_readwrite(GLib.FileCreateFlags.PRIVATE);
 				var of  = new DataOutputStream(dis.output_stream as FileOutputStream);
 
-				of.put_string("#!/bin/sh\n\n");
+				of.put_string("#!/bin/sh\n\nset -e\n\n");
 
 				foreach (var line in this.post_inst) {
 					of.put_string(line + "\n");
@@ -603,7 +603,7 @@ namespace AutoVala {
 				var dis = f_rules.create_readwrite(GLib.FileCreateFlags.PRIVATE);
 				var of  = new DataOutputStream(dis.output_stream as FileOutputStream);
 
-				of.put_string("#!/bin/sh\n\n");
+				of.put_string("#!/bin/sh\n\nset -e\n\n");
 
 				foreach (var line in this.post_rm) {
 					of.put_string(line + "\n");
