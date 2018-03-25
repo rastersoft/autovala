@@ -6,7 +6,7 @@ Build-Depends: build-essential, po-debconf, valac, libc6-dev, libgee-0.8-dev, li
 
 Package: autovala
 Architecture: any
-Version: 1.4.0
+Version: 1.5.0
 Depends: libgee-0.8-2, libreadline6 | libreadline7, libvte-2.91-0, pandoc, curl
 Description: Autovala is a program and a library designed to help in the creation
  of projects with Vala and CMake.
@@ -44,5 +44,4 @@ Description: Autovala is a program and a library designed to help in the creatio
  introspection capabilities
  * Automatically generates the list of source files for GETTEXT
  * Simplifies mixing C and Vala source files
- .
  .
