@@ -91,6 +91,9 @@ namespace AutoVala {
 			if (this.create_postrm(path)) {
 				return true;
 			}
+			if (this.create_compat(path)) {
+				return true;
+			}
 			if (this.create_changelog(path)) {
 				return true;
 			}
@@ -318,7 +321,7 @@ namespace AutoVala {
 				this.print_key(of, source_keys, "Standards-Version", "4.0.0");
 
 				foreach (var key in source_keys.keys) {
-					if ((key == "Source") || (key == "Maintainer") || (key == "Priority") || (key == "Section") || (key == "Build-Depends")) {
+					if ((key == "Source") || (key == "Maintainer") || (key == "Priority") || (key == "Section") || (key == "Build-Depends") || (key == "Standards-Version")) {
 						continue;
 					}
 					of.put_string("%s: %s\n".printf(key, source_keys.get(key)));
@@ -614,6 +617,38 @@ namespace AutoVala {
 					f_rules.delete();
 				} catch (GLib.Error e) {
 					ElementBase.globalData.addError(_("Failed to delete invalid debian/postrm file (%s)").printf(e.message));
+				}
+				return true;
+			}
+			return false;
+		}
+
+/**
+		 * Creates de debian/compat file
+		 * @param path The 'debian' path
+		 * @return false if everything went OK; true if there was an error
+		 */
+		private bool create_compat(string path) {
+
+			var f_rules_path = Path.build_filename(path, "compat");
+			var f_rules      = File.new_for_path(f_rules_path);
+			if (f_rules.query_exists()) {
+				// if the file already exists, don't touch it
+				return false;
+			}
+
+			try {
+				var dis = f_rules.create_readwrite(GLib.FileCreateFlags.PRIVATE);
+				var of  = new DataOutputStream(dis.output_stream as FileOutputStream);
+
+				of.put_string("10\n");
+				dis.close();
+			} catch (Error e) {
+				ElementBase.globalData.addError(_("Failed to write data to debian/compat file (%s)").printf(e.message));
+				try {
+					f_rules.delete();
+				} catch (GLib.Error e) {
+					ElementBase.globalData.addError(_("Failed to delete invalid debian/compat file (%s)").printf(e.message));
 				}
 				return true;
 			}
