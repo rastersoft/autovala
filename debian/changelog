@@ -1,8 +1,14 @@
+autovala (1.6.1-Debian1) sid; urgency=low
+
+  * Fixed error in translations that prevented building the code
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Wed, 28 Mar 2018 23:55:00 +0200
+
 autovala (1.6.0-Debian1) sid; urgency=low
 
   * Allows to include notes for the translators in the code and add them in the .po files
 
- -- Sergio Costas Rodriguez <raster@rastersoft.com>  Wed, 28 Mar 2018 23:55:00 +0200
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Wed, 28 Mar 2018 23:50:00 +0200
 
 autovala (1.5.0-Debian1) sid; urgency=low
 

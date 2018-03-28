@@ -3,12 +3,12 @@ Maintainer: Sergio Costas <rastersoft@gmail.com>
 Priority: optional
 Section: misc
 Standards-Version: 4.0.0
-Build-Depends: build-essential, po-debconf, valac (>=0.30), libc6-dev, libgee-0.8-dev, libreadline-dev, libxml2-dev, libvte-2.91-dev, cmake, intltool, pandoc, bash-completion
+Build-Depends: build-essential, po-debconf, valac (>=0.30), libc6-dev, libgee-0.8-dev, libreadline-dev | libreadline6-dev, libxml2-dev, libvte-2.91-dev, cmake, intltool, pandoc, bash-completion
 
 Package: autovala
 Architecture: any
-Version: 1.6.0
-Depends: libgee-0.8-2, libreadline7, libvte-2.91-0, pandoc, curl
+Version: 1.6.1
+Depends: libgee-0.8-2, libreadline7 | libreadline6, libvte-2.91-0, pandoc, curl
 Description: Autovala is a program and a library designed to help in the creation
  of projects with Vala and CMake.
  .
