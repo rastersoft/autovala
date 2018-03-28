@@ -8,7 +8,7 @@ autovala fileformat - The syntax for autovala configuration file
 
 The project file has a very simple format. Usually you don't need to manually edit it, but when the guesses of autovala are incorrect, you can do it, and your changes will be remembered each time you refresh the file.
 
-The current version for the project file format is **27**.
+The current version for the project file format is **28**.
 
 The file is based on commands in the format:
 
@@ -27,6 +27,8 @@ The next line has the command **autovala_version**. This command specifies which
 The next line has the command **project_name**. This command sets the name assigned to this project.
 
 Next line can contain **project_version**. This allows to set a default version number for the project. Thus, every binary or library that doesn't specify a version number will take it from this. The version can be defined as *X.Y* or *X.Y.Z* (being X, Y and Z numbers with one or more digits).
+
+The next line, which is optional, is **po_comment_tag**, and is used to enable the notes for translators in the generated .po files. If the tag is put *as is* (with or without the trailing colon), then *xgettext* will receive the parameter *--add-comments*, thus adding as notes for translators every comment located before a translatable string. But if a string is set as the value for this tag (e.g. **po_comment_tag: TRANSLATOR**), then *xgettext* will receive the parameter *--add-comments=PARAMETER* (in the previous example it will be *--add-comments=TRANSLATOR*), thus adding only as notes for transtators the comments that start with the specified parameter.
 
 Then, the next line contains **vala_version**, which specifies the minimum Vala version needed to compile this project. By default, it is filled with the version number of the vala version installed when the project was created.
 

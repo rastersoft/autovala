@@ -7,6 +7,19 @@
 <p><a href="index.html">Home</a></p>
 <h1 id="history-of-versions">History of versions</h1>
 <ul>
+<li>version 1.6.0 (2018-03-28)
+<ul>
+<li>Allows to include notes for the translators in the code and add them in the .po files</li>
+</ul></li>
+<li>version 1.5.0 (2018-03-25)
+<ul>
+<li>Now the package optimization works in systems with non-english languages</li>
+<li>Now remembers the data in the old <em>control</em> file in debian package files, allowing to personalize the descriptions and more</li>
+</ul></li>
+<li>version 1.4.0 (2018-03-24)
+<ul>
+<li>Now removes unneeded packages in the dependencies list in debian/control files</li>
+</ul></li>
 <li>version 1.3.1 (2018-03-12)
 <ul>
 <li>Updated documentation style</li>

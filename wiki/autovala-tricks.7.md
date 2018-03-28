@@ -4,7 +4,28 @@
 
 Autovala tricks - Several tricks for Autovala
 
-### I migrated to Meson from CMake, but my libraries seems to not being installed...
+### How to add notes for translators
+
+*Xgettext* allows to add notes for translators in the code by adding a comment before the line with the translatable string. It is possible to specify that by adding a *po_comment_tag* statement in the .avprj file's header.
+
+An example: if you just add:
+
+    po_comment_tag:
+
+when launching *autovala po*, every comment located in the previous line of a translatable string will be added as *notes for translators*. But since this is not always desirable, and it is better to add only specific comments, it is possible to add a keyword to filter only the comments that start with that keyword. So if you add:
+
+    po_comment_tag: TRANSLATOR
+
+and you have in your code the following lines:
+
+    // this comment is a normal comment
+    var a = _("a translatable string");
+    // TRANSLATOR this is a note for the translator
+    var b = _("another translatable string");
+
+Then the first translatable string won't have a note, but the second one will have it.
+
+### I migrated to Meson from CMake, but my libraries seems to not being installed
 
 Meson installs libraries at */usr/lib/x86_64-linux-gnu*, while CMake installs them at */usr/lib*. Ensure that you remove any old library from */usr/lib* and */usr/local/lib*.
 

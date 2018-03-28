@@ -10,7 +10,7 @@
 <p>autovala fileformat - The syntax for autovala configuration file</p>
 <h2 id="description">DESCRIPTION</h2>
 <p>The project file has a very simple format. Usually you don't need to manually edit it, but when the guesses of autovala are incorrect, you can do it, and your changes will be remembered each time you refresh the file.</p>
-<p>The current version for the project file format is <strong>27</strong>.</p>
+<p>The current version for the project file format is <strong>28</strong>.</p>
 <p>The file is based on commands in the format:</p>
 <pre><code>    command: data</code></pre>
 <p>one in each line. Each command can be optionally be prefixed with an asterisk (*). In that case, it is assumed that the command has been created automatically by AutoVala, after applying the guessing rules, and will be erased and regerenated every time the .avprj file is recreated. If the command lacks the asterisk, it is assumed that it has been manually added by the user, so it will be preserved between refreshes.</p>
@@ -20,6 +20,7 @@
 <p>The next line has the command <strong>autovala_version</strong>. This command specifies which version of the syntax uses this file, to avoid an old version of Autovala to open a newer, with commands that it wouldn't understand.</p>
 <p>The next line has the command <strong>project_name</strong>. This command sets the name assigned to this project.</p>
 <p>Next line can contain <strong>project_version</strong>. This allows to set a default version number for the project. Thus, every binary or library that doesn't specify a version number will take it from this. The version can be defined as <em>X.Y</em> or <em>X.Y.Z</em> (being X, Y and Z numbers with one or more digits).</p>
+<p>The next line, which is optional, is <strong>po_comment_tag</strong>, and is used to enable the notes for translators in the generated .po files. If the tag is put <em>as is</em> (with or without the trailing colon), then <em>xgettext</em> will receive the parameter <em>--add-comments</em>, thus adding as notes for translators every comment located before a translatable string. But if a string is set as the value for this tag (e.g. <strong>po_comment_tag: TRANSLATOR</strong>), then <em>xgettext</em> will receive the parameter <em>--add-comments=PARAMETER</em> (in the previous example it will be <em>--add-comments=TRANSLATOR</em>), thus adding only as notes for transtators the comments that start with the specified parameter.</p>
 <p>Then, the next line contains <strong>vala_version</strong>, which specifies the minimum Vala version needed to compile this project. By default, it is filled with the version number of the vala version installed when the project was created.</p>
 <p>After that, it comes several commands, some of them repeated several times, to specify what to do with each file in your project. These commands are:</p>
 <ul>

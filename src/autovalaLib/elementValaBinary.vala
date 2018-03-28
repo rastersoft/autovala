@@ -503,7 +503,8 @@ namespace AutoVala {
 				if (this.namespaces.index_of(element) != -1) {
 					continue;
 				}
-				ElementBase.globalData.addWarning(_("Can't resolve Using %s").printf(element));
+				// TRANSLATOR "Using" is a Vala statement to specify a code module, so this message says that there is a "Using XXXX" statement in the code, but Autovala can't find the module XXXX in the system.
+				ElementBase.globalData.addWarning(_("Can't resolve 'Using %s'").printf(element));
 			}
 			return false;
 		}

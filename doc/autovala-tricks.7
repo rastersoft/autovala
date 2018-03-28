@@ -8,7 +8,19 @@
 <h1 id="autovala-tricks1">Autovala-tricks(1)</h1>
 <h2 id="name">NAME</h2>
 <p>Autovala tricks - Several tricks for Autovala</p>
-<h3 id="i-migrated-to-meson-from-cmake-but-my-libraries-seems-to-not-being-installed...">I migrated to Meson from CMake, but my libraries seems to not being installed...</h3>
+<h3 id="how-to-add-notes-for-translators">How to add notes for translators</h3>
+<p><em>Xgettext</em> allows to add notes for translators in the code by adding a comment before the line with the translatable string. It is possible to specify that by adding a <em>po_comment_tag</em> statement in the .avprj file's header.</p>
+<p>An example: if you just add:</p>
+<pre><code>po_comment_tag:</code></pre>
+<p>when launching <em>autovala po</em>, every comment located in the previous line of a translatable string will be added as <em>notes for translators</em>. But since this is not always desirable, and it is better to add only specific comments, it is possible to add a keyword to filter only the comments that start with that keyword. So if you add:</p>
+<pre><code>po_comment_tag: TRANSLATOR</code></pre>
+<p>and you have in your code the following lines:</p>
+<pre><code>// this comment is a normal comment
+var a = _(&quot;a translatable string&quot;);
+// TRANSLATOR this is a note for the translator
+var b = _(&quot;another translatable string&quot;);</code></pre>
+<p>Then the first translatable string won't have a note, but the second one will have it.</p>
+<h3 id="i-migrated-to-meson-from-cmake-but-my-libraries-seems-to-not-being-installed">I migrated to Meson from CMake, but my libraries seems to not being installed</h3>
 <p>Meson installs libraries at <em>/usr/lib/x86_64-linux-gnu</em>, while CMake installs them at <em>/usr/lib</em>. Ensure that you remove any old library from <em>/usr/lib</em> and <em>/usr/local/lib</em>.</p>
 <h3 id="adding-the-project-files-to-a-versioning-system-like-git-mercurial-or-bazaar">Adding the project files to a versioning system like git, mercurial or bazaar</h3>
 <p>Autovala simplifies this taks by listing for you all the files it knows belong to the project. This is what the <em>autovala project_files</em> command is for. You can add all these files to, let's say, a bazaar repository, just running from the project root folder:</p>
@@ -67,7 +79,7 @@ use_gresource: datas_gresource_xml
 <pre><code>./debian/rules clean
 ./debian/rules build
 ./debian/rules binary-arch</code></pre>
-<p>It is possible to create a template control file at <strong>packages/control.base</strong>. In this file you can manually add entries that you want to be included in the final <strong>control</strong> file for Debian packages. Its syntax is exactly the same than the final <strong>control</strong> file. Autovala will honor these entries and will use them instead the ones generated automatically, with one exception: the dependencies defined in this file will not overrule the automatic ones, but will be added to them. That way, if autovala is unable to detect that your program needs, let's say, <em>pandoc</em> to be run, you can put it in this file and it will be added to the dependency list.</p>
+<p>It is possible to manually modify the <strong>packages/control</strong> file, adding new entries that you want to be included in the final <strong>control</strong> file for Debian packages. Autovala will honor these entries and will use them instead the ones generated automatically, with the following exceptions: <strong>Maintainer</strong> (which will be asked when running <em>autovala deb</em>), <strong>Build-Depends</strong>, <strong>Depends</strong> and <strong>Version</strong>. Thus, you can edit the description or the priority manually, and the changes will be kept.</p>
 <p>You can manually edit the files <strong>preinst</strong>, <strong>prerm</strong>, <strong>postinst</strong> and <strong>postrm</strong> in the <strong>debian</strong> folder, and the changes will be kept if you run again the package generation.</p>
 <p>To generate .rpm files, just run <strong>autovala rpm</strong>. It will create the folders <strong>rpmbuild/SPECS/</strong>, and inside will be the <strong>.spec</strong> file with the metadata. Then, go to <strong>rpmbuild</strong> folder and run:</p>
 <pre><code>rpmbuild --define &quot;_topdir `pwd`&quot; -ba SPECS/PROJECT_NAME.spec</code></pre>

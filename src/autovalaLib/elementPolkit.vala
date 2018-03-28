@@ -51,6 +51,7 @@ namespace AutoVala {
 			try {
 				dataStream.put_string("install_data( '%s',install_dir: join_paths(get_option('prefix'),get_option('datadir'),'polkit-1','actions'))\n".printf(this._fullPath));
 			} catch (Error e) {
+				// TRANSLATOR meson.build is a file needed to use the MESON build system
 				ElementBase.globalData.addError(_("Failed to write to meson.build at '%s' element, at '%s' path: %s").printf(this.command, this._path, e.message));
 				return true;
 			}

@@ -46,8 +46,8 @@ namespace AutoVala {
 				Intl.bindtextdomain(AutoValaConstants.GETTEXT_PACKAGE, Path.build_filename(AutoValaConstants.DATADIR, "locale"));
 			}
 
-			// currently we support version 27 of the syntax
-			this.currentVersion = 27;
+			// currently we support version 28 of the syntax
+			this.currentVersion = 28;
 			this.version        = 0;
 
 			this.globalData = new AutoVala.Globals(projectName, basePath);
@@ -177,6 +177,7 @@ namespace AutoVala {
 			var  file         = File.new_for_path(this.globalData.configFile);
 			bool error        = false;
 			int  ifLineNumber = 0;
+			this.globalData.po_comment_tag = null;
 			try {
 				var dis = new DataInputStream(file.read());
 
@@ -230,6 +231,12 @@ namespace AutoVala {
 						} else {
 							this.globalData.global_version = gversion;
 						}
+						continue;
+					} else if (line.has_prefix("po_comment_tag:")) {
+						this.globalData.po_comment_tag = line.substring(15).strip();
+						continue;
+					} else if (line.strip() =="po_comment_tag") {
+						this.globalData.po_comment_tag = "";
 						continue;
 					} else if (line.has_prefix("vapidir: ")) {
 						element = new ElementVapidir();
@@ -437,6 +444,9 @@ namespace AutoVala {
 				data_stream.put_string("project_name: %s\n".printf(this.globalData.projectName));
 				if (this.globalData.global_version != null) {
 					data_stream.put_string("project_version: %s\n".printf(this.globalData.global_version));
+				}
+				if (this.globalData.po_comment_tag != null) {
+					data_stream.put_string("po_comment_tag: %s\n".printf(this.globalData.po_comment_tag));
 				}
 				if (this.globalData.versionAutomatic) {
 					data_stream.put_string("*vala_version: %d.%d\n\n".printf(this.globalData.valaMajor, this.globalData.valaMinor));

@@ -784,7 +784,15 @@ namespace AutoVala {
 			foreach (var element in ElementBase.globalData.globalElements) {
 				if (element.eType == ConfigType.PO) {
 					try {
-						string callString = "xgettext --from-code=UTF-8 -d %s -o %s -p %s --keyword='_' -f po/POTFILES.in".printf(ElementBase.globalData.projectName, ElementBase.globalData.projectName + ".pot", element.path);
+						string add_comment = "";
+						if (ElementBase.globalData.po_comment_tag != null) {
+							if (ElementBase.globalData.po_comment_tag == "") {
+								add_comment = "--add-comments";
+							} else {
+								add_comment = "--add-comments=%s".printf(ElementBase.globalData.po_comment_tag);
+							}
+						}
+						string callString = "xgettext --from-code=UTF-8 -d %s -o %s -p %s --keyword='_' %s  -f po/POTFILES.in".printf(ElementBase.globalData.projectName, ElementBase.globalData.projectName + ".pot", element.path, add_comment);
 						ElementBase.globalData.addMessage(_("Launching command %s").printf(callString));
 						retVal = GLib.Process.spawn_command_line_sync(callString, out ls_stdout, out ls_stderr, out ls_status);
 					} catch (GLib.SpawnError e) {

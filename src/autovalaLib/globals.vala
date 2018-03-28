@@ -46,6 +46,8 @@ namespace AutoVala {
 		public int valaVersionMinor;
 		// if true, the compiler version in the file has been automatically detected (it has an asterisk in the file)
 		public bool versionAutomatic;
+		// the tag that must be added to the commen before a localized string to be recognized as a translator comment, or null to add all comments
+		public string ? po_comment_tag;
 
 		// A list with all the files and paths that must be avoided when doing automatic detection
 		public string[] excludeFiles;
@@ -90,6 +92,7 @@ namespace AutoVala {
 			this.warning        = false;
 			this.projectName    = projectName;
 			this.projectFolder  = null;
+			this.po_comment_tag = null;
 			this.globalElements = new Gee.ArrayList<ElementBase>();
 			this.excludeFiles   = {};
 			this.getValaVersion();
@@ -175,19 +178,6 @@ namespace AutoVala {
 		public void addElement(ElementBase element) {
 			this.globalElements.add(element);
 		}
-
-/* Not needed
- *              public ElementBase[] findElements(AutoVala.ConfigType eType) {
- *
- *                      AutoVala.ElementBase[] elements = {};
- *                      foreach(var element in this.globalElements) {
- *                              if (element.eType == eType) {
- *                                      elements += element;
- *                              }
- *                      }
- *                      return elements;
- *              }
- */
 
 		/**
 		 * Inserts a new file/path in the list of exclude files/paths
@@ -318,7 +308,7 @@ namespace AutoVala {
 		 */
 		public void addError(string errorMsg) {
 			this.error = true;
-			// Shows an Error message
+			// TRANSLATOR Shows "Error" in red, followed by an error message
 			this.errorList += "\033[1;31m%s\033[0m %s".printf(_("Error:"), errorMsg);
 		}
 
@@ -328,7 +318,7 @@ namespace AutoVala {
 		 */
 		public void addWarning(string warningMsg) {
 			this.warning = true;
-			// Shows a Warning message
+			// TRANSLATOR Shows "Warning" in yellow, followed by a warning message
 			this.errorList += "\033[1;33m%s\033[0m %s".printf(_("Warning:"), warningMsg);
 		}
 
