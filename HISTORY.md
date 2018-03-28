@@ -1,5 +1,7 @@
 # History of versions #
 
+* version 1.6.1 (2018-03-28)
+      * Fixed error in translations that prevented building the code
 * version 1.6.0 (2018-03-28)
       * Allows to include notes for the translators in the code and add them in the .po files
 * version 1.5.0 (2018-03-25)

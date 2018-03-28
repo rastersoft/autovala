@@ -1107,7 +1107,7 @@ msgstr "Excepción '%s' al lanzar apt para el fichero %s"
 
 #: src/autovalaLib/packages_deb.vala:185
 #, c-format
-msgid "Finding package for %s"
+msgid "Finding package for %s\n"
 msgstr "Buscando paquete para %s\n"
 
 #: src/autovalaLib/packages_deb.vala:192
