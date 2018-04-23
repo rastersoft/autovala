@@ -1,3 +1,9 @@
+autovala (1.7.0-Debian1) sid; urgency=low
+
+  * Now ignores the built-in defines like VALA_X_Y
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Mon, 23 Apr 2018 23:55:00 +0200
+
 autovala (1.6.1-Debian1) sid; urgency=low
 
   * Fixed error in translations that prevented building the code

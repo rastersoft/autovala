@@ -1,5 +1,7 @@
 # History of versions #
 
+* version 1.7.0 (2018-04-23)
+      * Now ignores the built-in defines like VALA_X_Y
 * version 1.6.1 (2018-03-28)
       * Fixed error in translations that prevented building the code
 * version 1.6.0 (2018-03-28)

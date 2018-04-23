@@ -4,7 +4,7 @@ cfg_autovalaLib.set('PKGDATADIR', join_paths(get_option('prefix'),get_option('da
 cfg_autovalaLib.set('GETTEXT_PACKAGE', 'autovala')
 cfg_autovalaLib.set('RELEASE_NAME', 'autovala')
 cfg_autovalaLib.set('PREFIX', get_option('prefix'))
-cfg_autovalaLib.set('VERSION', '1.6.1')
+cfg_autovalaLib.set('VERSION', '1.7.0')
 cfg_autovalaLib.set('TESTSRCDIR', meson.source_root())
 
 cfgfile_4 = configure_file(input: 'Config.vala.base',output: 'Config.vala',configuration: cfg_autovalaLib)
@@ -69,7 +69,7 @@ autovalaLib_link_args = ['-lreadline']
 autovalaLib_vala_args += ['--gir=AutoVala-1.0.gir']
 
 
-AutoVala_library = shared_library('AutoVala',autovalaLib_sources,dependencies: autovalaLib_deps,vala_args: autovalaLib_vala_args,link_args: autovalaLib_link_args,version: '1.6.1',soversion: '1',install: true)
+AutoVala_library = shared_library('AutoVala',autovalaLib_sources,dependencies: autovalaLib_deps,vala_args: autovalaLib_vala_args,link_args: autovalaLib_link_args,version: '1.7.0',soversion: '1',install: true)
 
 autovalaLib_requires = []
 autovalaLib_requires += ['cairo']
@@ -84,7 +84,7 @@ autovalaLib_requires += ['pango']
 autovalaLib_requires += ['pangocairo']
 pkg_mod = import('pkgconfig')
 pkg_mod.generate(libraries : AutoVala_library,
-	version : '1.6.1',
+	version : '1.7.0',
 	name : 'AutoVala',
 	filebase : 'AutoVala',
 	description : 'AutoVala',

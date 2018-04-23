@@ -7,6 +7,14 @@
 <p><a href="index.html">Home</a></p>
 <h1 id="history-of-versions">History of versions</h1>
 <ul>
+<li>version 1.7.0 (2018-04-23)
+<ul>
+<li>Now ignores the built-in defines like VALA_X_Y</li>
+</ul></li>
+<li>version 1.6.1 (2018-03-28)
+<ul>
+<li>Fixed error in translations that prevented building the code</li>
+</ul></li>
 <li>version 1.6.0 (2018-03-28)
 <ul>
 <li>Allows to include notes for the translators in the code and add them in the .po files</li>

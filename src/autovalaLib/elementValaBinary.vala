@@ -194,6 +194,7 @@ namespace AutoVala {
 		private GLib.Regex regexPackages;
 		private GLib.Regex regexPackages2;
 		private GLib.Regex regexClasses;
+		private GLib.Regex regexDefines;
 
 		public string get_vala_opts() {
 			string opts = "";
@@ -298,6 +299,7 @@ namespace AutoVala {
 				this.regexPackages  = new GLib.Regex("^([ \t]*// *)?[Uu]sing +[^;]+;?");
 				this.regexPackages2 = new GLib.Regex("^([ \t]*// *)?uses +[a-zA-Z_][a-zA-Z0-9_, -]+ *$");
 				this.regexClasses   = new GLib.Regex("^[ \t]*(public )?(private )?[ \t]*class[ ]+");
+				this.regexDefines   = new GLib.Regex("^VALA_[0-9]+_[0-9]+$");
 			} catch (GLib.Error e) {
 				ElementBase.globalData.addError(_("Can't generate the Regexps"));
 			}
@@ -644,10 +646,14 @@ namespace AutoVala {
 						string element = line.substring(pos).strip();
 						// remove all logical elements to get a set of DEFINEs
 						string[] elements = element.replace("&&", " ").replace("||", " ").replace("==", " ").replace("!=", " ").replace("!", " ").replace("(", " ").replace(")", " ").split(" ");
-						foreach (var l in elements) {
+						foreach (var l2 in elements) {
+							var l = l2.strip();
 							if ((l != "") && (l.ascii_casecmp("true") != 0) && (l.ascii_casecmp("false") != 0) && (this.defines.contains(l) == false) && (l.ascii_casecmp("UNITEST") != 0)) {
-								var define = new ElementDefine();
-								define.addNewDefine(l);
+								// ensure that it is not any of the VALA supported defines
+								if ((l != "POSIX") && (l != "GOBJECT") && (l != "DOVA") && (l != "DBUS_GLIB") && (!this.regexDefines.match(l))) {
+									var define = new ElementDefine();
+									define.addNewDefine(l);
+								}
 							}
 						}
 					}
