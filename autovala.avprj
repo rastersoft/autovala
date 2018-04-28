@@ -1,7 +1,7 @@
 ### AutoVala Project ###
 autovala_version: 28
 project_name: autovala
-project_version: 1.7.0
+project_version: 1.8.0
 po_comment_tag: TRANSLATOR
 vala_version: 0.30
 
@@ -11,7 +11,7 @@ custom: data/cmake share/autovala/cmake
 *gresource: extras_gresource_xml data/extras.gresource.xml
 
 vala_binary: src/autovala
-*version: 1.7.0
+*version: 1.8.0
 vala_local_package: AutoVala
 *vala_package: posix
 vala_check_package: gio-2.0
@@ -21,7 +21,7 @@ vala_check_package: gio-2.0
 
 
 vala_library: src/autovalaLib/autovalaLib
-*version: 1.7.0
+*version: 1.8.0
 *namespace: AutoVala
 *vala_package: posix
 *vala_package: readline

@@ -1555,7 +1555,7 @@ namespace AutoVala {
 
 				foreach (var filename in this._vapis) {
 					printConditions.printCondition(filename.condition, filename.invertCondition);
-					this.setMesonVar(dataStream, "sources", "join_paths(meson.source_root(),'%s')".printf(filename.elementName));
+					this.setMesonVar(dataStream, "sources", "join_paths(meson.current_source_dir(),'%s')".printf(filename.elementName));
 				}
 				printConditions.printTail();
 

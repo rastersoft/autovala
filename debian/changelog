@@ -1,3 +1,9 @@
+autovala (1.8.0-Debian1) sid; urgency=low
+
+  * Fixed a bug when using .vapi files and building with meson
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Sat, 28 Apr 2018 23:55:00 +0200
+
 autovala (1.7.0-Debian1) sid; urgency=low
 
   * Now ignores the built-in defines like VALA_X_Y
