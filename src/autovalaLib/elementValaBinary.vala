@@ -1653,6 +1653,7 @@ namespace AutoVala {
 					printConditions.printCondition(llibrary.condition, llibrary.invertCondition);
 					this.setMesonVar(dataStream, "link_args", "'-l%s'".printf(llibrary.elementName));
 				}
+				this.setMesonVar(dataStream, "link_args", "'-rdynamic'");
 				printConditions.printTail();
 
 				foreach (var element in this._hFolders) {

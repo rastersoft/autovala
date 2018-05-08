@@ -5,7 +5,7 @@
 <body>
 <div class="main_frame">
 <p><a href="index.html">Home</a></p>
-<h1 id="to-do">TO DO</h1>
+<h1>TO DO</h1>
 <p>While Autovala is fully usable, there are still a lot of things that I want to add to it, and I will need help.</p>
 <ul>
 <li>Support localization of desktop files</li>

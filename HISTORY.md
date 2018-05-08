@@ -1,5 +1,7 @@
 # History of versions #
 
+* version 1.9.0 (2018-05-08)
+      * Now adds "-rdynamic" in meson/ninja, to ensure that it is possible to connect signals with Builder
 * version 1.8.0 (2018-04-28)
       * Fixed a bug when using .vapi files and building with meson
 * version 1.7.0 (2018-04-23)

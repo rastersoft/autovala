@@ -35,11 +35,12 @@ autovalaPlugin_sources += ['searchview.vala']
 autovalaPlugin_sources += [extras_gresource_xml_file_c]
 autovalaPlugin_vala_args = ['--gresources='+join_paths(meson.source_root(),'data/extras.gresource.xml')]
 autovalaPlugin_dependencies = [AutoVala_library]
+autovalaPlugin_link_args = ['-rdynamic']
 autovalaPlugin_hfolders = ['../../src/autovalaLib']
 autovalaPlugin_vala_args += ['--gir=AutovalaPlugin-0.0.gir']
 
 
-AutovalaPlugin_library = shared_library('AutovalaPlugin',autovalaPlugin_sources,dependencies: autovalaPlugin_deps,vala_args: autovalaPlugin_vala_args,link_with: autovalaPlugin_dependencies,include_directories: include_directories(autovalaPlugin_hfolders),version: '0.99',soversion: '0',install: true)
+AutovalaPlugin_library = shared_library('AutovalaPlugin',autovalaPlugin_sources,dependencies: autovalaPlugin_deps,vala_args: autovalaPlugin_vala_args,link_args: autovalaPlugin_link_args,link_with: autovalaPlugin_dependencies,include_directories: include_directories(autovalaPlugin_hfolders),version: '0.99',soversion: '0',install: true)
 
 autovalaPlugin_requires = []
 autovalaPlugin_requires += ['AutoVala']

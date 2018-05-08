@@ -5,10 +5,10 @@
 <body>
 <div class="main_frame">
 <p><a href="index.html">Home</a></p>
-<h1 id="autovala-keep-changes7">Autovala-keep-changes(7)</h1>
-<h2 id="name">NAME</h2>
+<h1>Autovala-keep-changes(7)</h1>
+<h2>NAME</h2>
 <p>autovala keeping your changes - How to manually modify the configuration file without loosing your changes</p>
-<h2 id="description">DESCRIPTION</h2>
+<h2>DESCRIPTION</h2>
 <p>By default, nearly all the lines in the project file start with an asterisk. Those lines contain automatically created commands, and every time the user launches the command <strong>autovala refresh</strong> or <strong>autovala update</strong>, they are deleted and recreated using the current files in the disk and the <a href="autovala-rules.7">rules</a>.</p>
 <p>Lines without the asterisk contain commands specified manually by the user, and they are not deleted before recreating the project file.</p>
 <p>Also, when an automatically created <strong>vala_library</strong> or <strong>vala_binary</strong> command (this is, prefixed with the asterisk) contains at least one subcommand added manually, that command will be considered manually added too, so it will be preserved even if you delete its folder. This is made this way to ensure that the manual data is preserved in all cases.</p>
@@ -66,9 +66,9 @@
     *vala_source: configuration.vala
     *vala_source: autovala.vala</code></pre>
 <p>Now the change will remain, no matter how many times <strong>autovala refresh</strong> or <strong>autovala update</strong> are run.</p>
-<h2 id="see-also">SEE ALSO</h2>
+<h2>SEE ALSO</h2>
 <p><a href="autovala.1">autovala(1)</a> <a href="autovala-rules.7">autovala-rules(7)</a> <a href="autovala-fileformat.5">autovala-fileformat(5)</a> <a href="autovala-tricks.7">autovala-tricks(7)</a></p>
-<h2 id="author">AUTHOR</h2>
+<h2>AUTHOR</h2>
 <p>Sergio Costas Rodriguez<br />
 <a href="mailto:raster@rastersoft.com">raster@rastersoft.com</a><br />
 <a href="http://www.rastersoft.com" class="uri">http://www.rastersoft.com</a><br />
