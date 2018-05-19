@@ -781,6 +781,24 @@ namespace AutoVala {
 			string ls_stderr;
 			int    ls_status;
 
+			var version = ElementBase.globalData.global_version;
+			if (version == null) {
+				int minversion = -1;
+				foreach(var element in ElementBase.globalData.globalElements) {
+					if ((element.eType == ConfigType.VALA_BINARY) || (element.eType == ConfigType.VALA_LIBRARY)) {
+						var element2 = element as ElementValaBinary;
+						int ln = element2.fullPath.length;
+						if ((minversion == -1) || (ln < minversion)) {
+							minversion = ln;
+							version = element2.version;
+						}
+					}
+				}
+			}
+			if (version == null) {
+				version = "1.0.0";
+			}
+
 			foreach (var element in ElementBase.globalData.globalElements) {
 				if (element.eType == ConfigType.PO) {
 					try {
@@ -792,7 +810,7 @@ namespace AutoVala {
 								add_comment = "--add-comments=%s".printf(ElementBase.globalData.po_comment_tag);
 							}
 						}
-						string callString = "xgettext --from-code=UTF-8 -d %s -o %s -p %s --keyword='_' %s  -f po/POTFILES.in".printf(ElementBase.globalData.projectName, ElementBase.globalData.projectName + ".pot", element.path, add_comment);
+						string callString = "xgettext --from-code=UTF-8 -d %s -o %s -p %s --keyword='_' %s  -f po/POTFILES.in --package-name=%s --package-version=%s".printf(ElementBase.globalData.projectName, ElementBase.globalData.projectName + ".pot", element.path, add_comment, ElementBase.globalData.projectName.replace(" ", "_"), version);
 						ElementBase.globalData.addMessage(_("Launching command %s").printf(callString));
 						retVal = GLib.Process.spawn_command_line_sync(callString, out ls_stdout, out ls_stderr, out ls_status);
 					} catch (GLib.SpawnError e) {

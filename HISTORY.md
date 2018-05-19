@@ -1,5 +1,7 @@
 # History of versions #
 
+* version 1.10.0 (2018-05-19)
+      * Now adds the version and project name in the PO files
 * version 1.9.0 (2018-05-08)
       * Now adds "-rdynamic" in meson/ninja, to ensure that it is possible to connect signals with Builder
 * version 1.8.0 (2018-04-28)

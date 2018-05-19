@@ -1,3 +1,9 @@
+autovala (1.10.0-Debian1) sid; urgency=low
+
+  * Now adds the version and project name in the PO files
+
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Sat, 19 May 2018 23:55:00 +0200
+
 autovala (1.9.0-Debian1) sid; urgency=low
 
   * Now adds "-rdynamic" in meson/ninja, to ensure that it is possible to connect signals with Builder
@@ -114,7 +120,7 @@ autovala (1.0.0-Debian1) sid; urgency=low
 
   * Updated version to 1.0.0
 
- -- Sergio Costas Rodriguez <raster@rastersoft.com>  Fri, 30 Dec 2016 23:55:00 +0200
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Fry, 30 Dec 2016 23:55:00 +0200
 
 autovala (0.99.48-Debian1) sid; urgency=low
 
@@ -122,7 +128,7 @@ autovala (0.99.48-Debian1) sid; urgency=low
   * Now adds the .VAPI and .GS (Genie) files in all src/ folder to the list of files generated for SCM systems like GIT
   * Now can find the icon themes even if XDG_DATA_DIRS is not defined
 
- -- Sergio Costas Rodriguez <raster@rastersoft.com>  Fri, 16 Dec 2016 23:55:00 +0200
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Fry, 16 Dec 2016 23:55:00 +0200
 
 autovala (0.99.47-Debian1) sid; urgency=low
 
@@ -379,7 +385,7 @@ autovala (0.99.11-Debian1) sid; urgency=low
   * Now only updates the project view in editor plugins when the project file has changed.
   * Added support for GTK 3.4 (needed to allow to compile under Elementary OS Luna)
 
- -- Sergio Costas Rodriguez <raster@rastersoft.com>  Fri, 12 Dec 2014 23:55:00 +0200
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Fry, 12 Dec 2014 23:55:00 +0200
 
 autovala (0.99.10-Debian1) sid; urgency=low
 
@@ -503,7 +509,7 @@ autovala (0.94.0-Debian1) sid; urgency=low
 
   * Now keeps automatic binaries when contains a manually-added DBus interface definition
 
- -- Sergio Costas Rodriguez <raster@rastersoft.com>  Fri, 21 Mar 2014 23:55:00 +0200
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Fry, 21 Mar 2014 23:55:00 +0200
 
 autovala (0.93.0-Debian1) sid; urgency=low
 
@@ -557,7 +563,7 @@ autovala (0.32.0-Debian1) sid; urgency=low
   * Always forces GLib and GObject packages to ensure that everything compiles
   * Added GLib.File as rule to detect when automagically add GIO
 
- -- Sergio Costas Rodriguez <raster@rastersoft.com>  Fri, 06 Dec 2013 23:55:00 +0200
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Fry, 06 Dec 2013 23:55:00 +0200
 
 autovala (0.31.0-Debian1) sid; urgency=low
 
@@ -675,7 +681,7 @@ autovala (0.15.0-Debian1) sid; urgency=low
   * Allows to install files in a manually specified destination directory
   * Autodetects autorun *.desktop* files and install them in the right place
 
- -- Sergio Costas Rodriguez <raster@rastersoft.com>  Fri, 26 Apr 2013 23:55:00 +0200
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Fry, 26 Apr 2013 23:55:00 +0200
 
 autovala (0.14.0-Debian1) sid; urgency=low
 
@@ -733,7 +739,7 @@ autovala (0.7.0-Debian1) sid; urgency=low
 
   * Now honors the IGNORE command with VAPI files and source folders
 
- -- Sergio Costas Rodriguez <raster@rastersoft.com>  Fri, 05 Apr 2013 23:55:00 +0200
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Fry, 05 Apr 2013 23:55:00 +0200
 
 autovala (0.6.0-Debian1) sid; urgency=low
 
@@ -741,7 +747,7 @@ autovala (0.6.0-Debian1) sid; urgency=low
   * Installs Valadoc file sin a better place
   * Added instructions in HTML format, extracted from GitHub's wiki
 
- -- Sergio Costas Rodriguez <raster@rastersoft.com>  Fri, 05 Apr 2013 23:50:00 +0200
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Fry, 05 Apr 2013 23:50:00 +0200
 
 autovala (0.5.0-Debian1) sid; urgency=low
 
@@ -774,5 +780,5 @@ autovala (0.1.0-Debian1) sid; urgency=low
 
   * First public version
 
- -- Sergio Costas Rodriguez <raster@rastersoft.com>  Fri, 29 Mar 2013 23:55:00 +0200
+ -- Sergio Costas Rodriguez <raster@rastersoft.com>  Fry, 29 Mar 2013 23:55:00 +0200
 
