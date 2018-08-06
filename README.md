@@ -1,5 +1,9 @@
 # AUTOVALA #
 
+**IMPORTANT: Autovala has been migrated to Gitlab**
+
+https://gitlab.com/rastersoft/autovala
+
 Autovala is a program and a library designed to help in the creation of
 projects with Vala and CMake. It also has support for Genie.
 
